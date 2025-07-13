@@ -61,8 +61,6 @@ class CameraManager: NSObject, ObservableObject {
         guard let device = videoDeviceInput?.device else { return }
         
         do {
-            // mutex락처럼 락을 걸고 설정을 바꿔주는
-            // beginConfiguration/commitConfiguration도 비슷한 구조 (세션자체의 락이냐 아니냐 차이)
             try device.lockForConfiguration()
             
             // 초점조절
@@ -87,12 +85,11 @@ class CameraManager: NSObject, ObservableObject {
     func switchCamera(to position: AVCaptureDevice.Position) {
         session.beginConfiguration()
         
-        // 기존에 연결된 input있으면 날리고
+        // 기존에 연결된 input 제거
         if let existingInput = videoDeviceInput {
             session.removeInput(existingInput)
         }
         
-        // 새로운 카메라 디바이스 가져오기
         if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) {
             do {
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
