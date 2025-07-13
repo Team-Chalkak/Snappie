@@ -36,7 +36,7 @@ struct CameraPreviewView: UIViewRepresentable {
         
         // focusbox 표시
         private func showFocusBox(at point: CGPoint) {
-            // 다른곳 터치할 수 있으니까 기존에 있던 focusbox 제거
+            // 기존 focusbox 제거
             layer.sublayers?.forEach { sublayer in
                 if sublayer.name == "focusBox" {
                     sublayer.removeFromSuperlayer()
@@ -81,7 +81,6 @@ struct CameraPreviewView: UIViewRepresentable {
                 focusBoxLayer.add(fadeOut, forKey: "fadeOut")
                 focusBoxLayer.opacity = 0
                 
-                // 시간지났으니 레이어삭제
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     focusBoxLayer.removeFromSuperlayer()
                 }
