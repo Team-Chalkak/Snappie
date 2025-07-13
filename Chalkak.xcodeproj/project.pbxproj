@@ -632,6 +632,8 @@
 				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera 접근";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "photo Library 접근";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
