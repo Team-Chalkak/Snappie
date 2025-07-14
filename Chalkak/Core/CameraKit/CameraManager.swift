@@ -178,7 +178,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL)
             }
         } catch {
-            print("동엿ㅇ상 저장 에러 \(error.localizedDescription)")
+            print("동영상 저장 에러\(error.localizedDescription)")
         }
     }
 }
