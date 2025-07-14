@@ -9,6 +9,5 @@ import Foundation
 
 struct Tilt: Codable, Hashable {
     var degreeX: Double
-    var degreeY: Double
     var degreeZ: Double
 }

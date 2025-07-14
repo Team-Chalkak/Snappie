@@ -6,6 +6,7 @@
 	objectVersion = 77;
 	objects = {
 
+
 /* Begin PBXBuildFile section */
 		993A1D3D2E21C0D40059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D3B2E21C0D40059B70A /* ChalkakTests.swift */; };
 		993A1D412E21C0D40059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D3E2E21C0D40059B70A /* ChalkakUITests.swift */; };
@@ -31,6 +32,7 @@
 		B6D2D2152E23AC2300550E9E /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D2D2142E23AC2300550E9E /* CameraPreviewView.swift */; };
 /* End PBXBuildFile section */
 
+
 /* Begin PBXContainerItemProxy section */
 		993A1CD72E2049D60059B70A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +54,7 @@
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+
 		993A1D3B2E21C0D40059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1D3E2E21C0D40059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1D3F2E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -74,7 +77,26 @@
 		993A1D642E21C0D40059B70A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		993A1D662E21C0D40059B70A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B6D2D2142E23AC2300550E9E /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CameraPreviewView.swift; path = Chalkak/Presentation/Camera/CameraPreviewView.swift; sourceTree = SOURCE_ROOT; };
+
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		993A1E202E249C9E0059B70A /* Chalkak */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Chalkak;
+			sourceTree = "<group>";
+		};
+		993A1E342E249C9E0059B70A /* ChalkakTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChalkakTests;
+			sourceTree = "<group>";
+		};
+		993A1E382E249C9E0059B70A /* ChalkakUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChalkakUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		993A1CC32E2049D50059B70A /* Frameworks */ = {
@@ -104,9 +126,9 @@
 		993A1CBD2E2049D50059B70A = {
 			isa = PBXGroup;
 			children = (
-				993A1D682E21C0D40059B70A /* Chalkak */,
-				993A1D3C2E21C0D40059B70A /* ChalkakTests */,
-				993A1D402E21C0D40059B70A /* ChalkakUITests */,
+				993A1E202E249C9E0059B70A /* Chalkak */,
+				993A1E342E249C9E0059B70A /* ChalkakTests */,
+				993A1E382E249C9E0059B70A /* ChalkakUITests */,
 				993A1CC72E2049D50059B70A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -121,6 +143,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+
 		993A1D3C2E21C0D40059B70A /* ChalkakTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +339,7 @@
 			path = Chalkak;
 			sourceTree = "<group>";
 		};
+
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -330,6 +354,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				993A1E202E249C9E0059B70A /* Chalkak */,
 			);
 			name = Chalkak;
 			packageProductDependencies = (
@@ -351,6 +378,9 @@
 			dependencies = (
 				993A1CD82E2049D60059B70A /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				993A1E342E249C9E0059B70A /* ChalkakTests */,
+			);
 			name = ChalkakTests;
 			packageProductDependencies = (
 			);
@@ -370,6 +400,9 @@
 			);
 			dependencies = (
 				993A1CE22E2049D60059B70A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				993A1E382E249C9E0059B70A /* ChalkakUITests */,
 			);
 			name = ChalkakUITests;
 			packageProductDependencies = (
@@ -427,8 +460,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D792E21C0D40059B70A /* Preview Assets.xcassets in Resources */,
-				993A1D7A2E21C0D40059B70A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,6 +484,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+
 				993A1D692E21C0D40059B70A /* ChalkakApp.swift in Sources */,
 				993A1D6A2E21C0D40059B70A /* ARProcessManager.swift in Sources */,
 				993A1D6B2E21C0D40059B70A /* CameraManager.swift in Sources */,
@@ -470,6 +502,7 @@
 				993A1D762E21C0D40059B70A /* ClipEditViewModel.swift in Sources */,
 				993A1D772E21C0D40059B70A /* ProjectPreViewView.swift in Sources */,
 				993A1D782E21C0D40059B70A /* ProjectPreViewViewModel.swift in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,7 +510,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D3D2E21C0D40059B70A /* ChalkakTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,8 +517,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D412E21C0D40059B70A /* ChalkakUITests.swift in Sources */,
-				993A1D422E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
