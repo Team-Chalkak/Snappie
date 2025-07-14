@@ -38,8 +38,8 @@ class CameraViewModel: ObservableObject {
 
     @Published var showingCameraControl = false
     @Published var isTorch = false
+    @Published var isGrid = false
 
-    @Published var isSilentModeOn = false
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
     @Published var recordingTime = 0
@@ -60,6 +60,8 @@ class CameraViewModel: ObservableObject {
 
         model.$isRecording
             .assign(to: &$isRecording)
+
+        configure()
     }
 
     func switchCameraControls() {
@@ -105,8 +107,8 @@ class CameraViewModel: ObservableObject {
         model.setTorchMode(isTorch)
     }
 
-    func switchSilent() {
-        isSilentModeOn.toggle()
+    func switchGrid() {
+        isGrid.toggle()
     }
 
     func startVideoRecording() {

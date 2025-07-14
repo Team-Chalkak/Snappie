@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CameraPreviewView: UIViewRepresentable {
     class VideoPreviewView: UIView {
+        var gridLayer: CAShapeLayer?
         override class var layerClass: AnyClass {
             AVCaptureVideoPreviewLayer.self
         }
@@ -86,9 +87,50 @@ struct CameraPreviewView: UIViewRepresentable {
                 }
             }
         }
+        
+        func showGrid() {
+            // 기존 그리드레이어 제거
+            gridLayer?.removeFromSuperlayer()
+            // 그리드 레이어 새로 그리기
+            let gridShapeLayer = CAShapeLayer()
+            gridShapeLayer.strokeColor = UIColor.white.withAlphaComponent(0.3).cgColor
+            gridShapeLayer.lineWidth = 0.5
+            gridShapeLayer.fillColor = UIColor.clear.cgColor
+            
+            // 베젤빼고 정말 촬영중인 그 비디어 프레임 계산
+            let videoRect = videoPreviewLayer.layerRectConverted(fromMetadataOutputRect: CGRect(x: 0, y: 0, width: 1, height: 1))
+            
+            let path = UIBezierPath()
+            
+            // 세로선
+            let verticalSpacing = videoRect.width / 3
+            for i in 1..<3 {
+                let x = videoRect.origin.x + CGFloat(i) * verticalSpacing
+                path.move(to: CGPoint(x: x, y: videoRect.origin.y))
+                path.addLine(to: CGPoint(x: x, y: videoRect.origin.y + videoRect.height))
+            }
+            
+            // 가로선
+            let horizontalSpacing = videoRect.height / 3
+            for i in 1..<3 {
+                let y = videoRect.origin.y + CGFloat(i) * horizontalSpacing
+                path.move(to: CGPoint(x: videoRect.origin.x, y: y))
+                path.addLine(to: CGPoint(x: videoRect.origin.x + videoRect.width, y: y))
+            }
+            
+            gridShapeLayer.path = path.cgPath
+            layer.addSublayer(gridShapeLayer)
+            gridLayer = gridShapeLayer
+        }
+        
+        func hideGrid() {
+            gridLayer?.removeFromSuperlayer()
+            gridLayer = nil
+        }
     }
     
     let session: AVCaptureSession
+    @Binding var showGrid: Bool
    
     func makeUIView(context: Context) -> VideoPreviewView {
         let view = VideoPreviewView()
@@ -102,5 +144,7 @@ struct CameraPreviewView: UIViewRepresentable {
         return view
     }
     
-    func updateUIView(_ uiView: VideoPreviewView, context: Context) {}
+    func updateUIView(_ uiView: VideoPreviewView, context: Context) {
+        showGrid ? uiView.showGrid() : uiView.hideGrid()
+    }
 }

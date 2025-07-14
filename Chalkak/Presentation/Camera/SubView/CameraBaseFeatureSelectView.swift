@@ -17,12 +17,8 @@ struct CameraBaseFeatureSelectView: View {
         CircleIconButton(iconName: viewModel.isTorch ? "bolt.fill" : "bolt.slash", action: viewModel.switchTorch, isSelected: viewModel.isTorch)
             .frame(maxWidth: .infinity)
 
-        CircleIconButton(
-            iconName: "grid",
-            action: {},
-            isSelected: false
-        )
-        .frame(maxWidth: .infinity)
+        CircleIconButton(iconName: "grid", action: viewModel.switchGrid, isSelected: viewModel.isGrid)
+            .frame(maxWidth: .infinity)
 
         CircleIconButton(
             iconName: "ruler",

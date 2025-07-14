@@ -13,10 +13,7 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.session)
-                .onAppear {
-                    viewModel.configure()
-                }
+            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
 
             VStack {
                 // 상단 컨트롤바 (기본 촬영 기능들)
