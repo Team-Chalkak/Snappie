@@ -6,34 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		9310B6762E24A18D00580BB1 /* TrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9310B6752E24A18D00580BB1 /* TrimmingLineView.swift */; };
-		9310B67C2E24E02A00580BB1 /* TimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9310B67B2E24E02A00580BB1 /* TimeDisplay.swift */; };
-		9310B67E2E24E89C00580BB1 /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9310B67D2E24E89C00580BB1 /* sample-video.mov */; };
-		9310B6802E24E8DC00580BB1 /* sample_video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9310B67F2E24E8DC00580BB1 /* sample_video.mov */; };
-		993A1D3D2E21C0D40059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D3B2E21C0D40059B70A /* ChalkakTests.swift */; };
-		993A1D412E21C0D40059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D3E2E21C0D40059B70A /* ChalkakUITests.swift */; };
-		993A1D422E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D3F2E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift */; };
-		993A1D692E21C0D40059B70A /* ChalkakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D432E21C0D40059B70A /* ChalkakApp.swift */; };
-		993A1D6A2E21C0D40059B70A /* ARProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D482E21C0D40059B70A /* ARProcessManager.swift */; };
-		993A1D6B2E21C0D40059B70A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D4A2E21C0D40059B70A /* CameraManager.swift */; };
-		993A1D6C2E21C0D40059B70A /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D4C2E21C0D40059B70A /* VideoManager.swift */; };
-		993A1D6D2E21C0D40059B70A /* VisionProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D4E2E21C0D40059B70A /* VisionProcessManager.swift */; };
-		993A1D6E2E21C0D40059B70A /* Clip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D512E21C0D40059B70A /* Clip.swift */; };
-		993A1D6F2E21C0D40059B70A /* Guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D522E21C0D40059B70A /* Guide.swift */; };
-		993A1D702E21C0D40059B70A /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D532E21C0D40059B70A /* Project.swift */; };
-		993A1D712E21C0D40059B70A /* Tilt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D542E21C0D40059B70A /* Tilt.swift */; };
-		993A1D722E21C0D40059B70A /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D572E21C0D40059B70A /* CameraView.swift */; };
-		993A1D732E21C0D40059B70A /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D582E21C0D40059B70A /* CameraViewModel.swift */; };
-		993A1D742E21C0D40059B70A /* ShootState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D592E21C0D40059B70A /* ShootState.swift */; };
-		993A1D752E21C0D40059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D5C2E21C0D40059B70A /* ClipEditView.swift */; };
-		993A1D762E21C0D40059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D5D2E21C0D40059B70A /* ClipEditViewModel.swift */; };
-		993A1D772E21C0D40059B70A /* ProjectPreViewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D602E21C0D40059B70A /* ProjectPreViewView.swift */; };
-		993A1D782E21C0D40059B70A /* ProjectPreViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D612E21C0D40059B70A /* ProjectPreViewViewModel.swift */; };
-		993A1D792E21C0D40059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1D642E21C0D40059B70A /* Preview Assets.xcassets */; };
-		993A1D7A2E21C0D40059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1D662E21C0D40059B70A /* Assets.xcassets */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		993A1CD72E2049D60059B70A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -59,28 +31,25 @@
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		993A1D3B2E21C0D40059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
-		993A1D3E2E21C0D40059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
-		993A1D3F2E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		993A1D432E21C0D40059B70A /* ChalkakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakApp.swift; sourceTree = "<group>"; };
-		993A1D482E21C0D40059B70A /* ARProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARProcessManager.swift; sourceTree = "<group>"; };
-		993A1D4A2E21C0D40059B70A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		993A1D4C2E21C0D40059B70A /* VideoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
-		993A1D4E2E21C0D40059B70A /* VisionProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionProcessManager.swift; sourceTree = "<group>"; };
-		993A1D512E21C0D40059B70A /* Clip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clip.swift; sourceTree = "<group>"; };
-		993A1D522E21C0D40059B70A /* Guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guide.swift; sourceTree = "<group>"; };
-		993A1D532E21C0D40059B70A /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
-		993A1D542E21C0D40059B70A /* Tilt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tilt.swift; sourceTree = "<group>"; };
-		993A1D572E21C0D40059B70A /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
-		993A1D582E21C0D40059B70A /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
-		993A1D592E21C0D40059B70A /* ShootState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootState.swift; sourceTree = "<group>"; };
-		993A1D5C2E21C0D40059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
-		993A1D5D2E21C0D40059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
-		993A1D602E21C0D40059B70A /* ProjectPreViewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewView.swift; sourceTree = "<group>"; };
-		993A1D612E21C0D40059B70A /* ProjectPreViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewViewModel.swift; sourceTree = "<group>"; };
-		993A1D642E21C0D40059B70A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		993A1D662E21C0D40059B70A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		993A1E202E249C9E0059B70A /* Chalkak */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Chalkak;
+			sourceTree = "<group>";
+		};
+		993A1E342E249C9E0059B70A /* ChalkakTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChalkakTests;
+			sourceTree = "<group>";
+		};
+		993A1E382E249C9E0059B70A /* ChalkakUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChalkakUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		993A1CC32E2049D50059B70A /* Frameworks */ = {
@@ -110,9 +79,9 @@
 		993A1CBD2E2049D50059B70A = {
 			isa = PBXGroup;
 			children = (
-				993A1D682E21C0D40059B70A /* Chalkak */,
-				993A1D3C2E21C0D40059B70A /* ChalkakTests */,
-				993A1D402E21C0D40059B70A /* ChalkakUITests */,
+				993A1E202E249C9E0059B70A /* Chalkak */,
+				993A1E342E249C9E0059B70A /* ChalkakTests */,
+				993A1E382E249C9E0059B70A /* ChalkakUITests */,
 				993A1CC72E2049D50059B70A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,204 +94,6 @@
 				993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		993A1D3C2E21C0D40059B70A /* ChalkakTests */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D3B2E21C0D40059B70A /* ChalkakTests.swift */,
-			);
-			path = ChalkakTests;
-			sourceTree = "<group>";
-		};
-		993A1D402E21C0D40059B70A /* ChalkakUITests */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D3E2E21C0D40059B70A /* ChalkakUITests.swift */,
-				993A1D3F2E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift */,
-			);
-			path = ChalkakUITests;
-			sourceTree = "<group>";
-		};
-		993A1D442E21C0D40059B70A /* App */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D432E21C0D40059B70A /* ChalkakApp.swift */,
-			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		993A1D452E21C0D40059B70A /* DesignSystem */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DesignSystem;
-			sourceTree = "<group>";
-		};
-		993A1D462E21C0D40059B70A /* Extension */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extension;
-			sourceTree = "<group>";
-		};
-		993A1D472E21C0D40059B70A /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D452E21C0D40059B70A /* DesignSystem */,
-				993A1D462E21C0D40059B70A /* Extension */,
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
-		993A1D492E21C0D40059B70A /* ARProcessor */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D482E21C0D40059B70A /* ARProcessManager.swift */,
-			);
-			path = ARProcessor;
-			sourceTree = "<group>";
-		};
-		993A1D4B2E21C0D40059B70A /* CameraKit */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D4A2E21C0D40059B70A /* CameraManager.swift */,
-			);
-			path = CameraKit;
-			sourceTree = "<group>";
-		};
-		993A1D4D2E21C0D40059B70A /* VideoEditor */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D4C2E21C0D40059B70A /* VideoManager.swift */,
-			);
-			path = VideoEditor;
-			sourceTree = "<group>";
-		};
-		993A1D4F2E21C0D40059B70A /* VisionProcessor */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D4E2E21C0D40059B70A /* VisionProcessManager.swift */,
-			);
-			path = VisionProcessor;
-			sourceTree = "<group>";
-		};
-		993A1D502E21C0D40059B70A /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D492E21C0D40059B70A /* ARProcessor */,
-				993A1D4B2E21C0D40059B70A /* CameraKit */,
-				993A1D4D2E21C0D40059B70A /* VideoEditor */,
-				993A1D4F2E21C0D40059B70A /* VisionProcessor */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		993A1D552E21C0D40059B70A /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D512E21C0D40059B70A /* Clip.swift */,
-				993A1D522E21C0D40059B70A /* Guide.swift */,
-				993A1D532E21C0D40059B70A /* Project.swift */,
-				993A1D542E21C0D40059B70A /* Tilt.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		993A1D562E21C0D40059B70A /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SubViews;
-			sourceTree = "<group>";
-		};
-		993A1D5A2E21C0D40059B70A /* Camera */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D562E21C0D40059B70A /* SubViews */,
-				993A1D572E21C0D40059B70A /* CameraView.swift */,
-				993A1D582E21C0D40059B70A /* CameraViewModel.swift */,
-				993A1D592E21C0D40059B70A /* ShootState.swift */,
-			);
-			path = Camera;
-			sourceTree = "<group>";
-		};
-		993A1D5B2E21C0D40059B70A /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-				9310B6752E24A18D00580BB1 /* TrimmingLineView.swift */,
-				9310B67B2E24E02A00580BB1 /* TimeDisplay.swift */,
-			);
-			path = SubViews;
-			sourceTree = "<group>";
-		};
-		993A1D5E2E21C0D40059B70A /* ClipEdit */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D5B2E21C0D40059B70A /* SubViews */,
-				993A1D5C2E21C0D40059B70A /* ClipEditView.swift */,
-				993A1D5D2E21C0D40059B70A /* ClipEditViewModel.swift */,
-			);
-			path = ClipEdit;
-			sourceTree = "<group>";
-		};
-		993A1D5F2E21C0D40059B70A /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SubViews;
-			sourceTree = "<group>";
-		};
-		993A1D622E21C0D40059B70A /* ProjectPreview */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D5F2E21C0D40059B70A /* SubViews */,
-				993A1D602E21C0D40059B70A /* ProjectPreViewView.swift */,
-				993A1D612E21C0D40059B70A /* ProjectPreViewViewModel.swift */,
-			);
-			path = ProjectPreview;
-			sourceTree = "<group>";
-		};
-		993A1D632E21C0D40059B70A /* Presentation */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D5A2E21C0D40059B70A /* Camera */,
-				993A1D5E2E21C0D40059B70A /* ClipEdit */,
-				993A1D622E21C0D40059B70A /* ProjectPreview */,
-			);
-			path = Presentation;
-			sourceTree = "<group>";
-		};
-		993A1D652E21C0D40059B70A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D642E21C0D40059B70A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		993A1D672E21C0D40059B70A /* Resource */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D662E21C0D40059B70A /* Assets.xcassets */,
-				9310B67D2E24E89C00580BB1 /* sample-video.mov */,
-				9310B67F2E24E8DC00580BB1 /* sample_video.mov */,
-			);
-			path = Resource;
-			sourceTree = "<group>";
-		};
-		993A1D682E21C0D40059B70A /* Chalkak */ = {
-			isa = PBXGroup;
-			children = (
-				993A1D442E21C0D40059B70A /* App */,
-				993A1D472E21C0D40059B70A /* Common */,
-				993A1D502E21C0D40059B70A /* Core */,
-				993A1D552E21C0D40059B70A /* Model */,
-				993A1D632E21C0D40059B70A /* Presentation */,
-				993A1D652E21C0D40059B70A /* Preview Content */,
-				993A1D672E21C0D40059B70A /* Resource */,
-			);
-			path = Chalkak;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -339,6 +110,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				993A1E202E249C9E0059B70A /* Chalkak */,
 			);
 			name = Chalkak;
 			packageProductDependencies = (
@@ -360,6 +134,9 @@
 			dependencies = (
 				993A1CD82E2049D60059B70A /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				993A1E342E249C9E0059B70A /* ChalkakTests */,
+			);
 			name = ChalkakTests;
 			packageProductDependencies = (
 			);
@@ -379,6 +156,9 @@
 			);
 			dependencies = (
 				993A1CE22E2049D60059B70A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				993A1E382E249C9E0059B70A /* ChalkakUITests */,
 			);
 			name = ChalkakUITests;
 			packageProductDependencies = (
@@ -436,10 +216,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D792E21C0D40059B70A /* Preview Assets.xcassets in Resources */,
-				9310B67E2E24E89C00580BB1 /* sample-video.mov in Resources */,
-				9310B6802E24E8DC00580BB1 /* sample_video.mov in Resources */,
-				993A1D7A2E21C0D40059B70A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,24 +240,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D692E21C0D40059B70A /* ChalkakApp.swift in Sources */,
-				993A1D6A2E21C0D40059B70A /* ARProcessManager.swift in Sources */,
-				993A1D6B2E21C0D40059B70A /* CameraManager.swift in Sources */,
-				993A1D6C2E21C0D40059B70A /* VideoManager.swift in Sources */,
-				993A1D6D2E21C0D40059B70A /* VisionProcessManager.swift in Sources */,
-				993A1D6E2E21C0D40059B70A /* Clip.swift in Sources */,
-				993A1D6F2E21C0D40059B70A /* Guide.swift in Sources */,
-				993A1D702E21C0D40059B70A /* Project.swift in Sources */,
-				993A1D712E21C0D40059B70A /* Tilt.swift in Sources */,
-				993A1D722E21C0D40059B70A /* CameraView.swift in Sources */,
-				993A1D732E21C0D40059B70A /* CameraViewModel.swift in Sources */,
-				9310B67C2E24E02A00580BB1 /* TimeDisplay.swift in Sources */,
-				993A1D742E21C0D40059B70A /* ShootState.swift in Sources */,
-				993A1D752E21C0D40059B70A /* ClipEditView.swift in Sources */,
-				9310B6762E24A18D00580BB1 /* TrimmingLineView.swift in Sources */,
-				993A1D762E21C0D40059B70A /* ClipEditViewModel.swift in Sources */,
-				993A1D772E21C0D40059B70A /* ProjectPreViewView.swift in Sources */,
-				993A1D782E21C0D40059B70A /* ProjectPreViewViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,7 +247,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D3D2E21C0D40059B70A /* ChalkakTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,8 +254,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				993A1D412E21C0D40059B70A /* ChalkakUITests.swift in Sources */,
-				993A1D422E21C0D40059B70A /* ChalkakUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
