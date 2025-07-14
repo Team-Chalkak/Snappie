@@ -13,6 +13,7 @@ import AVKit
 struct ClipEditView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject var viewModel: ClipEditViewModel
+    @State private var isDragging = false
     
     init() {
         _viewModel = StateObject(wrappedValue: ClipEditViewModel(context: nil))
@@ -28,7 +29,7 @@ struct ClipEditView: View {
                 
                 videoPreview
                 
-                TrimmingLineView(viewModel: viewModel)
+                TrimmingLineView(viewModel: viewModel, isDragging: $isDragging)
                 
             })
             .navigationTitle("영상 트리밍")
@@ -55,7 +56,12 @@ struct ClipEditView: View {
     // MARK: - 비디오 프리뷰
     private var videoPreview: some View {
         Group {
-            if let player = viewModel.player {
+            if isDragging, let previewImage = viewModel.previewImage {
+                Image(uiImage: previewImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 296, height: 526)
+            } else if let player = viewModel.player {
                 VideoPlayer(player: player)
                     .frame(width: 296, height: 526)
             } else {

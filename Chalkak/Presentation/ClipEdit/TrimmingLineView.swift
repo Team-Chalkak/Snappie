@@ -10,6 +10,7 @@ import AVKit
 
 struct TrimmingLineView: View {
     @ObservedObject var viewModel: ClipEditViewModel
+    @Binding var isDragging: Bool
     
     var body: some View {
         VStack(alignment: .center, spacing: 0, content: {
@@ -90,6 +91,7 @@ struct TrimmingLineView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { gesture in
+                                    isDragging = true
                                     viewModel.player?.pause()
                                     viewModel.isPlaying = false
                                     let newStart = max(
@@ -100,7 +102,8 @@ struct TrimmingLineView: View {
                                     viewModel.updateStart(newStart)
                                 }
                                 .onEnded { _ in
-                                    viewModel.playPreview()
+                                    isDragging = false
+                                    viewModel.seek(to: viewModel.startPoint)
                                 }
                         )
 
@@ -109,6 +112,7 @@ struct TrimmingLineView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { gesture in
+                                    isDragging = true
                                     viewModel.player?.pause()
                                     viewModel.isPlaying = false
                                     let newEnd = min(
@@ -119,7 +123,8 @@ struct TrimmingLineView: View {
                                     viewModel.updateEnd(newEnd)
                                 }
                                 .onEnded { _ in
-                                    viewModel.playPreview()
+                                    isDragging = false
+                                    viewModel.seek(to: viewModel.endPoint)
                                 }
                     )
                 }

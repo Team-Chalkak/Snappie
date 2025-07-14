@@ -24,6 +24,7 @@ final class ClipEditViewModel: ObservableObject {
     @Published var duration: Double = 0
     @Published var thumbnails: [UIImage] = []
     @Published var isPlaying = false
+    @Published var previewImage: UIImage?
 
     // 더미 영상 경로
     private let dummyURL: URL? = Bundle.main.url(forResource: "sample-video", withExtension: "mov")
@@ -55,6 +56,8 @@ final class ClipEditViewModel: ObservableObject {
 
         let imageGenerator = AVAssetImageGenerator(asset: asset)
         imageGenerator.appliesPreferredTrackTransform = true
+        imageGenerator.requestedTimeToleranceBefore = .zero
+        imageGenerator.requestedTimeToleranceAfter = .zero
         self.imageGenerator = imageGenerator
 
         Task {
@@ -71,6 +74,7 @@ final class ClipEditViewModel: ObservableObject {
                 }
 
                 await generateThumbnails(for: asset)
+                await generateThumbnail(for: 0)
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
@@ -100,14 +104,30 @@ final class ClipEditViewModel: ObservableObject {
         self.thumbnails = images
     }
 
+    @MainActor
+    func generateThumbnail(for time: Double) async {
+        let time = CMTime(seconds: time, preferredTimescale: 600)
+        do {
+            if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
+                previewImage = UIImage(cgImage: cgImage)
+            }
+        } catch {
+            print("⚠️ Failed to generate thumbnail at \(time): \(error)")
+        }
+    }
+
     func updateStart(_ value: Double) {
         startPoint = value
-        seek(to: value)
+        Task {
+            await generateThumbnail(for: value)
+        }
     }
 
     func updateEnd(_ value: Double) {
         endPoint = value
-        seek(to: value)
+        Task {
+            await generateThumbnail(for: value)
+        }
     }
 
     func seek(to time: Double) {
@@ -133,7 +153,7 @@ final class ClipEditViewModel: ObservableObject {
             timeObserverToken = nil
         }
         
-        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600)) { [weak self] _ in
             guard let self = self else { return }
             
             self.player?.play()
