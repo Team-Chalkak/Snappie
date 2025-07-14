@@ -9,29 +9,38 @@ import Foundation
 import SwiftData
 
 @Model
-/// A video clip containing video data and associated metadata.
+/// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
 class Clip {
-    /// Unique identifier for the clip.
+    /// 클립의 고유 식별자.
     @Attribute(.unique) var id: String
     
-    /// Raw video data (e.g. from camera recording).
+    /// 영상의 바이너리 데이터.
     var videoData: Data
     
-    /// Start time of the relevant section (in seconds).
+    /// 트리밍하여 사용할 영상 구간의 시작 시점. (초 단위)
     var startPoint: Double
     
-    /// End time of the relevant section (in seconds).
+    /// 트리밍하여 사용할 영상 구간의 종료 시점. (초 단위)
     var endPoint: Double
     
-    /// Timestamp when the clip was created.
+    /// 클립이 생성된 시간.
     var createdAt: Date
     
-    /// Recorded camera tilt values with timestamps.
+    /// 시간별로 기록된 카메라 기울기 정보.
     var tiltList: [TimeStampedTilt]
     
-    /// Recorded camera height values with timestamps.
+    /// 시간별로 기록된 카메라 높이 정보.
     var heightList: [TimeStampedHeight]
-
+    
+    /// 새로운 `Clip` 인스턴스를 초기화합니다.
+    /// - Parameters:
+    ///   - id: 클립의 고유 ID (기본값은 UUID).
+    ///   - videoData: 영상의 데이터.
+    ///   - startPoint: 시작 시점 (초 단위).
+    ///   - endPoint: 종료 시점 (초 단위).
+    ///   - createdAt: 생성일자 (기본값은 현재 시각).
+    ///   - tiltList: 시간별 기울기 정보 목록.
+    ///   - heightList: 시간별 높이 정보 목록.
     init(
         id: String = UUID().uuidString,
         videoData: Data,
@@ -49,15 +58,4 @@ class Clip {
         self.tiltList = tiltList
         self.heightList = heightList
     }
-}
-
-// MARK: - Codable helpers
-struct TimeStampedTilt: Codable {
-    let time: Int64
-    let tilt: Tilt
-}
-
-struct TimeStampedHeight: Codable {
-    let time: Int64
-    let height: Float
 }
