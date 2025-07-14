@@ -17,6 +17,8 @@ class CameraViewModel: ObservableObject {
     let session: AVCaptureSession
     
     @Published var isFlashOn = false
+    @Published var showingCameraControl = false
+    @Published var isTorch = false
     @Published var isSilentModeOn = false
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
@@ -33,16 +35,22 @@ class CameraViewModel: ObservableObject {
     func configure() {
         model.requestAndCheckPermissions()
     }
-    
-    func switchFlash() {
-        isFlashOn.toggle()
+
+    func switchCameraControls() {
+        showingCameraControl.toggle()
     }
-    
+
+    func switchTorch() {
+        isTorch.toggle()
+        model.setTorchMode(isTorch)
+    }
+
     func switchSilent() {
         isSilentModeOn.toggle()
     }
 
     func startVideoRecording() {
+        showingCameraControl = false
         model.startRecording()
         isRecording = true
     }

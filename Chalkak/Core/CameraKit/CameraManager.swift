@@ -57,6 +57,30 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
     
+    /// 켜져있는 플래쉬는 Torch로 표현
+    func setTorchMode(_ isFlash: Bool) {
+        guard let device = videoDeviceInput?.device else { return }
+            
+        do {
+            try device.lockForConfiguration()
+                
+            if device.hasTorch && device.isTorchAvailable {
+                device.torchMode = isFlash ? .on : .off
+                // 플래쉬 밝기설정 / 0.0~1.0
+                // 레벨설정도 가능
+                if isFlash {
+                    try device.setTorchModeOn(level: 1.0)
+                }
+            } else {
+                print("이 기기는 플래시/토치를 지원하지 않습니다.")
+            }
+                
+            device.unlockForConfiguration()
+        } catch {
+            print("플래시/토치 모드 설정 오류: \(error)")
+        }
+    }
+    
     // 터치한 위치에대한 초점조정
     @objc func focusAtPoint(_ notification: Notification) {
         guard let point = notification.userInfo?["point"] as? CGPoint else { return }
