@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Tilt data with associated timestamp.
 struct Tilt: Codable, Hashable {
     var degreeX: Double
     var degreeZ: Double

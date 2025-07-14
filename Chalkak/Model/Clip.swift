@@ -9,13 +9,27 @@ import Foundation
 import SwiftData
 
 @Model
+/// A video clip containing video data and associated metadata.
 class Clip {
+    /// Unique identifier for the clip.
     @Attribute(.unique) var id: String
+    
+    /// Raw video data (e.g. from camera recording).
     var videoData: Data
+    
+    /// Start time of the relevant section (in seconds).
     var startPoint: Double
+    
+    /// End time of the relevant section (in seconds).
     var endPoint: Double
+    
+    /// Timestamp when the clip was created.
     var createdAt: Date
+    
+    /// Recorded camera tilt values with timestamps.
     var tiltList: [TimeStampedTilt]
+    
+    /// Recorded camera height values with timestamps.
     var heightList: [TimeStampedHeight]
 
     init(
