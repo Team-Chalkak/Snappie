@@ -8,19 +8,21 @@
 import CoreMotion
 import Foundation
 
-/// CoreMotion 데이터를 수집하는 클래스
-///
-///  `TiltDataCollector`는 디바이스의 물리적 기울기를 감지하여 중력 벡터 데이터를 수집합니다.
-///
-///  ## 사용 예시
-///  ```
-///  @StateObject private var tiltCollector = TiltDataCollector()
-///
-///  var body: some View {
-///     Text("x: \(tiltCollector.gravityX)")
-///     Text("z: \(tiltCollector.gravityZ)")
-///  }
-///  ```
+/**
+ CoreMotion 데이터를 수집하는 클래스
+ 
+ `TiltDataCollector`는 디바이스의 물리적 기울기를 감지하여 중력 벡터 데이터를 수집합니다.
+ 
+ ## 사용 예시
+ ```
+ @StateObject private var tiltCollector = TiltDataCollector()
+ 
+ var body: some View {
+     Text("x: \(tiltCollector.gravityX)")
+     Text("z: \(tiltCollector.gravityZ)")
+ }
+ ```
+ */
 class TiltDataCollector: ObservableObject {
 
     /// CoreMotion 데이터를 수집하는 모션 매니저
