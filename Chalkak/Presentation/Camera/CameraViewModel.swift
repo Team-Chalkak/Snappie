@@ -45,6 +45,25 @@ class CameraViewModel: ObservableObject {
     @Published var recordingTime = 0
 
     @Published var timerCountdown = 0
+
+    @Published var showingZoomControl = false
+    @Published var zoomScale: CGFloat = 1.0
+
+    // 줌 범위  수정 가능
+    var minZoomScale: CGFloat { 0.5 }
+    var maxZoomScale: CGFloat { 6.0 }
+
+    // 현재 카메라 타입 표시
+    var currentCameraTypeSymbol: String {
+        if zoomScale < 1.0 {
+            return "0.5×" // 울트라 와이드
+        } else if zoomScale <= 2.0 {
+            return "1×" // 와이드
+        } else {
+            return "2×" // 망원
+        }
+    }
+
     private var timer: Timer?
     private var timerCountdownTimer: Timer?
     var formattedTime: String {
@@ -109,6 +128,19 @@ class CameraViewModel: ObservableObject {
 
     func switchGrid() {
         isGrid.toggle()
+    }
+
+    func toggleZoomControl() {
+        showingZoomControl.toggle()
+    }
+
+    func selectZoomScale(_ scale: CGFloat) {
+        // 안전성 검사
+        guard !scale.isNaN && !scale.isInfinite else { return }
+
+        let safeScale = max(minZoomScale, min(maxZoomScale, scale))
+        zoomScale = safeScale
+        model.setZoomScale(safeScale)
     }
 
     func startVideoRecording() {

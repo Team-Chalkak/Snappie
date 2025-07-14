@@ -16,7 +16,10 @@ class CameraManager: NSObject, ObservableObject {
     let movieOutput = AVCaptureMovieFileOutput()
     
     @Published var isRecording = false
-
+    @Published var currentZoomScale: CGFloat = 1.0
+    
+    // 현재 사용 중인 카메라 타입 추적
+    private var currentCameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera
     deinit {
         NotificationCenter.default.removeObserver(self)
         session.stopRunning()
@@ -109,26 +112,118 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
     
-    func switchCamera(to position: AVCaptureDevice.Position) {
+    /// 카메라 전환
+    private func switchCamera(to deviceType: AVCaptureDevice.DeviceType, targetZoom: CGFloat) {
+        guard let newDevice = AVCaptureDevice.default(deviceType, for: .video, position: .back) else {
+            return
+        }
+            
         session.beginConfiguration()
-        
-        // 기존에 연결된 input 제거
+            
         if let existingInput = videoDeviceInput {
             session.removeInput(existingInput)
         }
-        
-        if let device = getCamera(for: position) {
+            
+        do {
+            videoDeviceInput = try AVCaptureDeviceInput(device: newDevice)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
+                currentCameraType = deviceType
+
+                // 새 카메라에서 줌 설정
+                adjustZoomOnCurrentCamera(targetZoom)
+            }
+        } catch {
+            print("카메라 전환 에러 \(error)")
+        }
+            
+        session.commitConfiguration()
+    }
+    
+    func switchCamera(to position: AVCaptureDevice.Position) {
+        session.beginConfiguration()
+            
+        if let existingInput = videoDeviceInput {
+            session.removeInput(existingInput)
+        }
+            
+        // 새로운 카메라 디바이스 가져오기
+        if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) {
             do {
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
                 if session.canAddInput(videoDeviceInput) {
                     session.addInput(videoDeviceInput)
+                    // 카메라 타입 업데이트
+                    currentCameraType = .builtInWideAngleCamera
                 }
             } catch {
-                print("카메라 전환에러\(error)")
+                print("카메라 전환 중 오류: \(error)")
             }
         }
-        
+            
         session.commitConfiguration()
+    }
+    
+    func setZoomScale(_ scale: CGFloat) {
+        let uiMinZoom: CGFloat = 0.5
+        let uiMaxZoom: CGFloat = 6.0
+        let clampedUIScale = min(max(scale, uiMinZoom), uiMaxZoom)
+            
+        // 줌의 정도에따라서 카메라 타입 변환
+        let requiredCameraType: AVCaptureDevice.DeviceType
+        if clampedUIScale < 1.0 {
+            requiredCameraType = .builtInUltraWideCamera
+        } else if clampedUIScale <= 2.0 {
+            requiredCameraType = .builtInWideAngleCamera
+        } else {
+            requiredCameraType = AVCaptureDevice.default(.builtInTelephotoCamera, for: .video, position: .back) != nil ? .builtInTelephotoCamera : .builtInWideAngleCamera
+        }
+            
+        if requiredCameraType != currentCameraType {
+            switchCamera(to: requiredCameraType, targetZoom: clampedUIScale)
+        } else {
+            adjustZoomOnCurrentCamera(clampedUIScale)
+        }
+    }
+    
+    // 현재 카메라에서 줌 조정
+    private func adjustZoomOnCurrentCamera(_ uiScale: CGFloat) {
+        guard let device = videoDeviceInput?.device else { return }
+           
+        do {
+            try device.lockForConfiguration()
+               
+            let deviceMinZoom = device.minAvailableVideoZoomFactor
+            let deviceMaxZoom = device.maxAvailableVideoZoomFactor
+               
+            // 카메라 타입별로 줌 조정
+            let deviceZoom: CGFloat
+            switch currentCameraType {
+            case .builtInUltraWideCamera:
+                let progress = (uiScale - 0.5) / (1.0 - 0.5)
+                deviceZoom = 1.0 + min(1.0, deviceMaxZoom - 1.0) * progress
+                   
+            case .builtInWideAngleCamera:
+                deviceZoom = uiScale
+                   
+            case .builtInTelephotoCamera:
+                let progress = (uiScale - 2.0) / (6.0 - 2.0)
+                deviceZoom = 1.0 + min(3.0, deviceMaxZoom - 1.0) * progress
+                   
+            default:
+                deviceZoom = min(uiScale, deviceMaxZoom)
+            }
+               
+            let finalZoom = min(max(deviceZoom, deviceMinZoom), deviceMaxZoom)
+               
+            device.videoZoomFactor = finalZoom
+            currentZoomScale = uiScale
+               
+            device.unlockForConfiguration()
+            
+        } catch {
+            print("줌 조정 에러 \(error)")
+        }
     }
     
     func requestAndCheckPermissions() {
