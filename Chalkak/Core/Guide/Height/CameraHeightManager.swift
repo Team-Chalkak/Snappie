@@ -20,7 +20,7 @@ import Foundation
 ///
 /// ## 사용법
 /// ```swift
-/// @StateObject private var heightManager = HeightManager(idealHeight: 1.1)
+/// @StateObject private var heightManager = CameraHeightManager(idealHeight: 1.1)
 ///
 /// HeightMeasurementARView(
 ///     measuredHeight: $heightManager.measuredHeight,
@@ -28,7 +28,7 @@ import Foundation
 /// )
 /// ```
 ///
-class HeightManager: ObservableObject {
+class CameraHeightManager: ObservableObject {
     // MARK: - Properties
     /// AR 원점이 바닥을 기준으로 설정되었는지 확인하는 변수
     ///

@@ -15,7 +15,7 @@ import SwiftUI
 
  ## 사용 예시
  ```
- @StateObject private var heightManager = HeightManager(idealHeight: 1.1)
+ @StateObject private var heightManager = CameraHeightManager(idealHeight: 1.1)
 
  var body: some View {
      ZStack {
