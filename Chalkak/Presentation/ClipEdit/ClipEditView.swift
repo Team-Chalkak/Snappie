@@ -20,14 +20,16 @@ struct ClipEditView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .center, spacing: 15, content: {
+            VStack(alignment: .center, spacing: 30, content: {
+                
+                Spacer().frame(height: 0)
+
+                Text("사용할 부분만 트리밍 해주세요")
+                
                 videoPreview
                 
-                Divider()
-
-                trimmingSliders
+                TrimmingLineView(viewModel: viewModel)
                 
-                Spacer()
             })
             .navigationTitle("영상 트리밍")
             .navigationBarTitleDisplayMode(.inline)
@@ -55,19 +57,11 @@ struct ClipEditView: View {
         Group {
             if let player = viewModel.player {
                 VideoPlayer(player: player)
-                    .scaledToFill()
-                    .onAppear {
-                        player.play()
-                    }
+                    .frame(width: 296, height: 526)
             } else {
                 Text("영상을 불러오는 중...")
             }
         }
-    }
-
-    // MARK: - 트리밍 슬라이더
-    private var trimmingSliders: some View {
-        TrimmingSliderView(viewModel: viewModel)
     }
 }
 
