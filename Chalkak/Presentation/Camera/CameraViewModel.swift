@@ -21,6 +21,15 @@ class CameraViewModel: ObservableObject {
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
     
+    init(context: ModelContext?) {
+        model = CameraManager()
+        session = model.session
+        modelContext = context
+        
+        model.$isRecording
+            .assign(to: &$isRecording)
+    }
+    
     func configure() {
         model.requestAndCheckPermissions()
     }
@@ -48,15 +57,6 @@ class CameraViewModel: ObservableObject {
         model.switchCamera(to: cameraPostion)
     }
     
-    init(context: ModelContext?) {
-        model = CameraManager()
-        session = model.session
-        modelContext = context
-        
-        model.$isRecording
-            .assign(to: &$isRecording)
-    }
-
     func updateContext(_ context: ModelContext) {
         modelContext = context
     }
