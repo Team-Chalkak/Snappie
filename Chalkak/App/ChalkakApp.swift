@@ -12,7 +12,7 @@ import SwiftUI
 struct ChalkakApp: App {
     var body: some Scene {
         WindowGroup {
-            CameraView()
+            ClipEditView()
         }
         .modelContainer(for: [Project.self, Clip.self, Guide.self])
     }
