@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CameraView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel = CameraViewModel(context: nil)
+    @StateObject private var viewModel: CameraViewModel = .init(context: nil)
 
     var body: some View {
         ZStack {
@@ -19,76 +19,47 @@ struct CameraView: View {
                 }
 
             VStack {
-                // 상단 컨트롤
+                // 상단 컨트롤바
                 HStack {
-                    Spacer()
-
-                    // 카메라 전환 버튼
-                    Button(action: { viewModel.changeCamera() }) {
-                        Image(systemName: "arrow.triangle.2.circlepath.camera")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 50)
-
-                Spacer()
-
-                // 하단 컨트롤
-                VStack(spacing: 20) {
-                    // 녹화 상태 표시
                     if viewModel.isRecording {
                         Text(viewModel.formattedTime)
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 12, height: 12)
-                            Text("녹화 중...")
-                                .foregroundColor(.white)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(20)
+                            .foregroundColor(.black)
+                            .font(.system(size: 18, weight: .medium))
+                            .padding(.all, 8)
+                            .background(.white)
+                            .cornerRadius(10)
                     }
+                    else {
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(alignment: .center) {
+                                CircleIconButton(iconName: viewModel.showingCameraControl ? "chevron.up" : "chevron.down", action: viewModel.switchCameraControls,
+                                                 iconSize: (28, 37),
+                                                 isSelected: viewModel.showingCameraControl)
+                                    .frame(maxWidth: .infinity)
 
-                    ZStack {
-                        // 메인 셔터/녹화 버튼
-                        Button(action: {
-                            if viewModel.isRecording {
-                                viewModel.stopVideoRecording()
-                            } else {
-                                viewModel.startVideoRecording()
+                                ForEach(0 ..< 3) { _ in
+                                    Spacer()
+                                        .frame(maxWidth: .infinity)
+                                }
                             }
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .stroke(lineWidth: 5)
-                                    .frame(width: 75, height: 75)
-                                    .foregroundColor(.white)
-
-                                Circle()
-                                    .fill(viewModel.isRecording ? Color.red : Color.white)
-                                    .frame(width: 60, height: 60)
-
-                                if viewModel.isRecording {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.white)
-                                        .frame(width: 20, height: 20)
+                            if viewModel.showingCameraControl {
+                                HStack(alignment: .center, spacing: 0) {
+                                    CameraBaseFeatureSelectView(viewModel: viewModel)
                                 }
                             }
                         }
                     }
+                }.padding(.top, 50)
+
+                Spacer()
+
+                // 하단 컨트롤바
+                VStack(spacing: 20) {
+                    // 녹화 상태 표시
+                    CameraRecordView(viewModel: viewModel)
                 }
-                .padding(.bottom, 50)
+                .foregroundColor(.white)
             }
-            .foregroundColor(.white)
         }
     }
 }
