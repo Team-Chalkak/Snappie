@@ -24,10 +24,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9310B6752E24A18D00580BB1 /* TrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrimmingLineView.swift; path = Chalkak/Presentation/ClipEdit/TrimmingLineView.swift; sourceTree = SOURCE_ROOT; };
-		9310B67B2E24E02A00580BB1 /* TimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeDisplay.swift; path = Chalkak/Presentation/ClipEdit/TimeDisplay.swift; sourceTree = SOURCE_ROOT; };
-		9310B67D2E24E89C00580BB1 /* sample-video.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "sample-video.mov"; sourceTree = "<group>"; };
-		9310B67F2E24E8DC00580BB1 /* sample_video.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sample_video.mov; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };

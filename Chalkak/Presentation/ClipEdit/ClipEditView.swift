@@ -21,34 +21,47 @@ struct ClipEditView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .center, spacing: 30, content: {
-                
-                Spacer().frame(height: 0)
+            ZStack {
+                VStack(alignment: .center, spacing: 30, content: {
+                    
+                    Spacer().frame(height: 0)
 
-                Text("사용할 부분만 트리밍 해주세요")
-                
-                videoPreview
-                
-                TrimmingLineView(viewModel: viewModel, isDragging: $isDragging)
-                
-            })
-            .navigationTitle("영상 트리밍")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("뒤로") {
-                        print("뒤로가기 버튼 눌림")
+                    Text("사용할 부분만 트리밍 해주세요")
+
+                    videoPreview
+
+                    TrimmingLineView(viewModel: viewModel, isDragging: $isDragging)
+                    
+                })
+                .navigationTitle("영상 트리밍")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("뒤로") {
+                            print("뒤로가기 버튼 눌림")
+                        }
+                    }
+
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("다음") {
+                            viewModel.prepareOverlay()
+                        }
                     }
                 }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("다음") {
-                        print("다음 버튼 눌림")
-                    }
+                .navigationDestination(isPresented: $viewModel.isOverlayReady) {
+                    OverlayView(viewModel: viewModel)
                 }
-            }
-            .onAppear {
-                viewModel.updateContext(modelContext)
+                .onAppear {
+                    viewModel.updateContext(modelContext)
+                }
+                
+                if viewModel.isLoading {
+                    ProgressView("윤곽선 생성 중...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(10)
+                }
             }
         }
     }

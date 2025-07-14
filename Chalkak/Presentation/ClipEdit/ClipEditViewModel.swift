@@ -25,12 +25,22 @@ final class ClipEditViewModel: ObservableObject {
     @Published var thumbnails: [UIImage] = []
     @Published var isPlaying = false
     @Published var previewImage: UIImage?
+    
+    // 로딩 및 화면 전환 상태
+    @Published var isLoading = false
+    @Published var isOverlayReady = false
+    
+    // 관리 객체
+    let extractor = VideoFrameExtractor()
+    let overlayManager = OverlayManager()
 
-    // 더미 영상 경로
-    private let dummyURL: URL? = Bundle.main.url(forResource: "sample-video", withExtension: "mov")
+    //TODO: - 더미 영상 경로 : 이후 스위프트 데이터에서 가져오도록 수정해야함
+    public var dummyURL: URL? = Bundle.main.url(forResource: "sample-video", withExtension: "mov")
 
     init(context: ModelContext?) {
         self.modelContext = context
+        // 관리 객체 연결
+        extractor.overlayManager = overlayManager
         setupPlayer()
     }
     
@@ -43,6 +53,29 @@ final class ClipEditViewModel: ObservableObject {
 
     func updateContext(_ context: ModelContext) {
         self.modelContext = context
+    }
+    
+    // '다음' 버튼 액션
+    func prepareOverlay() {
+        guard let url = dummyURL else { return }
+        
+        isLoading = true
+        
+        extractor.extractFrame(from: url, at: startPoint) {
+            // 윤곽선 추출 완료 후
+            self.isLoading = false
+            self.isOverlayReady = true
+        }
+    }
+    
+    func dismissOverlay() {
+        isOverlayReady = false
+        isLoading = false
+        overlayManager.outlineImage = nil
+        overlayManager.maskedCIImage = nil
+        overlayManager.maskedUIImage = nil
+        extractor.extractedImage = nil
+        extractor.extractedCIImage = nil
     }
 
     private func setupPlayer() {
