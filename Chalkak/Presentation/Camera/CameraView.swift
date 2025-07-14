@@ -44,7 +44,7 @@ struct CameraView: View {
                 VStack(spacing: 20) {
                     // 녹화 상태 표시
                     if viewModel.isRecording {
-                        HStack {
+                        Text(viewModel.formattedTime)
                             Circle()
                                 .fill(Color.red)
                                 .frame(width: 12, height: 12)
