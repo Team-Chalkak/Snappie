@@ -15,8 +15,8 @@ class Clip {
     var startPoint: Double
     var endPoint: Double
     var createdAt: Date
-    var tiltListJSON: String
-    var heightListJSON: String
+    var tiltList: [TimeStampedTilt]
+    var heightList: [TimeStampedHeight]
 
     init(
         id: String = UUID().uuidString,
@@ -24,39 +24,26 @@ class Clip {
         startPoint: Double = 0,
         endPoint: Double,
         createdAt: Date = .now,
-        tiltList: [(Date, Tilt)] = [],
-        heightList: [(Date, Float)] = []
+        tiltList: [TimeStampedTilt] = [],
+        heightList: [TimeStampedHeight] = []
     ) {
         self.id = id
         self.videoData = videoData
         self.startPoint = startPoint
         self.endPoint = endPoint
         self.createdAt = createdAt
-        self.tiltListJSON = Self.encodeTiltList(tiltList)
-        self.heightListJSON = Self.encodeHeightList(heightList)
-    }
-
-    // MARK: - Encode/Decode helpers
-    static func encodeTiltList(_ list: [(Date, Tilt)]) -> String {
-        let codableList = list.map { TimeStampedTilt(time: $0.0, tilt: $0.1) }
-        let data = try? JSONEncoder().encode(codableList)
-        return String(data: data ?? Data(), encoding: .utf8) ?? "[]"
-    }
-
-    static func encodeHeightList(_ list: [(Date, Float)]) -> String {
-        let codableList = list.map { TimeStampedHeight(time: $0.0, height: $0.1) }
-        let data = try? JSONEncoder().encode(codableList)
-        return String(data: data ?? Data(), encoding: .utf8) ?? "[]"
+        self.tiltList = tiltList
+        self.heightList = heightList
     }
 }
 
 // MARK: - Codable helpers
-private struct TimeStampedTilt: Codable {
-    let time: Date
+struct TimeStampedTilt: Codable {
+    let time: Int64
     let tilt: Tilt
 }
 
-private struct TimeStampedHeight: Codable {
-    let time: Date
+struct TimeStampedHeight: Codable {
+    let time: Int64
     let height: Float
 }
