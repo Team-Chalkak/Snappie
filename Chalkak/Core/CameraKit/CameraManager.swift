@@ -22,10 +22,13 @@ class CameraManager: NSObject, ObservableObject {
         session.stopRunning()
     }
     
+    /// 전면or후면 카메라 디바이스 가져오기
+    private func getCamera(for position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+        return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+    }
+    
     func setUpCamera() {
-        if let device = AVCaptureDevice.default(.builtInWideAngleCamera,
-                                                for: .video, position: .back)
-        {
+        if let device = getCamera(for: .back) {
             do {
                 // 카메라연결
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
@@ -90,7 +93,7 @@ class CameraManager: NSObject, ObservableObject {
             session.removeInput(existingInput)
         }
         
-        if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position) {
+        if let device = getCamera(for: position) {
             do {
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
                 if session.canAddInput(videoDeviceInput) {
