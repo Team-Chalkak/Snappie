@@ -11,8 +11,8 @@ import SwiftData
 @Model
 class Project: Identifiable {
     @Attribute(.unique) var id: String
-    var guide: Guide?
-    var clipList: [Clip]
+    @Relationship(deleteRule: .cascade) var guide: Guide?
+    @Relationship(deleteRule: .cascade) var clipList: [Clip]
 
     init(
         id: String = UUID().uuidString,
