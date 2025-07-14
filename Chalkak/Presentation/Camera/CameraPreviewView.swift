@@ -2,7 +2,7 @@
 //  CameraPreview.swift
 //  Chalkak
 //
-//  Created by finn on 7/13/25.
+//  Created by 정종문 on 7/13/25.
 //
 import AVFoundation
 import SwiftUI
