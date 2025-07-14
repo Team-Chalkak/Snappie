@@ -2,6 +2,6 @@
 //  VisionProcessManager.swift
 //  Chalkak
 //
-//  Created by 배현진 on 7/12/25.
+//  Created by 석민솔 on 7/12/25.
 //
 

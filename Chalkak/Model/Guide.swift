@@ -10,8 +10,8 @@ import SwiftData
 import UIKit
 
 @Model
-class Guide {
-    var clipID: String
+class Guide: Identifiable {
+    @Attribute(.unique) var clipID: String
     var bBoxPosition: CGPoint
     var bBoxScale: CGFloat
     var cameraTilt: Tilt
