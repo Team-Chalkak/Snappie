@@ -36,7 +36,7 @@ struct CameraPreviewView: UIViewRepresentable {
         
         // focusbox 표시
         private func showFocusBox(at point: CGPoint) {
-            // 기존 focusbox 제거
+            // 기존에 있던 focusbox 제거
             layer.sublayers?.forEach { sublayer in
                 if sublayer.name == "focusBox" {
                     sublayer.removeFromSuperlayer()

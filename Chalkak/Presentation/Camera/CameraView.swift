@@ -13,7 +13,7 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            viewModel.cameraPreview
+            CameraPreviewView(session: viewModel.session)
                 .onAppear {
                     viewModel.configure()
                 }

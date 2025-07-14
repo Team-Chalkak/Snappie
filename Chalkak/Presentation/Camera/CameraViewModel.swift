@@ -14,8 +14,7 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private var modelContext: ModelContext?
     private let model: CameraManager
-    private let session: AVCaptureSession
-    let cameraPreview: AnyView
+    let session: AVCaptureSession
     
     @Published var isFlashOn = false
     @Published var isSilentModeOn = false
@@ -52,7 +51,6 @@ class CameraViewModel: ObservableObject {
     init(context: ModelContext?) {
         model = CameraManager()
         session = model.session
-        cameraPreview = AnyView(CameraPreviewView(session: session))
         modelContext = context
         
         model.$isRecording
