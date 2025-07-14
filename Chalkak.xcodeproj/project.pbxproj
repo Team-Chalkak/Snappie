@@ -28,6 +28,7 @@
 		993A1D782E21C0D40059B70A /* ProjectPreViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1D612E21C0D40059B70A /* ProjectPreViewViewModel.swift */; };
 		993A1D792E21C0D40059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1D642E21C0D40059B70A /* Preview Assets.xcassets */; };
 		993A1D7A2E21C0D40059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1D662E21C0D40059B70A /* Assets.xcassets */; };
+		B6D2D2152E23AC2300550E9E /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D2D2142E23AC2300550E9E /* CameraPreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		993A1D612E21C0D40059B70A /* ProjectPreViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewViewModel.swift; sourceTree = "<group>"; };
 		993A1D642E21C0D40059B70A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		993A1D662E21C0D40059B70A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B6D2D2142E23AC2300550E9E /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CameraPreviewView.swift; path = Chalkak/Presentation/Camera/CameraPreviewView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 		993A1D562E21C0D40059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				B6D2D2142E23AC2300550E9E /* CameraPreviewView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -461,6 +464,7 @@
 				993A1D712E21C0D40059B70A /* Tilt.swift in Sources */,
 				993A1D722E21C0D40059B70A /* CameraView.swift in Sources */,
 				993A1D732E21C0D40059B70A /* CameraViewModel.swift in Sources */,
+				B6D2D2152E23AC2300550E9E /* CameraPreviewView.swift in Sources */,
 				993A1D742E21C0D40059B70A /* ShootState.swift in Sources */,
 				993A1D752E21C0D40059B70A /* ClipEditView.swift in Sources */,
 				993A1D762E21C0D40059B70A /* ClipEditViewModel.swift in Sources */,
