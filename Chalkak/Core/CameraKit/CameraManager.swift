@@ -208,42 +208,12 @@ class CameraManager: NSObject, ObservableObject {
 }
 
 extension CameraManager: AVCaptureFileOutputRecordingDelegate {
+    /// 녹화가 끝나면 촬영한 파일 URL을 NotificationCenter를 통해 알림
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
             print("녹화에러 \(error)")
             return
         }
-        Task {
-            await saveVideoToLibrary(videoURL: outputFileURL)
-        }
-    }
-
-    @MainActor
-    private func saveVideoToLibrary(videoURL: URL) async {
-        let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
-
-        switch authorizationStatus {
-        case .notDetermined:
-            let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-            if status == .authorized || status == .limited {
-                await performVideoSave(videoURL: videoURL)
-            } else {
-                print("라이브러리 권한 거부")
-            }
-        case .authorized, .limited:
-            await performVideoSave(videoURL: videoURL)
-        default:
-            print("라이브러리 접근 권한 없음")
-        }
-    }
-
-    private func performVideoSave(videoURL: URL) async {
-        do {
-            try await PHPhotoLibrary.shared().performChanges {
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL)
-            }
-        } catch {
-            print("동영상 저장 에러\(error.localizedDescription)")
-        }
+        NotificationCenter.default.post(name: .init("VideoSaved"), object: nil, userInfo: ["url": outputFileURL])
     }
 }
