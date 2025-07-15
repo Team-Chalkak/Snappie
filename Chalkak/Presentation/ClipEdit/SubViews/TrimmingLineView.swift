@@ -15,11 +15,10 @@ struct TrimmingLineView: View {
     var body: some View {
         GeometryReader { geometry in
             let totalWidth = geometry.size.width
-            let thumbnailCount = editViewModel.thumbnails.count
-            let thumbnailWidth = totalWidth / CGFloat(thumbnailCount)
-            let startX = CGFloat(editViewModel.startPoint / editViewModel.duration) * totalWidth
-            let endX = CGFloat(editViewModel.endPoint / editViewModel.duration) * totalWidth
-            let trimmingWidth = endX - startX
+            let thumbnailWidth = editViewModel.thumbnailWidth(for: totalWidth)
+            let startX = editViewModel.startX(for: totalWidth)
+            let endX = editViewModel.endX(for: totalWidth)
+            let trimmingWidth = editViewModel.trimmingWidth(for: totalWidth)
 
             ZStack(alignment: .leading) {
                 // 1. 썸네일 라인

@@ -127,7 +127,28 @@ final class ClipEditViewModel: ObservableObject {
         isPlaying.toggle()
         isPlaying ? playPreview() : player?.pause()
     }
+    
+    /// 트리밍 라인(타임라인)에서 각 프레임 썸네일 너비
+    func thumbnailWidth(for totalWidth: CGFloat) -> CGFloat {
+        guard thumbnails.count > 0 else { return 0 }
+        return totalWidth / CGFloat(thumbnails.count)
+    }
 
+    /// 왼쪽 트리밍 핸들 위치
+    func startX(for totalWidth: CGFloat) -> CGFloat {
+        return CGFloat(startPoint / duration) * totalWidth
+    }
+
+    /// 오른쪽 트리밍 핸들 위치
+    func endX(for totalWidth: CGFloat) -> CGFloat {
+        return CGFloat(endPoint / duration) * totalWidth
+    }
+
+    /// 트리밍 핸들 사이 간격
+    func trimmingWidth(for totalWidth: CGFloat) -> CGFloat {
+        return endX(for: totalWidth) - startX(for: totalWidth)
+    }
+    
     func playPreview() {
         if let token = timeObserverToken {
             player?.removeTimeObserver(token)
