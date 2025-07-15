@@ -8,14 +8,14 @@
 import Foundation
 import SwiftData
 
-@Model
 /// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
+@Model
 class Clip {
     /// 클립의 고유 식별자.
     @Attribute(.unique) var id: String
     
     /// 영상의 바이너리 데이터.
-    var videoData: Data
+    var videoURL: URL
     
     /// 트리밍하여 사용할 영상 구간의 시작 시점. (초 단위)
     var startPoint: Double
@@ -32,7 +32,7 @@ class Clip {
     /// 시간별로 기록된 카메라 높이 정보.
     var heightList: [TimeStampedHeight]
     
-    /// 새로운 `Clip` 인스턴스를 초기화합니다.
+    /// 새로운 Clip 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 클립의 고유 ID (기본값은 UUID).
     ///   - videoData: 영상의 데이터.
@@ -43,7 +43,7 @@ class Clip {
     ///   - heightList: 시간별 높이 정보 목록.
     init(
         id: String = UUID().uuidString,
-        videoData: Data,
+        videoURL: URL,
         startPoint: Double = 0,
         endPoint: Double,
         createdAt: Date = .now,
@@ -51,7 +51,7 @@ class Clip {
         heightList: [TimeStampedHeight] = []
     ) {
         self.id = id
-        self.videoData = videoData
+        self.videoURL = videoURL
         self.startPoint = startPoint
         self.endPoint = endPoint
         self.createdAt = createdAt

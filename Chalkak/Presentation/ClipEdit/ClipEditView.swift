@@ -11,7 +11,6 @@ import SwiftUI
 
 /// 클립 편집 뷰
 struct ClipEditView: View {
-    @Environment(\.modelContext) private var modelContext
     @StateObject private var editViewModel: ClipEditViewModel
     @StateObject private var overlayViewModel: OverlayViewModel
     
@@ -21,7 +20,7 @@ struct ClipEditView: View {
     @State private var navigateToCameraView = false
         
     init(clipURL: URL, isFirstShoot: Bool) {
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(context: nil, clipURL: clipURL))
+        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL))
         _overlayViewModel = StateObject(wrappedValue: OverlayViewModel())
         self.isFirstShoot = isFirstShoot
     }

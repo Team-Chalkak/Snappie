@@ -12,7 +12,6 @@ import UIKit
 
 /// 클립 편집 뷰모델
 final class ClipEditViewModel: ObservableObject {
-    private var modelContext: ModelContext?
     private var asset: AVAsset?
     private var imageGenerator: AVAssetImageGenerator?
     private var timeObserverToken: Any?
@@ -30,8 +29,7 @@ final class ClipEditViewModel: ObservableObject {
 
     var clipURL: URL
 
-    init(context: ModelContext?, clipURL: URL) {
-        self.modelContext = context
+    init(clipURL: URL) {
         self.clipURL = clipURL
         setupPlayer()
     }
@@ -41,10 +39,6 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(timeObserverToken)
         }
         debounceTimer?.invalidate()
-    }
-
-    func updateContext(_ context: ModelContext) {
-        self.modelContext = context
     }
 
     private func setupPlayer() {
