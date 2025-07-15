@@ -5,8 +5,8 @@
 //  Created by Youbin on 7/14/25.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 struct TrimmingLineView: View {
     @ObservedObject var viewModel: ClipEditViewModel
@@ -17,14 +17,14 @@ struct TrimmingLineView: View {
 
             TimeDisplay()
             
-            TimeLine
+            timeLine
             
         })
         .background(Color.gray)
     }
     
     //MARK: 재생 버튼 + 트리밍 라인
-    private var TimeLine: some View {
+    private var timeLine: some View {
         HStack(alignment: .center, spacing: 15, content: {
             Button(action: {
                 viewModel.togglePlayback()
@@ -46,10 +46,10 @@ struct TrimmingLineView: View {
         GeometryReader { geometry in
             let totalWidth = geometry.size.width
             let thumbnailCount = viewModel.thumbnails.count
-            let thumbnailWidth = totalWidth / CGFloat(thumbnailCount)
-            let startX = CGFloat(viewModel.startPoint / viewModel.duration) * totalWidth
-            let endX = CGFloat(viewModel.endPoint / viewModel.duration) * totalWidth
-            let trimmingWidth = endX - startX
+            let thumbnailWidth = viewModel.thumbnailWidth(for: totalWidth)
+            let startX = viewModel.startX(for: totalWidth)
+            let endX = viewModel.endX(for: totalWidth)
+            let trimmingWidth = viewModel.trimmingWidth(for: totalWidth)
 
             ZStack(alignment: .leading) {
                 /// 1. 썸네일들

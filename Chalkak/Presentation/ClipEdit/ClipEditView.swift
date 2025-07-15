@@ -5,9 +5,9 @@
 //  Created by 배현진 on 7/12/25.
 //
 
+import AVKit
 import SwiftUI
 import SwiftData
-import AVKit
 
 /// 클립 편집 뷰
 struct ClipEditView: View {
