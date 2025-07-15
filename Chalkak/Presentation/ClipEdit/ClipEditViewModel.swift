@@ -55,29 +55,8 @@ final class ClipEditViewModel: ObservableObject {
         self.modelContext = context
     }
     
-    // '다음' 버튼 액션
-    func prepareOverlay() {
-        guard let url = dummyURL else { return }
-        
-        isLoading = true
-        
-        extractor.extractFrame(from: url, at: startPoint) {
-            // 윤곽선 추출 완료 후
-            self.isLoading = false
-            self.isOverlayReady = true
-        }
-    }
-    
-    func dismissOverlay() {
-        isOverlayReady = false
-        isLoading = false
-        overlayManager.outlineImage = nil
-        overlayManager.maskedCIImage = nil
-        overlayManager.maskedUIImage = nil
-        extractor.extractedImage = nil
-        extractor.extractedCIImage = nil
-    }
-
+    //MARK: - 클립 편집 화면 관련 함수
+    ///프리뷰 플레이어 셋업
     private func setupPlayer() {
         guard let url = dummyURL else {
             print("❌ dummyURL is nil")
@@ -107,7 +86,7 @@ final class ClipEditViewModel: ObservableObject {
                 }
 
                 await generateThumbnails(for: asset)
-                await generateThumbnail(for: 0)
+                await updatePreviewImage(at: 0)
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
@@ -115,6 +94,7 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
 
+    ///클립타임라인(TrimmingLine) 생성
     @MainActor
     private func generateThumbnails(for asset: AVAsset) async {
         thumbnails = []
@@ -137,29 +117,32 @@ final class ClipEditViewModel: ObservableObject {
         self.thumbnails = images
     }
 
+    ///핸들 움직일 때, 프리뷰 이미지도 업데이트 되게
     @MainActor
-    func generateThumbnail(for time: Double) async {
+    func updatePreviewImage(at time: Double) async {
         let time = CMTime(seconds: time, preferredTimescale: 600)
         do {
             if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
                 previewImage = UIImage(cgImage: cgImage)
             }
         } catch {
-            print("⚠️ Failed to generate thumbnail at \(time): \(error)")
+            print("⚠️ Failed to generate preview image at \(time): \(error)")
         }
     }
 
+    /// 스타트 포인트 변경
     func updateStart(_ value: Double) {
         startPoint = value
         Task {
-            await generateThumbnail(for: value)
+            await updatePreviewImage(at: value)
         }
     }
 
+    /// 엔드 포인트 변경
     func updateEnd(_ value: Double) {
         endPoint = value
         Task {
-            await generateThumbnail(for: value)
+            await updatePreviewImage(at: value)
         }
     }
 
@@ -171,6 +154,7 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
+    /// 재생/일시정지 버튼
     func togglePlayback() {
         isPlaying.toggle()
         if isPlaying {
@@ -180,6 +164,7 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
     
+    /// 프리뷰 재생
     func playPreview() {
         if let token = timeObserverToken {
             player?.removeTimeObserver(token)
@@ -204,6 +189,60 @@ final class ClipEditViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    //MARK: - 실루엣 오버레이 추출 및 저장 관련 함수
+    /// 트리밍 후 '다음' 버튼 액션
+    func prepareOverlay() {
+        guard let url = dummyURL else { return }
+        
+        isLoading = true
+        
+        extractor.extractFrame(from: url, at: startPoint) {
+            /// 실루엣 오버레이 추출 완료 후
+            self.isLoading = false
+            self.isOverlayReady = true
+        }
+    }
+    
+    /// 실루엣 오버레이 생성 화면에서 '뒤로가기' 버튼 눌렀을 때 가이드 관련 내용 초기화
+    func dismissOverlay() {
+        isOverlayReady = false
+        isLoading = false
+        overlayManager.outlineImage = nil
+        overlayManager.maskedCIImage = nil
+        overlayManager.maskedUIImage = nil
+        extractor.extractedImage = nil
+        extractor.extractedCIImage = nil
+    }
+    
+    /// 실루엣 오버레이 객체 잘 저장되는지 확인
+    func createGuideForLog() {
+        guard let outlineImage = overlayManager.outlineImage,
+              let bBox = overlayManager.boundingBox else {
+            print("❌ 로그 출력을 위한 정보가 부족합니다.")
+            return
+        }
+        
+        let dummyClipID = "DUMMY_CLIP_ID"
+        
+        let newGuide = Guide(
+            clipID: dummyClipID,
+            bBoxPosition: bBox.origin,
+            bBoxScale: bBox.width,
+            outlineImage: outlineImage,
+            cameraTilt: Tilt(degreeX: 0, degreeZ: 0), // 임시값
+            cameraHeight: 1.0 // 임시값
+        )
+        
+        print("--- 생성된 가이드 정보 ---")
+        print("Clip ID: \(newGuide.clipID)")
+        print("Bounding Box Position: \(newGuide.bBoxPosition)")
+        print("Bounding Box Scale: \(newGuide.bBoxScale)")
+        print("Camera Tilt: \(newGuide.cameraTilt)")
+        print("Camera Height: \(newGuide.cameraHeight)")
+        print("Outline Image Data Size: \(newGuide.outlineImageData.count) bytes")
+        print("-------------------------")
     }
 }
 
