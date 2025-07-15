@@ -7,7 +7,9 @@
 
 import SwiftUI
 
+/// 카메라 배율 조절 슬라이더
 struct ZoomSlider: View {
+    /// 현재 카메라의 줌 배율
     let zoomScale: CGFloat
     let minZoom: CGFloat
     let maxZoom: CGFloat
@@ -50,7 +52,10 @@ struct ZoomSlider: View {
         .frame(height: 50)
     }
     
-    /// 줌 드래그 제스처
+    /// 드래그 제스처를 통해 줌 배율을 업데이트
+    /// - Parameters:
+    ///   - value: 드래그 제스처 값
+    ///   - geometry: 슬라이더 지오메트리 정보
     private func handleDrag(value: DragGesture.Value, geometry: GeometryProxy) {
         guard geometry.size.width > 50,
               maxZoom > minZoom,
@@ -68,12 +73,14 @@ struct ZoomSlider: View {
         
         // 최종 안전 검사
         let safeZoom = max(minZoom, min(maxZoom, newZoom))
-        if safeZoom.isFinite && !safeZoom.isNaN {
+        if safeZoom.isFinite, !safeZoom.isNaN {
             onValueChanged(safeZoom)
         }
     }
     
-    /// 줌 인디케이터 오프셋 계산
+    /// 현재 줌 배율에 따른 인디케이터 오프셋 계산
+    /// - Parameter geometry: 슬라이더 뷰의 지오메트리 정보입니다.
+    /// - Returns: 계산된 인디케이터의 x축 오프셋 값
     private func calculateIndicatorOffset(geometry: GeometryProxy) -> CGFloat {
         guard geometry.size.width > 50,
               maxZoom > minZoom,
@@ -85,7 +92,7 @@ struct ZoomSlider: View {
         
         let totalWidth = geometry.size.width - 50
         let clampedZoom = max(minZoom, min(maxZoom, zoomScale))
-        let progress = (clampedZoom - minZoom) / (maxZoom - minZoom)
+        let progress = (maxZoom - minZoom) > 0 ? (clampedZoom - minZoom) / (maxZoom - minZoom) : 0
         let offset = 25 + (totalWidth * progress) - 15
         
         return max(10, min(geometry.size.width - 40, offset))
