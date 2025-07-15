@@ -327,8 +327,8 @@
 			isa = PBXGroup;
 			children = (
 				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
-				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
+				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
