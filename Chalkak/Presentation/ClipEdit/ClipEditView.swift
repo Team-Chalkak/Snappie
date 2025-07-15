@@ -26,42 +26,35 @@ struct ClipEditView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(alignment: .center, spacing: 20, content: {
-                    Spacer().frame(height: 20)
+        ZStack {
+            VStack(alignment: .center, spacing: 20, content: {
+                Spacer().frame(height: 20)
 
-                    Text("사용할 부분만 트리밍 해주세요")
+                Text("사용할 부분만 트리밍 해주세요")
 
-                    VideoPreviewView(
-                        previewImage: editViewModel.previewImage,
-                        player: editViewModel.player,
-                        isDragging: isDragging
-                    )
+                VideoPreviewView(
+                    previewImage: editViewModel.previewImage,
+                    player: editViewModel.player,
+                    isDragging: isDragging
+                )
 
-                    TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
-                })
+                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+            })
 
-                //TODO: 추후 가이드 생성 화면 나오면 삭제
-                if overlayViewModel.isLoading {
-                    ProgressView("윤곽선 생성 중...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .foregroundStyle(.white)
-                        .tint(.white)
-                        .padding()
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(10)
-                }
+            //TODO: 추후 가이드 생성 화면 나오면 삭제
+            if overlayViewModel.isLoading {
+                ProgressView("윤곽선 생성 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .foregroundStyle(.white)
+                    .tint(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.5))
+                    .cornerRadius(10)
             }
-            .navigationTitle("영상 트리밍")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("뒤로") {
-                        //TODO: 카메라 화면으로 돌아가는 버튼 액션 필요
-                        print("뒤로가기 버튼 눌림")
-                    }
-                }
+        }
+        .navigationTitle("영상 트리밍")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
                 
                 if !isFirstShoot {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -91,6 +84,9 @@ struct ClipEditView: View {
             .navigationDestination(isPresented: $navigateToCameraView) {
                 //TODO: - 가이드 있는 카메라 뷰파인더로 연결(Berry)
             }
-        }
+            .onAppear {
+                editViewModel.updateContext(modelContext)
+            }
     }
 }
+
