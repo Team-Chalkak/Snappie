@@ -10,6 +10,7 @@ import CoreImage
 import UIKit
 import CoreImage.CIFilterBuiltins
 
+/// 사람 인식 및 실루엣 오버레이 추출
 class OverlayManager: ObservableObject {
     /// 바운딩 박스, CIImage 객체
     @Published var boundingBox: CGRect?

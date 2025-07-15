@@ -8,11 +8,12 @@
 import AVFoundation
 import UIKit
 
+/// 영상에서 첫번째 프레임 추출
 class VideoFrameExtractor: ObservableObject {
     @Published var extractedImage: UIImage?
     @Published var extractedCIImage: CIImage?
     
-    var overlayManager: OverlayManager?  // 연결
+    var overlayManager: OverlayManager?  /// 연결
 
     func extractFrame(from url: URL, at time: Double, completion: @escaping () -> Void) {
         let asset = AVURLAsset(url: url)
@@ -32,7 +33,7 @@ class VideoFrameExtractor: ObservableObject {
                     self.extractedImage = uiImage
                     self.extractedCIImage = ciImage
                     
-                    // ✅ 오버레이 매니저로 전달
+                    /// ✅ 오버레이 매니저로 전달
                     self.overlayManager?.process(image: ciImage, completion: completion)
                 }
             } else {

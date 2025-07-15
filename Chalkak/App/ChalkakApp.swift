@@ -12,8 +12,10 @@ import SwiftUI
 struct ChalkakApp: App {
     var body: some Scene {
         WindowGroup {
-            ClipEditView()
+            ClipEditView(clipURL: Bundle.main.url(forResource: "sample-video", withExtension: "mov")!, isFirstShoot: true)
         }
         .modelContainer(for: [Project.self, Clip.self, Guide.self])
     }
 }
+
+
