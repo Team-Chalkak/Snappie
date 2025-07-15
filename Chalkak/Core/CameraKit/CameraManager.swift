@@ -14,7 +14,7 @@ class CameraManager: NSObject, ObservableObject {
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
-    
+
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
@@ -76,7 +76,7 @@ class CameraManager: NSObject, ObservableObject {
         do {
             try device.lockForConfiguration()
 
-            if device.hasTorch && device.isTorchAvailable {
+            if device.hasTorch, device.isTorchAvailable {
                 device.torchMode = isFlash ? .on : .off
                 if isFlash {
                     try device.setTorchModeOn(level: 1.0)
@@ -91,7 +91,7 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    // 터치한 위치에대한 초점조정
+    /// 터치한 위치에대한 초점조정
     @objc func focusAtPoint(_ notification: Notification) {
         guard let point = notification.userInfo?["point"] as? CGPoint else { return }
         guard let device = videoDeviceInput?.device else { return }
@@ -108,9 +108,9 @@ class CameraManager: NSObject, ObservableObject {
                 device.exposureMode = .autoExpose
                 device.exposurePointOfInterest = point
             }
-            
+
             device.unlockForConfiguration()
-            
+
         } catch {
             print("초점 에러\(error)")
         }
@@ -168,7 +168,7 @@ class CameraManager: NSObject, ObservableObject {
             print("줌 조정 에러 \(error)")
         }
     }
-    
+
     func requestAndCheckPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
@@ -187,21 +187,21 @@ class CameraManager: NSObject, ObservableObject {
             print("Permession declined")
         }
     }
-    
+
     func startRecording() {
         guard !isRecording else { return }
-        
+
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let videoName = "video_\(Date().timeIntervalSince1970).mp4"
         let videoURL = documentsPath.appendingPathComponent(videoName)
-        
+
         movieOutput.startRecording(to: videoURL, recordingDelegate: self)
         isRecording = true
     }
 
     func stopRecording() {
         guard isRecording else { return }
-        
+
         movieOutput.stopRecording()
         isRecording = false
     }
@@ -221,7 +221,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     @MainActor
     private func saveVideoToLibrary(videoURL: URL) async {
         let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
-        
+
         switch authorizationStatus {
         case .notDetermined:
             let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
@@ -236,7 +236,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             print("라이브러리 접근 권한 없음")
         }
     }
-    
+
     private func performVideoSave(videoURL: URL) async {
         do {
             try await PHPhotoLibrary.shared().performChanges {
