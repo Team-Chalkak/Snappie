@@ -11,16 +11,34 @@ struct CameraView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: CameraViewModel = .init(context: nil)
 
+    @State private var clipUrl: URL?
+    @State private var navigateToEdit = false
+
     var body: some View {
-        ZStack {
-            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
+        NavigationStack {
+            ZStack {
+                CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
 
-            VStack {
-                CameraTopControlView(viewModel: viewModel)
+                VStack {
+                    CameraTopControlView(viewModel: viewModel)
 
-                Spacer()
+                    Spacer()
 
-                CameraBottomControlView(viewModel: viewModel)
+                    CameraBottomControlView(viewModel: viewModel)
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("VideoSaved"))) { output in
+                /// 촬영 완료 후 저장된 파일 URL을 NotificationCenter에서 받고 navigateToEdit 트리거
+                if let userInfo = output.userInfo, let url = userInfo["url"] as? URL {
+                    self.clipUrl = url
+                    self.navigateToEdit = true
+                }
+            }
+
+            .navigationDestination(isPresented: $navigateToEdit) {
+                if let url = clipUrl {
+                    ClipEditView(clipURL: url, isFirstShoot: true)
+                }
             }
         }
     }
