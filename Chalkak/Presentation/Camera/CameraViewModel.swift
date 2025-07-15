@@ -12,7 +12,6 @@ import SwiftData
 import SwiftUI
 
 class CameraViewModel: ObservableObject {
-    private var modelContext: ModelContext?
     private let model: CameraManager
     let session: AVCaptureSession
 
@@ -56,10 +55,9 @@ class CameraViewModel: ObservableObject {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 
-    init(context: ModelContext?) {
+    init() {
         model = CameraManager()
         session = model.session
-        modelContext = context
 
         model.$isRecording
             .assign(to: &$isRecording)
@@ -184,9 +182,5 @@ class CameraViewModel: ObservableObject {
     func changeCamera() {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
-    }
-
-    func updateContext(_ context: ModelContext) {
-        modelContext = context
     }
 }

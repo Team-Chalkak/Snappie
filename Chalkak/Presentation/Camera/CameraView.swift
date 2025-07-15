@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct CameraView: View {
-    @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel: CameraViewModel = .init(context: nil)
+    @StateObject private var viewModel: CameraViewModel = .init()
 
     @State private var clipUrl: URL?
     @State private var navigateToEdit = false

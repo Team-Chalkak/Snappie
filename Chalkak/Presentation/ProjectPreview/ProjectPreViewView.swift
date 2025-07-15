@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct ProjectPreViewView: View {
-    @Environment(\.modelContext) private var modelContext
     @StateObject var viewModel: CameraViewModel
     
     init() {
-        _viewModel = StateObject(wrappedValue: CameraViewModel(context: nil))
+        _viewModel = StateObject(wrappedValue: CameraViewModel())
     }
     
     var body: some View {
@@ -20,9 +19,6 @@ struct ProjectPreViewView: View {
             Text("ProjectPreViewView")
         }
         .padding()
-        .onAppear {
-            viewModel.updateContext(modelContext)
-        }
     }
 }
 
