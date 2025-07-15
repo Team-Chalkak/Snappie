@@ -6,6 +6,56 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
+		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
+		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
+		993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */; };
+		993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F0F2E267E0C0059B70A /* CameraManager.swift */; };
+		993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F112E267E0C0059B70A /* BoundingBoxManager.swift */; };
+		993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F132E267E0C0059B70A /* CameraHeightManager.swift */; };
+		993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */; };
+		993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */; };
+		993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F172E267E0C0059B70A /* OverlayManager.swift */; };
+		993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F192E267E0C0059B70A /* CameraTiltManager.swift */; };
+		993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F1A2E267E0C0059B70A /* TiltDataCollector.swift */; };
+		993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F1B2E267E0C0059B70A /* TiltFeedbackView.swift */; };
+		993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */; };
+		993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F1F2E267E0C0059B70A /* VideoManager.swift */; };
+		993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F222E267E0C0059B70A /* Clip.swift */; };
+		993A1F602E267E0C0059B70A /* Guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F232E267E0C0059B70A /* Guide.swift */; };
+		993A1F612E267E0C0059B70A /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F242E267E0C0059B70A /* Project.swift */; };
+		993A1F622E267E0C0059B70A /* Tilt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F252E267E0C0059B70A /* Tilt.swift */; };
+		993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F272E267E0C0059B70A /* SwiftDataManager.swift */; };
+		993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F292E267E0C0059B70A /* TimerOptions.swift */; };
+		993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F2B2E267E0C0059B70A /* CameraPreviewView.swift */; };
+		993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */; };
+		993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */; };
+		993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */; };
+		993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F302E267E0C0059B70A /* CameraRecordView.swift */; };
+		993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F312E267E0C0059B70A /* CameraTopControlView.swift */; };
+		993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F322E267E0C0059B70A /* CircleIconButton.swift */; };
+		993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */; };
+		993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F342E267E0C0059B70A /* ZoomSlider.swift */; };
+		993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F362E267E0C0059B70A /* CameraView.swift */; };
+		993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F372E267E0C0059B70A /* CameraViewModel.swift */; };
+		993A1F702E267E0C0059B70A /* ShootState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F382E267E0C0059B70A /* ShootState.swift */; };
+		993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */; };
+		993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3B2E267E0C0059B70A /* OverlayView.swift */; };
+		993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */; };
+		993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */; };
+		993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */; };
+		993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */; };
+		993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreview.swift */; };
+		993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F432E267E0C0059B70A /* ClipEditView.swift */; };
+		993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */; };
+		993A1F7A2E267E0C0059B70A /* ProjectPreViewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */; };
+		993A1F7B2E267E0C0059B70A /* ProjectPreViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */; };
+		993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */; };
+		993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */; };
+		993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		993A1CD72E2049D60059B70A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,25 +77,54 @@
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakApp.swift; sourceTree = "<group>"; };
+		993A1F0F2E267E0C0059B70A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		993A1F112E267E0C0059B70A /* BoundingBoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxManager.swift; sourceTree = "<group>"; };
+		993A1F132E267E0C0059B70A /* CameraHeightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraHeightManager.swift; sourceTree = "<group>"; };
+		993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightFeedbackView.swift; sourceTree = "<group>"; };
+		993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightMeasurementARView.swift; sourceTree = "<group>"; };
+		993A1F172E267E0C0059B70A /* OverlayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayManager.swift; sourceTree = "<group>"; };
+		993A1F192E267E0C0059B70A /* CameraTiltManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTiltManager.swift; sourceTree = "<group>"; };
+		993A1F1A2E267E0C0059B70A /* TiltDataCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiltDataCollector.swift; sourceTree = "<group>"; };
+		993A1F1B2E267E0C0059B70A /* TiltFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiltFeedbackView.swift; sourceTree = "<group>"; };
+		993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFrameExtractor.swift; sourceTree = "<group>"; };
+		993A1F1F2E267E0C0059B70A /* VideoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoManager.swift; sourceTree = "<group>"; };
+		993A1F222E267E0C0059B70A /* Clip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clip.swift; sourceTree = "<group>"; };
+		993A1F232E267E0C0059B70A /* Guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guide.swift; sourceTree = "<group>"; };
+		993A1F242E267E0C0059B70A /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		993A1F252E267E0C0059B70A /* Tilt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tilt.swift; sourceTree = "<group>"; };
+		993A1F272E267E0C0059B70A /* SwiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataManager.swift; sourceTree = "<group>"; };
+		993A1F292E267E0C0059B70A /* TimerOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerOptions.swift; sourceTree = "<group>"; };
+		993A1F2B2E267E0C0059B70A /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraBaseFeatureSelectView.swift; sourceTree = "<group>"; };
+		993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraBottomControlView.swift; sourceTree = "<group>"; };
+		993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraDefaultTopControlView.swift; sourceTree = "<group>"; };
+		993A1F302E267E0C0059B70A /* CameraRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraRecordView.swift; sourceTree = "<group>"; };
+		993A1F312E267E0C0059B70A /* CameraTopControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTopControlView.swift; sourceTree = "<group>"; };
+		993A1F322E267E0C0059B70A /* CircleIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleIconButton.swift; sourceTree = "<group>"; };
+		993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerOptionSelectView.swift; sourceTree = "<group>"; };
+		993A1F342E267E0C0059B70A /* ZoomSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomSlider.swift; sourceTree = "<group>"; };
+		993A1F362E267E0C0059B70A /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		993A1F372E267E0C0059B70A /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		993A1F382E267E0C0059B70A /* ShootState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootState.swift; sourceTree = "<group>"; };
+		993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
+		993A1F3B2E267E0C0059B70A /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayViewModel.swift; sourceTree = "<group>"; };
+		993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingControlView.swift; sourceTree = "<group>"; };
+		993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineView.swift; sourceTree = "<group>"; };
+		993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplay.swift; sourceTree = "<group>"; };
+		993A1F412E267E0C0059B70A /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
+		993A1F432E267E0C0059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
+		993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
+		993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewView.swift; sourceTree = "<group>"; };
+		993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewViewModel.swift; sourceTree = "<group>"; };
+		993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		993A1F4C2E267E0C0059B70A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		993A1F4D2E267E0C0059B70A /* sample-video.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "sample-video.mov"; sourceTree = "<group>"; };
+		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
+		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
+		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		993A1E202E249C9E0059B70A /* Chalkak */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Chalkak;
-			sourceTree = "<group>";
-		};
-		993A1E342E249C9E0059B70A /* ChalkakTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ChalkakTests;
-			sourceTree = "<group>";
-		};
-		993A1E382E249C9E0059B70A /* ChalkakUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ChalkakUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		993A1CC32E2049D50059B70A /* Frameworks */ = {
@@ -75,9 +154,9 @@
 		993A1CBD2E2049D50059B70A = {
 			isa = PBXGroup;
 			children = (
-				993A1E202E249C9E0059B70A /* Chalkak */,
-				993A1E342E249C9E0059B70A /* ChalkakTests */,
-				993A1E382E249C9E0059B70A /* ChalkakUITests */,
+				993A1F4F2E267E0C0059B70A /* Chalkak */,
+				993A1F7D2E267E0C0059B70A /* ChalkakTests */,
+				993A1F812E267E0C0059B70A /* ChalkakUITests */,
 				993A1CC72E2049D50059B70A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +169,250 @@
 				993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		993A1F0E2E267E0C0059B70A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		993A1F102E267E0C0059B70A /* CameraKit */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F0F2E267E0C0059B70A /* CameraManager.swift */,
+			);
+			path = CameraKit;
+			sourceTree = "<group>";
+		};
+		993A1F122E267E0C0059B70A /* Distance */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F112E267E0C0059B70A /* BoundingBoxManager.swift */,
+			);
+			path = Distance;
+			sourceTree = "<group>";
+		};
+		993A1F162E267E0C0059B70A /* Height */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F132E267E0C0059B70A /* CameraHeightManager.swift */,
+				993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */,
+				993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */,
+			);
+			path = Height;
+			sourceTree = "<group>";
+		};
+		993A1F182E267E0C0059B70A /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F172E267E0C0059B70A /* OverlayManager.swift */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		993A1F1C2E267E0C0059B70A /* Tilt */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F192E267E0C0059B70A /* CameraTiltManager.swift */,
+				993A1F1A2E267E0C0059B70A /* TiltDataCollector.swift */,
+				993A1F1B2E267E0C0059B70A /* TiltFeedbackView.swift */,
+			);
+			path = Tilt;
+			sourceTree = "<group>";
+		};
+		993A1F1D2E267E0C0059B70A /* Guide */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F122E267E0C0059B70A /* Distance */,
+				993A1F162E267E0C0059B70A /* Height */,
+				993A1F182E267E0C0059B70A /* Overlay */,
+				993A1F1C2E267E0C0059B70A /* Tilt */,
+			);
+			path = Guide;
+			sourceTree = "<group>";
+		};
+		993A1F202E267E0C0059B70A /* VideoEditor */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */,
+				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
+			);
+			path = VideoEditor;
+			sourceTree = "<group>";
+		};
+		993A1F212E267E0C0059B70A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F102E267E0C0059B70A /* CameraKit */,
+				993A1F1D2E267E0C0059B70A /* Guide */,
+				993A1F202E267E0C0059B70A /* VideoEditor */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		993A1F262E267E0C0059B70A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F222E267E0C0059B70A /* Clip.swift */,
+				993A1F232E267E0C0059B70A /* Guide.swift */,
+				993A1F242E267E0C0059B70A /* Project.swift */,
+				993A1F252E267E0C0059B70A /* Tilt.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		993A1F282E267E0C0059B70A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F262E267E0C0059B70A /* Model */,
+				993A1F272E267E0C0059B70A /* SwiftDataManager.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		993A1F2A2E267E0C0059B70A /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
+			);
+			path = Enum;
+			sourceTree = "<group>";
+		};
+		993A1F2C2E267E0C0059B70A /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F2B2E267E0C0059B70A /* CameraPreviewView.swift */,
+			);
+			path = Preview;
+			sourceTree = "<group>";
+		};
+		993A1F352E267E0C0059B70A /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */,
+				993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */,
+				993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */,
+				993A1F302E267E0C0059B70A /* CameraRecordView.swift */,
+				993A1F312E267E0C0059B70A /* CameraTopControlView.swift */,
+				993A1F322E267E0C0059B70A /* CircleIconButton.swift */,
+				993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */,
+				993A1F342E267E0C0059B70A /* ZoomSlider.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		993A1F392E267E0C0059B70A /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F2A2E267E0C0059B70A /* Enum */,
+				993A1F2C2E267E0C0059B70A /* Preview */,
+				993A1F352E267E0C0059B70A /* SubViews */,
+				993A1F362E267E0C0059B70A /* CameraView.swift */,
+				993A1F372E267E0C0059B70A /* CameraViewModel.swift */,
+				993A1F382E267E0C0059B70A /* ShootState.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		993A1F3D2E267E0C0059B70A /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
+				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
+				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		993A1F422E267E0C0059B70A /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
+				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
+				993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */,
+				993A1F412E267E0C0059B70A /* VideoPreview.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		993A1F452E267E0C0059B70A /* ClipEdit */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F3D2E267E0C0059B70A /* Overlay */,
+				993A1F422E267E0C0059B70A /* SubViews */,
+				993A1F432E267E0C0059B70A /* ClipEditView.swift */,
+				993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */,
+			);
+			path = ClipEdit;
+			sourceTree = "<group>";
+		};
+		993A1F482E267E0C0059B70A /* ProjectPreview */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */,
+				993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */,
+			);
+			path = ProjectPreview;
+			sourceTree = "<group>";
+		};
+		993A1F492E267E0C0059B70A /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F392E267E0C0059B70A /* Camera */,
+				993A1F452E267E0C0059B70A /* ClipEdit */,
+				993A1F482E267E0C0059B70A /* ProjectPreview */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		993A1F4B2E267E0C0059B70A /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		993A1F4E2E267E0C0059B70A /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F4C2E267E0C0059B70A /* Assets.xcassets */,
+				993A1F4D2E267E0C0059B70A /* sample-video.mov */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		993A1F4F2E267E0C0059B70A /* Chalkak */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F0E2E267E0C0059B70A /* App */,
+				993A1F212E267E0C0059B70A /* Core */,
+				993A1F282E267E0C0059B70A /* Data */,
+				993A1F492E267E0C0059B70A /* Presentation */,
+				993A1F4B2E267E0C0059B70A /* Preview Content */,
+				993A1F4E2E267E0C0059B70A /* Resource */,
+			);
+			path = Chalkak;
+			sourceTree = "<group>";
+		};
+		993A1F7D2E267E0C0059B70A /* ChalkakTests */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */,
+			);
+			path = ChalkakTests;
+			sourceTree = "<group>";
+		};
+		993A1F812E267E0C0059B70A /* ChalkakUITests */ = {
+			isa = PBXGroup;
+			children = (
+				993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */,
+				993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */,
+			);
+			path = ChalkakUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,9 +429,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				993A1E202E249C9E0059B70A /* Chalkak */,
 			);
 			name = Chalkak;
 			packageProductDependencies = (
@@ -130,9 +450,6 @@
 			dependencies = (
 				993A1CD82E2049D60059B70A /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				993A1E342E249C9E0059B70A /* ChalkakTests */,
-			);
 			name = ChalkakTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +469,6 @@
 			);
 			dependencies = (
 				993A1CE22E2049D60059B70A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				993A1E382E249C9E0059B70A /* ChalkakUITests */,
 			);
 			name = ChalkakUITests;
 			packageProductDependencies = (
@@ -212,6 +526,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */,
+				993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */,
+				993A1F522E267E0C0059B70A /* sample-video.mov in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +553,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
+				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
+				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
+				993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */,
+				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
+				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
+				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
+				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
+				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
+				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
+				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
+				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
+				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
+				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
+				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
+				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
+				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
+				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
+				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
+				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
+				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
+				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
+				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
+				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
+				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
+				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
+				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
+				993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */,
+				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
+				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
+				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
+				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
+				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
+				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
+				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
+				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
+				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
+				993A1F7A2E267E0C0059B70A /* ProjectPreViewView.swift in Sources */,
+				993A1F7B2E267E0C0059B70A /* ProjectPreViewViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +601,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +609,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */,
+				993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
