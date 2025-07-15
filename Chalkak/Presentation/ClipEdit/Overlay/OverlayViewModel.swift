@@ -23,6 +23,7 @@ final class OverlayViewModel: ObservableObject {
         extractor.overlayManager = overlayManager
     }
 
+    /// 첫번째 프레임, 오버레이 추출
     func prepareOverlay(from url: URL, at time: Double) {
         isLoading = true
         extractor.extractFrame(from: url, at: time) { [weak self] in
@@ -33,6 +34,7 @@ final class OverlayViewModel: ObservableObject {
         }
     }
 
+    /// 뒤로가기 버튼 누를 시, 오버레이 초기화
     func dismissOverlay() {
         isOverlayReady = false
         isLoading = false
@@ -43,12 +45,13 @@ final class OverlayViewModel: ObservableObject {
         extractor.extractedCIImage = nil
     }
 
-    func createGuideForLog() {
-        guard let outlineImage = overlayManager.outlineImage,
-              let bBox = overlayManager.boundingBox else {
-            print("❌ 로그 출력을 위한 정보가 부족합니다.")
-            return
+    /// Guide 객체 생성
+    func makeGuide() -> Guide? {
+        guard let outlineImage = overlayManager.outlineImage, let bBox = overlayManager.boundingBox else {
+            print("❌ outlineImage가 없습니다.")
+            return nil
         }
+        
         let guide = Guide(
             clipID: "dummy-id",
             bBoxPosition: bBox.origin,
@@ -57,7 +60,7 @@ final class OverlayViewModel: ObservableObject {
             cameraTilt: Tilt(degreeX: 0, degreeZ: 0),
             cameraHeight: 1.0
         )
-        print("--- GUIDE ---")
-        print("\(guide)")
+        
+        return guide
     }
 }

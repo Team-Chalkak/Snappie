@@ -4,9 +4,10 @@
 //
 //  Created by 배현진 on 7/12/25.
 //
+
+import AVFoundation
 import Foundation
 import SwiftData
-import AVFoundation
 import UIKit
 
 /// 클립 편집 뷰모델

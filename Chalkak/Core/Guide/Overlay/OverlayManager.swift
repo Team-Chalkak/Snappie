@@ -5,10 +5,10 @@
 //  Created by Youbin on 7/15/25.
 //
 
-import Vision
 import CoreImage
-import UIKit
 import CoreImage.CIFilterBuiltins
+import UIKit
+import Vision
 
 /// 사람 인식 및 실루엣 오버레이 추출
 class OverlayManager: ObservableObject {
@@ -120,7 +120,7 @@ class OverlayManager: ObservableObject {
         context.clear(CGRect(x: 0, y: 0, width: width, height: height))
 
         // 빨간색 윤곽선
-        context.setStrokeColor(UIColor.red.cgColor)
+        context.setStrokeColor(UIColor.white.cgColor)
         context.setLineWidth(1)
 
         // 경계 픽셀 검사

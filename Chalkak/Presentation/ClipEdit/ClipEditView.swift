@@ -5,9 +5,9 @@
 //  Created by 배현진 on 7/12/25.
 //
 
-import SwiftUI
-import SwiftData
 import AVKit
+import SwiftData
+import SwiftUI
 
 /// 클립 편집 뷰
 struct ClipEditView: View {
@@ -46,6 +46,7 @@ struct ClipEditView: View {
                     ProgressView("윤곽선 생성 중...")
                         .progressViewStyle(CircularProgressViewStyle())
                         .foregroundStyle(.white)
+                        .tint(.white)
                         .padding()
                         .background(Color.black.opacity(0.5))
                         .cornerRadius(10)
@@ -56,6 +57,7 @@ struct ClipEditView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("뒤로") {
+                        //TODO: 카메라 화면으로 돌아가는 버튼 액션 필요
                         print("뒤로가기 버튼 눌림")
                     }
                 }

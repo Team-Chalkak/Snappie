@@ -5,8 +5,8 @@
 //  Created by Youbin on 7/15/25.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 /// 비디오 프리뷰
 struct VideoPreviewView: View {

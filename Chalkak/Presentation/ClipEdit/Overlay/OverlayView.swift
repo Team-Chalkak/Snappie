@@ -36,8 +36,14 @@ struct OverlayView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("다음") {
-                        overlayViewModel.createGuideForLog()
-                        // TODO: - 저장 후 다음 화면으로 넘어가는 로직 필요
+                        /// 가이드 객체 생성
+                        if let guide = overlayViewModel.makeGuide() {
+                            print("--- GUIDE ---")
+                            print(guide)/// 생성된 Guide 확인
+                            //TODO: - guide를 다음 화면으로 전달하거나 저장
+                        } else {
+                            print("❌ guide 생성 실패")
+                        }
                     }
                 }
             }

@@ -15,11 +15,11 @@ struct TrimmingControlView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
 
-            // 📌 추후 구현 예정
+            //TODO: - 추후 구현 예정
             TrimmingTimeDisplayView()
 
             HStack(spacing: 15) {
-                // ▶️ 재생/일시정지 버튼
+                /// 재생/일시정지 버튼
                 Button(action: {
                     editViewModel.togglePlayback()
                 }) {
@@ -29,7 +29,7 @@ struct TrimmingControlView: View {
                         .foregroundColor(.black)
                 }
 
-                // 🎞️ 썸네일 + 트리밍 슬라이더
+                /// 썸네일 + 트리밍 슬라이더
                 TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
             }
             .frame(height: 128)
