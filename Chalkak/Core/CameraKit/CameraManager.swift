@@ -14,29 +14,41 @@ class CameraManager: NSObject, ObservableObject {
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
-    
+
     @Published var isRecording = false
+    @Published var currentZoomScale: CGFloat = 1.0
 
     deinit {
         NotificationCenter.default.removeObserver(self)
         session.stopRunning()
     }
-    
-    /// 전면or후면 카메라 디바이스 가져오기
-    private func getCamera(for position: AVCaptureDevice.Position) -> AVCaptureDevice? {
-        return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+
+    /// 후면 카메라 중 가장 좋은 성능의 카메라(가상 카메라 우선)를 찾아서 반환
+    private func findBestBackCamera() -> AVCaptureDevice? {
+        let deviceTypes: [AVCaptureDevice.DeviceType] = [
+            .builtInTripleCamera,
+            .builtInDualWideCamera,
+            .builtInDualCamera,
+            .builtInWideAngleCamera
+        ]
+        let discoverySession = AVCaptureDevice.DiscoverySession(
+            deviceTypes: deviceTypes,
+            mediaType: .video,
+            position: .back
+        )
+        return discoverySession.devices.first
     }
-    
+
     func setUpCamera() {
-        if let device = getCamera(for: .back) {
+        if let device = findBestBackCamera() {
             do {
-                // 카메라연결
+                // 카메라 연결
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
                 if session.canAddInput(videoDeviceInput) {
                     session.addInput(videoDeviceInput)
                 }
-                
-                // 동영상 추가
+
+                // 동영상 출력 추가
                 if session.canAddOutput(movieOutput) {
                     session.addOutput(movieOutput)
                 }
@@ -44,7 +56,7 @@ class CameraManager: NSObject, ObservableObject {
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
                 }
-                // CameraPreview에서 탭제스처에대해서 알림센터를 통해서 전달받음
+                // 포커스 제스처 알림 구독
                 NotificationCenter.default.addObserver(
                     self,
                     selector: #selector(focusAtPoint),
@@ -52,61 +64,111 @@ class CameraManager: NSObject, ObservableObject {
                     object: nil
                 )
             } catch {
-                print(error)
+                print("카메라 설정 오류: \(error)")
             }
         }
     }
-    
-    // 터치한 위치에대한 초점조정
-    @objc func focusAtPoint(_ notification: Notification) {
-        guard let point = notification.userInfo?["point"] as? CGPoint else { return }
-        
+
+    /// 켜져있는 플래쉬는 Torch로 표현
+    func setTorchMode(_ isFlash: Bool) {
         guard let device = videoDeviceInput?.device else { return }
-        
+
         do {
             try device.lockForConfiguration()
-            
-            // 초점조절
+
+            if device.hasTorch, device.isTorchAvailable {
+                device.torchMode = isFlash ? .on : .off
+                if isFlash {
+                    try device.setTorchModeOn(level: 1.0)
+                }
+            } else {
+                print("이 기기는 플래시/토치를 지원하지 않습니다.")
+            }
+
+            device.unlockForConfiguration()
+        } catch {
+            print("플래시/토치 모드 설정 오류: \(error)")
+        }
+    }
+
+    /// 터치한 위치에대한 초점조정
+    @objc func focusAtPoint(_ notification: Notification) {
+        guard let point = notification.userInfo?["point"] as? CGPoint else { return }
+        guard let device = videoDeviceInput?.device else { return }
+
+        do {
+            try device.lockForConfiguration()
+
             if device.isFocusModeSupported(.autoFocus) {
                 device.focusMode = .autoFocus
                 device.focusPointOfInterest = point
             }
-            
-            // 노출조절
+
             if device.isExposureModeSupported(.autoExpose) {
                 device.exposureMode = .autoExpose
                 device.exposurePointOfInterest = point
             }
-            
+
             device.unlockForConfiguration()
-            
+
         } catch {
             print("초점 에러\(error)")
         }
     }
-    
+
+    /// 전면/후면 카메라 전환
     func switchCamera(to position: AVCaptureDevice.Position) {
         session.beginConfiguration()
-        
-        // 기존에 연결된 input 제거
+
         if let existingInput = videoDeviceInput {
             session.removeInput(existingInput)
         }
-        
-        if let device = getCamera(for: position) {
+
+        let newDevice: AVCaptureDevice?
+        if position == .back {
+            newDevice = findBestBackCamera()
+        } else {
+            newDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+        }
+
+        if let device = newDevice {
             do {
                 videoDeviceInput = try AVCaptureDeviceInput(device: device)
                 if session.canAddInput(videoDeviceInput) {
                     session.addInput(videoDeviceInput)
                 }
             } catch {
-                print("카메라 전환에러\(error)")
+                print("카메라 전환 중 오류: \(error)")
             }
         }
-        
+
         session.commitConfiguration()
     }
-    
+
+    /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
+    func setZoomScale(_ scale: CGFloat) {
+        guard let device = videoDeviceInput?.device else { return }
+
+        do {
+            try device.lockForConfiguration()
+
+            let minZoom = device.minAvailableVideoZoomFactor
+            let maxZoom = device.maxAvailableVideoZoomFactor
+
+            let zoomFactorToSet = scale * 2.0
+
+            // 디바이스 지원 줌 범위로 값 제한
+            let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
+
+            device.videoZoomFactor = clampedZoomFactor
+            currentZoomScale = scale
+
+            device.unlockForConfiguration()
+        } catch {
+            print("줌 조정 에러 \(error)")
+        }
+    }
+
     func requestAndCheckPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
@@ -125,21 +187,21 @@ class CameraManager: NSObject, ObservableObject {
             print("Permession declined")
         }
     }
-    
+
     func startRecording() {
         guard !isRecording else { return }
-        
+
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let videoName = "video_\(Date().timeIntervalSince1970).mp4"
         let videoURL = documentsPath.appendingPathComponent(videoName)
-        
+
         movieOutput.startRecording(to: videoURL, recordingDelegate: self)
         isRecording = true
     }
 
     func stopRecording() {
         guard isRecording else { return }
-        
+
         movieOutput.stopRecording()
         isRecording = false
     }
@@ -159,7 +221,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     @MainActor
     private func saveVideoToLibrary(videoURL: URL) async {
         let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
-        
+
         switch authorizationStatus {
         case .notDetermined:
             let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
@@ -174,7 +236,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             print("라이브러리 접근 권한 없음")
         }
     }
-    
+
     private func performVideoSave(videoURL: URL) async {
         do {
             try await PHPhotoLibrary.shared().performChanges {
