@@ -11,22 +11,6 @@ import Photos
 import SwiftData
 import SwiftUI
 
-enum TimerOptions: Int, CaseIterable {
-    case off = 0
-    case three = 3
-    case five = 5
-    case ten = 10
-
-    var displayText: String {
-        switch self {
-        case .off: return "해제"
-        case .three: return "3초"
-        case .five: return "5초"
-        case .ten: return "10초"
-        }
-    }
-}
-
 class CameraViewModel: ObservableObject {
     private var modelContext: ModelContext?
     private let model: CameraManager
@@ -136,7 +120,7 @@ class CameraViewModel: ObservableObject {
 
     func selectZoomScale(_ scale: CGFloat) {
         // 안전성 검사
-        guard !scale.isNaN && !scale.isInfinite else { return }
+        guard !scale.isNaN, !scale.isInfinite else { return }
 
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
         zoomScale = safeScale
