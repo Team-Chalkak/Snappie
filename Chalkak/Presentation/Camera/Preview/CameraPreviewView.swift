@@ -8,6 +8,9 @@ import AVFoundation
 import SwiftUI
 
 struct CameraPreviewView: UIViewRepresentable {
+    let session: AVCaptureSession
+    @Binding var showGrid: Bool
+    
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
         override class var layerClass: AnyClass {
@@ -53,8 +56,8 @@ struct CameraPreviewView: UIViewRepresentable {
             
             let boxSize: CGFloat = 60
             let boxRect = CGRect(
-                x: point.x - boxSize/2,
-                y: point.y - boxSize/2,
+                x: point.x - boxSize / 2,
+                y: point.y - boxSize / 2,
                 width: boxSize,
                 height: boxSize
             )
@@ -128,9 +131,6 @@ struct CameraPreviewView: UIViewRepresentable {
             gridLayer = nil
         }
     }
-    
-    let session: AVCaptureSession
-    @Binding var showGrid: Bool
    
     func makeUIView(context: Context) -> VideoPreviewView {
         let view = VideoPreviewView()
