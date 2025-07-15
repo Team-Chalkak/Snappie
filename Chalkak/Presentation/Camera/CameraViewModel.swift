@@ -183,4 +183,8 @@ class CameraViewModel: ObservableObject {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
     }
+    
+    func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
+        model.onMultiBoundingBoxUpdate = handler
+    }
 }

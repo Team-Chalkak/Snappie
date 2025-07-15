@@ -14,7 +14,20 @@ class CameraManager: NSObject, ObservableObject {
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
+    let videoOutput = AVCaptureVideoDataOutput()
+    private let videoDataOutputQueue = DispatchQueue(
+        label: "com.camera.videoDataOutputQueue",
+        qos: .userInitiated
+    )
 
+    private let boundingBoxManager = BoundingBoxManager()
+
+    var onMultiBoundingBoxUpdate: (([CGRect]) -> Void)? {
+        didSet {
+            boundingBoxManager.onMultiBoundingBoxUpdate = onMultiBoundingBoxUpdate
+        }
+    }
+    
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
@@ -52,10 +65,18 @@ class CameraManager: NSObject, ObservableObject {
                 if session.canAddOutput(movieOutput) {
                     session.addOutput(movieOutput)
                 }
+                
+                // 비디오 데이터 출력 추가 및 델리게이트 설정
+                if session.canAddOutput(videoOutput) {
+                    session.addOutput(videoOutput)
+                    videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
+                    videoOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA]
+                }
 
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
                 }
+                
                 // 포커스 제스처 알림 구독
                 NotificationCenter.default.addObserver(
                     self,

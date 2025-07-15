@@ -54,6 +54,9 @@
 		993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */; };
 		993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */; };
 		993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */; };
+		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
+		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
+		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +127,9 @@
 		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
+		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
+		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -321,8 +327,8 @@
 			isa = PBXGroup;
 			children = (
 				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
-				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
+				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -341,7 +347,6 @@
 		993A1F452E267E0C0059B70A /* ClipEdit */ = {
 			isa = PBXGroup;
 			children = (
-				993A1F3D2E267E0C0059B70A /* Overlay */,
 				993A1F422E267E0C0059B70A /* SubViews */,
 				993A1F432E267E0C0059B70A /* ClipEditView.swift */,
 				993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */,
@@ -361,6 +366,7 @@
 		993A1F492E267E0C0059B70A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				993A21782E26A05A0059B70A /* Guide */,
 				993A1F392E267E0C0059B70A /* Camera */,
 				993A1F452E267E0C0059B70A /* ClipEdit */,
 				993A1F482E267E0C0059B70A /* ProjectPreview */,
@@ -389,6 +395,7 @@
 			isa = PBXGroup;
 			children = (
 				993A1F0E2E267E0C0059B70A /* App */,
+				993A217E2E26AB7E0059B70A /* Common */,
 				993A1F212E267E0C0059B70A /* Core */,
 				993A1F282E267E0C0059B70A /* Data */,
 				993A1F492E267E0C0059B70A /* Presentation */,
@@ -413,6 +420,48 @@
 				993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */,
 			);
 			path = ChalkakUITests;
+			sourceTree = "<group>";
+		};
+		993A21782E26A05A0059B70A /* Guide */ = {
+			isa = PBXGroup;
+			children = (
+				993A21792E26A0690059B70A /* Distance */,
+				993A1F3D2E267E0C0059B70A /* Overlay */,
+			);
+			path = Guide;
+			sourceTree = "<group>";
+		};
+		993A21792E26A0690059B70A /* Distance */ = {
+			isa = PBXGroup;
+			children = (
+				993A217A2E26A0760059B70A /* BoundingBoxView.swift */,
+				993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */,
+			);
+			path = Distance;
+			sourceTree = "<group>";
+		};
+		993A217E2E26AB7E0059B70A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				993A21802E26AB9C0059B70A /* Extension */,
+				993A217F2E26AB920059B70A /* DesignSystem */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		993A217F2E26AB920059B70A /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		993A21802E26AB9C0059B70A /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				993A21812E26ABA70059B70A /* Array + Ext.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -560,7 +609,9 @@
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
+				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
@@ -586,6 +637,7 @@
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
