@@ -54,6 +54,7 @@
 		993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */; };
 		993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */; };
 		993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */; };
+		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +125,7 @@
 		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +241,7 @@
 			children = (
 				993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */,
 				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
+				C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */,
 			);
 			path = VideoEditor;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
+				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
