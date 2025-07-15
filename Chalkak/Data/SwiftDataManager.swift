@@ -52,19 +52,18 @@ import SwiftUI
 class SwiftDataManager {
     static let shared = SwiftDataManager()
     
-    private let container: ModelContainer
-    var context: ModelContext { container.mainContext }
-
-    private init() {
-        do {
-            let config = ModelConfiguration(isStoredInMemoryOnly: false)
-            self.container = try ModelContainer(
-                for: Clip.self, Guide.self, Project.self,
-                configurations: config
-            )
-        } catch {
-            fatalError("ModelContainer 초기화 실패: \(error)")
+    private var container: ModelContainer?
+    var context: ModelContext {
+        guard let container = container else {
+            fatalError("ModelContainer가 아직 설정되지 않았습니다. configure(container:)를 먼저 호출하세요.")
         }
+        return container.mainContext
+    }
+
+    private init() {}
+    
+    func configure(container: ModelContainer) {
+        self.container = container
     }
 
     // MARK: - Project
