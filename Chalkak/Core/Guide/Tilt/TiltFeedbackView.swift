@@ -45,10 +45,6 @@ struct TiltFeedbackView: View {
     var offsetY: CGFloat
     
     /// 현재 위치가 적절한 범위 내에 있는지 확인하는 계산 프로퍼티
-    ///
-    /// X축과 Y축 오프셋이 모두 3 이하일 때 `true`를 반환합니다.
-    ///
-    /// - Returns: 적절한 위치에 있으면 `true`, 그렇지 않으면 `false`
     var isProperPosition: Bool {
         if abs(offsetX) < 3 && abs(offsetY) < 3 {
             return true
@@ -64,8 +60,6 @@ struct TiltFeedbackView: View {
     }
     
     // MARK: - View
-    /// 가이드 원과 피드백 원으로 구성된 기울기 표시 UI를 생성합니다.
-    /// 적절한 위치에 있을 때와 그렇지 않을 때 색상이 변화합니다.
     var body: some View {
         // 가이드 동그라미
         Circle()
