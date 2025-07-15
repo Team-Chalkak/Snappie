@@ -9,86 +9,37 @@ import SwiftUI
 
 struct CameraView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel = CameraViewModel(context: nil)
+    @StateObject private var viewModel: CameraViewModel = .init(context: nil)
+
+    @State private var clipUrl: URL?
+    @State private var navigateToEdit = false
 
     var body: some View {
-        ZStack {
-            CameraPreviewView(session: viewModel.session)
-                .onAppear {
-                    viewModel.configure()
-                }
+        NavigationStack {
+            ZStack {
+                CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
 
-            VStack {
-                // 상단 컨트롤
-                HStack {
+                VStack {
+                    CameraTopControlView(viewModel: viewModel)
+
                     Spacer()
 
-                    // 카메라 전환 버튼
-                    Button(action: { viewModel.changeCamera() }) {
-                        Image(systemName: "arrow.triangle.2.circlepath.camera")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
-                    }
+                    CameraBottomControlView(viewModel: viewModel)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 50)
-
-                Spacer()
-
-                // 하단 컨트롤
-                VStack(spacing: 20) {
-                    // 녹화 상태 표시
-                    if viewModel.isRecording {
-                        HStack {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 12, height: 12)
-                            Text("녹화 중...")
-                                .foregroundColor(.white)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(20)
-                    }
-
-                    ZStack {
-                        // 메인 셔터/녹화 버튼
-                        Button(action: {
-                            if viewModel.isRecording {
-                                viewModel.stopVideoRecording()
-                            } else {
-                                viewModel.startVideoRecording()
-                            }
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .stroke(lineWidth: 5)
-                                    .frame(width: 75, height: 75)
-                                    .foregroundColor(.white)
-
-                                Circle()
-                                    .fill(viewModel.isRecording ? Color.red : Color.white)
-                                    .frame(width: 60, height: 60)
-
-                                if viewModel.isRecording {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.white)
-                                        .frame(width: 20, height: 20)
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.bottom, 50)
             }
-            .foregroundColor(.white)
+            .onReceive(NotificationCenter.default.publisher(for: .init("VideoSaved"))) { output in
+                /// 촬영 완료 후 저장된 파일 URL을 NotificationCenter에서 받고 navigateToEdit 트리거
+                if let userInfo = output.userInfo, let url = userInfo["url"] as? URL {
+                    self.clipUrl = url
+                    self.navigateToEdit = true
+                }
+            }
+
+            .navigationDestination(isPresented: $navigateToEdit) {
+                if let url = clipUrl {
+                    ClipEditView(clipURL: url, isFirstShoot: true)
+                }
+            }
         }
     }
 }

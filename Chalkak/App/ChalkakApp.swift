@@ -17,5 +17,3 @@ struct ChalkakApp: App {
         .modelContainer(for: [Project.self, Clip.self, Guide.self])
     }
 }
-
-
