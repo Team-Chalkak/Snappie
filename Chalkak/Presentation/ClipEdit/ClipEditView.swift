@@ -17,6 +17,8 @@ struct ClipEditView: View {
     
     @State private var isDragging = false
     private var isFirstShoot: Bool = true
+    
+    @State private var navigateToCameraView = false
         
     init(clipURL: URL, isFirstShoot: Bool) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(context: nil, clipURL: clipURL))
@@ -61,18 +63,34 @@ struct ClipEditView: View {
                         print("뒤로가기 버튼 눌림")
                     }
                 }
+                
+                if !isFirstShoot {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("내보내기") {
+                            // TODO: 내보내기 기능 구현
+                            print("내보내기 버튼 눌림")
+                        }
+                    }
+                }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("다음") {
-                        overlayViewModel.prepareOverlay(
-                            from: editViewModel.clipURL,
-                            at: editViewModel.startPoint
-                        )
+                        if isFirstShoot {
+                            overlayViewModel.prepareOverlay(
+                                from: editViewModel.clipURL,
+                                at: editViewModel.startPoint
+                            )
+                        } else {
+                            navigateToCameraView = true
+                        }
                     }
                 }
             }
             .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
                 OverlayView(overlayViewModel: overlayViewModel)
+            }
+            .navigationDestination(isPresented: $navigateToCameraView) {
+                //TODO: - 가이드 있는 카메라 뷰파인더로 연결(Berry)
             }
             .onAppear {
                 editViewModel.updateContext(modelContext)
