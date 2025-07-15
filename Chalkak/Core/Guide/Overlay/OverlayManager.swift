@@ -36,9 +36,12 @@ class OverlayManager: ObservableObject {
                 try handler.perform([rectangleRequest, maskRequest])
 
                 // 2단계: BoundingBox 추출
-                if let result = rectangleRequest.results?.first as? VNHumanObservation {
+                if let results = rectangleRequest.results as? [VNHumanObservation], !results.isEmpty {
+                    let boxes = results.map { $0.boundingBox }
+                    let averageBox = boxes.average() // ⬅️ 이미 ViewModel에서 사용하던 확장 활용
+
                     DispatchQueue.main.async {
-                        self.boundingBox = result.boundingBox
+                        self.boundingBox = averageBox
                     }
                 }
 
