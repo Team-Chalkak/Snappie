@@ -124,6 +124,7 @@
 		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -388,6 +389,7 @@
 		993A1F4F2E267E0C0059B70A /* Chalkak */ = {
 			isa = PBXGroup;
 			children = (
+				B655A8672E26A4EE0060E2C0 /* Info.plist */,
 				993A1F0E2E267E0C0059B70A /* App */,
 				993A1F212E267E0C0059B70A /* Core */,
 				993A1F282E267E0C0059B70A /* Data */,
