@@ -57,6 +57,8 @@
 		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A092E27BADB00F42541 /* Coordinator.swift */; };
+		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +132,8 @@
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +184,7 @@
 		993A1F0E2E267E0C0059B70A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				99C93A092E27BADB00F42541 /* Coordinator.swift */,
 				993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */,
 			);
 			path = App;
@@ -443,6 +448,7 @@
 		993A217E2E26AB7E0059B70A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
 				993A217F2E26AB920059B70A /* DesignSystem */,
 			);
@@ -462,6 +468,22 @@
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		99C93A0B2E27BAF700F42541 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				99C93A0C2E27BAFD00F42541 /* Enum */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		99C93A0C2E27BAFD00F42541 /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				99C93A0D2E27BB0300F42541 /* Path.swift */,
+			);
+			path = Enum;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -619,12 +641,14 @@
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
+				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
+				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
