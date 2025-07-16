@@ -12,7 +12,7 @@ import Photos
 /**
  여러 비디오 파일을 하나의 파일로 병합하는 기능을 제공하는 클래스
  
- 이 클래스는 여러 동영상 파일을 하나로 합쳐서 하나의 동영상 파일로 만들고, 사진 앱에 동영상을 저장합니다(임시)
+ 이 클래스는 여러 동영상 파일을 하나로 합쳐서 하나의 동영상 파일로 만들고, (임시)사진 앱에 동영상을 저장합니다
  
  ## 사용 예시
  ```swift
@@ -46,6 +46,34 @@ class VideoMerger: ObservableObject {
     /// 현재 합치기 작업 진행 중인지 여부
     @Published var isMerging: Bool = false
     
+    /// 동영상 자르기 타이밍용 트리밍 정보
+    var clipInfoList: [(startTime: CMTime, endTime: CMTime)] = []
+    
+    // MARK: - init
+    /// UserDefaults의 현재 프로젝트 ID를 이용해서 합쳐야 하는 영상 정보를 입력받아서 시작할 수 있도록 생성자 구현
+    init() {
+        // UserDefaults에서 현재 프로젝트 ID 불러오기
+        if let projectID = UserDefaults().string(forKey: "currentProjectID") {
+            
+            // 프로젝트 ID를 이용해서 SwiftData에서 clipList 가져오기
+            Task { @MainActor in
+                if let project = SwiftDataManager.shared.fetchProject(byID: projectID) {
+                    // URL 정보 저장하기
+                    self.videoURLs = project.clipList.map {
+                        $0.videoURL
+                    }
+                    // 트리밍 정보 저장하기
+                    self.clipInfoList = project.clipList.map { clip in
+                        let startTime = CMTime(seconds: clip.startPoint, preferredTimescale: 600)
+                        let endTime = CMTime(seconds: clip.endPoint, preferredTimescale: 600)
+                        
+                        return (startTime, endTime)
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: - Public Methods
     
     /**
@@ -58,50 +86,35 @@ class VideoMerger: ObservableObject {
         - urls: 합칠 동영상 URL들의 배열
         - completion: 완료 시 호출될 핸들러. 성공 시 최종 URL, 실패 시 nil
      */
-    func mergeVideos(from urls: [URL], completion: @escaping (URL?) -> Void) {
-        guard !urls.isEmpty else {
-            completion(nil)
-            return
+    func mergeVideos() async throws -> URL {
+        guard !videoURLs.isEmpty else {
+            throw VideoMergerError.noVideosToMerge
         }
         
-        // 단일 영상인 경우
-        if urls.count == 1 {
-            completion(urls.first)
-            return
+        // 단일 영상인 경우 바로 반환
+        if videoURLs.count == 1, let url = videoURLs.first {
+            return url
         }
         
-        // 여러 영상을 합치는 경우
-        self.videoURLs = urls
-        self.isMerging = true
+        // UI 상태 업데이트
+        isMerging = true
         
-        let assets = urls.map { AVURLAsset(url: $0) }
-        
-        // TODO: Deprecated된 코드 업그레이드 필요(ssol)
-        mergeVideos(assets: assets) { exporter in
-            exporter.exportAsynchronously {
-                DispatchQueue.main.async {
-                    self.isMerging = false
-                    
-                    if exporter.status == .failed {
-                        print("영상 합치기 실패: \(exporter.error?.localizedDescription ?? "알 수 없는 오류")")
-                        completion(nil)
-                    } else {
-                        if let finalURL = exporter.outputURL {
-                            print("영상 합치기 완료: \(finalURL)")
-                            self.finalVideoURL = finalURL
-                            // TODO: 미리보기로 구현하고 해당 로직은 삭제 필요(ssol)
-                            // 자동으로 사진 앱에 저장
-                            Task {
-                                await self.saveVideoToLibrary(videoURL: finalURL)
-                            }
-                            
-                            completion(finalURL)
-                        } else {
-                            completion(nil)
-                        }
-                    }
-                }
-            }
+        do {
+            let assets = videoURLs.map { AVURLAsset(url: $0) }
+            let finalURL = try await merge(assets: assets)
+            
+            // 성공 시 UI 업데이트 및 사진 앱에 저장
+            finalVideoURL = finalURL
+            
+            // 사진 앱에 저장 (필요에 따라 제거 가능)
+            try await saveVideoToLibrary(videoURL: finalURL)
+            
+            isMerging = false
+            return finalURL
+            
+        } catch {
+            isMerging = false
+            throw error
         }
     }
     
@@ -120,14 +133,11 @@ class VideoMerger: ObservableObject {
      5. 최종 영상 익스포트 준비
      
      - Parameters:
-        - assets: 합칠 동영상 애셋들의 배열
-        - completion: 익스포트 세션을 반환하는 완료 핸들러
+     - assets: 합칠 동영상 애셋들의 배열
+     - completion: 익스포트 세션을 반환하는 완료 핸들러
      */
-    private func mergeVideos(
-        assets: [AVURLAsset],
-        completion: @escaping (AVAssetExportSession) -> Void
-    ) {
-        // 1. 새로운 컴포지션 생성
+    private func merge(assets: [AVURLAsset]) async throws -> URL {
+        // 1. 컴포지션 생성
         let composition = AVMutableComposition()
         var lastTime: CMTime = .zero
         
@@ -136,96 +146,134 @@ class VideoMerger: ObservableObject {
             withMediaType: .video,
             preferredTrackID: Int32(kCMPersistentTrackID_Invalid)
         ) else {
-            print("비디오 트랙 생성 실패")
-            return
+            throw VideoMergerError.videoTrackCreationFailed
         }
         
         // TODO: 오디오 기능 도입되면 주석 해제(ssol)
-//        // 3. 오디오 트랙 생성
+        // 3. 오디오 트랙 생성
 //        guard let audioTrack = composition.addMutableTrack(
 //            withMediaType: .audio,
 //            preferredTrackID: Int32(kCMPersistentTrackID_Invalid)
 //        ) else {
-//            print("오디오 트랙 생성 실패")
-//            return
+//            throw VideoMergerError.audioTrackCreationFailed
 //        }
         
         // 4. 각 애셋을 순차적으로 합치기
         for (index, asset) in assets.enumerated() {
+            // 트리밍할 구간 구하기
+            let timeRangeToInsert = CMTimeRange(
+                start: clipInfoList[index].startTime,
+                end: clipInfoList[index].endTime
+            )
+            
+            
             do {
-                // 비디오 트랙 추가
-                let videoTracks = asset.tracks(withMediaType: .video)
-                if !videoTracks.isEmpty {
-                    try videoTrack.insertTimeRange(
-                        CMTimeRange(start: .zero, duration: asset.duration),
-                        of: videoTracks[0],
-                        at: lastTime
-                    )
-                }
+                
+                let videoTracks = try await asset.loadTracks(withMediaType: .video)
+                guard !videoTracks.isEmpty else { continue }
                 
                 // TODO: 오디오 기능 도입되면 주석 해제(ssol)
-//                // 오디오 트랙이 있으면 추가
-//                let audioTracks = asset.tracks(withMediaType: .audio)
-//                if !audioTracks.isEmpty {
-//                    try audioTrack.insertTimeRange(
-//                        CMTimeRange(start: .zero, duration: asset.duration),
-//                        of: audioTracks[0],
-//                        at: lastTime
-//                    )
-//                }
+//            // 오디오 트랙이 있으면 추가
+//            let audioTracks = try await asset.loadTracks(withMediaType: .audio)
+//            guard !audioTracks.isEmpty else { continue }
+                
+                // 비디오
+                try videoTrack.insertTimeRange(timeRangeToInsert, of: videoTracks[0], at: lastTime)
+                
+                // TODO: 오디오 기능 도입되면 주석 해제(ssol)
+//                try audioTrack.insertTimeRange(timeRangeToInsert, of: audioTracks[0], at: lastTime)
+                
+                lastTime = CMTimeAdd(lastTime, timeRangeToInsert.duration)
                 
                 print("영상 \(index + 1)/\(assets.count) 추가 완료")
             } catch {
                 print("영상 \(index + 1) 추가 실패: \(error.localizedDescription)")
+                throw VideoMergerError.unknown(error)
             }
-            
-            // 다음 영상이 시작될 시간 계산
-            lastTime = CMTimeAdd(lastTime, asset.duration)
         }
         
-        // 5. 최종 출력 파일 경로 생성
+        // 5. 출력 URL 생성
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory() + "\(UUID().uuidString).mp4")
         
-        // 6. 비디오 회전 보정 설정(세로로 찍었는데 가로로 저장되는 이슈 해결)
-        let layerInstructions = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
+        // 6. 비디오 컴포지션 생성
+        let videoComposition = createVideoComposition(for: videoTrack, duration: lastTime)
         
-        var transform = CGAffineTransform.identity
-        transform = transform.rotated(by: 90 * (.pi / 180))        // 90도 회전
-        transform = transform.translatedBy(x: 0, y: -videoTrack.naturalSize.height)  // 위치 조정
-        layerInstructions.setTransform(transform, at: .zero)
-        
-        // 7. 컴포지션 인스트럭션 생성
-        let instructions = AVMutableVideoCompositionInstruction()
-        instructions.timeRange = CMTimeRange(start: .zero, duration: lastTime)
-        instructions.layerInstructions = [layerInstructions]
-        
-        // 8. 비디오 컴포지션 설정
-        let videoComposition = AVMutableVideoComposition()
-        videoComposition.renderSize = CGSize(
-            width: videoTrack.naturalSize.height,   // 회전으로 인해 width/height 교체
-            height: videoTrack.naturalSize.width
-        )
-        videoComposition.instructions = [instructions]
-        videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)  // 30fps
-        
-        // 9. 익스포트 세션 생성
+        // 7. 익스포트 세션 생성
         guard let exporter = AVAssetExportSession(
             asset: composition,
             presetName: AVAssetExportPresetHighestQuality
         ) else {
-            print("익스포트 세션 생성 실패")
-            return
+            throw VideoMergerError.exportFailed
         }
         
-        // 10. 익스포트 설정
+        // 익스포트 설정
         exporter.outputFileType = .mp4
         exporter.outputURL = tempURL
         exporter.videoComposition = videoComposition
         
-        // 11. 완료 핸들러 호출
-        completion(exporter)
+        // 8. 비동기 익스포트 실행
+        return try await withCheckedThrowingContinuation { continuation in
+            exporter.exportAsynchronously {
+                switch exporter.status {
+                case .completed:
+                    guard let url = exporter.outputURL else {
+                        continuation.resume(throwing: VideoMergerError.exportURLNotFound)
+                        return
+                    }
+                    print("영상 합치기 완료: \(url)")
+                    continuation.resume(returning: url)
+                    
+                case .failed:
+                    let error = exporter.error ?? VideoMergerError.exportFailed
+                    print("영상 합치기 실패: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                    
+                case .cancelled:
+                    continuation.resume(throwing: VideoMergerError.exportCancelled)
+                    
+                default:
+                    continuation.resume(throwing: VideoMergerError.unknown(NSError(domain: "VideoMerger", code: -1, userInfo: [NSLocalizedDescriptionKey: "예상치 못한 상태"])))
+                }
+            }
+        }
     }
     
+    /**
+    비디오 트랙에 90도 회전 보정을 적용한 비디오 컴포지션을 생성합니다.
+
+    세로로 촬영된 비디오가 가로로 저장되는 이슈를 해결하기 위해 회전 변환을 적용합니다.
+
+    - Parameters:
+       - videoTrack: 회전 보정을 적용할 비디오 트랙
+       - duration: 최종 비디오의 총 재생 시간
+    - Returns: 회전 보정이 적용된 비디오 컴포지션
+    */
+    private func createVideoComposition(for videoTrack: AVMutableCompositionTrack, duration: CMTime) -> AVMutableVideoComposition {
+        // 비디오 회전 보정 설정
+        let layerInstructions = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
+        
+        var transform = CGAffineTransform.identity
+        transform = transform.rotated(by: 90 * (.pi / 180))
+        transform = transform.translatedBy(x: 0, y: -videoTrack.naturalSize.height)
+        layerInstructions.setTransform(transform, at: .zero)
+        
+        // 컴포지션 인스트럭션 생성
+        let instructions = AVMutableVideoCompositionInstruction()
+        instructions.timeRange = CMTimeRange(start: .zero, duration: duration)
+        instructions.layerInstructions = [layerInstructions]
+        
+        // 비디오 컴포지션 설정
+        let videoComposition = AVMutableVideoComposition()
+        videoComposition.renderSize = CGSize(
+            width: videoTrack.naturalSize.height,
+            height: videoTrack.naturalSize.width
+        )
+        videoComposition.instructions = [instructions]
+        videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
+        
+        return videoComposition
+    }
+
     /**
      임시 파일들을 정리합니다.
      
@@ -268,6 +316,29 @@ extension VideoMerger {
             }
         } catch {
             print("동영상 저장 에러\(error.localizedDescription)")
+        }
+    }
+}
+
+// VideoMerger에서 발생할 수 있는 커스텀 에러 정의
+enum VideoMergerError: Error, LocalizedError {
+    case noVideosToMerge
+    case exportFailed
+    case exportCancelled
+    case exportURLNotFound
+    case videoTrackCreationFailed
+    case audioTrackCreationFailed
+    case unknown(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .noVideosToMerge: return "합칠 동영상이 없습니다."
+        case .exportFailed: return "비디오 익스포트에 실패했습니다."
+        case .exportCancelled: return "비디오 익스포트가 중단되었습니다."
+        case .exportURLNotFound: return "익스포트된 비디오의 URL을 찾을 수 없습니다."
+        case .videoTrackCreationFailed: return "비디오 트랙 생성에 실패했습니다."
+        case .audioTrackCreationFailed: return "오디오 트랙 생성에 실패했습니다."
+        case .unknown(let error): return "알 수 없는 오류가 발생했습니다: \(error.localizedDescription)"
         }
     }
 }
