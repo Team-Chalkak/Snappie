@@ -13,16 +13,19 @@ import SwiftUI
 struct ClipEditView: View {
     @StateObject private var editViewModel: ClipEditViewModel
     @StateObject private var overlayViewModel: OverlayViewModel
-    
+    @EnvironmentObject private var coordinator: Coordinator
+
     @State private var isDragging = false
     private var isFirstShoot: Bool = true
+    let guide: Guide?
     
     @State private var navigateToCameraView = false
         
-    init(clipURL: URL, isFirstShoot: Bool) {
+    init(clipURL: URL, isFirstShoot: Bool, guide: Guide?) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL))
         _overlayViewModel = StateObject(wrappedValue: OverlayViewModel())
         self.isFirstShoot = isFirstShoot
+        self.guide = guide
     }
     
     var body: some View {
@@ -55,39 +58,37 @@ struct ClipEditView: View {
         .navigationTitle("영상 트리밍")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-                
-                if !isFirstShoot {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("내보내기") {
-                            // TODO: 내보내기 기능 구현
-                            print("내보내기 버튼 눌림")
-                        }
-                    }
-                }
-
+            if !isFirstShoot {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("다음") {
-                        if isFirstShoot {
-                            editViewModel.saveProjectData()
-                            overlayViewModel.prepareOverlay(
-                                from: editViewModel.clipURL,
-                                at: editViewModel.startPoint
-                            )
-                        } else {
-                            editViewModel.appendClipToCurrentProject()
-                            navigateToCameraView = true
+                    Button("내보내기") {
+                        // TODO: 내보내기 기능 구현
+                        print("내보내기 버튼 눌림")
+                    }
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("다음") {
+                    if isFirstShoot {
+                        editViewModel.saveProjectData()
+                        overlayViewModel.prepareOverlay(
+                            from: editViewModel.clipURL,
+                            at: editViewModel.startPoint
+                        )
+                    } else {
+                        editViewModel.appendClipToCurrentProject()
+                        if let guide = guide {
+                            coordinator.push(.boundingBox(guide: guide, isFirstShoot: false))
                         }
                     }
                 }
             }
-            .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
-                if let clipID = editViewModel.clipID {
-                    OverlayView(overlayViewModel: overlayViewModel, clipID: clipID)
-                }
+        }
+        .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
+            if let clipID = editViewModel.clipID {
+                OverlayView(overlayViewModel: overlayViewModel, clipID: clipID)
             }
-            .navigationDestination(isPresented: $navigateToCameraView) {
-                //TODO: - 가이드 있는 카메라 뷰파인더로 연결(Berry)
-            }
+        }
     }
 }
 

@@ -12,8 +12,10 @@ struct OverlayView: View {
     @ObservedObject var overlayViewModel: OverlayViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var navigateToCameraView = false
+    @EnvironmentObject private var coordinator: Coordinator
 
     let clipID: String
+    @State private var guide: Guide?
     
     var body: some View {
         VStack(alignment: .center, spacing: 20, content: {
@@ -40,8 +42,9 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let guide = overlayViewModel.makeGuide(clipID: clipID) {
-                        navigateToCameraView = true
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clipID) {
+                        guide = newGuide
+                        coordinator.push(.boundingBox(guide: newGuide, isFirstShoot: false))
                     } else {
                         print("❌ guide 생성 실패")
                     }
