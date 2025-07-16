@@ -57,7 +57,7 @@ final class OverlayViewModel: ObservableObject {
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
             bBoxPosition: PointWrapper(bBox.origin),
-            bBoxScale: bBox.width,
+            bBoxScale: bBox.width * 1.5,
             outlineImage: outlineImage,
             cameraTilt: Tilt(degreeX: 0, degreeZ: 0),
             cameraHeight: 1.0

@@ -56,7 +56,7 @@ class BoundingBoxViewModel: ObservableObject {
         let yDiff = abs(live.minY - ref.minY)
 
         let areaOk = (0.8...1.2).contains(ratio)
-        let positionOk = (xDiff < 0.05 && yDiff < 0.05)
+        let positionOk = (xDiff < 0.1 && yDiff < 0.1)
         
         return areaOk && positionOk
     }
