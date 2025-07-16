@@ -14,11 +14,18 @@ class BoundingBoxViewModel: ObservableObject {
     @Published var isAligned: Bool = false
     
     /// 기준 설정
-    func setReference() {
-        referenceBoundingBoxes = [
-            // TODO: - 실제 Guide 데이터로 변경 (Berry)
-            CGRect(x: 0.351, y: 0.206, width: 0.130, height: 0.214)
-        ]
+    func setReference(from guide: Guide) {
+        let position = guide.bBoxPosition.cgPoint
+        let scale = guide.bBoxScale
+
+        let rect = CGRect(
+            x: position.x,
+            y: position.y,
+            width: scale,
+            height: scale
+        )
+
+        referenceBoundingBoxes = [rect]
         isSettingReference = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -50,7 +57,7 @@ class BoundingBoxViewModel: ObservableObject {
 
         let areaOk = (0.8...1.2).contains(ratio)
         let positionOk = (xDiff < 0.05 && yDiff < 0.05)
-
+        
         return areaOk && positionOk
     }
 }

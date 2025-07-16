@@ -8,29 +8,35 @@
 import SwiftUI
 
 struct BoundingBoxView: View {
+    let guide: Guide?
+    
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
     var body: some View {
-        ZStack {
-            if viewModel.isAligned {
-                Color.blue
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-            }
-            
-            CameraView()
-                .onAppear {
-                    cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
-                        viewModel.liveBoundingBoxes = bboxes
-                    }
+        NavigationStack {
+            ZStack {
+                if viewModel.isAligned {
+                    Color.blue
+                        .ignoresSafeArea()
+                        .transition(.opacity)
                 }
-        }
-        .onAppear() {
-            viewModel.setReference()
-        }
-        .onChange(of: viewModel.liveBoundingBoxes) {
-            viewModel.compare()
+                
+                CameraView(viewModel: cameraViewModel)
+                    .onAppear {
+                        cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
+                            viewModel.liveBoundingBoxes = bboxes
+                        }
+                    }
+            }
+            .onAppear() {
+                if let guide = guide {
+                    viewModel.setReference(from: guide)
+                }
+            }
+            .onChange(of: viewModel.liveBoundingBoxes) {
+                viewModel.compare()
+            }
         }
     }
 }

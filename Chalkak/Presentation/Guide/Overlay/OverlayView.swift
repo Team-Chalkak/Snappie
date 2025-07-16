@@ -14,6 +14,7 @@ struct OverlayView: View {
     @State private var navigateToCameraView = false
 
     let clipID: String
+    @State private var guide: Guide?
     
     var body: some View {
         VStack(alignment: .center, spacing: 20, content: {
@@ -40,7 +41,8 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let guide = overlayViewModel.makeGuide(clipID: clipID) {
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clipID) {
+                        guide = newGuide
                         navigateToCameraView = true
                     } else {
                         print("❌ guide 생성 실패")
@@ -48,6 +50,12 @@ struct OverlayView: View {
                 }
             }
         }
+//        .navigationDestination(isPresented: $navigateToCameraView) {
+//            if let guide = guide {
+//                BoundingBoxView(guide: guide)
+//            }
+//        }
+        // TODO: - 네비게이션 문제 발생 -> path 관리 방식으로 변경 (Berry)
         .onDisappear {
             overlayViewModel.dismissOverlay()
         }
