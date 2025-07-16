@@ -77,7 +77,7 @@ struct ClipEditView: View {
                         )
                     } else {
                         editViewModel.appendClipToCurrentProject()
-                        if let guide = overlayViewModel.guide {
+                        if let guide = guide {
                             coordinator.push(.boundingBox(guide: guide, isFirstShoot: false))
                         }
                     }
