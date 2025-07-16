@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct CameraView: View {
+    let isFirstShoot: Bool
+    let guide: Guide?
+    
     @ObservedObject var viewModel: CameraViewModel
+    @EnvironmentObject private var coordinator: Coordinator
 
     @State private var clipUrl: URL?
     @State private var navigateToEdit = false
@@ -29,13 +33,7 @@ struct CameraView: View {
             /// 촬영 완료 후 저장된 파일 URL을 NotificationCenter에서 받고 navigateToEdit 트리거
             if let userInfo = output.userInfo, let url = userInfo["url"] as? URL {
                 self.clipUrl = url
-                self.navigateToEdit = true
-            }
-        }
-
-        .navigationDestination(isPresented: $navigateToEdit) {
-            if let url = clipUrl {
-                ClipEditView(clipURL: url, isFirstShoot: true)
+                coordinator.push(.clipEdit(clipURL: url, isFirstShoot: isFirstShoot, guide: guide))
             }
         }
     }

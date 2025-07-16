@@ -12,7 +12,8 @@ import UIKit
 final class OverlayViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isOverlayReady = false
-
+    @Published var guide: Guide?
+    
     let extractor = VideoFrameExtractor()
     let overlayManager = OverlayManager()
 

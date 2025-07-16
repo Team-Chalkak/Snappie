@@ -9,34 +9,37 @@ import SwiftUI
 
 struct BoundingBoxView: View {
     let guide: Guide?
+    let isFirstShoot: Bool
     
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
+            if isFirstShoot {
+                CameraView(isFirstShoot: isFirstShoot, guide: nil, viewModel: cameraViewModel)
+            } else {
                 if viewModel.isAligned {
                     Color.blue
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
                 
-                CameraView(viewModel: cameraViewModel)
+                CameraView(isFirstShoot: isFirstShoot, guide: guide, viewModel: cameraViewModel)
                     .onAppear {
                         cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
                             viewModel.liveBoundingBoxes = bboxes
                         }
                     }
             }
-            .onAppear() {
-                if let guide = guide {
-                    viewModel.setReference(from: guide)
-                }
+        }
+        .onAppear() {
+            if let guide = guide {
+                viewModel.setReference(from: guide)
             }
-            .onChange(of: viewModel.liveBoundingBoxes) {
-                viewModel.compare()
-            }
+        }
+        .onChange(of: viewModel.liveBoundingBoxes) {
+            viewModel.compare()
         }
     }
 }

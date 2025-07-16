@@ -12,6 +12,7 @@ struct OverlayView: View {
     @ObservedObject var overlayViewModel: OverlayViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var navigateToCameraView = false
+    @EnvironmentObject private var coordinator: Coordinator
 
     let clipID: String
     @State private var guide: Guide?
@@ -43,19 +44,13 @@ struct OverlayView: View {
                     /// 가이드 객체 생성
                     if let newGuide = overlayViewModel.makeGuide(clipID: clipID) {
                         guide = newGuide
-                        navigateToCameraView = true
+                        coordinator.push(.boundingBox(guide: newGuide, isFirstShoot: false))
                     } else {
                         print("❌ guide 생성 실패")
                     }
                 }
             }
         }
-//        .navigationDestination(isPresented: $navigateToCameraView) {
-//            if let guide = guide {
-//                BoundingBoxView(guide: guide)
-//            }
-//        }
-        // TODO: - 네비게이션 문제 발생 -> path 관리 방식으로 변경 (Berry)
         .onDisappear {
             overlayViewModel.dismissOverlay()
         }
