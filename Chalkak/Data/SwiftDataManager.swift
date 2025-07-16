@@ -78,6 +78,13 @@ class SwiftDataManager {
     // TODO: - 프로젝트 단의 관리 시작 시점에 구현 (Berry)
     //    func fetchAllProjects() -> [Project] {
     //    }
+    
+    /// `Project` 가져오기
+    func fetchProject(byID id: String) -> Project? {
+        let predicate = #Predicate<Project> { $0.id == id }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return try? context.fetch(descriptor).first
+    }
 
     /// `Project` 삭제
     func deleteProject(_ project: Project) {
