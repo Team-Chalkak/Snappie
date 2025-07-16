@@ -11,7 +11,10 @@ import SwiftUI
 struct OverlayView: View {
     @ObservedObject var overlayViewModel: OverlayViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var navigateToCameraView = false
 
+    let clipID: String
+    
     var body: some View {
         VStack(alignment: .center, spacing: 20, content: {
             
@@ -37,10 +40,8 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let guide = overlayViewModel.makeGuide() {
-                        print("--- GUIDE ---")
-                        print(guide)/// 생성된 Guide 확인
-                        //TODO: - guide를 다음 화면으로 전달하거나 저장(Berry)
+                    if let guide = overlayViewModel.makeGuide(clipID: clipID) {
+                        navigateToCameraView = true
                     } else {
                         print("❌ guide 생성 실패")
                     }
