@@ -69,8 +69,12 @@ class SwiftDataManager {
     // MARK: - Project
     
     /// `Project` 생성
-    func createProject(guide: Guide? = nil, clips: [Clip] = []) -> Project {
-        let newProject = Project(guide: guide, clipList: clips)
+    func createProject(
+        id: String,
+        guide: Guide? = nil,
+        clips: [Clip] = []
+    ) -> Project {
+        let newProject = Project(id: id, guide: guide, clipList: clips)
         context.insert(newProject)
         return newProject
     }
@@ -78,6 +82,13 @@ class SwiftDataManager {
     // TODO: - 프로젝트 단의 관리 시작 시점에 구현 (Berry)
     //    func fetchAllProjects() -> [Project] {
     //    }
+    
+    /// `Project` id 이용해 조회
+    func fetchProject(byID id: String) -> Project? {
+        let predicate = #Predicate<Project> { $0.id == id }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return try? context.fetch(descriptor).first
+    }
 
     /// `Project` 삭제
     func deleteProject(_ project: Project) {
@@ -88,6 +99,7 @@ class SwiftDataManager {
 
     /// `Clip` 생성
     func createClip(
+        id: String,
         videoURL: URL,
         startPoint: Double = 0,
         endPoint: Double,
@@ -95,6 +107,7 @@ class SwiftDataManager {
         heightList: [TimeStampedHeight] = []
     ) -> Clip {
         let clip = Clip(
+            id: id,
             videoURL: videoURL,
             startPoint: startPoint,
             endPoint: endPoint,
@@ -122,7 +135,7 @@ class SwiftDataManager {
     /// `Guide` 생성
     func createGuide(
         clipID: String,
-        bBoxPosition: CGPoint,
+        bBoxPosition: PointWrapper,
         bBoxScale: CGFloat,
         outlineImage: UIImage,
         cameraTilt: Tilt,

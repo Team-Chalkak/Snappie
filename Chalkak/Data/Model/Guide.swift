@@ -16,7 +16,7 @@ class Guide: Identifiable {
     @Attribute(.unique) var clipID: String
     
     /// 화면 내 바운딩 박스의 위치.
-    var bBoxPosition: CGPoint
+    var bBoxPosition: PointWrapper
     
     /// 카메라로부터의 거리 비교를 위한 바운딩 박스의 크기.
     var bBoxScale: CGFloat
@@ -49,7 +49,7 @@ class Guide: Identifiable {
     ///   - createdAt: 생성 시각 (기본값은 현재 시간).
     init(
         clipID: String,
-        bBoxPosition: CGPoint,
+        bBoxPosition: PointWrapper,
         bBoxScale: CGFloat,
         outlineImage: UIImage,
         cameraTilt: Tilt,
@@ -63,5 +63,19 @@ class Guide: Identifiable {
         self.cameraHeight = cameraHeight
         self.createdAt = createdAt
         self.outlineImageData = outlineImage.pngData() ?? Data()
+    }
+}
+
+struct PointWrapper: Codable {
+    var x: CGFloat
+    var y: CGFloat
+    
+    init(_ point: CGPoint) {
+        self.x = point.x
+        self.y = point.y
+    }
+    
+    var cgPoint: CGPoint {
+        CGPoint(x: x, y: y)
     }
 }
