@@ -25,21 +25,22 @@ struct BoundingBoxView: View {
                         .transition(.opacity)
                 }
                 
-                CameraView(isFirstShoot: isFirstShoot, guide: guide, viewModel: cameraViewModel)
-                    .onAppear {
-                        cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
-                            viewModel.liveBoundingBoxes = bboxes
+                ZStack {
+                    CameraView(isFirstShoot: isFirstShoot, guide: guide, viewModel: cameraViewModel)
+                        .onAppear {
+                            cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
+                                viewModel.liveBoundingBoxes = bboxes
+                            }
                         }
+                    
+                    if let guide = guide, let outline = guide.outlineImage {
+                        Image(uiImage: outline)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } else {
+                        Text("윤곽선 이미지 없음")
+                            .foregroundColor(.gray)
                     }
-                
-                if let guide = guide, let outline = guide.outlineImage {
-                    Image(uiImage: outline)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 296, height: 526)
-                } else {
-                    Text("윤곽선 이미지 없음")
-                        .foregroundColor(.gray)
                 }
                 
                 // TODO: - Height, Tilt 피드백 뷰 띄우기
