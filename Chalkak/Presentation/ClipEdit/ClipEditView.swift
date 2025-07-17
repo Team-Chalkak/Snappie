@@ -62,10 +62,11 @@ struct ClipEditView: View {
             if !isFirstShoot {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        // 현재까지 작업하던 영상 합쳐서 갤러리로 내보내기
                         Task {
+                            // 현재까지 작업하던 영상 합쳐서 미리보기 화면으로 보내기
                             editViewModel.appendClipToCurrentProject()
-                            await videoManager.processAndSaveVideo()
+                            let finalURL = try await videoManager.processAndSaveVideo()
+                            coordinator.push(.projectPreview(finalVideoURL: finalURL))
                         }
                     } label: {
                         if videoManager.isProcessing {

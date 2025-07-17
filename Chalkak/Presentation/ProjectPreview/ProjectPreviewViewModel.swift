@@ -8,9 +8,9 @@
 import Foundation
 import SwiftData
 
-final class ProjectPreviewViewModel {
+final class ProjectPreviewViewModel: ObservableObject {
     
-    init() {
+    init(finalVideoURL: URL) {
         
     }
 }

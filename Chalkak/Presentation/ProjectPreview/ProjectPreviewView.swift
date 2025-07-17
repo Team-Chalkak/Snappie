@@ -10,7 +10,7 @@ import SwiftUI
 struct ProjectPreviewView: View {
     @StateObject var viewModel: CameraViewModel
     
-    init() {
+    init(finalVideoURL: URL) {
         _viewModel = StateObject(wrappedValue: CameraViewModel())
     }
     
@@ -23,5 +23,5 @@ struct ProjectPreviewView: View {
 }
 
 #Preview {
-    ProjectPreviewView()
+    ProjectPreviewView(finalVideoURL: URL(fileURLWithPath: ""))
 }
