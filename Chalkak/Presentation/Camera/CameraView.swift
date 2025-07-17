@@ -26,7 +26,7 @@ struct CameraView: View {
                     Spacer()
                     Rectangle()
                         .frame(height: 2)
-                        .foregroundColor(viewModel.isLevel ? .green : .gray)
+                        .foregroundColor(viewModel.isHorizontal ? .green : .gray)
                     Spacer()
                 }
                 .padding(.horizontal, 100)

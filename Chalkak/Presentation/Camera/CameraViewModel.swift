@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Combine
 import CoreMotion
 import Foundation
 import Photos
@@ -15,7 +16,8 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
-    private var motionManager = CMMotionManager()
+    private var tiltCollector = TiltDataCollector()
+    private var cancellables = Set<AnyCancellable>()
 
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
@@ -27,14 +29,14 @@ class CameraViewModel: ObservableObject {
     @Published var isHorizontalLevelActive = false {
         didSet {
             if isHorizontalLevelActive {
-                startDeviceMotionUpdates()
+                startObservingTilt()
             } else {
-                stopDeviceMotionUpdates()
+                stopObservingTilt()
             }
         }
     }
 
-    @Published var isLevel = false
+    @Published var isHorizontal = false
 
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
@@ -129,24 +131,18 @@ class CameraViewModel: ObservableObject {
         isHorizontalLevelActive.toggle()
     }
 
-    /// 디바이스 기울기로 수평 상태 확인
-    /// roll 값이 -0.1에서 0.1 사이일 때 수평 상태로 간주
-    private func startDeviceMotionUpdates() {
-        if motionManager.isDeviceMotionAvailable {
-            // 1초에 5번 수행
-            motionManager.deviceMotionUpdateInterval = 0.2
-            motionManager.startDeviceMotionUpdates(to: .main) { [weak self] data, _ in
-                guard let data = data else { return }
-                // +3.14~ -3.14 수평에 가까울수록 값이 작아짐
-                let roll = data.attitude.roll
-
-                self?.isLevel = abs(roll) < 0.1
+    private func startObservingTilt() {
+        tiltCollector.$gravityX
+            .sink { [weak self] gravityX in
+                self?.isHorizontal = abs(gravityX) < 0.05
             }
-        }
+            .store(in: &cancellables)
     }
 
-    private func stopDeviceMotionUpdates() {
-        motionManager.stopDeviceMotionUpdates()
+    /// 수평 감지 구독 제거
+    private func stopObservingTilt() {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 
     func toggleZoomControl() {
