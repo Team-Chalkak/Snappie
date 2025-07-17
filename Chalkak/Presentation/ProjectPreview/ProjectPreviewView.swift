@@ -20,6 +20,16 @@ struct ProjectPreviewView: View {
         VStack {
             VideoPlayer(player: viewModel.player)
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("내보내기") {
+                    Task {
+                        await viewModel.exportToPhotos()
+                    }
+                }
+            }
+        }
+        .alert("영상 저장이 완료되었어요", isPresented: $viewModel.isExportFinished) { }
         .onDisappear {
             Task {
                 await viewModel.cleanupTemporaryVideoFile()
