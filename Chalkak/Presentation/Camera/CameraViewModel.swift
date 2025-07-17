@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import CoreMotion
 import Foundation
 import Photos
 import SwiftData
@@ -14,6 +15,7 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
+    private var motionManager = CMMotionManager()
 
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
@@ -22,6 +24,17 @@ class CameraViewModel: ObservableObject {
     @Published var showingCameraControl = false
     @Published var isTorch = false
     @Published var isGrid = false
+    @Published var isHorizontalLevelActive = false {
+        didSet {
+            if isHorizontalLevelActive {
+                startDeviceMotionUpdates()
+            } else {
+                stopDeviceMotionUpdates()
+            }
+        }
+    }
+
+    @Published var isLevel = false
 
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
@@ -112,12 +125,35 @@ class CameraViewModel: ObservableObject {
         isGrid.toggle()
     }
 
+    func switchHorizontalLevel() {
+        isHorizontalLevelActive.toggle()
+    }
+
+    /// 디바이스 기울기로 수평 상태 확인
+    /// roll 값이 -0.1에서 0.1 사이일 때 수평 상태로 간주
+    private func startDeviceMotionUpdates() {
+        if motionManager.isDeviceMotionAvailable {
+            // 1초에 5번 수행
+            motionManager.deviceMotionUpdateInterval = 0.2
+            motionManager.startDeviceMotionUpdates(to: .main) { [weak self] data, _ in
+                guard let data = data else { return }
+                // +3.14~ -3.14 수평에 가까울수록 값이 작아짐
+                let roll = data.attitude.roll
+
+                self?.isLevel = abs(roll) < 0.1
+            }
+        }
+    }
+
+    private func stopDeviceMotionUpdates() {
+        motionManager.stopDeviceMotionUpdates()
+    }
+
     func toggleZoomControl() {
         showingZoomControl.toggle()
     }
 
     func selectZoomScale(_ scale: CGFloat) {
-        // 안전성 검사
         guard !scale.isNaN, !scale.isInfinite else { return }
 
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
@@ -136,7 +172,6 @@ class CameraViewModel: ObservableObject {
     }
 
     private func executeVideoRecording() {
-        print("녹화시작")
         model.startRecording()
         isRecording = true
         startRecordingTimer()
@@ -183,7 +218,7 @@ class CameraViewModel: ObservableObject {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
     }
-    
+
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
     }
