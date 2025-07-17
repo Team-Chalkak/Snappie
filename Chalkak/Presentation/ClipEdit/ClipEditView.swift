@@ -14,7 +14,7 @@ struct ClipEditView: View {
     @StateObject private var editViewModel: ClipEditViewModel
     @StateObject private var overlayViewModel: OverlayViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    @StateObject private var videoManager = VideoManager()
+    
 
     @State private var isDragging = false
     private var isFirstShoot: Bool = true
@@ -65,17 +65,17 @@ struct ClipEditView: View {
                         Task {
                             // 현재까지 작업하던 영상 합쳐서 미리보기 화면으로 보내기
                             editViewModel.appendClipToCurrentProject()
-                            let finalURL = try await videoManager.processAndSaveVideo()
+                            let finalURL = try await editViewModel.mergeVideo()
                             coordinator.push(.projectPreview(finalVideoURL: finalURL))
                         }
                     } label: {
-                        if videoManager.isProcessing {
+                        if editViewModel.videoManager.isProcessing {
                             ProgressView()
                         } else {
-                            Text("내보내기")
+                            Text("완료하기")
                         }
                     }
-                    .disabled(videoManager.isProcessing)
+                    .disabled(editViewModel.videoManager.isProcessing)
                 }
             }
 

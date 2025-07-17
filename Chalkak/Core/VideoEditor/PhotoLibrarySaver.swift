@@ -12,7 +12,7 @@ import Photos
 struct PhotoLibrarySaver {
     /// 비디오를 사진 라이브러리에 저장합니다.
     @MainActor
-    private func saveVideoToLibrary(videoURL: URL) async {
+    func saveVideoToLibrary(videoURL: URL) async {
         let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
         
         switch authorizationStatus {
