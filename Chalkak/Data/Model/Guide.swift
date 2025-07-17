@@ -76,6 +76,6 @@ struct PointWrapper: Codable {
     }
     
     var cgPoint: CGPoint {
-        CGPoint(x: x, y: y)
+        CGPoint(x: x, y: y * 0.9)
     }
 }
