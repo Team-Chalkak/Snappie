@@ -31,12 +31,11 @@ struct BoundingBoxView: View {
                                 viewModel.liveBoundingBoxes = bboxes
                             }
                         }
-
+                    
                     if let guide = guide, let outline = guide.outlineImage {
                         Image(uiImage: outline)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 296, height: 526)
                             .allowsHitTesting(false)
                     } else {
                         Text("윤곽선 이미지 없음")
