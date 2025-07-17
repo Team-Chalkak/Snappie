@@ -10,7 +10,7 @@ import SwiftUI
 struct BoundingBoxView: View {
     let guide: Guide?
     let isFirstShoot: Bool
-    
+
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
@@ -24,7 +24,6 @@ struct BoundingBoxView: View {
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
-                
                 ZStack {
                     CameraView(isFirstShoot: isFirstShoot, guide: guide, viewModel: cameraViewModel)
                         .onAppear {
@@ -32,21 +31,24 @@ struct BoundingBoxView: View {
                                 viewModel.liveBoundingBoxes = bboxes
                             }
                         }
-                    
+
                     if let guide = guide, let outline = guide.outlineImage {
                         Image(uiImage: outline)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .frame(width: 296, height: 526)
+                            .allowsHitTesting(false)
                     } else {
                         Text("윤곽선 이미지 없음")
                             .foregroundColor(.gray)
+                            .allowsHitTesting(false)
                     }
+
+                    // TODO: - Height, Tilt 피드백 뷰 띄우기
                 }
-                
-                // TODO: - Height, Tilt 피드백 뷰 띄우기
             }
         }
-        .onAppear() {
+        .onAppear {
             if let guide = guide {
                 viewModel.setReference(from: guide)
             }
