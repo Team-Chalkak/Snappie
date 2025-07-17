@@ -162,6 +162,12 @@ class CameraManager: NSObject, ObservableObject {
                 print("카메라 전환 중 오류: \(error)")
             }
         }
+        
+        if let connection = movieOutput.connection(with: .video) {
+            if connection.isVideoMirroringSupported {
+                connection.isVideoMirrored = position == .front
+            }
+        }
 
         session.commitConfiguration()
     }
