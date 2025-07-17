@@ -14,6 +14,7 @@ struct ClipEditView: View {
     @StateObject private var editViewModel: ClipEditViewModel
     @StateObject private var overlayViewModel: OverlayViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var videoManager = VideoManager()
 
     @State private var isDragging = false
     private var isFirstShoot: Bool = true
@@ -60,10 +61,20 @@ struct ClipEditView: View {
         .toolbar {
             if !isFirstShoot {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("내보내기") {
-                        // TODO: 내보내기 기능 구현
-                        print("내보내기 버튼 눌림")
+                    Button {
+                        // 현재까지 작업하던 영상 합쳐서 갤러리로 내보내기
+                        Task {
+                            editViewModel.appendClipToCurrentProject()
+                            await videoManager.processAndSaveVideo()
+                        }
+                    } label: {
+                        if videoManager.isProcessing {
+                            ProgressView()
+                        } else {
+                            Text("내보내기")
+                        }
                     }
+                    .disabled(videoManager.isProcessing)
                 }
             }
 
