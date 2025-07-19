@@ -138,7 +138,7 @@ struct CameraPreviewView: UIViewRepresentable {
         view.videoPreviewLayer.videoGravity = .resizeAspect
         view.videoPreviewLayer.cornerRadius = 0
         view.videoPreviewLayer.connection?.videoRotationAngle = 90
-        view.handleFocus = tabToFocus // 콜백 설정
+        view.handleFocus = tabToFocus
 
         return view
     }
