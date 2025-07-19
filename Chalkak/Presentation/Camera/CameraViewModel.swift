@@ -38,7 +38,11 @@ class CameraViewModel: ObservableObject {
 
     @Published var isHorizontal = false
 
-    @Published var cameraPostion: AVCaptureDevice.Position = .back
+    @Published var cameraPostion: AVCaptureDevice.Position = .back {
+        didSet {
+            isUsingFrontCamera = (cameraPostion == .front)
+        }
+    }
     @Published var isRecording = false
     @Published var recordingTime = 0
 
@@ -46,6 +50,8 @@ class CameraViewModel: ObservableObject {
 
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
+    
+    var isUsingFrontCamera: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }

@@ -44,7 +44,7 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let newGuide = overlayViewModel.makeGuide(clipID: clipID) {
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clipID, isFrontCamera: isFrontCamera) {
                         guide = newGuide
                         coordinator.push(.boundingBox(guide: newGuide, isFirstShoot: false))
                     } else {
