@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Combine
 import Foundation
 import Photos
 import SwiftUI
@@ -22,17 +23,20 @@ class CameraManager: NSObject, ObservableObject {
 
     private let boundingBoxManager = BoundingBoxManager()
 
+    /// 비디오 저장 이벤트발생시 clipEditView로 URL전달
+    /// 상태를 별도로 저장할 필요가 없어서 @Published 대신 PassthroughSubject 활용
+    let savedVideoInfo = PassthroughSubject<URL, Never>()
+
     var onMultiBoundingBoxUpdate: (([CGRect]) -> Void)? {
         didSet {
             boundingBoxManager.onMultiBoundingBoxUpdate = onMultiBoundingBoxUpdate
         }
     }
-    
+
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
         session.stopRunning()
     }
 
@@ -65,12 +69,12 @@ class CameraManager: NSObject, ObservableObject {
                 if session.canAddOutput(movieOutput) {
                     session.addOutput(movieOutput)
                 }
-                
+
                 // 비디오 데이터 출력 추가 및 델리게이트 설정
                 if session.canAddOutput(videoOutput) {
                     session.addOutput(videoOutput)
                     videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
-                    videoOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA]
+                    videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
                 }
 
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -128,6 +132,11 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    /// 비디오 저장 알림메소드
+    func videoSaved(url: URL) {
+        savedVideoInfo.send(url)
+    }
+
     /// 전면/후면 카메라 전환
     func switchCamera(to position: AVCaptureDevice.Position) {
         session.beginConfiguration()
@@ -153,7 +162,7 @@ class CameraManager: NSObject, ObservableObject {
                 print("카메라 전환 중 오류: \(error)")
             }
         }
-        
+
         if let connection = movieOutput.connection(with: .video) {
             if connection.isVideoMirroringSupported {
                 connection.isVideoMirrored = position == .front
@@ -232,6 +241,6 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             print("녹화에러 \(error)")
             return
         }
-        NotificationCenter.default.post(name: .init("VideoSaved"), object: nil, userInfo: ["url": outputFileURL])
+        videoSaved(url: outputFileURL)
     }
 }
