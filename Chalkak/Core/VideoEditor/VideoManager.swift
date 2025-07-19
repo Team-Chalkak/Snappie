@@ -71,7 +71,7 @@ class VideoManager: ObservableObject {
         
         do {
             // 2. 비디오 병합
-            let finalVideoURL = try await VideoMerger().mergeVideos(from: clipList)
+            let finalVideoURL = try await videoMerger.mergeVideos(from: clipList)
             
             return finalVideoURL
 
