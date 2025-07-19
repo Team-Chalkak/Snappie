@@ -21,6 +21,10 @@ class Project: Identifiable {
     /// 프로젝트를 구성하는 클립 목록.
     /// 프로젝트가 삭제되면 함께 삭제됩니다.
     @Relationship(deleteRule: .cascade) var clipList: [Clip]
+    
+    /// 프로젝트에서 사용된 카메라 설정 정보.
+    /// 프로젝트가 삭제되면 함께 삭제됩니다.
+    @Relationship(deleteRule: .cascade) var cameraSetting: CameraSetting?
 
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
@@ -30,10 +34,12 @@ class Project: Identifiable {
     init(
         id: String = UUID().uuidString,
         guide: Guide? = nil,
-        clipList: [Clip] = []
+        clipList: [Clip] = [],
+        cameraSetting: CameraSetting? = nil
     ) {
         self.id = id
         self.guide = guide
         self.clipList = clipList
+        self.cameraSetting = cameraSetting
     }
 }
