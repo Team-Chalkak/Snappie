@@ -31,8 +31,12 @@ struct ProjectPreviewView: View {
         }
         .alert("영상 저장이 완료되었어요", isPresented: $viewModel.isExportFinished) { }
         .onDisappear {
-            Task {
+            // 뷰 해제 및 앱 백그라운드 상황에서도 삭제 작업 보장
+            let taskID = UIApplication.shared.beginBackgroundTask(withName: "cleanTempVideo")
+            
+            Task.detached {
                 await viewModel.cleanupTemporaryVideoFile()
+                UIApplication.shared.endBackgroundTask(taskID)
             }
         }
     }
