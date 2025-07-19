@@ -75,6 +75,9 @@ class CameraManager: NSObject, ObservableObject {
 
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
+                    DispatchQueue.main.async {
+                        self?.setZoomScale(1.0)
+                    }
                 }
                 
                 // 포커스 제스처 알림 구독
