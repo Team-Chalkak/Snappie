@@ -76,14 +76,6 @@ class CameraManager: NSObject, ObservableObject {
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
                 }
-                
-                // 포커스 제스처 알림 구독
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(focusAtPoint),
-                    name: .init("FocusAtPoint"),
-                    object: nil
-                )
             } catch {
                 print("카메라 설정 오류: \(error)")
             }
@@ -113,8 +105,7 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     /// 터치한 위치에대한 초점조정
-    @objc func focusAtPoint(_ notification: Notification) {
-        guard let point = notification.userInfo?["point"] as? CGPoint else { return }
+    func focusAtPoint(_ point: CGPoint) {
         guard let device = videoDeviceInput?.device else { return }
 
         do {

@@ -118,6 +118,11 @@ class CameraViewModel: ObservableObject {
         }
     }
 
+    func focusAtPoint(_ point: CGPoint) {
+        print(point)
+        model.focusAtPoint(point)
+    }
+
     func switchTorch() {
         isTorch.toggle()
         model.setTorchMode(isTorch)
