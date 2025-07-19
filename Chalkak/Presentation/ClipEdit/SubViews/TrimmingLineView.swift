@@ -63,11 +63,11 @@ struct TrimmingLineView: View {
                 draggableHandleView(positionX: startX, totalWidth: totalWidth, isStart: true)
                 draggableHandleView(positionX: endX, totalWidth: totalWidth, isStart: false)
 
-                // 5. 미리보기 강조 박스
-                RoundedRectangle(cornerRadius: Layout.previewCornerRadius)
-                    .fill(Color.white.opacity(0.3))
-                    .frame(width: Layout.previewBoxWidth, height: Layout.previewBoxHeight)
-                    .position(x: startX + Layout.previewOffsetX, y: Layout.timelineY)
+                // 5. 영상 첫번째 프레임 강조 박스
+                RoundedRectangle(cornerRadius: Layout.frameBoxCornerRadius)
+                    .stroke(Layout.frameBoxStrokeColor, lineWidth: 2)
+                    .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
+                    .position(x: startX + Layout.frameBoxOffsetX, y: Layout.timelineY)
             }
         }
         .frame(height: Layout.timelineHeight)
@@ -137,10 +137,11 @@ private extension TrimmingLineView {
         static let handleWidth: CGFloat = 10
         static let handleHeight: CGFloat = 60
 
-        /// 영상첫번째 프레임 표시
-        static let previewCornerRadius: CGFloat = 6
-        static let previewBoxWidth: CGFloat = 34
-        static let previewBoxHeight: CGFloat = 57
-        static let previewOffsetX: CGFloat = 20
+        /// 영상 첫번째 프레임 표시
+        static let frameBoxCornerRadius: CGFloat = 6
+        static let frameBoxWidth: CGFloat = 34
+        static let frameBoxHeight: CGFloat = 57
+        static let frameBoxOffsetX: CGFloat = 21
+        static let frameBoxStrokeColor: Color = .white
     }
 }

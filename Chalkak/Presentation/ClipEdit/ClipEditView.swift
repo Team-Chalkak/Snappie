@@ -12,8 +12,8 @@ import SwiftUI
 /**
  ClipEditView: 영상 클립을 트리밍하는 사용자 인터페이스
 
- 사용자가 영상에서 사용할 구간을 직접 선택(트리밍)할 수 있도록 도와주는 메인 View입니다.
- 영상 재생, 썸네일 기반 트리밍, 클립 저장, 다음 단계(윤곽선 생성 또는 후속 클립 연결)로 이동하는 역할을 합니다.
+ 사용자가 영상에서 사용할 구간을 직접 선택(트리밍)할 수 있도록 도와주는 메인 View
+ 영상 재생, 썸네일 기반 트리밍, 클립 저장, 다음 단계(윤곽선 생성 또는 후속 클립 연결)로 이동하는 역할
 
  ## 데이터 흐름
  ⭐️ isFirstShoot 값에 따른 분기 처리
@@ -118,7 +118,7 @@ struct ClipEditView: View {
         }
         .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
             if let clipID = editViewModel.clipID {
-                OverlayView(overlayViewModel: overlayViewModel, clipID: clipID)
+                OverlayView(clipID: clipID, overlayViewModel: overlayViewModel)
             }
         }
     }
