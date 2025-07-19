@@ -29,9 +29,11 @@ final class ClipEditViewModel: ObservableObject {
     @Published var clipID: String? = nil
 
     var clipURL: URL
+    var cameraSetting: CameraSetting
 
-    init(clipURL: URL) {
+    init(clipURL: URL, cameraSetting: CameraSetting) {
         self.clipURL = clipURL
+        self.cameraSetting = cameraSetting
         setupPlayer()
     }
 
@@ -172,8 +174,9 @@ final class ClipEditViewModel: ObservableObject {
     @MainActor
     func saveProjectData() {
         let clip = saveClipData()
+        let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
-        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip])
+        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip], cameraSetting: cameraSetting)
         
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
@@ -190,6 +193,16 @@ final class ClipEditViewModel: ObservableObject {
             endPoint: endPoint,
             tiltList: [],
             heightList: []
+        )
+    }
+    
+    @MainActor
+    func saveCameraSetting() -> CameraSetting {
+        return SwiftDataManager.shared.createCameraSetting(
+            zoomScale: cameraSetting.zoomScale,
+            isGridEnabled: cameraSetting.isGridEnabled,
+            isFrontPosition: cameraSetting.isFrontPosition,
+            timerSecond: cameraSetting.timerSecond
         )
     }
     

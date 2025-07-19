@@ -19,14 +19,16 @@ struct ClipEditView: View {
     @State private var isDragging = false
     private var isFirstShoot: Bool = true
     let guide: Guide?
+    let cameraSetting: CameraSetting
     
     @State private var navigateToCameraView = false
         
-    init(clipURL: URL, isFirstShoot: Bool, guide: Guide?) {
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL))
+    init(clipURL: URL, isFirstShoot: Bool, guide: Guide?, cameraSetting: CameraSetting) {
+        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL, cameraSetting: cameraSetting))
         _overlayViewModel = StateObject(wrappedValue: OverlayViewModel())
         self.isFirstShoot = isFirstShoot
         self.guide = guide
+        self.cameraSetting = cameraSetting
     }
     
     var body: some View {
@@ -97,7 +99,7 @@ struct ClipEditView: View {
         }
         .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
             if let clipID = editViewModel.clipID {
-                OverlayView(overlayViewModel: overlayViewModel, clipID: clipID)
+                OverlayView(overlayViewModel: overlayViewModel, clipID: clipID, isFrontCamera: cameraSetting.isFrontPosition)
             }
         }
     }

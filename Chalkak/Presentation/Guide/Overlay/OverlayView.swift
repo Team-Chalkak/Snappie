@@ -15,6 +15,8 @@ struct OverlayView: View {
     @EnvironmentObject private var coordinator: Coordinator
 
     let clipID: String
+    let isFrontCamera: Bool
+    
     @State private var guide: Guide?
     
     var body: some View {
