@@ -10,15 +10,33 @@ import Foundation
 import SwiftData
 import UIKit
 
-/// 클립 편집 뷰모델
+/**
+ ClipEditViewModel: 클립 편집 뷰모델
+
+ 영상 클립의 재생, 트리밍 범위 설정, 썸네일 생성, 프리뷰 이미지 갱신, 클립 및 프로젝트 저장 등의 기능을 담당하는 ViewModel
+
+ ## 주요 기능
+ - AVPlayer 및 AVAssetImageGenerator 초기화
+ - 트리밍 타임라인 썸네일 이미지 생성
+ - 트리밍 시작/종료 지점 관리 및 프리뷰 이미지 갱신
+ - Clip 모델 저장 및 Project 생성 또는 클립 추가
+
+ ## 데이터 흐름
+ 1. ClipEditView 진입 시, clipURL을 받아 초기화
+    └ asset 구성 및 썸네일, duration, player 설정
+
+ 2. TrimmingLineView에서 핸들 드래그
+    └ updateStart / updateEnd(좌우 트리밍 핸들 위치) 호출 → previewImage 변경
+
+ 3. "다음" 버튼 클릭
+    ├─ isFirstShoot == true: saveProjectData() 호출 → Clip 및 Project 생성
+    └─ isFirstShoot == false: appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
+ */
 final class ClipEditViewModel: ObservableObject {
-    private var asset: AVAsset?
-    private var imageGenerator: AVAssetImageGenerator?
-    private var timeObserverToken: Any?
-    private var debounceTimer: Timer?
+    // 1. Input
+    var clipURL: URL
 
-    private let thumbnailCount = 10
-
+    // 2. Published properties
     @Published var player: AVPlayer?
     @Published var startPoint: Double = 0
     @Published var endPoint: Double = 0
@@ -28,8 +46,16 @@ final class ClipEditViewModel: ObservableObject {
     @Published var previewImage: UIImage?
     @Published var clipID: String? = nil
 
-    var clipURL: URL
+    // 3. Private 저장 프로퍼티
+    private var asset: AVAsset?
+    private var imageGenerator: AVAssetImageGenerator?
+    private var timeObserverToken: Any?
+    private var debounceTimer: Timer?
+    
+    // 4. 기타 상수
+    private let thumbnailCount = 10
 
+    // 5. init & deinit
     init(clipURL: URL) {
         self.clipURL = clipURL
         setupPlayer()
@@ -42,6 +68,7 @@ final class ClipEditViewModel: ObservableObject {
         debounceTimer?.invalidate()
     }
 
+    /// ViewModel을 초기화할 때 영상 URL을 기반으로 AVAsset과 player를 구성, 썸네일 및 preview 이미지를 준비
     private func setupPlayer() {
         let asset = AVAsset(url: clipURL)
         self.asset = asset
@@ -73,6 +100,7 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
 
+    /// 영상 전체 길이와 썸네일 간격을 계산하여, 일정 시간 간격으로 트리밍 타임라인 썸네일 이미지 생성
     @MainActor
     private func generateThumbnails(for asset: AVAsset) async {
         thumbnails = []
@@ -92,6 +120,7 @@ final class ClipEditViewModel: ObservableObject {
         self.thumbnails = images
     }
 
+    /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
     @MainActor
     func updatePreviewImage(at time: Double) async {
         let time = CMTime(seconds: time, preferredTimescale: 600)
@@ -104,46 +133,53 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
 
+    
+    /// 트리밍 시작 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateStart(_ value: Double) {
         startPoint = value
         Task { await updatePreviewImage(at: value) }
     }
 
+    /// 트리밍 종료 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateEnd(_ value: Double) {
         endPoint = value
         Task { await updatePreviewImage(at: value) }
     }
 
+    /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
         player?.seek(to: CMTime(seconds: time, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
+    /// 재생/일시정지 상태 토글 - 현재 상태에 따라 playPreview() 또는 pause를 수행
     func togglePlayback() {
         isPlaying.toggle()
         isPlaying ? playPreview() : player?.pause()
     }
     
-    /// 트리밍 라인(타임라인)에서 각 프레임 썸네일 너비
+    /// 트리밍 라인에서 사용할 썸네일의 너비를 계산
     func thumbnailWidth(for totalWidth: CGFloat) -> CGFloat {
         guard thumbnails.count > 0 else { return 0 }
         return totalWidth / CGFloat(thumbnails.count)
     }
 
-    /// 왼쪽 트리밍 핸들 위치
+    /// 왼쪽 트리밍 핸들 위치 - 트리밍 시작 핸들의 X 위치를 계산
     func startX(for totalWidth: CGFloat) -> CGFloat {
         return CGFloat(startPoint / duration) * totalWidth
     }
 
-    /// 오른쪽 트리밍 핸들 위치
+    /// 오른쪽 트리밍 핸들 위치 - 트리밍 종료 핸들의 X 위치를 계산
     func endX(for totalWidth: CGFloat) -> CGFloat {
         return CGFloat(endPoint / duration) * totalWidth
     }
 
-    /// 트리밍 핸들 사이 간격
+    /// 두 핸들 사이의 간격(트리밍 너비)을 계산
     func trimmingWidth(for totalWidth: CGFloat) -> CGFloat {
         return endX(for: totalWidth) - startX(for: totalWidth)
     }
     
+    /// 트리밍 시작 시점부터 재생을 시작하고, 종료 시점에 도달하면 자동으로 정지
+    /// 시간 업데이트를 감지하기 위해 AVPlayer에 timeObserver를 등록
     func playPreview() {
         if let token = timeObserverToken {
             player?.removeTimeObserver(token)
@@ -179,6 +215,8 @@ final class ClipEditViewModel: ObservableObject {
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
+    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성하여 반환
+    /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip {
         let clipID = UUID().uuidString
@@ -193,6 +231,8 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
+    /// 기존 Project에 새로운 Clip을 추가
+    /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
         let clip = saveClipData()
