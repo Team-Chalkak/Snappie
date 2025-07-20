@@ -72,11 +72,17 @@ class SwiftDataManager {
     func createProject(
         id: String,
         guide: Guide? = nil,
-        clips: [Clip] = []
+        clips: [Clip] = [],
+        cameraSetting: CameraSetting? = nil
     ) -> Project {
-        let newProject = Project(id: id, guide: guide, clipList: clips)
-        context.insert(newProject)
-        return newProject
+        let project = Project(
+            id: id,
+            guide: guide,
+            clipList: clips,
+            cameraSetting: cameraSetting
+        )
+        context.insert(project)
+        return project
     }
 
     // TODO: - 프로젝트 단의 관리 시작 시점에 구현 (Berry)
@@ -163,6 +169,25 @@ class SwiftDataManager {
     /// `Guide` 삭제하기
     func deleteGuide(_ guide: Guide) {
         context.delete(guide)
+    }
+    
+    // MARK: - CameraSetting
+    
+    /// `CameraSetting` 생성
+    func createCameraSetting(
+        zoomScale: CGFloat,
+        isGridEnabled: Bool,
+        isFrontPosition: Bool,
+        timerSecond: Int
+    ) -> CameraSetting {
+        let setting = CameraSetting(
+            zoomScale: zoomScale,
+            isGridEnabled: isGridEnabled,
+            isFrontPosition: isFrontPosition,
+            timerSecond: timerSecond
+        )
+        context.insert(setting)
+        return setting
     }
 
     // MARK: - Save & Rollback

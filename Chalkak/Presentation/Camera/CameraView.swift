@@ -41,8 +41,21 @@ struct CameraView: View {
             }
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
-            self.clipUrl = url
-            coordinator.push(.clipEdit(clipURL: url, isFirstShoot: isFirstShoot, guide: guide))
+            if let userInfo = output.userInfo, let url = userInfo["url"] as? URL {
+                self.clipUrl = url
+                let cameraSetting = CameraSetting(
+                    zoomScale: viewModel.zoomScale,
+                    isGridEnabled: viewModel.isGrid,
+                    isFrontPosition: viewModel.isUsingFrontCamera,
+                    timerSecond: viewModel.selectedTimerDuration.rawValue
+                )
+                coordinator.push(.clipEdit(
+                    clipURL: url,
+                    isFirstShoot: isFirstShoot,
+                    guide: guide,
+                    cameraSetting: cameraSetting)
+                )
+            }
         }
     }
 }

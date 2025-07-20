@@ -35,6 +35,7 @@ import UIKit
 final class ClipEditViewModel: ObservableObject {
     // 1. Input
     var clipURL: URL
+    var cameraSetting: CameraSetting
 
     // 2. Published properties
     @Published var player: AVPlayer?
@@ -58,8 +59,9 @@ final class ClipEditViewModel: ObservableObject {
     private let thumbnailCount = 10
 
     // 5. init & deinit
-    init(clipURL: URL) {
+    init(clipURL: URL, cameraSetting: CameraSetting) {
         self.clipURL = clipURL
+        self.cameraSetting = cameraSetting
         setupPlayer()
     }
 
@@ -210,8 +212,9 @@ final class ClipEditViewModel: ObservableObject {
     @MainActor
     func saveProjectData() {
         let clip = saveClipData()
+        let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
-        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip])
+        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip], cameraSetting: cameraSetting)
         
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
@@ -235,6 +238,16 @@ final class ClipEditViewModel: ObservableObject {
     
     /// 기존 Project에 새로운 Clip을 추가
     /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
+    @MainActor
+    func saveCameraSetting() -> CameraSetting {
+        return SwiftDataManager.shared.createCameraSetting(
+            zoomScale: cameraSetting.zoomScale,
+            isGridEnabled: cameraSetting.isGridEnabled,
+            isFrontPosition: cameraSetting.isFrontPosition,
+            timerSecond: cameraSetting.timerSecond
+        )
+    }
+    
     @MainActor
     func appendClipToCurrentProject() {
         let clip = saveClipData()

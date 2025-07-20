@@ -37,6 +37,7 @@ struct BoundingBoxView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .allowsHitTesting(false)
+                            .scaleEffect(x: cameraViewModel.isUsingFrontCamera ? -1 : 1, y: 1)
                     } else {
                         Text("윤곽선 이미지 없음")
                             .foregroundColor(.gray)
