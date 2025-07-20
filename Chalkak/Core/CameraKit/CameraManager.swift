@@ -91,6 +91,9 @@ class CameraManager: NSObject, ObservableObject {
 
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
+                    DispatchQueue.main.async {
+                        self?.setZoomScale(1.0)
+                    }
                 }
             } catch {
                 print("카메라 설정 오류: \(error)")
