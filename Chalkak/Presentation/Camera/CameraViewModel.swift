@@ -16,8 +16,8 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
-    private var tiltCollector = TiltDataCollector()
-    private var cancellables = Set<AnyCancellable>()
+    private var horizontalLevelCancellable: AnyCancellable?
+
 
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
@@ -64,12 +64,19 @@ class CameraViewModel: ObservableObject {
 
     private var timer: Timer?
     private var timerCountdownTimer: Timer?
+    private var dataCollectionTimer: Timer?
+    /// 녹화 시작 시간(실제 시간 기록용)
+    private var recordingStartDate: Date?
+    private var timeStampedTiltList: [TimeStampedTilt] = []
+    @Published var tiltCollector = TiltDataCollector()
+    
     var formattedTime: String {
         let minutes = recordingTime / 60
         let seconds = recordingTime % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
 
+    // MARK: - init
     init() {
         model = CameraManager()
         session = model.session
@@ -132,17 +139,16 @@ class CameraViewModel: ObservableObject {
     }
 
     private func startObservingTilt() {
-        tiltCollector.$gravityX
+        horizontalLevelCancellable = tiltCollector.$gravityX
             .sink { [weak self] gravityX in
                 self?.isHorizontal = abs(gravityX) < 0.05
             }
-            .store(in: &cancellables)
     }
 
     /// 수평 감지 구독 제거
     private func stopObservingTilt() {
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
+        horizontalLevelCancellable?.cancel()
+        horizontalLevelCancellable = nil
     }
 
     func toggleZoomControl() {
@@ -170,7 +176,15 @@ class CameraViewModel: ObservableObject {
     private func executeVideoRecording() {
         model.startRecording()
         isRecording = true
+        
+        // 녹화 시작 시간 기록
+        recordingStartDate = Date()
+        // 틸트 데이터 초기화
+        timeStampedTiltList.removeAll()
+        
+        // 타이머 시작
         startRecordingTimer()
+        startDataCollectionTimer()
     }
 
     func stopVideoRecording() {
@@ -183,6 +197,7 @@ class CameraViewModel: ObservableObject {
         model.stopRecording()
         isRecording = false
         stopRecordingTimer()
+        stopDataCollectionTimer()
         recordingTime = 0
     }
 
@@ -198,9 +213,31 @@ class CameraViewModel: ObservableObject {
             self?.recordingTime += 1
         }
     }
+    
+    /// Tilt 데이터 수집용 1/3초 타이머
+    private func startDataCollectionTimer() {
+        dataCollectionTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 3.0, repeats: true, block: { [weak self] _ in
+            guard let self = self else { return }
+            
+            if self.isRecording, let startDate = recordingStartDate {
+                // 경과 시간 계산
+                let recordingTime = Date().timeIntervalSince(startDate)
+                
+                // 기울기 값 가져오기
+                let currentTilt = Tilt(degreeX: tiltCollector.gravityX, degreeZ: tiltCollector.gravityZ)
+                
+                timeStampedTiltList.append(.init(time: recordingTime, tilt: currentTilt))
+            }
+        })
+    }
 
     private func stopRecordingTimer() {
         timer?.invalidate()
+        timer = nil
+    }
+    
+    private func stopDataCollectionTimer() {
+        dataCollectionTimer?.invalidate()
         timer = nil
     }
 
