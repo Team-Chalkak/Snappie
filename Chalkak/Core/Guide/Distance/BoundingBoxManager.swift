@@ -30,7 +30,7 @@ class BoundingBoxManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate
             }
         }
 
-        request.upperBodyOnly = false
+        request.upperBodyOnly = true
 
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer,
                                             orientation: .right,

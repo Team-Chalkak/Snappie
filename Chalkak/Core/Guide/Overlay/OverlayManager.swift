@@ -23,7 +23,7 @@ import Vision
 
  ## 사용 위치
  - OverlayViewModel 및 VideoFrameExtractor와 연동됨
- - 사용 예시: `overlayManager.process(image: ciImage)`
+ - 사용 예시: `overlayManager.process(pixelBuffer: pixelBuffer) { completion() }`
  */
 class OverlayManager: ObservableObject {
     // 1. Published properties
@@ -40,12 +40,12 @@ class OverlayManager: ObservableObject {
     /// 영상에서 사람의 마스킹하여 추출 -> outlineImage로 변환
     /// - Parameters:
     ///   - image: 입력 원본 CIImage (주로 영상 프레임)
-    func process(image: CIImage, completion: @escaping () -> Void) {
+    func process(pixelBuffer: CVPixelBuffer, completion: @escaping () -> Void) {
         // 1. Vision 요청 준비
         let rectangleRequest = VNDetectHumanRectanglesRequest()
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
-
-        let handler = VNImageRequestHandler(ciImage: image, options: [:])
+        rectangleRequest.upperBodyOnly = true
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: [:])
 
         DispatchQueue.global().async {
             do {

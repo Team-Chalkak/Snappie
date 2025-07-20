@@ -48,9 +48,6 @@ class VideoFrameExtractor: ObservableObject {
                 DispatchQueue.main.async {
                     self.extractedImage = uiImage
                     self.extractedCIImage = ciImage
-                    
-                    /// ✅ 오버레이 매니저로 전달
-                    self.overlayManager?.process(image: ciImage, completion: completion)
                 }
             } else {
                 print("❌ 프레임 추출 실패:", error?.localizedDescription ?? "알 수 없는 에러")
@@ -59,6 +56,19 @@ class VideoFrameExtractor: ObservableObject {
                 }
             }
         }
+        
+        Task {
+            do {
+                let pixelBuffer = try await PixelBufferExtractor.extractPixelBuffer(from: url, at: targetTime)
+                    await MainActor.run {
+                        self.overlayManager?.process(pixelBuffer: pixelBuffer) {
+                            completion()
+                        }
+                    }
+            } catch {
+                print("pixelBuffer 추출 실패")
+                await MainActor.run { completion() }
+            }
+        }
     }
 }
-
