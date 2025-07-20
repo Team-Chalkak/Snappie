@@ -8,12 +8,28 @@
 import AVFoundation
 import UIKit
 
-/// 영상에서 첫번째 프레임 추출
+/**
+ VideoFrameExtractor: 영상에서 프레임 이미지 추출
+
+ AVAssetImageGenerator를 사용하여 특정 시간의 CGImage를 추출하고,
+ CIImage와 UIImage 형태로 반환
+
+ ## 주요 기능
+ - 프레임 추출 (시간 지정 가능)
+ - CIImage → OverlayManager에 전달하여 마스킹 및 윤곽선 처리
+ - 추출 결과를 @Published 프로퍼티로 제공
+
+ ## 사용 위치
+ - OverlayViewModel 내부에서 사용
+ - 호출 예시: `extractFrame(from: url, at: 1.0)`
+ */
 class VideoFrameExtractor: ObservableObject {
+    // 1. Published Property
     @Published var extractedImage: UIImage?
     @Published var extractedCIImage: CIImage?
     
-    var overlayManager: OverlayManager?  /// 연결
+    // 2. Dependencies
+    var overlayManager: OverlayManager?
 
     func extractFrame(from url: URL, at time: Double, completion: @escaping () -> Void) {
         let asset = AVURLAsset(url: url)

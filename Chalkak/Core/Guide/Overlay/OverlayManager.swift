@@ -10,22 +10,38 @@ import CoreImage.CIFilterBuiltins
 import UIKit
 import Vision
 
-/// 사람 인식 및 실루엣 오버레이 추출
+/**
+ OverlayManager: 영상에서 사람 윤곽선 오버레이를 추출하는 유틸리티
+
+ Vision 프레임워크를 활용하여 사람의 바운딩 박스를 탐지하고, 전경 마스크 기반으로 윤곽선을 추출
+ 최종적으로 윤곽선 UIImage를 만들어 OverlayView에 전달
+
+ ## 주요 기능
+ - Vision 기반 바운딩 박스, 전경 마스크 요청 처리
+ - 마스킹된 CIImage → 윤곽선 그리기(CGContext)
+ - outlineImage, maskedCIImage, boundingBox 등 제공
+
+ ## 사용 위치
+ - OverlayViewModel 및 VideoFrameExtractor와 연동됨
+ - 사용 예시: `overlayManager.process(image: ciImage)`
+ */
 class OverlayManager: ObservableObject {
-    /// 바운딩 박스, CIImage 객체
+    // 1. Published properties
     @Published var boundingBox: CGRect?
     @Published var maskedCIImage: CIImage?
-    @Published var maskedUIImage: UIImage? /// 누끼 따는 것 잘 되었는지 테스트용
-
-    /// 윤곽선 객체
-    @Published var outlineImage: UIImage?  // 윤곽선 이미지
+    @Published var maskedUIImage: UIImage?
+    @Published var outlineImage: UIImage?
     @Published var shadowImage: UIImage?
 
+    // 2. Private 저장 프로퍼티
     private let context = CIContext()
 
-    // 2~4단계 통합 처리
+    //MARK: - 인물 마스킹
+    /// 영상에서 사람의 마스킹하여 추출 -> outlineImage로 변환
+    /// - Parameters:
+    ///   - image: 입력 원본 CIImage (주로 영상 프레임)
     func process(image: CIImage, completion: @escaping () -> Void) {
-        // 1. 요청 생성
+        // 1. Vision 요청 준비
         let rectangleRequest = VNDetectHumanRectanglesRequest()
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
 
@@ -35,24 +51,24 @@ class OverlayManager: ObservableObject {
             do {
                 try handler.perform([rectangleRequest, maskRequest])
 
-                // 2단계: BoundingBox 추출
-                if let results = rectangleRequest.results as? [VNHumanObservation], !results.isEmpty {
+                /// 2단계: BoundingBox 추출
+                if let results = rectangleRequest.results, !results.isEmpty {
                     let boxes = results.map { $0.boundingBox }
-                    let averageBox = boxes.average() // ⬅️ 이미 ViewModel에서 사용하던 확장 활용
+                    let averageBox = boxes.average() // 이미 ViewModel에서 사용하던 확장 활용
 
                     DispatchQueue.main.async {
                         self.boundingBox = averageBox
                     }
                 }
 
-                // 3단계: 마스크 생성
+                /// 3단계: 마스크 생성
                 guard let maskResult = maskRequest.results?.first as? VNInstanceMaskObservation else {
                     print("❌ 마스크 결과 없음")
                     DispatchQueue.main.async { completion() }
                     return
                 }
 
-                // 4단계: 마스크된 이미지 생성
+                /// 4단계: 마스크된 이미지 생성
                 let maskedPixelBuffer = try maskResult.generateMaskedImage(
                     ofInstances: maskResult.allInstances,
                     from: handler,
@@ -63,7 +79,7 @@ class OverlayManager: ObservableObject {
                 DispatchQueue.main.async {
                     self.maskedCIImage = ciImage
 
-                    // ✅ CIImage → UIImage 변환 -> 테스트용!
+                    /// CIImage → UIImage 변환(테스트용)
                     if let cgImage = self.context.createCGImage(ciImage, from: ciImage.extent) {
                         self.maskedUIImage = UIImage(cgImage: cgImage)
                     }
@@ -79,13 +95,15 @@ class OverlayManager: ObservableObject {
         }
     }
 
+    //MARK: - 실루엣 오버레이 이미지 생성
+    ///마스크 이미지에서 경계선을 검출하여 윤곽선 이미지 생성
     func applyOutlineEffect(completion: @escaping () -> Void) {
         guard let inputImage = maskedCIImage else { 
             completion()
             return 
         }
 
-        // CIImage → CGImage
+        /// CIImage → CGImage
         guard let cgImage = context.createCGImage(inputImage, from: inputImage.extent),
               let dataProvider = cgImage.dataProvider,
               let pixelData = dataProvider.data else {
@@ -100,7 +118,7 @@ class OverlayManager: ObservableObject {
         let bytesPerPixel = 4
         let bytesPerRow = cgImage.bytesPerRow
 
-        // RGBA 투명 배경 비트맵 컨텍스트 생성
+        /// RGBA 투명 배경 비트맵 컨텍스트 생성
         let bitmapBytesPerRow = width * bytesPerPixel
         let bitmapData = malloc(height * bitmapBytesPerRow)
         defer { free(bitmapData) }
@@ -119,34 +137,34 @@ class OverlayManager: ObservableObject {
             return
         }
 
-        // 투명 배경
+        /// 투명 배경
         context.clear(CGRect(x: 0, y: 0, width: width, height: height))
 
-        // 빨간색 윤곽선
+        /// 윤곽선 색상, 두께
         context.setStrokeColor(UIColor.white.cgColor)
         context.setLineWidth(1)
 
-        // 경계 픽셀 검사
+        /// 마스크 이미지의 알파 경계를 따라 선 그리기
         for y in 1..<height - 1 {
             for x in 1..<width - 1 {
                 let offset = y * bytesPerRow + x * bytesPerPixel
                 let alpha = data[offset + 3]
 
-                // 주변 픽셀들과 비교
+                /// 주변 픽셀들과 비교(상하좌우)
                 let neighborAlphas = [
-                    data[offset - bytesPerRow + 3],  // 위
-                    data[offset + bytesPerRow + 3],  // 아래
-                    data[offset - bytesPerPixel + 3], // 왼쪽
-                    data[offset + bytesPerPixel + 3]  // 오른쪽
+                    data[offset - bytesPerRow + 3],
+                    data[offset + bytesPerRow + 3],
+                    data[offset - bytesPerPixel + 3],
+                    data[offset + bytesPerPixel + 3]
                 ]
 
                 if neighborAlphas.contains(where: { abs(Int($0) - Int(alpha)) > 10 }) {
-                    context.stroke(CGRect(x: x, y: height - y, width: 1, height: 1)) // y좌표 보정
+                    context.stroke(CGRect(x: x, y: height - y, width: 1, height: 1))
                 }
             }
         }
 
-        // 이미지 생성
+        /// 최종 윤곽선 이미지 생성
         if let cgOutline = context.makeImage() {
             let outlineUIImage = UIImage(cgImage: cgOutline)
             DispatchQueue.main.async {
