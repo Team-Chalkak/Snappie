@@ -10,7 +10,7 @@ import SwiftUI
 struct CameraView: View {
     let isFirstShoot: Bool
     let guide: Guide?
-    
+
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
@@ -19,7 +19,7 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
+            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid, tabToFocus: viewModel.focusAtPoint)
 
             if viewModel.isHorizontalLevelActive {
                 HStack {
@@ -40,8 +40,7 @@ struct CameraView: View {
                 CameraBottomControlView(viewModel: viewModel)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .init("VideoSaved"))) { output in
-            /// 촬영 완료 후 저장된 파일 URL을 NotificationCenter에서 받고 navigateToEdit 트리거
+        .onReceive(viewModel.videoSavedPublisher) { url in
             if let userInfo = output.userInfo, let url = userInfo["url"] as? URL {
                 self.clipUrl = url
                 let cameraSetting = CameraSetting(

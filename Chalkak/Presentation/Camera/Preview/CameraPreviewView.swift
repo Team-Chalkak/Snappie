@@ -10,9 +10,12 @@ import SwiftUI
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
     @Binding var showGrid: Bool
+    let tabToFocus: ((CGPoint) -> Void)?
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
+        var handleFocus: ((CGPoint) -> Void)?
+        
         override class var layerClass: AnyClass {
             AVCaptureVideoPreviewLayer.self
         }
@@ -30,12 +33,7 @@ struct CameraPreviewView: UIViewRepresentable {
             
             showFocusBox(at: location)
             
-            // 초점 조정알림
-            NotificationCenter.default.post(
-                name: .init("FocusAtPoint"),
-                object: nil,
-                userInfo: ["point": devicePoint]
-            )
+            handleFocus?(devicePoint)
         }
         
         // focusbox 표시
@@ -140,6 +138,7 @@ struct CameraPreviewView: UIViewRepresentable {
         view.videoPreviewLayer.videoGravity = .resizeAspect
         view.videoPreviewLayer.cornerRadius = 0
         view.videoPreviewLayer.connection?.videoRotationAngle = 90
+        view.handleFocus = tabToFocus
 
         return view
     }

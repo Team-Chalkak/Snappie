@@ -48,6 +48,10 @@ struct ChalkakApp: App {
                         case .boundingBox(let guide, let isFirstShoot):
                             BoundingBoxView(guide: guide, isFirstShoot: isFirstShoot)
                                 .toolbar(.hidden, for: .navigationBar)
+                            
+                            
+                        case .projectPreview(finalVideoURL: let finalVideoURL):
+                            ProjectPreviewView(finalVideoURL: finalVideoURL)
                         }
                     }
             }
