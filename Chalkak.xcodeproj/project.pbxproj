@@ -64,7 +64,6 @@
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
 		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
-
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,7 +134,6 @@
 		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
@@ -143,10 +141,10 @@
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
 		99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Ext.swift"; sourceTree = "<group>"; };
+		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
-
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -691,8 +689,8 @@
 				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
-				993A1F7A2E267E0C0059B70A /* ProjectPreViewView.swift in Sources */,
-				993A1F7B2E267E0C0059B70A /* ProjectPreViewViewModel.swift in Sources */,
+				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
+				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -857,10 +855,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = ZUGAVD3728;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Chalkak/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera 접근";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "오디오 녹음을 위해 마이크를 사용합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "photo Library 접근";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -889,9 +889,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = ZUGAVD3728;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Chalkak/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera 접근";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "오디오 녹음을 위해 마이크를 사용합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "photo Library 접근";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
