@@ -24,6 +24,9 @@ import UIKit
  - 호출 예시: `overlayViewModel.prepareOverlay(from: url, at: time)`
  */
 final class OverlayViewModel: ObservableObject {
+    // 0. Input properties
+    let clip: Clip
+    
     // 1. Published properties
     @Published var isLoading = false
     @Published var isOverlayReady = false
@@ -38,14 +41,16 @@ final class OverlayViewModel: ObservableObject {
     var extractedImage: UIImage? { extractor.extractedImage }
 
     // 4. Init
-    init() {
+    init(clip: Clip) {
+        self.clip = clip
         extractor.overlayManager = overlayManager
+        prepareOverlay()
     }
 
     /// 첫번째 프레임, 오버레이 추출
-    func prepareOverlay(from url: URL, at time: Double) {
+    func prepareOverlay() {
         isLoading = true
-        extractor.extractFrame(from: url, at: time) { [weak self] in
+        extractor.extractFrame(from: clip.videoURL, at: clip.startPoint) { [weak self] in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 self?.isOverlayReady = true
@@ -53,6 +58,20 @@ final class OverlayViewModel: ObservableObject {
         }
     }
 
+    /// 시작 시점과 가장 가까운 직후의 기울기 값 추출
+    private func determineTilt() -> Tilt {
+        let tiltList = clip.tiltList
+        let startPoint = clip.startPoint
+        
+        let timestampedTilt = tiltList
+            .filter { $0.time >= startPoint }
+            .min {
+                abs($0.time - startPoint) < abs($1.time - startPoint)
+            }
+        
+        return timestampedTilt?.tilt ?? Tilt(degreeX: 0.0, degreeZ: 0.0)
+    }
+    
     /// 뒤로가기 버튼 누를 시, 오버레이 초기화
     func dismissOverlay() {
         isOverlayReady = false
@@ -71,6 +90,8 @@ final class OverlayViewModel: ObservableObject {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
+        // 가이드 tilt 값 결정
+        let cameraTilt = determineTilt()
         
         let outlineImage: UIImage
         
@@ -85,7 +106,7 @@ final class OverlayViewModel: ObservableObject {
             bBoxPosition: PointWrapper(bBox.origin),
             bBoxScale: bBox.width * 1.5,
             outlineImage: outlineImage,
-            cameraTilt: Tilt(degreeX: 0, degreeZ: 0),
+            cameraTilt: cameraTilt,
             cameraHeight: 1.0
         )
         
@@ -93,4 +114,5 @@ final class OverlayViewModel: ObservableObject {
         
         return guide
     }
+    
 }

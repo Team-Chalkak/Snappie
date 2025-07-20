@@ -17,6 +17,7 @@ class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
     private var horizontalLevelCancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
 
     // 비디오 저장 완료 이벤트를 View로 전달
@@ -76,7 +77,7 @@ class CameraViewModel: ObservableObject {
     private var dataCollectionTimer: Timer?
     /// 녹화 시작 시간(실제 시간 기록용)
     private var recordingStartDate: Date?
-    private var timeStampedTiltList: [TimeStampedTilt] = []
+    var timeStampedTiltList: [TimeStampedTilt] = []
     @Published var tiltCollector = TiltDataCollector()
     
     var formattedTime: String {
