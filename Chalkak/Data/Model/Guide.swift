@@ -60,22 +60,3 @@ class Guide: Identifiable {
         self.outlineImageData = outlineImage.pngData() ?? Data()
     }
 }
-
-struct PointWrapper: Codable {
-    var x: CGFloat
-    var y: CGFloat
-    
-    init(_ point: CGPoint) {
-        self.x = point.x
-        self.y = point.y
-    }
-    
-    var cgPoint: CGPoint {
-        CGPoint(x: x, y: y)
-    }
-}
-
-struct BoundingBoxInfo: Codable {
-    var origin: PointWrapper
-    var scale: CGFloat
-}
