@@ -15,11 +15,8 @@ class Guide: Identifiable {
     /// 가이드가 연결된 클립의 ID.
     @Attribute(.unique) var clipID: String
     
-    /// 화면 내 바운딩 박스의 위치.
-    var bBoxPosition: PointWrapper
-    
-    /// 카메라로부터의 거리 비교를 위한 바운딩 박스의 크기.
-    var bBoxScale: CGFloat
+    /// 여러 명의 바운딩 박스 정보 (위치 + 크기)
+    var boundingBoxes: [BoundingBoxInfo]
     
     /// 카메라 기울기.
     var cameraTilt: Tilt
@@ -49,16 +46,14 @@ class Guide: Identifiable {
     ///   - createdAt: 생성 시각 (기본값은 현재 시간).
     init(
         clipID: String,
-        bBoxPosition: PointWrapper,
-        bBoxScale: CGFloat,
+        boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
         cameraHeight: Float,
         createdAt: Date = .now
     ) {
         self.clipID = clipID
-        self.bBoxPosition = bBoxPosition
-        self.bBoxScale = bBoxScale
+        self.boundingBoxes = boundingBoxes
         self.cameraTilt = cameraTilt
         self.cameraHeight = cameraHeight
         self.createdAt = createdAt
@@ -76,6 +71,11 @@ struct PointWrapper: Codable {
     }
     
     var cgPoint: CGPoint {
-        CGPoint(x: x, y: y * 0.7)
+        CGPoint(x: x, y: y)
     }
+}
+
+struct BoundingBoxInfo: Codable {
+    var origin: PointWrapper
+    var scale: CGFloat
 }

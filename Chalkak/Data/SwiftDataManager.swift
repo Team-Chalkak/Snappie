@@ -141,16 +141,14 @@ class SwiftDataManager {
     /// `Guide` 생성
     func createGuide(
         clipID: String,
-        bBoxPosition: PointWrapper,
-        bBoxScale: CGFloat,
+        boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
         cameraHeight: Float
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
-            bBoxPosition: bBoxPosition,
-            bBoxScale: bBoxScale,
+            boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
             cameraTilt: cameraTilt,
             cameraHeight: cameraHeight

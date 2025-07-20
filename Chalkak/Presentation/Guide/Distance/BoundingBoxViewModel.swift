@@ -15,17 +15,16 @@ class BoundingBoxViewModel: ObservableObject {
     
     /// 기준 설정
     func setReference(from guide: Guide) {
-        let position = guide.bBoxPosition.cgPoint
-        let scale = guide.bBoxScale
+        let referenceBoxes: [CGRect] = guide.boundingBoxes.map { boxInfo in
+            CGRect(
+                x: boxInfo.origin.x,
+                y: boxInfo.origin.y,
+                width: boxInfo.scale,
+                height: boxInfo.scale // or use separate width/height if needed
+            )
+        }
 
-        let rect = CGRect(
-            x: position.x,
-            y: position.y,
-            width: scale,
-            height: scale
-        )
-
-        referenceBoundingBoxes = [rect]
+        referenceBoundingBoxes = referenceBoxes
         isSettingReference = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
