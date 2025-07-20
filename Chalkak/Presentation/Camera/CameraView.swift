@@ -21,6 +21,17 @@ struct CameraView: View {
         ZStack {
             CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid)
 
+            if viewModel.isHorizontalLevelActive {
+                HStack {
+                    Spacer()
+                    Rectangle()
+                        .frame(height: 2)
+                        .foregroundColor(viewModel.isHorizontal ? .green : .gray)
+                    Spacer()
+                }
+                .padding(.horizontal, 100)
+            }
+
             VStack {
                 CameraTopControlView(viewModel: viewModel)
 

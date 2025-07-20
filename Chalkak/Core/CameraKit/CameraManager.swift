@@ -61,6 +61,18 @@ class CameraManager: NSObject, ObservableObject {
                     session.addInput(videoDeviceInput)
                 }
 
+                // 오디오 입력 추가
+                if let audioDevice = AVCaptureDevice.default(for: .audio) {
+                    do {
+                        let audioInput = try AVCaptureDeviceInput(device: audioDevice)
+                        if session.canAddInput(audioInput) {
+                            session.addInput(audioInput)
+                        }
+                    } catch {
+                        print("오디오 장치 입력 설정 오류: \(error)")
+                    }
+                }
+
                 // 동영상 출력 추가
                 if session.canAddOutput(movieOutput) {
                     session.addOutput(movieOutput)
@@ -197,21 +209,45 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     func requestAndCheckPermissions() {
+        // 비디오 권한 확인
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] authStatus in
-                if authStatus {
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                if granted {
+                    self?.checkAudioPermission()
+                }
+            }
+        case .restricted, .denied:
+            print("비디오 권한이 거부되었습니다.")
+        case .authorized:
+            checkAudioPermission()
+        @unknown default:
+            break
+        }
+    }
+
+    private func checkAudioPermission() {
+        // 오디오 권한 확인
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
+                if granted {
                     DispatchQueue.main.async {
                         self?.setUpCamera()
                     }
                 }
             }
-        case .restricted:
-            break
+        case .restricted, .denied:
+            print("오디오 권한이 거부되었습니다.")
+            DispatchQueue.main.async {
+                self.setUpCamera() // 오디오 권한 없이 계속 진행
+            }
         case .authorized:
-            setUpCamera()
-        default: // 거절
-            print("Permession declined")
+            DispatchQueue.main.async {
+                self.setUpCamera()
+            }
+        @unknown default:
+            break
         }
     }
 
