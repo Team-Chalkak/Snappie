@@ -123,27 +123,23 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 터치한 위치에대한 초점조정
+    /// 터치한 위치값에 대한 초점을 조정하는 메소드
     func focusAtPoint(_ point: CGPoint) {
         guard let device = videoDeviceInput?.device else { return }
 
         do {
             try device.lockForConfiguration()
 
-            if device.isFocusModeSupported(.autoFocus) {
-                device.focusMode = .autoFocus
-                device.focusPointOfInterest = point
-            }
+            // 초점,노출 지점접근
+            device.focusPointOfInterest = point
+            device.exposurePointOfInterest = point
 
-            if device.isExposureModeSupported(.autoExpose) {
-                device.exposureMode = .autoExpose
-                device.exposurePointOfInterest = point
-            }
+            device.focusMode = .autoFocus
+            device.exposureMode = .autoExpose
 
             device.unlockForConfiguration()
-
         } catch {
-            print("초점 에러\(error)")
+            print("디바이스 설정 변경오류\(error)")
         }
     }
 
