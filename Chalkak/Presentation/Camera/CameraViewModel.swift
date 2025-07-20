@@ -19,6 +19,9 @@ class CameraViewModel: ObservableObject {
     private var horizontalLevelCancellable: AnyCancellable?
 
 
+    // 비디오 저장 완료 이벤트를 View로 전달
+    let videoSavedPublisher = PassthroughSubject<URL, Never>()
+
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
     @Published var selectedTimerDuration: TimerOptions = .off
@@ -38,7 +41,11 @@ class CameraViewModel: ObservableObject {
 
     @Published var isHorizontal = false
 
-    @Published var cameraPostion: AVCaptureDevice.Position = .back
+    @Published var cameraPostion: AVCaptureDevice.Position = .back {
+        didSet {
+            isUsingFrontCamera = (cameraPostion == .front)
+        }
+    }
     @Published var isRecording = false
     @Published var recordingTime = 0
 
@@ -46,6 +53,8 @@ class CameraViewModel: ObservableObject {
 
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
+    
+    var isUsingFrontCamera: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
@@ -83,6 +92,13 @@ class CameraViewModel: ObservableObject {
 
         model.$isRecording
             .assign(to: &$isRecording)
+
+        // 비디오 저장상태 구독
+        model.savedVideoInfo
+            .sink { [weak self] url in
+                self?.videoSavedPublisher.send(url)
+            }
+            .store(in: &cancellables)
 
         configure()
     }
@@ -123,6 +139,10 @@ class CameraViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func focusAtPoint(_ point: CGPoint) {
+        model.focusAtPoint(point)
     }
 
     func switchTorch() {

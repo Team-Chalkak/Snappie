@@ -98,10 +98,7 @@ struct VideoMerger {
     ///   - trimmingInfoList: 각 애셋의 트리밍 정보
     /// - Returns: 병합된 비디오 파일의 URL
     /// - Throws: `VideoMergerError` 타입의 에러
-    private func merge(
-        assets: [AVURLAsset],
-        trimmingInfoList: [(startTime: CMTime, endTime: CMTime)]
-    ) async throws -> URL {
+    private func merge(assets: [AVURLAsset], trimmingInfoList: [(startTime: CMTime, endTime: CMTime)]) async throws -> URL {
         // 1. 컴포지션 생성
         let composition = AVMutableComposition()
         var lastTime: CMTime = .zero
