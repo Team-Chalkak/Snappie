@@ -6,6 +6,8 @@
 //
 
 import AVFoundation
+import Combine
+import CoreMotion
 import Foundation
 import Photos
 import SwiftData
@@ -14,6 +16,8 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
+    private var tiltCollector = TiltDataCollector()
+    private var cancellables = Set<AnyCancellable>()
 
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
@@ -22,6 +26,17 @@ class CameraViewModel: ObservableObject {
     @Published var showingCameraControl = false
     @Published var isTorch = false
     @Published var isGrid = false
+    @Published var isHorizontalLevelActive = false {
+        didSet {
+            if isHorizontalLevelActive {
+                startObservingTilt()
+            } else {
+                stopObservingTilt()
+            }
+        }
+    }
+
+    @Published var isHorizontal = false
 
     @Published var cameraPostion: AVCaptureDevice.Position = .back
     @Published var isRecording = false
@@ -112,12 +127,29 @@ class CameraViewModel: ObservableObject {
         isGrid.toggle()
     }
 
+    func switchHorizontalLevel() {
+        isHorizontalLevelActive.toggle()
+    }
+
+    private func startObservingTilt() {
+        tiltCollector.$gravityX
+            .sink { [weak self] gravityX in
+                self?.isHorizontal = abs(gravityX) < 0.05
+            }
+            .store(in: &cancellables)
+    }
+
+    /// 수평 감지 구독 제거
+    private func stopObservingTilt() {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
+
     func toggleZoomControl() {
         showingZoomControl.toggle()
     }
 
     func selectZoomScale(_ scale: CGFloat) {
-        // 안전성 검사
         guard !scale.isNaN, !scale.isInfinite else { return }
 
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
@@ -136,7 +168,6 @@ class CameraViewModel: ObservableObject {
     }
 
     private func executeVideoRecording() {
-        print("녹화시작")
         model.startRecording()
         isRecording = true
         startRecordingTimer()
@@ -182,5 +213,9 @@ class CameraViewModel: ObservableObject {
     func changeCamera() {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
+    }
+
+    func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
+        model.onMultiBoundingBoxUpdate = handler
     }
 }

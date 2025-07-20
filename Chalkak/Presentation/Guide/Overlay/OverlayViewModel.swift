@@ -12,7 +12,8 @@ import UIKit
 final class OverlayViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isOverlayReady = false
-
+    @Published var guide: Guide?
+    
     let extractor = VideoFrameExtractor()
     let overlayManager = OverlayManager()
 
@@ -46,20 +47,23 @@ final class OverlayViewModel: ObservableObject {
     }
 
     /// Guide 객체 생성
-    func makeGuide() -> Guide? {
+    @MainActor
+    func makeGuide(clipID: String) -> Guide? {
         guard let outlineImage = overlayManager.outlineImage, let bBox = overlayManager.boundingBox else {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
         
-        let guide = Guide(
-            clipID: "dummy-id",
-            bBoxPosition: bBox.origin,
-            bBoxScale: bBox.width,
+        let guide = SwiftDataManager.shared.createGuide(
+            clipID: clipID,
+            bBoxPosition: PointWrapper(bBox.origin),
+            bBoxScale: bBox.width * 1.5,
             outlineImage: outlineImage,
             cameraTilt: Tilt(degreeX: 0, degreeZ: 0),
             cameraHeight: 1.0
         )
+        
+        SwiftDataManager.shared.saveContext()
         
         return guide
     }

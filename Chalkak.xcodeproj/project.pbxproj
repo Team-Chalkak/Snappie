@@ -54,6 +54,13 @@
 		993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */; };
 		993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */; };
 		993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */; };
+		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
+		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
+		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
+		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
+		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A092E27BADB00F42541 /* Coordinator.swift */; };
+		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,7 +131,16 @@
 		993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakTests.swift; sourceTree = "<group>"; };
 		993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITests.swift; sourceTree = "<group>"; };
 		993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakUITestsLaunchTests.swift; sourceTree = "<group>"; };
+
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
+		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
+		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
+		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
+		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +191,7 @@
 		993A1F0E2E267E0C0059B70A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				99C93A092E27BADB00F42541 /* Coordinator.swift */,
 				993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */,
 			);
 			path = App;
@@ -240,6 +257,8 @@
 			children = (
 				993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */,
 				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
+				C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */,
+				C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */,
 			);
 			path = VideoEditor;
 			sourceTree = "<group>";
@@ -322,8 +341,8 @@
 			isa = PBXGroup;
 			children = (
 				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
-				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
+				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -342,7 +361,6 @@
 		993A1F452E267E0C0059B70A /* ClipEdit */ = {
 			isa = PBXGroup;
 			children = (
-				993A1F3D2E267E0C0059B70A /* Overlay */,
 				993A1F422E267E0C0059B70A /* SubViews */,
 				993A1F432E267E0C0059B70A /* ClipEditView.swift */,
 				993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */,
@@ -362,6 +380,7 @@
 		993A1F492E267E0C0059B70A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				993A21782E26A05A0059B70A /* Guide */,
 				993A1F392E267E0C0059B70A /* Camera */,
 				993A1F452E267E0C0059B70A /* ClipEdit */,
 				993A1F482E267E0C0059B70A /* ProjectPreview */,
@@ -391,6 +410,7 @@
 			children = (
 				B655A8672E26A4EE0060E2C0 /* Info.plist */,
 				993A1F0E2E267E0C0059B70A /* App */,
+				993A217E2E26AB7E0059B70A /* Common */,
 				993A1F212E267E0C0059B70A /* Core */,
 				993A1F282E267E0C0059B70A /* Data */,
 				993A1F492E267E0C0059B70A /* Presentation */,
@@ -415,6 +435,65 @@
 				993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */,
 			);
 			path = ChalkakUITests;
+			sourceTree = "<group>";
+		};
+		993A21782E26A05A0059B70A /* Guide */ = {
+			isa = PBXGroup;
+			children = (
+				993A21792E26A0690059B70A /* Distance */,
+				993A1F3D2E267E0C0059B70A /* Overlay */,
+			);
+			path = Guide;
+			sourceTree = "<group>";
+		};
+		993A21792E26A0690059B70A /* Distance */ = {
+			isa = PBXGroup;
+			children = (
+				993A217A2E26A0760059B70A /* BoundingBoxView.swift */,
+				993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */,
+			);
+			path = Distance;
+			sourceTree = "<group>";
+		};
+		993A217E2E26AB7E0059B70A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				99C93A0B2E27BAF700F42541 /* Util */,
+				993A21802E26AB9C0059B70A /* Extension */,
+				993A217F2E26AB920059B70A /* DesignSystem */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		993A217F2E26AB920059B70A /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		993A21802E26AB9C0059B70A /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				993A21812E26ABA70059B70A /* Array + Ext.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		99C93A0B2E27BAF700F42541 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				99C93A0C2E27BAFD00F42541 /* Enum */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		99C93A0C2E27BAFD00F42541 /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				99C93A0D2E27BB0300F42541 /* Path.swift */,
+			);
+			path = Enum;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -562,7 +641,9 @@
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
+				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
@@ -570,15 +651,19 @@
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
+				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
+				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
+				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
+				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
@@ -588,6 +673,7 @@
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,

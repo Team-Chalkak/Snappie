@@ -22,8 +22,7 @@ struct CameraBaseFeatureSelectView: View {
 
         CircleIconButton(
             iconName: "ruler",
-            action: {},
-            isSelected: false
+            action: viewModel.switchHorizontalLevel, isSelected: viewModel.isHorizontalLevelActive
         )
         .frame(maxWidth: .infinity)
     }
