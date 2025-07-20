@@ -48,10 +48,18 @@ final class OverlayViewModel: ObservableObject {
 
     /// Guide 객체 생성
     @MainActor
-    func makeGuide(clipID: String) -> Guide? {
-        guard let outlineImage = overlayManager.outlineImage, let bBox = overlayManager.boundingBox else {
+    func makeGuide(clipID: String, isFrontCamera: Bool) -> Guide? {
+        guard let capturedImage = overlayManager.outlineImage, let bBox = overlayManager.boundingBox else {
             print("❌ outlineImage가 없습니다.")
             return nil
+        }
+        
+        let outlineImage: UIImage
+        
+        if isFrontCamera {
+            outlineImage = capturedImage.flippedHorizontally()
+        } else {
+            outlineImage = capturedImage
         }
         
         let guide = SwiftDataManager.shared.createGuide(
