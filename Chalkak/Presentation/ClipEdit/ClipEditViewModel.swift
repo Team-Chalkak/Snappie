@@ -45,6 +45,8 @@ final class ClipEditViewModel: ObservableObject {
     @Published var isPlaying = false
     @Published var previewImage: UIImage?
     @Published var clipID: String? = nil
+    
+    @Published var videoManager = VideoManager()
 
     // 3. Private 저장 프로퍼티
     private var asset: AVAsset?
@@ -245,5 +247,10 @@ final class ClipEditViewModel: ObservableObject {
 
         project.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
+    }
+    
+    /// 작업하던 프로젝트의 영상 합치기
+    func mergeVideo() async throws -> URL {
+        try await self.videoManager.processAndSaveVideo()
     }
 }

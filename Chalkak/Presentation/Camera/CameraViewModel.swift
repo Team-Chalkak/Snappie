@@ -19,6 +19,9 @@ class CameraViewModel: ObservableObject {
     private var tiltCollector = TiltDataCollector()
     private var cancellables = Set<AnyCancellable>()
 
+    // 비디오 저장 완료 이벤트를 View로 전달
+    let videoSavedPublisher = PassthroughSubject<URL, Never>()
+
     @Published var isTimerRunning = false
     @Published var showingTimerControl = false
     @Published var selectedTimerDuration: TimerOptions = .off
@@ -77,6 +80,13 @@ class CameraViewModel: ObservableObject {
         model.$isRecording
             .assign(to: &$isRecording)
 
+        // 비디오 저장상태 구독
+        model.savedVideoInfo
+            .sink { [weak self] url in
+                self?.videoSavedPublisher.send(url)
+            }
+            .store(in: &cancellables)
+
         configure()
     }
 
@@ -116,6 +126,10 @@ class CameraViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func focusAtPoint(_ point: CGPoint) {
+        model.focusAtPoint(point)
     }
 
     func switchTorch() {

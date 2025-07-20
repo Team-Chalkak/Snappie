@@ -51,7 +51,7 @@ class VideoManager: ObservableObject {
     
     // MARK: - Methods
     /// 비디오 클립들을 로드하고 병합하여 최종 비디오를 생성합니다.
-    func processAndSaveVideo() async {
+    func processAndSaveVideo() async throws -> URL {
         isProcessing = true
         
         // defer를 통해 함수가 어떻게 종료되든 isProcessing을 false로 설정
@@ -64,56 +64,20 @@ class VideoManager: ObservableObject {
         
         guard !clipList.isEmpty else {
             print("클립이 없습니다")
-            return
+            throw VideoMergerError.noVideosToMerge
         }
         
         print("영상 합치기 시작 - 영상 개수: \(clipList.count)")
         
         do {
             // 2. 비디오 병합
-            let finalVideoURL = try await VideoMerger().mergeVideos(from: clipList)
+            let finalVideoURL = try await videoMerger.mergeVideos(from: clipList)
             
-            // FIXME: 미리보기 네비게이션 구현하면서 이 파일에서 해당 갤러리 저장 로직은 삭제하기(ssol)
-            // 3. (임시) 갤러리에 저장
-            await saveVideoToLibrary(videoURL: finalVideoURL)
+            return finalVideoURL
 
         } catch {
             print("영상 합치기 실패: \(error.localizedDescription)")
-        }
-    }
-}
-
-// FIXME: 미리보기 네비게이션 구현하면서 이 파일에서 해당 갤러리 저장 로직은 삭제될 예정(ssol)
-// MARK: Photos 앱에 데이터 저장
-extension VideoManager {
-    /// 비디오를 사진 라이브러리에 저장합니다.
-    @MainActor
-    private func saveVideoToLibrary(videoURL: URL) async {
-        let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
-        
-        switch authorizationStatus {
-        case .notDetermined:
-            let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-            if status == .authorized || status == .limited {
-                await performVideoSave(videoURL: videoURL)
-            } else {
-                print("라이브러리 권한 거부")
-            }
-        case .authorized, .limited:
-            await performVideoSave(videoURL: videoURL)
-        default:
-            print("라이브러리 접근 권한 없음")
-        }
-    }
-    
-    /// 실제 비디오 저장 작업을 수행합니다.
-    private func performVideoSave(videoURL: URL) async {
-        do {
-            try await PHPhotoLibrary.shared().performChanges {
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL)
-            }
-        } catch {
-            print("동영상 저장 에러\(error.localizedDescription)")
+            throw VideoMergerError.exportFailed
         }
     }
 }

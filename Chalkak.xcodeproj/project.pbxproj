@@ -49,8 +49,8 @@
 		993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreview.swift */; };
 		993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F432E267E0C0059B70A /* ClipEditView.swift */; };
 		993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */; };
-		993A1F7A2E267E0C0059B70A /* ProjectPreViewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */; };
-		993A1F7B2E267E0C0059B70A /* ProjectPreViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */; };
+		993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */; };
+		993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F472E267E0C0059B70A /* ProjectPreviewViewModel.swift */; };
 		993A1F7E2E267E0C0059B70A /* ChalkakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7C2E267E0C0059B70A /* ChalkakTests.swift */; };
 		993A1F822E267E0C0059B70A /* ChalkakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F7F2E267E0C0059B70A /* ChalkakUITests.swift */; };
 		993A1F832E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F802E267E0C0059B70A /* ChalkakUITestsLaunchTests.swift */; };
@@ -61,6 +61,7 @@
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
+		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,8 +124,8 @@
 		993A1F412E267E0C0059B70A /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
 		993A1F432E267E0C0059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
 		993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
-		993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewView.swift; sourceTree = "<group>"; };
-		993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreViewViewModel.swift; sourceTree = "<group>"; };
+		993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewView.swift; sourceTree = "<group>"; };
+		993A1F472E267E0C0059B70A /* ProjectPreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewViewModel.swift; sourceTree = "<group>"; };
 		993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		993A1F4C2E267E0C0059B70A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		993A1F4D2E267E0C0059B70A /* sample-video.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "sample-video.mov"; sourceTree = "<group>"; };
@@ -141,6 +142,9 @@
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
+		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
+		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
 
 /* End PBXFileReference section */
 
@@ -260,6 +264,7 @@
 				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
 				C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */,
 				C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */,
+				C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */,
 			);
 			path = VideoEditor;
 			sourceTree = "<group>";
@@ -372,8 +377,8 @@
 		993A1F482E267E0C0059B70A /* ProjectPreview */ = {
 			isa = PBXGroup;
 			children = (
-				993A1F462E267E0C0059B70A /* ProjectPreViewView.swift */,
-				993A1F472E267E0C0059B70A /* ProjectPreViewViewModel.swift */,
+				993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */,
+				993A1F472E267E0C0059B70A /* ProjectPreviewViewModel.swift */,
 			);
 			path = ProjectPreview;
 			sourceTree = "<group>";
@@ -660,6 +665,7 @@
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
+				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
@@ -681,8 +687,8 @@
 				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
-				993A1F7A2E267E0C0059B70A /* ProjectPreViewView.swift in Sources */,
-				993A1F7B2E267E0C0059B70A /* ProjectPreViewViewModel.swift in Sources */,
+				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
+				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -846,7 +852,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = F83F8K6223;
+				DEVELOPMENT_TEAM = ZUGAVD3728;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera 접근";
@@ -878,7 +884,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = SM37WHUJB5;
+				DEVELOPMENT_TEAM = ZUGAVD3728;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
