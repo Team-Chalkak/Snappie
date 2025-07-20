@@ -31,8 +31,8 @@ import SwiftUI
  */
 struct ClipEditView: View {
     // 1. Input properties
-    let guide: Guide?
     private var isFirstShoot: Bool
+    let guide: Guide?
     let cameraSetting: CameraSetting
 
     // 2. State & ObservedObject
@@ -120,9 +120,11 @@ struct ClipEditView: View {
         }
         .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
             if let clipID = editViewModel.clipID {
-                OverlayView(overlayViewModel: overlayViewModel, clipID: clipID, isFrontCamera: cameraSetting.isFrontPosition)
+                OverlayView(
+                    clipID: clipID,
+                    isFrontCamera: cameraSetting.isFrontPosition,
+                    overlayViewModel: overlayViewModel)
             }
         }
     }
 }
-

@@ -41,8 +41,8 @@ struct ChalkakApp: App {
                             let overlayViewModel = OverlayViewModel()
                             OverlayView(
                                 clipID: clipID, 
-                                overlayViewModel: overlayViewModel,
-                                isFrontCamera: isFrontCamera
+                                isFrontCamera: isFrontCamera,
+                                overlayViewModel: overlayViewModel
                             )
 
                         case .boundingBox(let guide, let isFirstShoot):
