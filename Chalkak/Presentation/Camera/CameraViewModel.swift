@@ -27,7 +27,7 @@ class CameraViewModel: ObservableObject {
     @Published var selectedTimerDuration: TimerOptions = .off
 
     @Published var showingCameraControl = false
-    @Published var isTorch = false
+    @Published var torchMode: TorchMode = .off
     @Published var isGrid = false
     @Published var isHorizontalLevelActive = false {
         didSet {
@@ -139,8 +139,8 @@ class CameraViewModel: ObservableObject {
     }
 
     func switchTorch() {
-        isTorch.toggle()
-        model.setTorchMode(isTorch)
+        torchMode.toggle()
+        model.setTorchMode(torchMode)
     }
 
     func switchGrid() {

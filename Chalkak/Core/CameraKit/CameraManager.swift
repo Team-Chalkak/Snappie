@@ -23,6 +23,8 @@ class CameraManager: NSObject, ObservableObject {
 
     private let boundingBoxManager = BoundingBoxManager()
 
+    @Published var torchMode: TorchMode = .off
+
     /// 비디오 저장 이벤트발생시 clipEditView로 URL전달
     /// 상태를 별도로 저장할 필요가 없어서 @Published 대신 PassthroughSubject 활용
     let savedVideoInfo = PassthroughSubject<URL, Never>()
@@ -101,17 +103,22 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 켜져있는 플래쉬는 Torch로 표현
-    func setTorchMode(_ isFlash: Bool) {
+    /// 토치 모드 설정
+    func setTorchMode(_ mode: TorchMode) {
+        torchMode = mode
         guard let device = videoDeviceInput?.device else { return }
 
         do {
             try device.lockForConfiguration()
 
             if device.hasTorch, device.isTorchAvailable {
-                device.torchMode = isFlash ? .on : .off
-                if isFlash {
-                    try device.setTorchModeOn(level: 1.0)
+                switch mode {
+                case .off:
+                    device.torchMode = .off
+                case .on:
+                    device.torchMode = .on
+                case .auto:
+                    device.torchMode = .auto
                 }
             } else {
                 print("이 기기는 플래시/토치를 지원하지 않습니다.")
