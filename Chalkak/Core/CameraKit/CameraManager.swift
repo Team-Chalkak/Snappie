@@ -48,8 +48,7 @@ class CameraManager: NSObject, ObservableObject {
         // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
         for format in device.formats {
             /// 현재 촬영하고자하는 해상도 정보 추출
-            /// dimension.width // Int32
-            /// dimension.height // Int32
+            /// struct CMVideoDimensions { var width: Int32 / var height: Int32 }
             let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
             let currentResolution = dimensions.width * dimensions.height
 
@@ -159,15 +158,15 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     /// 켜져있는 플래쉬는 Torch로 표현
-    func setTorchMode(_ isFlash: Bool) {
+    func setTorchMode(_ isTorch: Bool) {
         guard let device = videoDeviceInput?.device else { return }
 
         do {
             try device.lockForConfiguration()
 
             if device.hasTorch, device.isTorchAvailable {
-                device.torchMode = isFlash ? .on : .off
-                if isFlash {
+                device.torchMode = isTorch ? .on : .off
+                if isTorch {
                     try device.setTorchModeOn(level: 1.0)
                 }
             } else {
