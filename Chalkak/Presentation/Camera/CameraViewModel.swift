@@ -238,4 +238,17 @@ class CameraViewModel: ObservableObject {
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
     }
+    
+    func saveCameraSettingToUserDefaults() -> CameraSetting {
+        let setting = CameraSetting(
+            zoomScale: zoomScale,
+            isGridEnabled: isGrid,
+            isFrontPosition: isUsingFrontCamera,
+            timerSecond: selectedTimerDuration.rawValue
+        )
+        
+        UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
+
+        return setting
+    }
 }

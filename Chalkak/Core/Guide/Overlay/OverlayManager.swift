@@ -46,7 +46,7 @@ class OverlayManager: ObservableObject {
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
         rectangleRequest.upperBodyOnly = true
         let handler = VNImageRequestHandler(ciImage: image, options: [:])
-        let savedIsFront = UserDefaults.standard.bool(forKey: AppStorageKey.isFontPosition)
+        let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
 
         DispatchQueue.global().async {
             do {
