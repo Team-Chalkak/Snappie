@@ -36,6 +36,10 @@ class CameraManager: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
+    // 전면/후면 카메라별 줌 스케일 저장
+    private var frontCameraZoomScale: CGFloat = 1.0
+    private var backCameraZoomScale: CGFloat = 1.0
+
     deinit {
         session.stopRunning()
     }
