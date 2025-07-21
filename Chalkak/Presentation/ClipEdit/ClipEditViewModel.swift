@@ -190,7 +190,12 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(token)
             timeObserverToken = nil
         }
-        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+
+        let currentTime = player?.currentTime() ?? .zero
+        let currentTimeSeconds = CMTimeGetSeconds(currentTime)
+
+        /// 재생을 시작하고 종료 시점을 감지하는 로직
+        let startPlaybackAndObserve = { [weak self] in
             guard let self = self else { return }
             self.player?.play()
             self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
@@ -204,6 +209,15 @@ final class ClipEditViewModel: ObservableObject {
                     }
                 }
             }
+        }
+
+        /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
+        if currentTimeSeconds >= startPoint && currentTimeSeconds < endPoint {
+            startPlaybackAndObserve()
+        } else {
+            /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
+            seek(to: startPoint)
+            startPlaybackAndObserve()
         }
     }
     
