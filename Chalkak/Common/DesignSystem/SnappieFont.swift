@@ -10,6 +10,7 @@ import SwiftUI
 /**
  프로젝트에서 사용할 폰트 시스템
  
+ - Text extension의 snappieStyle 함수에서 내부적으로 해당 enum이 활용됩니다.
  ## 사용 예시
  ### 기본 사용
  ```swift
@@ -25,26 +26,140 @@ import SwiftUI
 
  */
 enum SnappieFont {
-    static func style(_ style: Style, size: CGFloat? = nil) -> Font {
-        Font.custom(style.fontName, size: size ?? style.defaultSize)
+    /// 폰트 및 기본 Font 생성 시 필요한 스타일 적용
+    static func style(_ style: Style) -> Font {
+        switch style.fontName {
+        case .kronaOne:
+            Font.custom(
+                style.fontName.rawValue,
+                size: style.defaultSize
+            )
+        case .sfPro:
+            Font.system(
+                size: style.defaultSize,
+                weight: style.weight,
+                design: .default
+            )
+        case .sfProRounded:
+            Font.system(
+                size: style.defaultSize,
+                weight: style.weight,
+                design: .rounded
+            )
+        }
     }
 
-    // TODO: 폰트 시스템이 나오면 추가 예정(ssol)
+    enum FontType: String {
+        case sfPro
+        case sfProRounded
+        case kronaOne = "KronaOne-Regular"
+    }
+    
+    // TODO: 폰트 시스템에 따라 추가 예정(ssol)
     enum Style {
-        case recordTimer, cameraToolBar
+        case proBody1
+        case proLabel1
+        case proLabel2
+        case proLabel3
         
-        var fontName: String {
+        case roundCaption1
+        case roundCaption2
+        
+        case kronaLabel1
+        case kronaCaption1
+        case kronaExtra
+        
+        var fontName: FontType {
             switch self {
-            case .recordTimer: return "KronaOne-Regular"
-            case .cameraToolBar: return "KronaOne-Regular"
+            case .proBody1, .proLabel1, .proLabel2, .proLabel3:
+                    .sfPro
+                
+            case .roundCaption1, .roundCaption2:
+                    .sfProRounded
+                
+            case .kronaLabel1, .kronaCaption1, .kronaExtra:
+                    .kronaOne
             }
         }
         
         var defaultSize: CGFloat {
             switch self {
-            case .recordTimer: return 14
-            case .cameraToolBar: return 8
+            case .proBody1:
+                16
+            case .proLabel1:
+                16
+            case .proLabel2:
+                14
+            case .proLabel3:
+                14
+            case .roundCaption1:
+                12
+            case .roundCaption2:
+                10
+            case .kronaLabel1:
+                14
+            case .kronaCaption1:
+                6
+            case .kronaExtra:
+                164
             }
+        }
+        
+        var weight: Font.Weight {
+            switch self {
+            case .proBody1:
+                    .regular
+            case .proLabel1:
+                    .medium
+            case .proLabel2:
+                    .medium
+            case .proLabel3:
+                    .semibold
+            case .roundCaption1:
+                    .regular
+            case .roundCaption2:
+                    .regular
+            case .kronaLabel1:
+                    .regular
+            case .kronaCaption1:
+                    .regular
+            case .kronaExtra:
+                    .regular
+            }
+        }
+        
+        var lineHeight: CGFloat {
+            switch self {
+            case .proBody1: 4
+            default: 0
+            }
+        }
+        
+        var spacing: CGFloat {
+            switch self {
+            case .proBody1:
+                self.getSpacing(scale: -1.2)
+            case .proLabel1:
+                self.getSpacing(scale: -2)
+            case .proLabel2:
+                self.getSpacing(scale: -2)
+            case .proLabel3:
+                self.getSpacing(scale: -2)
+            case .roundCaption1:
+                self.getSpacing(scale: -1.2)
+            case .roundCaption2:
+                self.getSpacing(scale: -2)
+            case .kronaLabel1:
+                self.getSpacing(scale: -2)
+            case .kronaCaption1:
+                self.getSpacing(scale: -2)
+            case .kronaExtra:
+                0
+            }
+        }
+        
+        private func getSpacing(scale: CGFloat) -> CGFloat {
+            return self.defaultSize * (scale / 100)
         }
     }
 }

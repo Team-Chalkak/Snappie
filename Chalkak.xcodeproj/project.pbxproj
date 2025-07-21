@@ -69,6 +69,7 @@
 		C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
 		C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */; };
 		C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */; };
+		C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +154,7 @@
 		C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KronaOne-Regular.ttf"; sourceTree = "<group>"; };
 		C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SnappieFont.swift; path = Chalkak/Common/DesignSystem/SnappieFont.swift; sourceTree = SOURCE_ROOT; };
 		C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieColor.swift; sourceTree = "<group>"; };
+		C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text + Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -485,6 +487,7 @@
 			children = (
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
+				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -713,6 +716,7 @@
 				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
+				C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
