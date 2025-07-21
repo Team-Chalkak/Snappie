@@ -64,6 +64,10 @@
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
 		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
+		C5FB3EC42E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +149,8 @@
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
+		C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KronaOne-Regular.ttf"; sourceTree = "<group>"; };
+		C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SnappieFont.swift; path = Chalkak/Common/DesignSystem/SnappieFont.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -405,6 +411,7 @@
 		993A1F4E2E267E0C0059B70A /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				C5FB3EC22E2E0E2900A4C1BE /* Fonts */,
 				993A1F4C2E267E0C0059B70A /* Assets.xcassets */,
 				993A1F4D2E267E0C0059B70A /* sample-video.mov */,
 			);
@@ -466,16 +473,9 @@
 			children = (
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
-				993A217F2E26AB920059B70A /* DesignSystem */,
+				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		993A217F2E26AB920059B70A /* DesignSystem */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DesignSystem;
 			sourceTree = "<group>";
 		};
 		993A21802E26AB9C0059B70A /* Extension */ = {
@@ -501,6 +501,22 @@
 				99C93A0D2E27BB0300F42541 /* Path.swift */,
 			);
 			path = Enum;
+			sourceTree = "<group>";
+		};
+		C5FB3EC22E2E0E2900A4C1BE /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		C5FB3ECC2E2E114600A4C1BE /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */,
+			);
+			path = DesignSystem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -614,6 +630,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 				993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */,
 				993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */,
 				993A1F522E267E0C0059B70A /* sample-video.mov in Resources */,
@@ -624,6 +641,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC42E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,6 +649,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +671,7 @@
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
+				C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
