@@ -233,6 +233,8 @@ class CameraViewModel: ObservableObject {
     func changeCamera() {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
+        // 카메라 전환 후 CameraManager에서 복원된 줌 스케일을 동기화
+        zoomScale = model.currentZoomScale
     }
 
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {

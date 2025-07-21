@@ -152,7 +152,8 @@ class CameraManager: NSObject, ObservableObject {
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
                     DispatchQueue.main.async {
-                        self?.setZoomScale(1.0)
+                        // 최초 카메라 설정 시 1.0 줌배율적용
+                        self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
                     }
                 }
             } catch {
@@ -210,6 +211,15 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 전면/후면 카메라 전환
     func switchCamera(to position: AVCaptureDevice.Position) {
+        // 현재 카메라의 줌 스케일 저장
+        if let currentDevice = videoDeviceInput?.device {
+            if currentDevice.position == .front {
+                frontCameraZoomScale = currentZoomScale
+            } else if currentDevice.position == .back {
+                backCameraZoomScale = currentZoomScale
+            }
+        }
+
         session.beginConfiguration()
 
         if let existingInput = videoDeviceInput {
@@ -242,6 +252,10 @@ class CameraManager: NSObject, ObservableObject {
         }
 
         session.commitConfiguration()
+
+        // 전환된 카메라의 저장된 줌 스케일 복원
+        let savedZoomScale = position == .front ? frontCameraZoomScale : backCameraZoomScale
+        setZoomScale(savedZoomScale)
     }
 
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
@@ -261,6 +275,13 @@ class CameraManager: NSObject, ObservableObject {
 
             device.videoZoomFactor = clampedZoomFactor
             currentZoomScale = scale
+
+            // 현재 카메라 포지션에 따라 줌 스케일 저장
+            if device.position == .front {
+                frontCameraZoomScale = scale
+            } else if device.position == .back {
+                backCameraZoomScale = scale
+            }
 
             device.unlockForConfiguration()
         } catch {
