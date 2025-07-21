@@ -68,6 +68,7 @@
 		C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
 		C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
 		C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */; };
+		C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +152,7 @@
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
 		C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KronaOne-Regular.ttf"; sourceTree = "<group>"; };
 		C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SnappieFont.swift; path = Chalkak/Common/DesignSystem/SnappieFont.swift; sourceTree = SOURCE_ROOT; };
+		C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -515,6 +517,7 @@
 			isa = PBXGroup;
 			children = (
 				C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */,
+				C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -660,6 +663,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
