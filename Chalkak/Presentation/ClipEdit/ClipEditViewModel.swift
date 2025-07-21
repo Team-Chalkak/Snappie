@@ -97,6 +97,7 @@ final class ClipEditViewModel: ObservableObject {
 
                 await generateThumbnails(for: asset)
                 await updatePreviewImage(at: 0)
+                playPreview()
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
@@ -189,7 +190,7 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(token)
             timeObserverToken = nil
         }
-        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600)) { [weak self] _ in
+        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
             guard let self = self else { return }
             self.player?.play()
             self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
