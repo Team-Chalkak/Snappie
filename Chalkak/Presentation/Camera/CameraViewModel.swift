@@ -289,9 +289,6 @@ class CameraViewModel: ObservableObject {
             timerSecond: selectedTimerDuration.rawValue
         )
         
-        print("cameraPosition: \(cameraPostion)")
-        print("isFrontPosition: \(setting.isFrontPosition)")
-        print("isFrontPosition: \(setting.isFrontPosition)")
         UserDefaults.standard.set(isGrid, forKey: UserDefaultKey.isGridOn)
         UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.zoomScale)
         UserDefaults.standard.set(selectedTimerDuration.rawValue, forKey: UserDefaultKey.timerSecond)
@@ -310,12 +307,6 @@ class CameraViewModel: ObservableObject {
         isGrid = savedGridOn
         zoomScale = savedZoomScale
         selectedTimerDuration = TimerOptions(rawValue: savedTimer) ?? .off
-
-//        cameraPostion = savedIsFront ? .front : .back
         cameraPostion = savedIsFront ? .front : .back
-
-        // 카메라 장치도 실제로 전환 필요
-//        model.switchCamera(to: cameraPostion)
-//        model.setZoomScale(zoomScale)
     }
 }
