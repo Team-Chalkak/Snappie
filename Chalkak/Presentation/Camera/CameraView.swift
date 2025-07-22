@@ -46,7 +46,9 @@ struct CameraView: View {
             coordinator.push(.clipEdit(
                 clipURL: url,
                 guide: guide,
-                cameraSetting: cameraSetting)
+                cameraSetting: cameraSetting,
+                TimeStampedTiltList: viewModel.timeStampedTiltList
+                )
             )
         }
     }
