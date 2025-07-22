@@ -18,7 +18,13 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid, tabToFocus: viewModel.focusAtPoint)
+            CameraPreviewView(
+                session: viewModel.session, 
+                showGrid: $viewModel.isGrid, 
+                tabToFocus: viewModel.focusAtPoint,
+                onPinchZoom: viewModel.selectZoomScale,
+                currentZoomScale: viewModel.zoomScale
+            )
 
             if viewModel.isHorizontalLevelActive {
                 HStack {

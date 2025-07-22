@@ -11,10 +11,20 @@ struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
     @Binding var showGrid: Bool
     let tabToFocus: ((CGPoint) -> Void)?
+    let onPinchZoom: ((CGFloat) -> Void)?
+    let currentZoomScale: CGFloat
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
         var handleFocus: ((CGPoint) -> Void)?
+        var handlePinchZoom: ((CGFloat) -> Void)?
+        
+        private var initialZoomScale: CGFloat = 1.0
+        private var lastPinchScale: CGFloat = 1.0
+        
+        func updateInitialZoomScale(_ scale: CGFloat) {
+            initialZoomScale = scale
+        }
         
         override class var layerClass: AnyClass {
             AVCaptureVideoPreviewLayer.self
@@ -22,6 +32,32 @@ struct CameraPreviewView: UIViewRepresentable {
         
         var videoPreviewLayer: AVCaptureVideoPreviewLayer {
             return layer as! AVCaptureVideoPreviewLayer
+        }
+        
+        func setupGestures() {
+            let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
+            addGestureRecognizer(pinchGesture)
+        }
+        
+        @objc private func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
+            // 감도 개선- 줌스케일 40%로 제한
+            let zoomSensitivity: CGFloat = 0.4
+            // 감도기반 줌스케일 보정값 적용
+            let adjustScale = 1.0 + (gesture.scale - 1.0) * zoomSensitivity
+            switch gesture.state {
+            case .began:
+                lastPinchScale = gesture.scale
+            case .changed:
+                let newZoomScale = initialZoomScale * adjustScale
+                // 줌 범위 제한
+                let clampedZoomScale = max(0.5, min(6.0, newZoomScale))
+                handlePinchZoom?(clampedZoomScale)
+            case .ended:
+                initialZoomScale = max(0.5, min(6.0, initialZoomScale * adjustScale))
+                gesture.scale = 1.0
+            default:
+                break
+            }
         }
         
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -139,11 +175,17 @@ struct CameraPreviewView: UIViewRepresentable {
         view.videoPreviewLayer.cornerRadius = 0
         view.videoPreviewLayer.connection?.videoRotationAngle = 90
         view.handleFocus = tabToFocus
+        view.handlePinchZoom = onPinchZoom
+        // 핀치 제스처
+        view.setupGestures()
 
         return view
     }
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {
         showGrid ? uiView.showGrid() : uiView.hideGrid()
+        
+        // 외부에서 줌 스케일이 변경되었을 때 동기화
+        uiView.updateInitialZoomScale(currentZoomScale)
     }
 }
