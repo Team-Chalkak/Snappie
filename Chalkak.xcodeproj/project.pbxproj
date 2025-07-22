@@ -57,6 +57,8 @@
 		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */; };
+		99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */; };
 		99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A092E27BADB00F42541 /* Coordinator.swift */; };
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
@@ -137,6 +139,8 @@
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstShootCameraView.swift; sourceTree = "<group>"; };
+		99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideCameraView.swift; sourceTree = "<group>"; };
 		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
@@ -455,6 +459,7 @@
 		993A21792E26A0690059B70A /* Distance */ = {
 			isa = PBXGroup;
 			children = (
+				99C7266D2E2F0A1B00E9D0CD /* SubViews */,
 				993A217A2E26A0760059B70A /* BoundingBoxView.swift */,
 				993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */,
 			);
@@ -485,6 +490,15 @@
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		99C7266D2E2F0A1B00E9D0CD /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */,
+				99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		99C93A0B2E27BAF700F42541 /* Util */ = {
@@ -657,6 +671,7 @@
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
+				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
@@ -675,6 +690,7 @@
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
+				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
 				993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */,
@@ -855,7 +871,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = SM37WHUJB5;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
@@ -889,7 +905,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = SM37WHUJB5;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
