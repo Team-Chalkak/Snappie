@@ -12,7 +12,20 @@ struct GuideCameraView: View {
 
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
-
+    
+    init(guide: Guide?) {
+        self.guide = guide
+        
+        let cameraVM = CameraViewModel()
+        self._cameraViewModel = StateObject(wrappedValue: cameraVM)
+        self._viewModel = StateObject(
+            wrappedValue: BoundingBoxViewModel(
+                properTilt: guide?.cameraTilt,
+                tiltDataCollector: cameraVM.tiltCollector
+            )
+        )
+    }
+    
     var body: some View {
         ZStack {
             if viewModel.isAligned {
@@ -40,7 +53,10 @@ struct GuideCameraView: View {
                     .allowsHitTesting(false)
             }
 
-            // TODO: - Height, Tilt 피드백 뷰 띄우기
+            // Tilt 피드백 뷰
+            if let tiltManager = viewModel.tiltManager {
+                TiltFeedbackView(offsetX: tiltManager.offsetX, offsetY: tiltManager.offsetZ)
+            }
         }
         .onAppear {
             if let guide = guide {
