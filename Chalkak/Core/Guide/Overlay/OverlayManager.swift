@@ -19,15 +19,15 @@ import Vision
  ## 주요 기능
  - Vision 기반 바운딩 박스, 전경 마스크 요청 처리
  - 마스킹된 CIImage → 윤곽선 그리기(CGContext)
- - outlineImage, maskedCIImage, boundingBox 등 제공
+ - outlineImage, maskedCIImage, boundingBoxes 등 제공
 
  ## 사용 위치
  - OverlayViewModel 및 VideoFrameExtractor와 연동됨
- - 사용 예시: `overlayManager.process(image: ciImage)`
+ - 사용 예시: `overlayManager.process(image: ciImage) { completion() }`
  */
 class OverlayManager: ObservableObject {
     // 1. Published properties
-    @Published var boundingBox: CGRect?
+    @Published var boundingBoxes: [CGRect] = []
     @Published var maskedCIImage: CIImage?
     @Published var maskedUIImage: UIImage?
     @Published var outlineImage: UIImage?
@@ -44,8 +44,9 @@ class OverlayManager: ObservableObject {
         // 1. Vision 요청 준비
         let rectangleRequest = VNDetectHumanRectanglesRequest()
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
-
+        rectangleRequest.upperBodyOnly = true
         let handler = VNImageRequestHandler(ciImage: image, options: [:])
+        let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
 
         DispatchQueue.global().async {
             do {
@@ -53,11 +54,23 @@ class OverlayManager: ObservableObject {
 
                 /// 2단계: BoundingBox 추출
                 if let results = rectangleRequest.results, !results.isEmpty {
-                    let boxes = results.map { $0.boundingBox }
-                    let averageBox = boxes.average() // 이미 ViewModel에서 사용하던 확장 활용
+                    let correctedBoxes = results.map { observation -> CGRect in
+                            let box = observation.boundingBox
+                            if savedIsFront {
+                                // 좌우 반전
+                                return CGRect(
+                                    x: 1 - box.origin.x - box.size.width,
+                                    y: box.origin.y,
+                                    width: box.size.width,
+                                    height: box.size.height
+                                )
+                            } else {
+                                return box
+                            }
+                        }
 
                     DispatchQueue.main.async {
-                        self.boundingBox = averageBox
+                        self.boundingBoxes = correctedBoxes
                     }
                 }
 
