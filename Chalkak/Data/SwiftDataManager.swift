@@ -103,7 +103,7 @@ class SwiftDataManager {
 
     // MARK: - Clip
 
-    /// `Clip` 생성
+    /// `Clip` 생성: Clip 객체 데이터로
     func createClip(
         id: String,
         videoURL: URL,
@@ -120,6 +120,12 @@ class SwiftDataManager {
             tiltList: tiltList,
             heightList: heightList
         )
+        context.insert(clip)
+        return clip
+    }
+    
+    /// `Clip` 생성: Clip 객체로
+    func createClip(clip: Clip) -> Clip {
         context.insert(clip)
         return clip
     }

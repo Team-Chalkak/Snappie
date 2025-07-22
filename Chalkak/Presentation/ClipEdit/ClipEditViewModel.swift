@@ -36,6 +36,7 @@ final class ClipEditViewModel: ObservableObject {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
+    var timeStampedTiltList: [TimeStampedTilt]
 
     // 2. Published properties
     @Published var player: AVPlayer?
@@ -59,9 +60,14 @@ final class ClipEditViewModel: ObservableObject {
     private let thumbnailCount = 10
 
     // 5. init & deinit
-    init(clipURL: URL, cameraSetting: CameraSetting) {
+    init(
+        clipURL: URL,
+        cameraSetting: CameraSetting,
+        timeStampedTiltList: [TimeStampedTilt]
+    ) {
         self.clipURL = clipURL
         self.cameraSetting = cameraSetting
+        self.timeStampedTiltList = timeStampedTiltList
         setupPlayer()
     }
 
@@ -220,18 +226,23 @@ final class ClipEditViewModel: ObservableObject {
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
-    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성하여 반환
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip {
+        let clip = createClipData()
+        return SwiftDataManager.shared.createClip(clip: clip)
+    }
+    
+    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
+    func createClipData() -> Clip {
         let clipID = UUID().uuidString
         self.clipID = clipID
-        return SwiftDataManager.shared.createClip(
+        return Clip(
             id: clipID,
             videoURL: clipURL,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: [],
+            tiltList: timeStampedTiltList,
             heightList: []
         )
     }
