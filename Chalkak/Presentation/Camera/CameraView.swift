@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CameraView: View {
-    let isFirstShoot: Bool
     let guide: Guide?
 
     @ObservedObject var viewModel: CameraViewModel
@@ -50,7 +49,6 @@ struct CameraView: View {
             )
             coordinator.push(.clipEdit(
                 clipURL: url,
-                isFirstShoot: isFirstShoot,
                 guide: guide,
                 cameraSetting: cameraSetting)
             )

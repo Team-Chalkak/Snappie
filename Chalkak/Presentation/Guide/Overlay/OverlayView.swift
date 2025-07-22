@@ -66,7 +66,7 @@ struct OverlayView: View {
                     /// 가이드 객체 생성
                     if let newGuide = overlayViewModel.makeGuide(clipID: clipID, isFrontCamera: isFrontCamera) {
                         guide = newGuide
-                        coordinator.push(.boundingBox(guide: newGuide, isFirstShoot: false))
+                        coordinator.push(.boundingBox(guide: newGuide))
                     } else {
                         print("❌ guide 생성 실패")
                     }

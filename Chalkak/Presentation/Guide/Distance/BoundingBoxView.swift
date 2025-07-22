@@ -9,10 +9,9 @@ import SwiftUI
 
 struct BoundingBoxView: View {
     let guide: Guide?
-    let isFirstShoot: Bool
 
     var body: some View {
-        if isFirstShoot {
+        if guide == nil {
             FirstShootCameraView()
         } else {
             GuideCameraView(guide: guide)

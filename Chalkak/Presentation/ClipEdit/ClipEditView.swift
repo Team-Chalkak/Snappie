@@ -31,7 +31,6 @@ import SwiftUI
  */
 struct ClipEditView: View {
     // 1. Input properties
-    private var isFirstShoot: Bool
     let guide: Guide?
     let cameraSetting: CameraSetting
 
@@ -42,10 +41,9 @@ struct ClipEditView: View {
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
         
-    init(clipURL: URL, isFirstShoot: Bool, guide: Guide?, cameraSetting: CameraSetting) {
+    init(clipURL: URL, guide: Guide?, cameraSetting: CameraSetting) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL, cameraSetting: cameraSetting))
         _overlayViewModel = StateObject(wrappedValue: OverlayViewModel())
-        self.isFirstShoot = isFirstShoot
         self.guide = guide
         self.cameraSetting = cameraSetting
     }
@@ -81,7 +79,7 @@ struct ClipEditView: View {
         .navigationTitle("영상 트리밍")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if !isFirstShoot {
+            if guide != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task {
@@ -103,7 +101,7 @@ struct ClipEditView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
-                    if isFirstShoot {
+                    if guide == nil {
                         editViewModel.saveProjectData()
                         overlayViewModel.prepareOverlay(
                             from: editViewModel.clipURL,
@@ -112,7 +110,7 @@ struct ClipEditView: View {
                     } else {
                         editViewModel.appendClipToCurrentProject()
                         if let guide = guide {
-                            coordinator.push(.boundingBox(guide: guide, isFirstShoot: false))
+                            coordinator.push(.boundingBox(guide: guide))
                         }
                     }
                 }
