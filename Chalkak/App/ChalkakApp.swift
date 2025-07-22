@@ -29,20 +29,19 @@ struct ChalkakApp: App {
                 BoundingBoxView(guide: nil, isFirstShoot: true)
                     .navigationDestination(for: Path.self) { path in
                         switch path {
-                        case .clipEdit(let url, let isFirstShoot, let guide, let cameraSetting):
+                        case .clipEdit(let url, let isFirstShoot, let guide, let cameraSetting, let timeStampedTiltList):
                             ClipEditView(
                                 clipURL: url,
                                 isFirstShoot: isFirstShoot,
                                 guide: guide,
-                                cameraSetting: cameraSetting
+                                cameraSetting: cameraSetting,
+                                timeStampedTiltList: timeStampedTiltList
                             )
 
-                        case .overlay(let clipID, let isFrontCamera):
-                            let overlayViewModel = OverlayViewModel()
+                        case .overlay(let clip, let isFrontCamera):
                             OverlayView(
-                                clipID: clipID, 
-                                isFrontCamera: isFrontCamera,
-                                overlayViewModel: overlayViewModel
+                                clip: clip,
+                                isFrontCamera: isFrontCamera
                             )
 
                         case .boundingBox(let guide, let isFirstShoot):

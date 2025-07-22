@@ -12,6 +12,14 @@ class BoundingBoxViewModel: ObservableObject {
     @Published var referenceBoundingBoxes: [CGRect] = []
     @Published var isSettingReference: Bool = false
     @Published var isAligned: Bool = false
+    @Published var tiltManager: CameraTiltManager?
+    
+    // MARK: - init
+    init(properTilt: Tilt? = nil, tiltDataCollector: TiltDataCollector? = nil) {
+        if let properTilt, let tiltDataCollector {
+            self.tiltManager = CameraTiltManager(properTilt: properTilt, dataCollector: tiltDataCollector)
+        }
+    }
     
     /// 기준 설정
     func setReference(from guide: Guide) {

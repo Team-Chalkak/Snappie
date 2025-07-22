@@ -11,8 +11,22 @@ struct BoundingBoxView: View {
     let guide: Guide?
     let isFirstShoot: Bool
 
-    @StateObject private var viewModel = BoundingBoxViewModel()
-    @StateObject private var cameraViewModel = CameraViewModel()
+    @StateObject private var viewModel: BoundingBoxViewModel
+    @StateObject private var cameraViewModel: CameraViewModel
+    
+    init(guide: Guide?, isFirstShoot: Bool) {
+        self.guide = guide
+        self.isFirstShoot = isFirstShoot
+        
+        let cameraVM = CameraViewModel()
+        self._cameraViewModel = StateObject(wrappedValue: cameraVM)
+        self._viewModel = StateObject(
+            wrappedValue: BoundingBoxViewModel(
+                properTilt: guide?.cameraTilt,
+                tiltDataCollector: cameraVM.tiltCollector
+            )
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -44,7 +58,10 @@ struct BoundingBoxView: View {
                             .allowsHitTesting(false)
                     }
 
-                    // TODO: - Height, Tilt 피드백 뷰 띄우기
+                    // Tilt 피드백 뷰
+                    if let tiltManager = viewModel.tiltManager {
+                        TiltFeedbackView(offsetX: tiltManager.offsetX, offsetY: tiltManager.offsetZ)
+                    }
                 }
             }
         }
