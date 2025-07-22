@@ -48,11 +48,14 @@ struct CameraView: View {
                 isFrontPosition: viewModel.isUsingFrontCamera,
                 timerSecond: viewModel.selectedTimerDuration.rawValue
             )
-            coordinator.push(.clipEdit(
-                clipURL: url,
-                isFirstShoot: isFirstShoot,
-                guide: guide,
-                cameraSetting: cameraSetting)
+            coordinator.push(
+                .clipEdit(
+                    clipURL: url,
+                    isFirstShoot: isFirstShoot,
+                    guide: guide,
+                    cameraSetting: cameraSetting,
+                    TimeStampedTiltList: viewModel.timeStampedTiltList
+                )
             )
         }
     }
