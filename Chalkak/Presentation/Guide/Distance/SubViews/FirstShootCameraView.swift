@@ -12,7 +12,7 @@ struct FirstShootCameraView: View {
 
     var body: some View {
         ZStack {
-            CameraView(isFirstShoot: true, guide: nil, viewModel: cameraViewModel)
+            CameraView(guide: nil, viewModel: cameraViewModel)
         }
     }
 }

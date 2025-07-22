@@ -21,7 +21,7 @@ struct GuideCameraView: View {
                     .transition(.opacity)
             }
 
-            CameraView(isFirstShoot: false, guide: guide, viewModel: cameraViewModel)
+            CameraView(guide: guide, viewModel: cameraViewModel)
                 .onAppear {
                     cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
                         viewModel.liveBoundingBoxes = bboxes
