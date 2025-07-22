@@ -35,7 +35,6 @@ import SwiftUI
  */
 struct ClipEditView: View {
     // 1. Input properties
-    private var isFirstShoot: Bool
     let guide: Guide?
     let cameraSetting: CameraSetting
 
@@ -45,12 +44,10 @@ struct ClipEditView: View {
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
     @State private var autoPlayEnabled = true
-        
     
     // 3. init
     init(
         clipURL: URL,
-        isFirstShoot: Bool,
         guide: Guide?,
         cameraSetting: CameraSetting,
         timeStampedTiltList: [TimeStampedTilt]
@@ -59,9 +56,8 @@ struct ClipEditView: View {
             clipURL: clipURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: timeStampedTiltList
+            )
         )
-        )
-        self.isFirstShoot = isFirstShoot
         self.guide = guide
         self.cameraSetting = cameraSetting
     }
@@ -86,7 +82,7 @@ struct ClipEditView: View {
         .navigationTitle("영상 트리밍")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if !isFirstShoot {
+            if guide != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task {
@@ -108,7 +104,7 @@ struct ClipEditView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
-                    if isFirstShoot {
+                    if guide == nil {
                         // 프로젝트 swiftdata에 저장
                         editViewModel.saveProjectData()
                         // 오버레이 생성 화면으로 이동
@@ -123,7 +119,7 @@ struct ClipEditView: View {
                         editViewModel.appendClipToCurrentProject()
                         // 가이드 카메라로 이동
                         if let guide = guide {
-                            coordinator.push(.boundingBox(guide: guide, isFirstShoot: false))
+                            coordinator.push(.boundingBox(guide: guide))
                         }
                     }
                 }
