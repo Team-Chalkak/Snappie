@@ -28,6 +28,10 @@ import SwiftUI
  ## 서브뷰
  - VideoPreviewView: 영상의 현재 구간을 보여주는 프리뷰 뷰
  - TrimmingControlView: 영상 재생 버튼과 트리밍 타임라인 UI를 포함한 조작 패널
+ 
+ ## 호출 위치
+ - CameraView → ClipEditView로 이동
+ - 호출 예시:
  */
 struct ClipEditView: View {
     // 1. Input properties
@@ -40,6 +44,7 @@ struct ClipEditView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
+    @State private var autoPlayEnabled = true
         
     
     // 3. init

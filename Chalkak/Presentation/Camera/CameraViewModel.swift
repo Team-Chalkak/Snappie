@@ -28,7 +28,7 @@ class CameraViewModel: ObservableObject {
     @Published var selectedTimerDuration: TimerOptions = .off
 
     @Published var showingCameraControl = false
-    @Published var isTorch = false
+    @Published var torchMode: TorchMode = .off
     @Published var isGrid = false
     @Published var isHorizontalLevelActive = false {
         didSet {
@@ -147,8 +147,8 @@ class CameraViewModel: ObservableObject {
     }
 
     func switchTorch() {
-        isTorch.toggle()
-        model.setTorchMode(isTorch)
+        torchMode.toggle()
+        model.setTorchMode(torchMode)
     }
 
     func switchGrid() {
@@ -271,9 +271,24 @@ class CameraViewModel: ObservableObject {
     func changeCamera() {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
+        // 카메라 전환 후 CameraManager에서 복원된 줌 스케일을 동기화
+        zoomScale = model.currentZoomScale
     }
 
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
+    }
+    
+    func saveCameraSettingToUserDefaults() -> CameraSetting {
+        let setting = CameraSetting(
+            zoomScale: zoomScale,
+            isGridEnabled: isGrid,
+            isFrontPosition: isUsingFrontCamera,
+            timerSecond: selectedTimerDuration.rawValue
+        )
+        
+        UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
+
+        return setting
     }
 }

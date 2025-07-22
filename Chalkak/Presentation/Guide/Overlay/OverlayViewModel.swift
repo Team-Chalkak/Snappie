@@ -86,7 +86,7 @@ final class OverlayViewModel: ObservableObject {
     /// Guide 객체 생성
     @MainActor
     func makeGuide(clipID: String, isFrontCamera: Bool) -> Guide? {
-        guard let capturedImage = overlayManager.outlineImage, let bBox = overlayManager.boundingBox else {
+        guard let capturedImage = overlayManager.outlineImage else {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
@@ -101,10 +101,17 @@ final class OverlayViewModel: ObservableObject {
             outlineImage = capturedImage
         }
         
+        // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
+            let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
+                BoundingBoxInfo(
+                    origin: PointWrapper(box.origin),
+                    scale: box.width // 필요 시 width/height 따로 둘 수도 있음
+                )
+            }
+        
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
-            bBoxPosition: PointWrapper(bBox.origin),
-            bBoxScale: bBox.width * 1.5,
+            boundingBoxes: boundingBoxInfos,
             outlineImage: outlineImage,
             cameraTilt: cameraTilt,
             cameraHeight: 1.0

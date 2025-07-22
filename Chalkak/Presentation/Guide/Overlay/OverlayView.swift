@@ -25,7 +25,7 @@ import SwiftUI
 
  ## 호출 위치
  - ClipEditView → OverlayView로 이동
- - 호출 예시: `NavigationLink(destination: OverlayView(...))`
+ - 호출 예시: 
  */
 struct OverlayView: View {
     // 1. Input properties
