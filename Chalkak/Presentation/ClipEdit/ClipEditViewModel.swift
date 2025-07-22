@@ -36,6 +36,7 @@ final class ClipEditViewModel: ObservableObject {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
+    var timeStampedTiltList: [TimeStampedTilt]
 
     // 2. Published properties
     @Published var player: AVPlayer?
@@ -59,9 +60,14 @@ final class ClipEditViewModel: ObservableObject {
     private let thumbnailCount = 10
 
     // 5. init & deinit
-    init(clipURL: URL, cameraSetting: CameraSetting) {
+    init(
+        clipURL: URL,
+        cameraSetting: CameraSetting,
+        timeStampedTiltList: [TimeStampedTilt]
+    ) {
         self.clipURL = clipURL
         self.cameraSetting = cameraSetting
+        self.timeStampedTiltList = timeStampedTiltList
         setupPlayer()
     }
 
@@ -97,6 +103,7 @@ final class ClipEditViewModel: ObservableObject {
 
                 await generateThumbnails(for: asset)
                 await updatePreviewImage(at: 0)
+                playPreview()
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
@@ -189,7 +196,12 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(token)
             timeObserverToken = nil
         }
-        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600)) { [weak self] _ in
+
+        let currentTime = player?.currentTime() ?? .zero
+        let currentTimeSeconds = CMTimeGetSeconds(currentTime)
+
+        /// 재생을 시작하고 종료 시점을 감지하는 로직
+        let startPlaybackAndObserve = { [weak self] in
             guard let self = self else { return }
             self.player?.play()
             self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
@@ -203,6 +215,15 @@ final class ClipEditViewModel: ObservableObject {
                     }
                 }
             }
+        }
+
+        /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
+        if currentTimeSeconds >= startPoint && currentTimeSeconds < endPoint {
+            startPlaybackAndObserve()
+        } else {
+            /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
+            seek(to: startPoint)
+            startPlaybackAndObserve()
         }
     }
     
@@ -220,18 +241,23 @@ final class ClipEditViewModel: ObservableObject {
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
-    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성하여 반환
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip {
+        let clip = createClipData()
+        return SwiftDataManager.shared.createClip(clip: clip)
+    }
+    
+    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
+    func createClipData() -> Clip {
         let clipID = UUID().uuidString
         self.clipID = clipID
-        return SwiftDataManager.shared.createClip(
+        return Clip(
             id: clipID,
             videoURL: clipURL,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: [],
+            tiltList: timeStampedTiltList,
             heightList: []
         )
     }

@@ -25,31 +25,47 @@ import SwiftUI
 
  ## 호출 위치
  - ClipEditView → OverlayView로 이동
- - 호출 예시: `NavigationLink(destination: OverlayView(...))`
+ - 호출 예시: 
  */
 struct OverlayView: View {
     // 1. Input properties
-    let clipID: String
+    let clip: Clip
     let isFrontCamera: Bool
 
     // 2. State & ObservedObject
-    @ObservedObject var overlayViewModel: OverlayViewModel
+    @StateObject var overlayViewModel: OverlayViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var navigateToCameraView = false
     @EnvironmentObject private var coordinator: Coordinator
     @State private var guide: Guide?
     
+    // 3. init
+    init(clip: Clip, isFrontCamera: Bool) {
+        self.clip = clip
+        self.isFrontCamera = isFrontCamera
+        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
+    }
+    
     var body: some View {
         VStack(alignment: .center, spacing: 20, content: {
-            
-            Spacer().frame(height: 1)
-
-            Text("생성된 가이드를 확인해보세요")
-
-            OverlayDisplayView(overlayViewModel: overlayViewModel)
-            
-            Spacer()
-            
+            if overlayViewModel.isOverlayReady {
+                Spacer().frame(height: 1)
+                
+                Text("생성된 가이드를 확인해보세요")
+                
+                OverlayDisplayView(overlayViewModel: overlayViewModel)
+                
+                Spacer()
+                
+            } else {
+                ProgressView("윤곽선 생성 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .foregroundStyle(.white)
+                    .tint(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.5))
+                    .cornerRadius(10)
+            }
         })
         .navigationBarBackButtonHidden()
         .navigationTitle("가이드 확인")
@@ -64,7 +80,10 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let newGuide = overlayViewModel.makeGuide(clipID: clipID, isFrontCamera: isFrontCamera) {
+                    if let newGuide = overlayViewModel.makeGuide(
+                        clipID: clip.id,
+                        isFrontCamera: isFrontCamera
+                    ) {
                         guide = newGuide
                         coordinator.push(.boundingBox(guide: newGuide))
                     } else {

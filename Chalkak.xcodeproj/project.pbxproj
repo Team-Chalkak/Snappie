@@ -59,13 +59,22 @@
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 		99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */; };
 		99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */; };
+		999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */; };
+		9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */; };
 		99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A092E27BADB00F42541 /* Coordinator.swift */; };
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
 		99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */; };
+		B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB62AD2E2E8B7700207590 /* TorchMode.swift */; };
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
 		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
+		C5FB3EC42E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */; };
+		C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */; };
+		C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */; };
+		C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,14 +150,21 @@
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstShootCameraView.swift; sourceTree = "<group>"; };
 		99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideCameraView.swift; sourceTree = "<group>"; };
+		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
+		9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultKey.swift; sourceTree = "<group>"; };
 		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
 		99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Ext.swift"; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B6AB62AD2E2E8B7700207590 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
+		C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "KronaOne-Regular.ttf"; sourceTree = "<group>"; };
+		C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SnappieFont.swift; path = Chalkak/Common/DesignSystem/SnappieFont.swift; sourceTree = SOURCE_ROOT; };
+		C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieColor.swift; sourceTree = "<group>"; };
+		C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text + Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +301,7 @@
 		993A1F262E267E0C0059B70A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */,
 				99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */,
 				993A1F222E267E0C0059B70A /* Clip.swift */,
 				993A1F232E267E0C0059B70A /* Guide.swift */,
@@ -306,6 +323,7 @@
 		993A1F2A2E267E0C0059B70A /* Enum */ = {
 			isa = PBXGroup;
 			children = (
+				B6AB62AD2E2E8B7700207590 /* TorchMode.swift */,
 				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
 			);
 			path = Enum;
@@ -409,6 +427,7 @@
 		993A1F4E2E267E0C0059B70A /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				C5FB3EC22E2E0E2900A4C1BE /* Fonts */,
 				993A1F4C2E267E0C0059B70A /* Assets.xcassets */,
 				993A1F4D2E267E0C0059B70A /* sample-video.mov */,
 			);
@@ -469,18 +488,12 @@
 		993A217E2E26AB7E0059B70A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				999992482E2D8EB300D56BD1 /* Constant */,
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
-				993A217F2E26AB920059B70A /* DesignSystem */,
+				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		993A217F2E26AB920059B70A /* DesignSystem */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DesignSystem;
 			sourceTree = "<group>";
 		};
 		993A21802E26AB9C0059B70A /* Extension */ = {
@@ -488,8 +501,25 @@
 			children = (
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
+				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		999992482E2D8EB300D56BD1 /* Constant */ = {
+			isa = PBXGroup;
+			children = (
+				999992492E2D8EBC00D56BD1 /* Environment */,
+			);
+			path = Constant;
+			sourceTree = "<group>";
+		};
+		999992492E2D8EBC00D56BD1 /* Environment */ = {
+			isa = PBXGroup;
+			children = (
+				9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */,
+			);
+			path = Environment;
 			sourceTree = "<group>";
 		};
 		99C7266D2E2F0A1B00E9D0CD /* SubViews */ = {
@@ -515,6 +545,23 @@
 				99C93A0D2E27BB0300F42541 /* Path.swift */,
 			);
 			path = Enum;
+			sourceTree = "<group>";
+		};
+		C5FB3EC22E2E0E2900A4C1BE /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C5FB3EC32E2E0E6700A4C1BE /* KronaOne-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		C5FB3ECC2E2E114600A4C1BE /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */,
+				C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */,
+			);
+			path = DesignSystem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -628,6 +675,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 				993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */,
 				993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */,
 				993A1F522E267E0C0059B70A /* sample-video.mov in Resources */,
@@ -638,6 +686,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC42E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +694,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3EC62E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,6 +705,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
@@ -666,10 +717,12 @@
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
+				C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
+				9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
@@ -683,8 +736,10 @@
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
+				B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
+				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
@@ -705,6 +760,7 @@
 				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
+				C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,

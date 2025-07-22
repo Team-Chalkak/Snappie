@@ -28,6 +28,10 @@ import SwiftUI
  ## 서브뷰
  - VideoPreviewView: 영상의 현재 구간을 보여주는 프리뷰 뷰
  - TrimmingControlView: 영상 재생 버튼과 트리밍 타임라인 UI를 포함한 조작 패널
+ 
+ ## 호출 위치
+ - CameraView → ClipEditView로 이동
+ - 호출 예시:
  */
 struct ClipEditView: View {
     // 1. Input properties
@@ -36,19 +40,29 @@ struct ClipEditView: View {
 
     // 2. State & ObservedObject
     @StateObject private var editViewModel: ClipEditViewModel
-    @StateObject private var overlayViewModel: OverlayViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
-        
-    init(clipURL: URL, guide: Guide?, cameraSetting: CameraSetting) {
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(clipURL: clipURL, cameraSetting: cameraSetting))
-        _overlayViewModel = StateObject(wrappedValue: OverlayViewModel())
+    @State private var autoPlayEnabled = true
+    
+    // 3. init
+    init(
+        clipURL: URL,
+        guide: Guide?,
+        cameraSetting: CameraSetting,
+        timeStampedTiltList: [TimeStampedTilt]
+    ) {
+        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
+            clipURL: clipURL,
+            cameraSetting: cameraSetting,
+            timeStampedTiltList: timeStampedTiltList
+            )
+        )
         self.guide = guide
         self.cameraSetting = cameraSetting
     }
     
-    
+    // 4. body
     var body: some View {
         ZStack {
             VStack(alignment: .center, spacing: 20, content: {
@@ -64,17 +78,6 @@ struct ClipEditView: View {
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
             })
-
-            //TODO: 추후 가이드 생성 화면 나오면 삭제
-            if overlayViewModel.isLoading {
-                ProgressView("윤곽선 생성 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundStyle(.white)
-                    .tint(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.5))
-                    .cornerRadius(10)
-            }
         }
         .navigationTitle("영상 트리밍")
         .navigationBarTitleDisplayMode(.inline)
@@ -102,26 +105,24 @@ struct ClipEditView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     if guide == nil {
+                        // 프로젝트 swiftdata에 저장
                         editViewModel.saveProjectData()
-                        overlayViewModel.prepareOverlay(
-                            from: editViewModel.clipURL,
-                            at: editViewModel.startPoint
+                        // 오버레이 생성 화면으로 이동
+                        coordinator.push(
+                            .overlay(
+                                clip: editViewModel.createClipData(),
+                                isFrontCamera: cameraSetting.isFrontPosition
+                            )
                         )
                     } else {
+                        // 트리밍한 클립 프로젝트에 추가
                         editViewModel.appendClipToCurrentProject()
+                        // 가이드 카메라로 이동
                         if let guide = guide {
                             coordinator.push(.boundingBox(guide: guide))
                         }
                     }
                 }
-            }
-        }
-        .navigationDestination(isPresented: $overlayViewModel.isOverlayReady) {
-            if let clipID = editViewModel.clipID {
-                OverlayView(
-                    clipID: clipID,
-                    isFrontCamera: cameraSetting.isFrontPosition,
-                    overlayViewModel: overlayViewModel)
             }
         }
     }

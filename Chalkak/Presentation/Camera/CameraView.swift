@@ -41,12 +41,8 @@ struct CameraView: View {
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
-            let cameraSetting = CameraSetting(
-                zoomScale: viewModel.zoomScale,
-                isGridEnabled: viewModel.isGrid,
-                isFrontPosition: viewModel.isUsingFrontCamera,
-                timerSecond: viewModel.selectedTimerDuration.rawValue
-            )
+            let cameraSetting = viewModel.saveCameraSettingToUserDefaults()
+            
             coordinator.push(.clipEdit(
                 clipURL: url,
                 guide: guide,
