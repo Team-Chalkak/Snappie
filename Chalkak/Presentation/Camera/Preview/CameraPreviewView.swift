@@ -9,11 +9,11 @@ import SwiftUI
 
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
-    @Binding var showGrid: Bool
     let tabToFocus: ((CGPoint) -> Void)?
     let onPinchZoom: ((CGFloat) -> Void)?
     let currentZoomScale: CGFloat
     let isUsingFrontCamera: Bool
+    @Binding var showGrid: Bool
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
@@ -195,7 +195,7 @@ struct CameraPreviewView: UIViewRepresentable {
         // 외부에서 줌 스케일이 변경되었을 때 동기화
         uiView.updateInitialZoomScale(currentZoomScale)
         
-        // 전면 카메라 상태 업데이트
+        // 핀치제스처 막기위한 현재 카메라 포지션 업데이트
         uiView.isUsingFrontCamera = isUsingFrontCamera
     }
 }
