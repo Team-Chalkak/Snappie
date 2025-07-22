@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct FirstShootCameraView: View {
+    @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
     var body: some View {
         ZStack {
             CameraView(guide: nil, viewModel: cameraViewModel)
+        }
+        .onAppear() {
+            viewModel.deleteUserDefault()
         }
     }
 }

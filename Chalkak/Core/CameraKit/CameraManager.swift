@@ -43,7 +43,8 @@ class CameraManager: NSObject, ObservableObject {
     private var backCameraZoomScale: CGFloat = 1.0
     private var initialCameraPosition: AVCaptureDevice.Position {
         get {
-            if let savedValue = UserDefaults.standard.string(forKey: "cameraPosition"), savedValue == "front" {
+            if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition),
+                   savedValue == "front" {
                 return .front
             } else {
                 return .back
@@ -51,7 +52,7 @@ class CameraManager: NSObject, ObservableObject {
         }
         set {
             let value = newValue == .front ? "front" : "back"
-            UserDefaults.standard.set(value, forKey: "cameraPosition")
+            UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
         }
     }
     

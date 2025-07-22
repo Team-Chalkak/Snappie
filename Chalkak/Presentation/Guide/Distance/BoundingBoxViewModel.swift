@@ -40,6 +40,14 @@ class BoundingBoxViewModel: ObservableObject {
         }
     }
     
+    func deleteUserDefault() {
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.isGridOn)
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.zoomScale)
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.timerSecond)
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.isFrontPosition)
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.cameraPosition)
+    }
+    
     /// 값 비교
     func compare() {
         guard !referenceBoundingBoxes.isEmpty else { return }
