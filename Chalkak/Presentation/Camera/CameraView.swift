@@ -23,7 +23,8 @@ struct CameraView: View {
                 showGrid: $viewModel.isGrid, 
                 tabToFocus: viewModel.focusAtPoint,
                 onPinchZoom: viewModel.selectZoomScale,
-                currentZoomScale: viewModel.zoomScale
+                currentZoomScale: viewModel.zoomScale,
+                isUsingFrontCamera: viewModel.isUsingFrontCamera
             )
 
             if viewModel.isHorizontalLevelActive {

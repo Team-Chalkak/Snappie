@@ -19,7 +19,6 @@ class CameraViewModel: ObservableObject {
     private var horizontalLevelCancellable: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
 
-
     // 비디오 저장 완료 이벤트를 View로 전달
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
 
@@ -47,6 +46,7 @@ class CameraViewModel: ObservableObject {
             isUsingFrontCamera = (cameraPostion == .front)
         }
     }
+
     @Published var isRecording = false
     @Published var recordingTime = 0
 
@@ -54,8 +54,7 @@ class CameraViewModel: ObservableObject {
 
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
-    
-    var isUsingFrontCamera: Bool = false
+    @Published var isUsingFrontCamera: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
@@ -79,7 +78,7 @@ class CameraViewModel: ObservableObject {
     private var recordingStartDate: Date?
     var timeStampedTiltList: [TimeStampedTilt] = []
     @Published var tiltCollector = TiltDataCollector()
-    
+
     var formattedTime: String {
         let minutes = recordingTime / 60
         let seconds = recordingTime % 60
@@ -87,6 +86,7 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - init
+
     init() {
         model = CameraManager()
         session = model.session
@@ -197,12 +197,12 @@ class CameraViewModel: ObservableObject {
     private func executeVideoRecording() {
         model.startRecording()
         isRecording = true
-        
+
         // 녹화 시작 시간 기록
         recordingStartDate = Date()
         // 틸트 데이터 초기화
         timeStampedTiltList.removeAll()
-        
+
         // 타이머 시작
         startRecordingTimer()
         startDataCollectionTimer()
@@ -234,19 +234,19 @@ class CameraViewModel: ObservableObject {
             self?.recordingTime += 1
         }
     }
-    
+
     /// Tilt 데이터 수집용 1/3초 타이머
     private func startDataCollectionTimer() {
         dataCollectionTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 3.0, repeats: true, block: { [weak self] _ in
             guard let self = self else { return }
-            
+
             if self.isRecording, let startDate = recordingStartDate {
                 // 경과 시간 계산
                 let recordingTime = Date().timeIntervalSince(startDate)
-                
+
                 // 기울기 값 가져오기
                 let currentTilt = Tilt(degreeX: tiltCollector.gravityX, degreeZ: tiltCollector.gravityZ)
-                
+
                 timeStampedTiltList.append(.init(time: recordingTime, tilt: currentTilt))
             }
         })
@@ -256,7 +256,7 @@ class CameraViewModel: ObservableObject {
         timer?.invalidate()
         timer = nil
     }
-    
+
     private func stopDataCollectionTimer() {
         dataCollectionTimer?.invalidate()
         timer = nil
@@ -278,7 +278,7 @@ class CameraViewModel: ObservableObject {
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
     }
-    
+
     func saveCameraSettingToUserDefaults() -> CameraSetting {
         let setting = CameraSetting(
             zoomScale: zoomScale,
@@ -286,7 +286,7 @@ class CameraViewModel: ObservableObject {
             isFrontPosition: isUsingFrontCamera,
             timerSecond: selectedTimerDuration.rawValue
         )
-        
+
         UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
 
         return setting

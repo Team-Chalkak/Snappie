@@ -13,11 +13,13 @@ struct CameraPreviewView: UIViewRepresentable {
     let tabToFocus: ((CGPoint) -> Void)?
     let onPinchZoom: ((CGFloat) -> Void)?
     let currentZoomScale: CGFloat
+    let isUsingFrontCamera: Bool
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
         var handleFocus: ((CGPoint) -> Void)?
         var handlePinchZoom: ((CGFloat) -> Void)?
+        var isUsingFrontCamera: Bool = false
         
         private var initialZoomScale: CGFloat = 1.0
         private var lastPinchScale: CGFloat = 1.0
@@ -40,6 +42,11 @@ struct CameraPreviewView: UIViewRepresentable {
         }
         
         @objc private func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
+            // 전면 카메라일 때는 핀치 제스처를 무시
+            if isUsingFrontCamera {
+                return
+            }
+            
             // 감도 개선- 줌스케일 40%로 제한
             let zoomSensitivity: CGFloat = 0.4
             // 감도기반 줌스케일 보정값 적용
@@ -187,5 +194,8 @@ struct CameraPreviewView: UIViewRepresentable {
         
         // 외부에서 줌 스케일이 변경되었을 때 동기화
         uiView.updateInitialZoomScale(currentZoomScale)
+        
+        // 전면 카메라 상태 업데이트
+        uiView.isUsingFrontCamera = isUsingFrontCamera
     }
 }
