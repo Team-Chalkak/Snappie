@@ -14,7 +14,7 @@ import Foundation
  `TiltDataCollector`는 디바이스의 물리적 기울기를 감지하여 중력 벡터 데이터를 수집합니다.
  
  ## 사용 예시
- ```
+ ```swift
  @StateObject private var tiltCollector = TiltDataCollector()
  
  var body: some View {
@@ -48,5 +48,10 @@ class TiltDataCollector: ObservableObject {
                 self.gravityZ = data.gravity.z
             }
         }
+    }
+    
+    /// TiltDataCollector가 해제될 때 motion updates를 자동으로 중지하도록 처리
+    deinit {
+        motionManager.stopDeviceMotionUpdates()
     }
 }

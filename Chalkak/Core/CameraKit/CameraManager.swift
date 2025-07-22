@@ -38,8 +38,61 @@ class CameraManager: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
+    // 전면/후면 카메라별 줌 스케일 저장
+    private var frontCameraZoomScale: CGFloat = 1.0
+    private var backCameraZoomScale: CGFloat = 1.0
+
     deinit {
         session.stopRunning()
+    }
+
+    /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
+    private func configureFrameRate(for device: AVCaptureDevice) {
+        var targetFormat: AVCaptureDevice.Format?
+        var maxResolution: Int32 = 0
+
+        // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
+        for format in device.formats {
+            /// 현재 촬영하고자하는 해상도 정보 추출
+            /// struct CMVideoDimensions { var width: Int32 / var height: Int32 }
+            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            let currentResolution = dimensions.width * dimensions.height
+
+            // 4K까지는 의미X 1080p(1920x1080의값2,073,600)이하로 제한
+            if currentResolution <= 2073600 {
+                // 이 포맷이 지원하는 프레임레이트 범위들을 확인
+                for range in format.videoSupportedFrameRateRanges {
+                    // 지금까지 찾은 것보다 더 높은 해상도인지 확인
+                    if range.maxFrameRate >= 60, currentResolution > maxResolution {
+                        targetFormat = format
+                        maxResolution = currentResolution
+                        break // 60fps 찾으면 break
+                    }
+                }
+            }
+        }
+
+        // 조건에 맞는 포맷을 찾지 못한 경우 에러 처리
+        guard let format = targetFormat else {
+            print("현재 해상도에서 60fps를 지원하지 않습니다.")
+            return
+        }
+
+        // 찾은 최적 포맷을 실제 카메라에 적용
+        do {
+            try device.lockForConfiguration()
+            device.activeFormat = format // 선택된 포맷 적용
+
+            // 프레임 60fps로 고정 설정
+            let frameDuration = CMTime(value: 1, timescale: 60)
+            // 최대 - 최소 프레임 60fps
+            device.activeVideoMinFrameDuration = frameDuration
+            device.activeVideoMaxFrameDuration = frameDuration
+            device.unlockForConfiguration()
+
+        } catch {
+            print("프레임 설정 오류 \(error)")
+        }
     }
 
     /// 후면 카메라 중 가장 좋은 성능의 카메라(가상 카메라 우선)를 찾아서 반환
@@ -58,7 +111,12 @@ class CameraManager: NSObject, ObservableObject {
         return discoverySession.devices.first
     }
 
+    /// 카메라 세팅
+    /// 비디오,오디오 연결
     func setUpCamera() {
+        // 고화질 설정
+//        session.sessionPreset = .hd1920x1080
+
         if let device = findBestBackCamera() {
             do {
                 // 카메라 연결
@@ -66,6 +124,8 @@ class CameraManager: NSObject, ObservableObject {
                 if session.canAddInput(videoDeviceInput) {
                     session.addInput(videoDeviceInput)
                 }
+
+                configureFrameRate(for: device)
 
                 // 오디오 입력 추가
                 if let audioDevice = AVCaptureDevice.default(for: .audio) {
@@ -94,7 +154,8 @@ class CameraManager: NSObject, ObservableObject {
                 DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                     self?.session.startRunning()
                     DispatchQueue.main.async {
-                        self?.setZoomScale(1.0)
+                        // 최초 카메라 설정 시 1.0 줌배율적용
+                        self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
                     }
                 }
             } catch {
@@ -102,6 +163,7 @@ class CameraManager: NSObject, ObservableObject {
             }
         }
     }
+
 
     /// 토치 모드 설정
     func setTorchMode(_ mode: TorchMode) {
@@ -157,6 +219,15 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 전면/후면 카메라 전환
     func switchCamera(to position: AVCaptureDevice.Position) {
+        // 현재 카메라의 줌 스케일 저장
+        if let currentDevice = videoDeviceInput?.device {
+            if currentDevice.position == .front {
+                frontCameraZoomScale = currentZoomScale
+            } else if currentDevice.position == .back {
+                backCameraZoomScale = currentZoomScale
+            }
+        }
+
         session.beginConfiguration()
 
         if let existingInput = videoDeviceInput {
@@ -176,6 +247,7 @@ class CameraManager: NSObject, ObservableObject {
                 if session.canAddInput(videoDeviceInput) {
                     session.addInput(videoDeviceInput)
                 }
+                configureFrameRate(for: device)
             } catch {
                 print("카메라 전환 중 오류: \(error)")
             }
@@ -188,6 +260,10 @@ class CameraManager: NSObject, ObservableObject {
         }
 
         session.commitConfiguration()
+
+        // 전환된 카메라의 저장된 줌 스케일 복원
+        let savedZoomScale = position == .front ? frontCameraZoomScale : backCameraZoomScale
+        setZoomScale(savedZoomScale)
     }
 
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
@@ -207,6 +283,13 @@ class CameraManager: NSObject, ObservableObject {
 
             device.videoZoomFactor = clampedZoomFactor
             currentZoomScale = scale
+
+            // 현재 카메라 포지션에 따라 줌 스케일 저장
+            if device.position == .front {
+                frontCameraZoomScale = scale
+            } else if device.position == .back {
+                backCameraZoomScale = scale
+            }
 
             device.unlockForConfiguration()
         } catch {
