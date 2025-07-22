@@ -85,7 +85,7 @@ final class OverlayViewModel: ObservableObject {
 
     /// Guide 객체 생성
     @MainActor
-    func makeGuide(clipID: String, isFrontCamera: Bool) -> Guide? {
+    func makeGuide(clipID: String) -> Guide? {
         guard let capturedImage = overlayManager.outlineImage else {
             print("❌ outlineImage가 없습니다.")
             return nil
@@ -94,8 +94,9 @@ final class OverlayViewModel: ObservableObject {
         let cameraTilt = determineTilt()
         
         let outlineImage: UIImage
-        
-        if isFrontCamera {
+        let savedIsFront = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition)
+
+        if savedIsFront == "true" {
             outlineImage = capturedImage.flippedHorizontally()
         } else {
             outlineImage = capturedImage
