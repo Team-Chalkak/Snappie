@@ -32,11 +32,8 @@ struct TrimmingControlView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
 
-            //TODO: - 추후 구현 예정
-            TrimmingTimeDisplayView()
-
             HStack(spacing: 15) {
-                /// 재생/일시정지 버튼
+                /// 시간
                 Button(action: {
                     editViewModel.togglePlayback()
                 }) {

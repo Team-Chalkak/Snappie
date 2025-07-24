@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A137662E32756A00777CF8 /* VideoControlView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
 		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
@@ -45,7 +46,6 @@
 		993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */; };
 		993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */; };
 		993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */; };
-		993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */; };
 		993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreviewView.swift */; };
 		993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F432E267E0C0059B70A /* ClipEditView.swift */; };
 		993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */; };
@@ -95,6 +95,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		93A137662E32756A00777CF8 /* VideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,7 +134,6 @@
 		993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayViewModel.swift; sourceTree = "<group>"; };
 		993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingControlView.swift; sourceTree = "<group>"; };
 		993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineView.swift; sourceTree = "<group>"; };
-		993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplay.swift; sourceTree = "<group>"; };
 		993A1F412E267E0C0059B70A /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
 		993A1F432E267E0C0059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
 		993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
@@ -380,8 +380,8 @@
 			children = (
 				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
-				993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */,
 				993A1F412E267E0C0059B70A /* VideoPreviewView.swift */,
+				93A137662E32756A00777CF8 /* VideoControlView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -706,6 +706,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
+				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
@@ -756,7 +757,6 @@
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
-				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
 				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
