@@ -144,6 +144,8 @@ struct CameraPreviewView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {
-        showGrid ? uiView.showGrid() : uiView.hideGrid()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.showGrid ? uiView.showGrid() : uiView.hideGrid()
+        }
     }
 }

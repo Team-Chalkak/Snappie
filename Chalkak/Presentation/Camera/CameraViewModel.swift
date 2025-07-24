@@ -101,6 +101,8 @@ class CameraViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        loadSavedSettings()
+        
         configure()
     }
 
@@ -287,8 +289,24 @@ class CameraViewModel: ObservableObject {
             timerSecond: selectedTimerDuration.rawValue
         )
         
+        UserDefaults.standard.set(isGrid, forKey: UserDefaultKey.isGridOn)
+        UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.zoomScale)
+        UserDefaults.standard.set(selectedTimerDuration.rawValue, forKey: UserDefaultKey.timerSecond)
         UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
 
         return setting
+    }
+    
+    private func loadSavedSettings() {
+        let savedGridOn = UserDefaults.standard.bool(forKey: UserDefaultKey.isGridOn)
+        let savedZoomScale = UserDefaults.standard.object(forKey: UserDefaultKey.zoomScale) as? CGFloat ?? 0.0
+        let savedTimer = UserDefaults.standard.integer(forKey: UserDefaultKey.timerSecond)
+        let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
+
+        // 상태에 반영
+        isGrid = savedGridOn
+        zoomScale = savedZoomScale
+        selectedTimerDuration = TimerOptions(rawValue: savedTimer) ?? .off
+        cameraPostion = savedIsFront ? .front : .back
     }
 }

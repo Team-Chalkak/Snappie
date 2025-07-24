@@ -110,10 +110,7 @@ struct ClipEditView: View {
                         editViewModel.saveProjectData()
                         // 오버레이 생성 화면으로 이동
                         coordinator.push(
-                            .overlay(
-                                clip: editViewModel.createClipData(),
-                                isFrontCamera: cameraSetting.isFrontPosition
-                            )
+                            .overlay(clip: editViewModel.createClipData())
                         )
                     } else {
                         // 트리밍한 클립 프로젝트에 추가
