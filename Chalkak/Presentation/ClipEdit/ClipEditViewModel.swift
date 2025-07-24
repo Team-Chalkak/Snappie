@@ -29,8 +29,8 @@ import UIKit
     └ updateStart / updateEnd(좌우 트리밍 핸들 위치) 호출 → previewImage 변경
 
  3. "다음" 버튼 클릭
-    ├─ isFirstShoot == true: saveProjectData() 호출 → Clip 및 Project 생성
-    └─ isFirstShoot == false: appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
+    ├─ guide == nil : saveProjectData() 호출 → Clip 및 Project 생성
+    └─ guide != nil : appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
  */
 final class ClipEditViewModel: ObservableObject {
     // 1. Input
@@ -156,6 +156,7 @@ final class ClipEditViewModel: ObservableObject {
         endPoint = value
         Task { await updatePreviewImage(at: value) }
     }
+    
 
     /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
@@ -227,6 +228,36 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
     
+    /// 드래깅해서 트리밍 박스를 일정 거리만큼 좌우로 이동시키는 함수
+    @MainActor
+    func shiftTrimmingRange(by delta: Double) {
+        let trimmingLength = endPoint - startPoint
+        let newStart = max(0, min(startPoint + delta, duration - trimmingLength))
+        let newEnd = newStart + trimmingLength
+
+        startPoint = newStart
+        endPoint = newEnd
+
+        Task { await updatePreviewImage(at: startPoint) }
+    }
+    
+    /// Project의 referenceDuration 값을 기반으로
+    /// 트리밍 구간(startPoint, endPoint)을 초기화합니다.
+    /// 두 번째 촬영 이후부터 호출됩니다.
+    @MainActor
+    func applyReferenceDuration() {
+        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+              let refDuration = project.referenceDuration
+        else {
+            print("⚠️ Project not found or referenceDuration is nil")
+            return
+        }
+
+        self.startPoint = 0
+        self.endPoint = min(refDuration, self.duration)
+    }
+    
     /// `Project` 저장
     /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
@@ -235,7 +266,14 @@ final class ClipEditViewModel: ObservableObject {
         let clip = saveClipData()
         let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
-        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip], cameraSetting: cameraSetting)
+        _ = SwiftDataManager.shared.createProject(
+            id: projectID,
+            guide: nil,
+            clips: [clip],
+            cameraSetting: cameraSetting,
+            referenceDuration: clip.endPoint - clip.startPoint
+        )
+    
         
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")

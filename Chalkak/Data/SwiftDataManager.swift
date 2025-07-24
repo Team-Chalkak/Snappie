@@ -73,13 +73,15 @@ class SwiftDataManager {
         id: String,
         guide: Guide? = nil,
         clips: [Clip] = [],
-        cameraSetting: CameraSetting? = nil
+        cameraSetting: CameraSetting? = nil,
+        referenceDuration: Double? = nil
     ) -> Project {
         let project = Project(
             id: id,
             guide: guide,
             clipList: clips,
-            cameraSetting: cameraSetting
+            cameraSetting: cameraSetting,
+            referenceDuration: referenceDuration
         )
         context.insert(project)
         return project

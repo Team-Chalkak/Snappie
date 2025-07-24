@@ -69,6 +69,27 @@ struct TrimmingLineView: View {
                     .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
                     .position(x: startX + Layout.frameBoxOffsetX, y: Layout.timelineY)
             }
+            .gesture(
+                DragGesture()
+                    .onChanged { gesture in
+                        isDragging = true
+                        editViewModel.player?.pause()
+                        editViewModel.isPlaying = false
+
+                        let locationRatio = gesture.location.x / geometry.size.width
+                        let centerTime = locationRatio * editViewModel.duration
+                        let currentCenter = (editViewModel.startPoint + editViewModel.endPoint) / 2
+                        let delta = centerTime - currentCenter
+
+                        Task {
+                            editViewModel.shiftTrimmingRange(by: delta)
+                        }
+                    }
+                    .onEnded { _ in
+                        isDragging = false
+                        editViewModel.seek(to: editViewModel.startPoint)
+                    }
+            )
         }
         .frame(height: Layout.timelineHeight)
     }
