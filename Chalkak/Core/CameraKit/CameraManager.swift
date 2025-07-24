@@ -43,7 +43,8 @@ class CameraManager: NSObject, ObservableObject {
     private var initialCameraPosition: AVCaptureDevice.Position {
         get {
             if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition),
-                   savedValue == "front" {
+               savedValue == "front"
+            {
                 return .front
             } else {
                 return .back
@@ -54,14 +55,14 @@ class CameraManager: NSObject, ObservableObject {
             UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
         }
     }
-    
+
     deinit {
         session.stopRunning()
     }
-    
+
     override init() {
-            super.init()
-        }
+        super.init()
+    }
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
     private func configureFrameRate(for device: AVCaptureDevice) {
@@ -171,9 +172,8 @@ class CameraManager: NSObject, ObservableObject {
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                 self?.session.startRunning()
                 DispatchQueue.main.async {
-                        // 최초 카메라 설정 시 1.0 줌배율적용
-                        self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
-                    self?.setZoomScale(zoomScale ?? 1.0)
+                    // 최초 카메라 설정 시 1.0 줌배율적용
+                    self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
                 }
             }
         } catch {
@@ -240,7 +240,7 @@ class CameraManager: NSObject, ObservableObject {
                 backCameraZoomScale = currentZoomScale
             }
         }
-        
+
         session.beginConfiguration()
         session.removeInput(videoDeviceInput)
 
@@ -273,13 +273,12 @@ class CameraManager: NSObject, ObservableObject {
         session.commitConfiguration()
 
         // 전환된 카메라의 저장된 줌 스케일 복원
-        if position == .back {
+        if newPosition == .back {
             let savedZoomScale = backCameraZoomScale
             setZoomScale(savedZoomScale)
         }
-
     }
-    
+
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
     func setZoomScale(_ scale: CGFloat) {
         guard let device = videoDeviceInput?.device else { return }
