@@ -7,5 +7,9 @@
 
 enum UserDefaultKey {
     // CameraSetting
+    static let isGridOn = "isGridOn"
+    static let zoomScale = "zoomScale"
+    static let timerSecond = "timerSecond"
     static let isFrontPosition = "isFrontPosition"
+    static let cameraPosition = "cameraPosition"
 }

@@ -38,12 +38,30 @@ class CameraManager: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
-    // 전면/후면 카메라별 줌 스케일 저장
-    private var frontCameraZoomScale: CGFloat = 1.0
+    // 카메라 줌스케일
     private var backCameraZoomScale: CGFloat = 1.0
+    private var initialCameraPosition: AVCaptureDevice.Position {
+        get {
+            if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition),
+               savedValue == "front"
+            {
+                return .front
+            } else {
+                return .back
+            }
+        }
+        set {
+            let value = newValue == .front ? "front" : "back"
+            UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
+        }
+    }
 
     deinit {
         session.stopRunning()
+    }
+
+    override init() {
+        super.init()
     }
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
@@ -114,56 +132,54 @@ class CameraManager: NSObject, ObservableObject {
     /// 카메라 세팅
     /// 비디오,오디오 연결
     func setUpCamera() {
-        // 고화질 설정
-//        session.sessionPreset = .hd1920x1080
+        let position = initialCameraPosition
+        let device = (position == .back) ? findBestBackCamera() : AVCaptureDevice.default(
+            .builtInWideAngleCamera,
+            for: .video,
+            position: .front
+        )
 
-        if let device = findBestBackCamera() {
-            do {
-                // 카메라 연결
-                videoDeviceInput = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(videoDeviceInput) {
-                    session.addInput(videoDeviceInput)
-                }
+        guard let device = device else { return }
 
-                configureFrameRate(for: device)
-
-                // 오디오 입력 추가
-                if let audioDevice = AVCaptureDevice.default(for: .audio) {
-                    do {
-                        let audioInput = try AVCaptureDeviceInput(device: audioDevice)
-                        if session.canAddInput(audioInput) {
-                            session.addInput(audioInput)
-                        }
-                    } catch {
-                        print("오디오 장치 입력 설정 오류: \(error)")
-                    }
-                }
-
-                // 동영상 출력 추가
-                if session.canAddOutput(movieOutput) {
-                    session.addOutput(movieOutput)
-                }
-
-                // 비디오 데이터 출력 추가 및 델리게이트 설정
-                if session.canAddOutput(videoOutput) {
-                    session.addOutput(videoOutput)
-                    videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
-                    videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
-                }
-
-                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                    self?.session.startRunning()
-                    DispatchQueue.main.async {
-                        // 최초 카메라 설정 시 1.0 줌배율적용
-                        self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
-                    }
-                }
-            } catch {
-                print("카메라 설정 오류: \(error)")
+        do {
+            videoDeviceInput = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
             }
+
+            configureFrameRate(for: device)
+
+            // 오디오 입력 추가
+            if let audioDevice = AVCaptureDevice.default(for: .audio) {
+                let audioInput = try AVCaptureDeviceInput(device: audioDevice)
+                if session.canAddInput(audioInput) {
+                    session.addInput(audioInput)
+                }
+            }
+
+            // 동영상 출력 추가
+            if session.canAddOutput(movieOutput) {
+                session.addOutput(movieOutput)
+            }
+
+            // 비디오 데이터 출력 추가 및 델리게이트 설정
+            if session.canAddOutput(videoOutput) {
+                session.addOutput(videoOutput)
+                videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
+                videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
+            }
+
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.session.startRunning()
+                DispatchQueue.main.async {
+                    // 최초 카메라 설정 시 1.0 줌배율적용
+                    self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
+                }
+            }
+        } catch {
+            print("카메라 설정 오류: \(error)")
         }
     }
-
 
     /// 토치 모드 설정
     func setTorchMode(_ mode: TorchMode) {
@@ -218,52 +234,49 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     /// 전면/후면 카메라 전환
-    func switchCamera(to position: AVCaptureDevice.Position) {
-        // 현재 카메라의 줌 스케일 저장
+    func switchCamera(to newPosition: AVCaptureDevice.Position) {
         if let currentDevice = videoDeviceInput?.device {
-            if currentDevice.position == .front {
-                frontCameraZoomScale = currentZoomScale
-            } else if currentDevice.position == .back {
+            if currentDevice.position == .back {
                 backCameraZoomScale = currentZoomScale
             }
         }
 
         session.beginConfiguration()
+        session.removeInput(videoDeviceInput)
 
-        if let existingInput = videoDeviceInput {
-            session.removeInput(existingInput)
+        let device = (newPosition == .back) ? findBestBackCamera() : AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+
+        guard let newDevice = device else {
+            session.commitConfiguration()
+            return
         }
-
-        let newDevice: AVCaptureDevice?
-        if position == .back {
-            newDevice = findBestBackCamera()
-        } else {
-            newDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
-        }
-
-        if let device = newDevice {
-            do {
-                videoDeviceInput = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(videoDeviceInput) {
-                    session.addInput(videoDeviceInput)
-                }
-                configureFrameRate(for: device)
-            } catch {
-                print("카메라 전환 중 오류: \(error)")
-            }
-        }
-
         if let connection = movieOutput.connection(with: .video) {
+            // 전면카메라 좌우반전 제거
             if connection.isVideoMirroringSupported {
-                connection.isVideoMirrored = position == .front
+                connection.isVideoMirrored = newPosition == .front
             }
+        }
+
+        do {
+            let newInput = try AVCaptureDeviceInput(device: newDevice)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
+                videoDeviceInput = newInput
+                configureFrameRate(for: newDevice)
+                initialCameraPosition = newPosition
+            }
+
+        } catch {
+            print("카메라 전환 중 오류: \(error)")
         }
 
         session.commitConfiguration()
 
         // 전환된 카메라의 저장된 줌 스케일 복원
-        let savedZoomScale = position == .front ? frontCameraZoomScale : backCameraZoomScale
-        setZoomScale(savedZoomScale)
+        if newPosition == .back {
+            let savedZoomScale = backCameraZoomScale
+            setZoomScale(savedZoomScale)
+        }
     }
 
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
@@ -285,9 +298,7 @@ class CameraManager: NSObject, ObservableObject {
             currentZoomScale = scale
 
             // 현재 카메라 포지션에 따라 줌 스케일 저장
-            if device.position == .front {
-                frontCameraZoomScale = scale
-            } else if device.position == .back {
+            if device.position == .back {
                 backCameraZoomScale = scale
             }
 

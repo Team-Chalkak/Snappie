@@ -30,7 +30,6 @@ import SwiftUI
 struct OverlayView: View {
     // 1. Input properties
     let clip: Clip
-    let isFrontCamera: Bool
 
     // 2. State & ObservedObject
     @StateObject var overlayViewModel: OverlayViewModel
@@ -40,9 +39,8 @@ struct OverlayView: View {
     @State private var guide: Guide?
     
     // 3. init
-    init(clip: Clip, isFrontCamera: Bool) {
+    init(clip: Clip) {
         self.clip = clip
-        self.isFrontCamera = isFrontCamera
         self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
     }
     
@@ -80,10 +78,7 @@ struct OverlayView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("다음") {
                     /// 가이드 객체 생성
-                    if let newGuide = overlayViewModel.makeGuide(
-                        clipID: clip.id,
-                        isFrontCamera: isFrontCamera
-                    ) {
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
                         guide = newGuide
                         coordinator.push(.boundingBox(guide: newGuide))
                     } else {
