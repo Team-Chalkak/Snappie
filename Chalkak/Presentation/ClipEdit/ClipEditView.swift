@@ -16,12 +16,12 @@ import SwiftUI
  영상 재생, 썸네일 기반 트리밍, 클립 저장, 다음 단계(윤곽선 생성 또는 후속 클립 연결)로 이동하는 역할
 
  ## 데이터 흐름
- ⭐️ isFirstShoot 값에 따른 분기 처리
- ├─ true
+ ⭐️ guide 값(nil 여부)에 따른 분기 처리
+ ├─ guide == nil
  │    1) "내보내기" 버튼이 표시되지 않음
  │    2) "다음" 버튼 → Clip 및 Project 모델 생성 및 저장, UserDefaults에 Project ID 저장
  │    3) prepareOverlay() 호출하여 윤곽선 추출 준비
- ├─ false
+ ├─ guide != nil
       1) "내보내기" 버튼이 표시됨
       2) "다음" 버튼 → 기존 Project에 새로운 Clip 모델 추가
  
@@ -64,21 +64,24 @@ struct ClipEditView: View {
     
     // 4. body
     var body: some View {
-        ZStack {
-            VStack(alignment: .center, spacing: 20, content: {
-                Spacer().frame(height: 20)
+        VStack(alignment: .center, spacing: 20, content: {
+            Spacer().frame(height: 20)
 
-                Text("사용할 부분만 트리밍 해주세요")
+            Text("사용할 부분만 트리밍 해주세요")
 
-                VideoPreviewView(
-                    previewImage: editViewModel.previewImage,
-                    player: editViewModel.player,
-                    isDragging: isDragging,
-                    overlayImage: guide?.outlineImage
-                )
+            VideoPreviewView(
+                previewImage: editViewModel.previewImage,
+                player: editViewModel.player,
+                isDragging: isDragging,
+                overlayImage: guide?.outlineImage
+            )
 
-                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
-            })
+            TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+        })
+        .task {
+            if guide != nil {
+                editViewModel.applyReferenceDuration()
+            }
         }
         .navigationTitle("영상 트리밍")
         .navigationBarTitleDisplayMode(.inline)
