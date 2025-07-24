@@ -48,10 +48,9 @@ struct CameraRecordView: View {
             
             Spacer()
             
-            // 오른쪽 - 카메라 전환 버튼
             CircleIconButton(iconName: "arrow.trianglehead.2.clockwise.rotate.90", action: viewModel.changeCamera)
         }
-        .padding(.bottom, 45)
+        .padding(.bottom, 20)
         .padding(.horizontal, 15)
     }
 }

@@ -18,6 +18,8 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
+            SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
+
             CameraPreviewView(
                 session: viewModel.session,
                 tabToFocus: viewModel.focusAtPoint,
@@ -26,7 +28,13 @@ struct CameraView: View {
                 isUsingFrontCamera: viewModel.isUsingFrontCamera,
                 showGrid: $viewModel.isGrid
             )
+            .aspectRatio(9 / 16, contentMode: .fit)
+            .clipped()
+            .padding(.top, 12)
+            .padding(.horizontal, 16)
+            .frame(maxHeight: .infinity, alignment: .top)
 
+            // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
                 HStack {
                     Spacer()
