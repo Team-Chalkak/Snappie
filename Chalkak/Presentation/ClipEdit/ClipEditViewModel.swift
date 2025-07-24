@@ -237,8 +237,6 @@ final class ClipEditViewModel: ObservableObject {
 
         startPoint = newStart
         endPoint = newEnd
-
-        Task { await updatePreviewImage(at: startPoint) }
     }
     
     /// Project의 referenceDuration 값을 기반으로

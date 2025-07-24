@@ -81,8 +81,10 @@ struct TrimmingLineView: View {
                         let currentCenter = (editViewModel.startPoint + editViewModel.endPoint) / 2
                         let delta = centerTime - currentCenter
 
+                        editViewModel.shiftTrimmingRange(by: delta)
+
                         Task {
-                            editViewModel.shiftTrimmingRange(by: delta)
+                            await editViewModel.updatePreviewImage(at: editViewModel.startPoint)
                         }
                     }
                     .onEnded { _ in
