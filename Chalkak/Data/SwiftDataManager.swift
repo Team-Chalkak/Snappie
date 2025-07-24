@@ -73,13 +73,15 @@ class SwiftDataManager {
         id: String,
         guide: Guide? = nil,
         clips: [Clip] = [],
-        cameraSetting: CameraSetting? = nil
+        cameraSetting: CameraSetting? = nil,
+        referenceDuration: Double? = nil
     ) -> Project {
         let project = Project(
             id: id,
             guide: guide,
             clipList: clips,
-            cameraSetting: cameraSetting
+            cameraSetting: cameraSetting,
+            referenceDuration: referenceDuration
         )
         context.insert(project)
         return project
@@ -103,7 +105,7 @@ class SwiftDataManager {
 
     // MARK: - Clip
 
-    /// `Clip` 생성
+    /// `Clip` 생성: Clip 객체 데이터로
     func createClip(
         id: String,
         videoURL: URL,
@@ -120,6 +122,12 @@ class SwiftDataManager {
             tiltList: tiltList,
             heightList: heightList
         )
+        context.insert(clip)
+        return clip
+    }
+    
+    /// `Clip` 생성: Clip 객체로
+    func createClip(clip: Clip) -> Clip {
         context.insert(clip)
         return clip
     }
@@ -141,16 +149,14 @@ class SwiftDataManager {
     /// `Guide` 생성
     func createGuide(
         clipID: String,
-        bBoxPosition: PointWrapper,
-        bBoxScale: CGFloat,
+        boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
         cameraHeight: Float
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
-            bBoxPosition: bBoxPosition,
-            bBoxScale: bBoxScale,
+            boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
             cameraTilt: cameraTilt,
             cameraHeight: cameraHeight

@@ -10,12 +10,15 @@ import SwiftUI
 
 /// 합본 영상을 확인하고 갤러리로 내보내기 할 수 있는 뷰
 struct ProjectPreviewView: View {
+    // MARK: Property Wrappers
     @StateObject var viewModel: ProjectPreviewViewModel
     
+    // MARK: init
     init(finalVideoURL: URL) {
         _viewModel = StateObject(wrappedValue: ProjectPreviewViewModel(finalVideoURL: finalVideoURL))
     }
     
+    // MARK: body
     var body: some View {
         VStack {
             VideoPlayer(player: viewModel.player)

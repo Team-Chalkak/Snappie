@@ -16,7 +16,7 @@ import SwiftUI
 class CameraViewModel: ObservableObject {
     private let model: CameraManager
     let session: AVCaptureSession
-    private var tiltCollector = TiltDataCollector()
+    private var horizontalLevelCancellable: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
 
     // 비디오 저장 완료 이벤트를 View로 전달
@@ -27,7 +27,7 @@ class CameraViewModel: ObservableObject {
     @Published var selectedTimerDuration: TimerOptions = .off
 
     @Published var showingCameraControl = false
-    @Published var isTorch = false
+    @Published var torchMode: TorchMode = .off
     @Published var isGrid = false
     @Published var isHorizontalLevelActive = false {
         didSet {
@@ -46,6 +46,7 @@ class CameraViewModel: ObservableObject {
             isUsingFrontCamera = (cameraPostion == .front)
         }
     }
+
     @Published var isRecording = false
     @Published var recordingTime = 0
 
@@ -53,8 +54,7 @@ class CameraViewModel: ObservableObject {
 
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
-    
-    var isUsingFrontCamera: Bool = false
+    @Published var isUsingFrontCamera: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
@@ -73,11 +73,19 @@ class CameraViewModel: ObservableObject {
 
     private var timer: Timer?
     private var timerCountdownTimer: Timer?
+    private var dataCollectionTimer: Timer?
+    /// 녹화 시작 시간(실제 시간 기록용)
+    private var recordingStartDate: Date?
+    var timeStampedTiltList: [TimeStampedTilt] = []
+    @Published var tiltCollector = TiltDataCollector()
+
     var formattedTime: String {
         let minutes = recordingTime / 60
         let seconds = recordingTime % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+
+    // MARK: - init
 
     init() {
         model = CameraManager()
@@ -93,6 +101,8 @@ class CameraViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        loadSavedSettings()
+        
         configure()
     }
 
@@ -139,8 +149,8 @@ class CameraViewModel: ObservableObject {
     }
 
     func switchTorch() {
-        isTorch.toggle()
-        model.setTorchMode(isTorch)
+        torchMode.toggle()
+        model.setTorchMode(torchMode)
     }
 
     func switchGrid() {
@@ -152,17 +162,16 @@ class CameraViewModel: ObservableObject {
     }
 
     private func startObservingTilt() {
-        tiltCollector.$gravityX
+        horizontalLevelCancellable = tiltCollector.$gravityX
             .sink { [weak self] gravityX in
                 self?.isHorizontal = abs(gravityX) < 0.05
             }
-            .store(in: &cancellables)
     }
 
     /// 수평 감지 구독 제거
     private func stopObservingTilt() {
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
+        horizontalLevelCancellable?.cancel()
+        horizontalLevelCancellable = nil
     }
 
     func toggleZoomControl() {
@@ -190,7 +199,15 @@ class CameraViewModel: ObservableObject {
     private func executeVideoRecording() {
         model.startRecording()
         isRecording = true
+
+        // 녹화 시작 시간 기록
+        recordingStartDate = Date()
+        // 틸트 데이터 초기화
+        timeStampedTiltList.removeAll()
+
+        // 타이머 시작
         startRecordingTimer()
+        startDataCollectionTimer()
     }
 
     func stopVideoRecording() {
@@ -203,6 +220,7 @@ class CameraViewModel: ObservableObject {
         model.stopRecording()
         isRecording = false
         stopRecordingTimer()
+        stopDataCollectionTimer()
         recordingTime = 0
     }
 
@@ -219,8 +237,30 @@ class CameraViewModel: ObservableObject {
         }
     }
 
+    /// Tilt 데이터 수집용 1/3초 타이머
+    private func startDataCollectionTimer() {
+        dataCollectionTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 3.0, repeats: true, block: { [weak self] _ in
+            guard let self = self else { return }
+
+            if self.isRecording, let startDate = recordingStartDate {
+                // 경과 시간 계산
+                let recordingTime = Date().timeIntervalSince(startDate)
+
+                // 기울기 값 가져오기
+                let currentTilt = Tilt(degreeX: tiltCollector.gravityX, degreeZ: tiltCollector.gravityZ)
+
+                timeStampedTiltList.append(.init(time: recordingTime, tilt: currentTilt))
+            }
+        })
+    }
+
     private func stopRecordingTimer() {
         timer?.invalidate()
+        timer = nil
+    }
+
+    private func stopDataCollectionTimer() {
+        dataCollectionTimer?.invalidate()
         timer = nil
     }
 
@@ -233,9 +273,40 @@ class CameraViewModel: ObservableObject {
     func changeCamera() {
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
+        // 카메라 전환 후 CameraManager에서 복원된 줌 스케일을 동기화
+        zoomScale = model.currentZoomScale
     }
 
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
+    }
+
+    func saveCameraSettingToUserDefaults() -> CameraSetting {
+        let setting = CameraSetting(
+            zoomScale: zoomScale,
+            isGridEnabled: isGrid,
+            isFrontPosition: isUsingFrontCamera,
+            timerSecond: selectedTimerDuration.rawValue
+        )
+        
+        UserDefaults.standard.set(isGrid, forKey: UserDefaultKey.isGridOn)
+        UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.zoomScale)
+        UserDefaults.standard.set(selectedTimerDuration.rawValue, forKey: UserDefaultKey.timerSecond)
+        UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
+
+        return setting
+    }
+    
+    private func loadSavedSettings() {
+        let savedGridOn = UserDefaults.standard.bool(forKey: UserDefaultKey.isGridOn)
+        let savedZoomScale = UserDefaults.standard.object(forKey: UserDefaultKey.zoomScale) as? CGFloat ?? 0.0
+        let savedTimer = UserDefaults.standard.integer(forKey: UserDefaultKey.timerSecond)
+        let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
+
+        // 상태에 반영
+        isGrid = savedGridOn
+        zoomScale = savedZoomScale
+        selectedTimerDuration = TimerOptions(rawValue: savedTimer) ?? .off
+        cameraPostion = savedIsFront ? .front : .back
     }
 }

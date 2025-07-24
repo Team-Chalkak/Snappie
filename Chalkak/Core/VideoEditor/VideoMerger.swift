@@ -222,7 +222,8 @@ struct VideoMerger {
             height: videoTrack.naturalSize.width
         )
         videoComposition.instructions = [instructions]
-        videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
+        // 내보내기 사양 60fps 설정
+        videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 60)
         
         return videoComposition
     }

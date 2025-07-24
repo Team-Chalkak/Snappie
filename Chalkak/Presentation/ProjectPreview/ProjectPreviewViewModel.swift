@@ -21,6 +21,7 @@ final class ProjectPreviewViewModel: ObservableObject {
     init(finalVideoURL: URL) {
         self.finalVideoURL = finalVideoURL
         self.player = AVPlayer(url: finalVideoURL)
+        player.play()
     }
     
     // MARK: - Methods

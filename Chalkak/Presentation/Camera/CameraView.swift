@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CameraView: View {
-    let isFirstShoot: Bool
     let guide: Guide?
 
     @ObservedObject var viewModel: CameraViewModel
@@ -19,7 +18,14 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid, tabToFocus: viewModel.focusAtPoint)
+            CameraPreviewView(
+                session: viewModel.session,
+                tabToFocus: viewModel.focusAtPoint,
+                onPinchZoom: viewModel.selectZoomScale,
+                currentZoomScale: viewModel.zoomScale,
+                isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                showGrid: $viewModel.isGrid
+            )
 
             if viewModel.isHorizontalLevelActive {
                 HStack {
@@ -42,17 +48,14 @@ struct CameraView: View {
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
-            let cameraSetting = CameraSetting(
-                zoomScale: viewModel.zoomScale,
-                isGridEnabled: viewModel.isGrid,
-                isFrontPosition: viewModel.isUsingFrontCamera,
-                timerSecond: viewModel.selectedTimerDuration.rawValue
-            )
+            let cameraSetting = viewModel.saveCameraSettingToUserDefaults()
+
             coordinator.push(.clipEdit(
                 clipURL: url,
-                isFirstShoot: isFirstShoot,
                 guide: guide,
-                cameraSetting: cameraSetting)
+                cameraSetting: cameraSetting,
+                TimeStampedTiltList: viewModel.timeStampedTiltList
+            )
             )
         }
     }

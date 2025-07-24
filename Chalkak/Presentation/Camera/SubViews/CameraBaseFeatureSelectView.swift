@@ -14,7 +14,7 @@ struct CameraBaseFeatureSelectView: View {
         CircleIconButton(iconName: "timer", action: viewModel.toggleTimerOption, isSelected: viewModel.selectedTimerDuration != .off)
             .frame(maxWidth: .infinity)
 
-        CircleIconButton(iconName: viewModel.isTorch ? "bolt.fill" : "bolt.slash", action: viewModel.switchTorch, isSelected: viewModel.isTorch)
+        CircleIconButton(iconName: viewModel.torchMode.iconName, action: viewModel.switchTorch, isSelected: viewModel.torchMode != .off)
             .frame(maxWidth: .infinity)
 
         CircleIconButton(iconName: "grid", action: viewModel.switchGrid, isSelected: viewModel.isGrid)

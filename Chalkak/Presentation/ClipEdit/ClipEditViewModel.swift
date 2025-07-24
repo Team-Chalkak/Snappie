@@ -29,13 +29,14 @@ import UIKit
     └ updateStart / updateEnd(좌우 트리밍 핸들 위치) 호출 → previewImage 변경
 
  3. "다음" 버튼 클릭
-    ├─ isFirstShoot == true: saveProjectData() 호출 → Clip 및 Project 생성
-    └─ isFirstShoot == false: appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
+    ├─ guide == nil : saveProjectData() 호출 → Clip 및 Project 생성
+    └─ guide != nil : appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
  */
 final class ClipEditViewModel: ObservableObject {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
+    var timeStampedTiltList: [TimeStampedTilt]
 
     // 2. Published properties
     @Published var player: AVPlayer?
@@ -59,9 +60,14 @@ final class ClipEditViewModel: ObservableObject {
     private let thumbnailCount = 10
 
     // 5. init & deinit
-    init(clipURL: URL, cameraSetting: CameraSetting) {
+    init(
+        clipURL: URL,
+        cameraSetting: CameraSetting,
+        timeStampedTiltList: [TimeStampedTilt]
+    ) {
         self.clipURL = clipURL
         self.cameraSetting = cameraSetting
+        self.timeStampedTiltList = timeStampedTiltList
         setupPlayer()
     }
 
@@ -97,6 +103,7 @@ final class ClipEditViewModel: ObservableObject {
 
                 await generateThumbnails(for: asset)
                 await updatePreviewImage(at: 0)
+                playPreview()
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
@@ -149,6 +156,7 @@ final class ClipEditViewModel: ObservableObject {
         endPoint = value
         Task { await updatePreviewImage(at: value) }
     }
+    
 
     /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
@@ -189,7 +197,12 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(token)
             timeObserverToken = nil
         }
-        player?.seek(to: CMTime(seconds: startPoint, preferredTimescale: 600)) { [weak self] _ in
+
+        let currentTime = player?.currentTime() ?? .zero
+        let currentTimeSeconds = CMTimeGetSeconds(currentTime)
+
+        /// 재생을 시작하고 종료 시점을 감지하는 로직
+        let startPlaybackAndObserve = { [weak self] in
             guard let self = self else { return }
             self.player?.play()
             self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
@@ -204,6 +217,43 @@ final class ClipEditViewModel: ObservableObject {
                 }
             }
         }
+
+        /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
+        if currentTimeSeconds >= startPoint && currentTimeSeconds < endPoint {
+            startPlaybackAndObserve()
+        } else {
+            /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
+            seek(to: startPoint)
+            startPlaybackAndObserve()
+        }
+    }
+    
+    /// 드래깅해서 트리밍 박스를 일정 거리만큼 좌우로 이동시키는 함수
+    @MainActor
+    func shiftTrimmingRange(by delta: Double) {
+        let trimmingLength = endPoint - startPoint
+        let newStart = max(0, min(startPoint + delta, duration - trimmingLength))
+        let newEnd = newStart + trimmingLength
+
+        startPoint = newStart
+        endPoint = newEnd
+    }
+    
+    /// Project의 referenceDuration 값을 기반으로
+    /// 트리밍 구간(startPoint, endPoint)을 초기화합니다.
+    /// 두 번째 촬영 이후부터 호출됩니다.
+    @MainActor
+    func applyReferenceDuration() {
+        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+              let refDuration = project.referenceDuration
+        else {
+            print("⚠️ Project not found or referenceDuration is nil")
+            return
+        }
+
+        self.startPoint = 0
+        self.endPoint = min(refDuration, self.duration)
     }
     
     /// `Project` 저장
@@ -214,24 +264,36 @@ final class ClipEditViewModel: ObservableObject {
         let clip = saveClipData()
         let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
-        _ = SwiftDataManager.shared.createProject(id: projectID, guide: nil, clips: [clip], cameraSetting: cameraSetting)
+        _ = SwiftDataManager.shared.createProject(
+            id: projectID,
+            guide: nil,
+            clips: [clip],
+            cameraSetting: cameraSetting,
+            referenceDuration: clip.endPoint - clip.startPoint
+        )
+    
         
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
-    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성하여 반환
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip {
+        let clip = createClipData()
+        return SwiftDataManager.shared.createClip(clip: clip)
+    }
+    
+    /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
+    func createClipData() -> Clip {
         let clipID = UUID().uuidString
         self.clipID = clipID
-        return SwiftDataManager.shared.createClip(
+        return Clip(
             id: clipID,
             videoURL: clipURL,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: [],
+            tiltList: timeStampedTiltList,
             heightList: []
         )
     }

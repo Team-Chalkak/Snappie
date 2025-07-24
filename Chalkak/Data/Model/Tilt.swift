@@ -25,9 +25,9 @@ struct Tilt: Codable, Hashable {
 }
 
 /// 특정 시점의 기울기 정보를 담고 있는 구조체입니다.
-struct TimeStampedTilt: Codable {
+struct TimeStampedTilt: Codable, Hashable {
     /// 시간 정보 (밀리초 단위).
-    let time: Int64
+    let time: Double
     
     /// 해당 시점의 카메라 기울기 값.
     let tilt: Tilt

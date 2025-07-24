@@ -46,7 +46,7 @@
 		993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */; };
 		993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */; };
 		993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */; };
-		993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreview.swift */; };
+		993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreviewView.swift */; };
 		993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F432E267E0C0059B70A /* ClipEditView.swift */; };
 		993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */; };
 		993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */; };
@@ -57,6 +57,10 @@
 		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */; };
+		9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */; };
+		99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */; };
+		99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */; };
 		99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A092E27BADB00F42541 /* Coordinator.swift */; };
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
@@ -73,6 +77,7 @@
 		C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B69E2E2EB7AB0066B59C /* IconView.swift */; };
 		C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */; };
 		C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */; };
+		B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB62AD2E2E8B7700207590 /* TorchMode.swift */; };
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
 		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
@@ -141,7 +146,7 @@
 		993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingControlView.swift; sourceTree = "<group>"; };
 		993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineView.swift; sourceTree = "<group>"; };
 		993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplay.swift; sourceTree = "<group>"; };
-		993A1F412E267E0C0059B70A /* VideoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreview.swift; sourceTree = "<group>"; };
+		993A1F412E267E0C0059B70A /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
 		993A1F432E267E0C0059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
 		993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
 		993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewView.swift; sourceTree = "<group>"; };
@@ -155,6 +160,10 @@
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
+		9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultKey.swift; sourceTree = "<group>"; };
+		99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstShootCameraView.swift; sourceTree = "<group>"; };
+		99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideCameraView.swift; sourceTree = "<group>"; };
 		99C93A092E27BADB00F42541 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
@@ -172,6 +181,7 @@
 		C5F7B69E2E2EB7AB0066B59C /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonSolid.swift; sourceTree = "<group>"; };
 		C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyleType.swift; sourceTree = "<group>"; };
+		B6AB62AD2E2E8B7700207590 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
@@ -315,6 +325,7 @@
 		993A1F262E267E0C0059B70A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */,
 				99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */,
 				993A1F222E267E0C0059B70A /* Clip.swift */,
 				993A1F232E267E0C0059B70A /* Guide.swift */,
@@ -336,6 +347,7 @@
 		993A1F2A2E267E0C0059B70A /* Enum */ = {
 			isa = PBXGroup;
 			children = (
+				B6AB62AD2E2E8B7700207590 /* TorchMode.swift */,
 				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
 			);
 			path = Enum;
@@ -393,7 +405,7 @@
 				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
 				993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */,
-				993A1F412E267E0C0059B70A /* VideoPreview.swift */,
+				993A1F412E267E0C0059B70A /* VideoPreviewView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -490,6 +502,7 @@
 		993A21792E26A0690059B70A /* Distance */ = {
 			isa = PBXGroup;
 			children = (
+				99C7266D2E2F0A1B00E9D0CD /* SubViews */,
 				993A217A2E26A0760059B70A /* BoundingBoxView.swift */,
 				993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */,
 			);
@@ -499,6 +512,7 @@
 		993A217E2E26AB7E0059B70A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				999992482E2D8EB300D56BD1 /* Constant */,
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
 				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
@@ -515,6 +529,31 @@
 				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		999992482E2D8EB300D56BD1 /* Constant */ = {
+			isa = PBXGroup;
+			children = (
+				999992492E2D8EBC00D56BD1 /* Environment */,
+			);
+			path = Constant;
+			sourceTree = "<group>";
+		};
+		999992492E2D8EBC00D56BD1 /* Environment */ = {
+			isa = PBXGroup;
+			children = (
+				9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */,
+			);
+			path = Environment;
+			sourceTree = "<group>";
+		};
+		99C7266D2E2F0A1B00E9D0CD /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				99C7266B2E2F069B00E9D0CD /* GuideCameraView.swift */,
+				99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		99C93A0B2E27BAF700F42541 /* Util */ = {
@@ -738,7 +777,9 @@
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
 				C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */,
+				9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
+				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
@@ -751,10 +792,12 @@
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				C5C12EA82E3227D100C4DC6D /* ButtonGlass.swift in Sources */,
+				B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				C5F7B69C2E2EB25F0066B59C /* Icon.swift in Sources */,
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
+				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
@@ -762,6 +805,7 @@
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
 				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
 				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
+				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
 				C5C12EAA2E325A1800C4DC6D /* SolidButtonStyler.swift in Sources */,
@@ -774,7 +818,7 @@
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
-				993A1F772E267E0C0059B70A /* VideoPreview.swift in Sources */,
+				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
 				C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */,

@@ -25,6 +25,11 @@ class Project: Identifiable {
     /// 프로젝트에서 사용된 카메라 설정 정보.
     /// 프로젝트가 삭제되면 함께 삭제됩니다.
     @Relationship(deleteRule: .cascade) var cameraSetting: CameraSetting?
+    
+    /// 첫번째 클립의 트리밍된 클립 길이.
+    /// 이후 클립 편집 시 초기값으로 사용.
+    var referenceDuration: Double?
+    
 
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
@@ -35,11 +40,13 @@ class Project: Identifiable {
         id: String = UUID().uuidString,
         guide: Guide? = nil,
         clipList: [Clip] = [],
-        cameraSetting: CameraSetting? = nil
+        cameraSetting: CameraSetting? = nil,
+        referenceDuration: Double? = nil
     ) {
         self.id = id
         self.guide = guide
         self.clipList = clipList
         self.cameraSetting = cameraSetting
+        self.referenceDuration = referenceDuration
     }
 }
