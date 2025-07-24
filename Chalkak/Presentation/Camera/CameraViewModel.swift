@@ -23,7 +23,6 @@ class CameraViewModel: ObservableObject {
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
 
     @Published var isTimerRunning = false
-    @Published var showingTimerControl = false
     @Published var selectedTimerDuration: TimerOptions = .off
 
     @Published var showingCameraControl = false
@@ -120,12 +119,43 @@ class CameraViewModel: ObservableObject {
     }
 
     func toggleTimerOption() {
-        showingTimerControl.toggle()
+        // Cycle through timer options: off -> 3s -> 5s -> 10s -> off
+        switch selectedTimerDuration {
+        case .off:
+            selectedTimerDuration = .three
+        case .three:
+            selectedTimerDuration = .five
+        case .five:
+            selectedTimerDuration = .ten
+        case .ten:
+            selectedTimerDuration = .off
+        }
+    }
+    
+    var currentTimerIcon: Icon {
+        switch selectedTimerDuration {
+        case .off:
+            return .timerOff
+        case .three:
+            return .timer3sec
+        case .five:
+            return .timer5sec
+        case .ten:
+            return .timer10sec
+        }
+    }
+    
+    var currentFlashIcon: Icon {
+        switch torchMode {
+        case .off:
+            return .flashOff
+        case .on:
+            return .flashOn
+        case .auto:
+            return .flashAuto
+        }
     }
 
-    func selectTimer(_ duration: TimerOptions) {
-        selectedTimerDuration = duration
-    }
 
     private func startTimerCountdown() {
         isTimerRunning = true

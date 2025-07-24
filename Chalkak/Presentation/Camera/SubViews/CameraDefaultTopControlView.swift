@@ -30,11 +30,7 @@ struct CameraDefaultTopControlView: View {
             }
             if viewModel.showingCameraControl && !viewModel.isTimerRunning {
                 HStack(spacing: 32) {
-                    if viewModel.showingTimerControl {
-                        TimerOptionSelectView(viewModel: viewModel)
-                    } else {
-                        CameraBaseFeatureSelectView(viewModel: viewModel)
-                    }
+                    CameraBaseFeatureSelectView(viewModel: viewModel)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)

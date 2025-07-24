@@ -11,7 +11,7 @@ struct CameraBaseFeatureSelectView: View {
     @ObservedObject var viewModel: CameraViewModel
 
     var body: some View {
-        ButtonIconWithText(title: "Timer", icon: .timer3sec, isActive: viewModel.selectedTimerDuration != .off) {
+        ButtonIconWithText(title: "Timer", icon: viewModel.currentTimerIcon, isActive: viewModel.selectedTimerDuration != .off) {
             viewModel.toggleTimerOption()
         }
         .frame(maxWidth: .infinity)
