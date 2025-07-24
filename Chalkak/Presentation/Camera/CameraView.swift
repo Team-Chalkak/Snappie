@@ -36,14 +36,7 @@ struct CameraView: View {
 
             // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
-                HStack {
-                    Spacer()
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundColor(viewModel.isHorizontal ? .green : .gray)
-                    Spacer()
-                }
-                .padding(.horizontal, 100)
+                HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
 
             VStack {
@@ -68,3 +61,4 @@ struct CameraView: View {
         }
     }
 }
+
