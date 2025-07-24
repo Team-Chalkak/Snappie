@@ -11,19 +11,24 @@ struct CameraBaseFeatureSelectView: View {
     @ObservedObject var viewModel: CameraViewModel
 
     var body: some View {
-        CircleIconButton(iconName: "timer", action: viewModel.toggleTimerOption, isSelected: viewModel.selectedTimerDuration != .off)
+        ButtonIconWithText(title: "Timer", icon: .timer3sec, isActive: viewModel.selectedTimerDuration != .off) {
+            viewModel.toggleTimerOption()
+        }
+        .frame(maxWidth: .infinity)
+
+        ButtonIconWithText(title: "Flash", icon: .flashOff, isActive: viewModel.torchMode != .off) {
+            viewModel.switchTorch()
+        }
+        .frame(maxWidth: .infinity)
+
+        ButtonIconWithText(title: "Grid", icon: .grid, isActive: viewModel.isGrid) {
+            viewModel.switchGrid()
+        }
             .frame(maxWidth: .infinity)
 
-        CircleIconButton(iconName: viewModel.torchMode.iconName, action: viewModel.switchTorch, isSelected: viewModel.torchMode != .off)
-            .frame(maxWidth: .infinity)
-
-        CircleIconButton(iconName: "grid", action: viewModel.switchGrid, isSelected: viewModel.isGrid)
-            .frame(maxWidth: .infinity)
-
-        CircleIconButton(
-            iconName: "ruler",
-            action: viewModel.switchHorizontalLevel, isSelected: viewModel.isHorizontalLevelActive
-        )
+        ButtonIconWithText(title: "Level", icon: .level, isActive: viewModel.isHorizontalLevelActive) {
+            viewModel.switchHorizontalLevel()
+        }
         .frame(maxWidth: .infinity)
     }
 }
