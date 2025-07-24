@@ -16,7 +16,7 @@ struct CameraBaseFeatureSelectView: View {
         }
         .frame(maxWidth: .infinity)
 
-        ButtonIconWithText(title: "Flash", icon: .flashOff, isActive: viewModel.torchMode != .off) {
+        ButtonIconWithText(title: "Flash", icon: viewModel.currentFlashIcon, isActive: viewModel.torchMode != .off) {
             viewModel.switchTorch()
         }
         .frame(maxWidth: .infinity)

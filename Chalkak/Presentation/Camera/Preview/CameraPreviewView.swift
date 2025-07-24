@@ -137,8 +137,8 @@ struct CameraPreviewView: UIViewRepresentable {
             gridLayer?.removeFromSuperlayer()
             // 그리드 레이어 새로 그리기
             let gridShapeLayer = CAShapeLayer()
-            gridShapeLayer.strokeColor = UIColor.white.withAlphaComponent(0.3).cgColor
-            gridShapeLayer.lineWidth = 0.5
+            gridShapeLayer.strokeColor = UIColor(SnappieColor.primaryLight).cgColor
+            gridShapeLayer.lineWidth = 1
             gridShapeLayer.fillColor = UIColor.clear.cgColor
             
             // 베젤빼고 정말 촬영중인 그 비디어 프레임 계산
