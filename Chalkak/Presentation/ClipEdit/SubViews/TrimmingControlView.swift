@@ -30,25 +30,25 @@ struct TrimmingControlView: View {
     @Binding var isDragging: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-
-            HStack(spacing: 15) {
-                /// 시간
-                Button(action: {
-                    editViewModel.togglePlayback()
-                }) {
-                    Image(editViewModel.isPlaying ? "pauseBtn" : "playBtn")
-                        .resizable()
-                        .frame(width: 36, height: 36)
-                        .foregroundColor(.black)
-                }
-
-                /// 썸네일 + 트리밍 슬라이더
-                TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
-            }
-            .frame(height: 128)
-            .padding(.horizontal, 16)
-            .background(.gray)
-        }
+        VStack(alignment: .center, spacing: 10, content: {
+            Divider()
+            
+            HStack(content: {
+                //TODO: 현재 영상 시간
+                Text("00:00")
+                
+                Spacer()
+                
+                //TODO: 원본 영상 길이
+                Text("00.15")
+            })
+            .padding(.horizontal, 24)
+            
+            TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
+                .padding(.horizontal, 26)
+            
+            Spacer()
+        })
+        .frame(height: 119)
     }
 }
