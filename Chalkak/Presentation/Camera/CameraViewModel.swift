@@ -102,8 +102,13 @@ class CameraViewModel: ObservableObject {
             .store(in: &cancellables)
 
         loadSavedSettings()
-        
+
         configure()
+
+        // 저장되어있는 줌스케일 적용
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.model.setZoomScale(self.zoomScale)
+        }
     }
 
     func switchCameraControls() {
@@ -175,10 +180,13 @@ class CameraViewModel: ObservableObject {
     }
 
     func toggleZoomControl() {
+        // 전면 카메라에서 줌 제어 비활성화
+        guard !isUsingFrontCamera else { return }
         showingZoomControl.toggle()
     }
 
     func selectZoomScale(_ scale: CGFloat) {
+        guard !isUsingFrontCamera else { return }
         guard !scale.isNaN, !scale.isInfinite else { return }
 
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
@@ -271,10 +279,23 @@ class CameraViewModel: ObservableObject {
     }
 
     func changeCamera() {
+        // 후면->전면 전환시 : 현재 줌 저장 후 전면카메라로 전환
+        if cameraPostion == .back {
+            // 후면카메라 줌상태 저장 (UserDefaults)
+            UserDefaults.standard.set(zoomScale, forKey: "backCameraZoomScale")
+            showingZoomControl = false
+            zoomScale = 1.0
+        }
+
         cameraPostion = cameraPostion == .back ? .front : .back
         model.switchCamera(to: cameraPostion)
-        // 카메라 전환 후 CameraManager에서 복원된 줌 스케일을 동기화
-        zoomScale = model.currentZoomScale
+
+        // 전면->후면 전환시 : 이전에 저장된 후면카메라 줌 복원
+        if cameraPostion == .back {
+            let savedZoom = UserDefaults.standard.object(forKey: "backCameraZoomScale") as? CGFloat ?? 1.0
+            zoomScale = savedZoom
+            model.setZoomScale(savedZoom)
+        }
     }
 
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
@@ -288,7 +309,7 @@ class CameraViewModel: ObservableObject {
             isFrontPosition: isUsingFrontCamera,
             timerSecond: selectedTimerDuration.rawValue
         )
-        
+
         UserDefaults.standard.set(isGrid, forKey: UserDefaultKey.isGridOn)
         UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.zoomScale)
         UserDefaults.standard.set(selectedTimerDuration.rawValue, forKey: UserDefaultKey.timerSecond)
@@ -296,10 +317,10 @@ class CameraViewModel: ObservableObject {
 
         return setting
     }
-    
+
     private func loadSavedSettings() {
         let savedGridOn = UserDefaults.standard.bool(forKey: UserDefaultKey.isGridOn)
-        let savedZoomScale = UserDefaults.standard.object(forKey: UserDefaultKey.zoomScale) as? CGFloat ?? 0.0
+        let savedZoomScale = UserDefaults.standard.object(forKey: UserDefaultKey.zoomScale) as? CGFloat ?? 1.0
         let savedTimer = UserDefaults.standard.integer(forKey: UserDefaultKey.timerSecond)
         let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
 
