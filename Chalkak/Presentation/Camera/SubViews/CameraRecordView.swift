@@ -12,9 +12,10 @@ struct CameraRecordView: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            Color.clear
-                .frame(width: 54, height: 54)
-            
+            Button(action: {}) {
+                Image(systemName: "square.stack")
+                    .font(.system(size: 54))
+            }
             Spacer()
             
             RecordButton(
@@ -43,6 +44,6 @@ struct CameraRecordView: View {
             )
         }
         .padding(.bottom, 20)
-        .padding(.horizontal, 15)
+        .padding(.horizontal, 20)
     }
 }
