@@ -73,7 +73,8 @@ struct ClipEditView: View {
                 VideoPreviewView(
                     previewImage: editViewModel.previewImage,
                     player: editViewModel.player,
-                    isDragging: isDragging
+                    isDragging: isDragging,
+                    overlayImage: guide?.outlineImage
                 )
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
