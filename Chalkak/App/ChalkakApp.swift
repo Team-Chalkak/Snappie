@@ -37,11 +37,8 @@ struct ChalkakApp: App {
                                 timeStampedTiltList: timeStampedTiltList
                             )
 
-                        case .overlay(let clip, let isFrontCamera):
-                            OverlayView(
-                                clip: clip,
-                                isFrontCamera: isFrontCamera
-                            )
+                        case .overlay(let clip):
+                            OverlayView(clip: clip)
 
                         case .boundingBox(let guide):
                             BoundingBoxView(guide: guide)

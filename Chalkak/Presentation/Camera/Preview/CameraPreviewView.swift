@@ -197,5 +197,8 @@ struct CameraPreviewView: UIViewRepresentable {
         
         // 핀치제스처 막기위한 현재 카메라 포지션 업데이트
         uiView.isUsingFrontCamera = isUsingFrontCamera
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.showGrid ? uiView.showGrid() : uiView.hideGrid()
+        }
     }
 }
