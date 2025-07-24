@@ -18,7 +18,14 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.session, showGrid: $viewModel.isGrid, tabToFocus: viewModel.focusAtPoint)
+            CameraPreviewView(
+                session: viewModel.session,
+                tabToFocus: viewModel.focusAtPoint,
+                onPinchZoom: viewModel.selectZoomScale,
+                currentZoomScale: viewModel.zoomScale,
+                isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                showGrid: $viewModel.isGrid
+            )
 
             if viewModel.isHorizontalLevelActive {
                 HStack {
@@ -42,13 +49,13 @@ struct CameraView: View {
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
             let cameraSetting = viewModel.saveCameraSettingToUserDefaults()
-            
+
             coordinator.push(.clipEdit(
                 clipURL: url,
                 guide: guide,
                 cameraSetting: cameraSetting,
                 TimeStampedTiltList: viewModel.timeStampedTiltList
-                )
+            )
             )
         }
     }

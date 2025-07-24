@@ -38,13 +38,13 @@ class CameraManager: NSObject, ObservableObject {
     @Published var isRecording = false
     @Published var currentZoomScale: CGFloat = 1.0
 
-    // 전면/후면 카메라별 줌 스케일 저장
-    private var frontCameraZoomScale: CGFloat = 1.0
+    // 카메라 줌스케일
     private var backCameraZoomScale: CGFloat = 1.0
     private var initialCameraPosition: AVCaptureDevice.Position {
         get {
             if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition),
-                   savedValue == "front" {
+               savedValue == "front"
+            {
                 return .front
             } else {
                 return .back
@@ -55,14 +55,14 @@ class CameraManager: NSObject, ObservableObject {
             UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
         }
     }
-    
+
     deinit {
         session.stopRunning()
     }
-    
+
     override init() {
-            super.init()
-        }
+        super.init()
+    }
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
     private func configureFrameRate(for device: AVCaptureDevice) {
@@ -172,9 +172,8 @@ class CameraManager: NSObject, ObservableObject {
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                 self?.session.startRunning()
                 DispatchQueue.main.async {
-                    // 최초 카메라 설정 시 1.0 줌배율 적용
-                    let zoomScale = (position == .front) ? self?.frontCameraZoomScale : self?.backCameraZoomScale
-                    self?.setZoomScale(zoomScale ?? 1.0)
+                    // 최초 카메라 설정 시 1.0 줌배율적용
+                    self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
                 }
             }
         } catch {
@@ -237,13 +236,11 @@ class CameraManager: NSObject, ObservableObject {
     /// 전면/후면 카메라 전환
     func switchCamera(to newPosition: AVCaptureDevice.Position) {
         if let currentDevice = videoDeviceInput?.device {
-            if currentDevice.position == .front {
-                frontCameraZoomScale = currentZoomScale
-            } else if currentDevice.position == .back {
+            if currentDevice.position == .back {
                 backCameraZoomScale = currentZoomScale
             }
         }
-        
+
         session.beginConfiguration()
         session.removeInput(videoDeviceInput)
 
@@ -253,26 +250,35 @@ class CameraManager: NSObject, ObservableObject {
             session.commitConfiguration()
             return
         }
+        if let connection = movieOutput.connection(with: .video) {
+            // 전면카메라 좌우반전 제거
+            if connection.isVideoMirroringSupported {
+                connection.isVideoMirrored = newPosition == .front
+            }
+        }
 
         do {
             let newInput = try AVCaptureDeviceInput(device: newDevice)
-            if session.canAddInput(newInput) {
-                session.addInput(newInput)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
                 videoDeviceInput = newInput
                 configureFrameRate(for: newDevice)
                 initialCameraPosition = newPosition
             }
+
         } catch {
-            print("카메라 전환 오류: \(error)")
+            print("카메라 전환 중 오류: \(error)")
         }
 
         session.commitConfiguration()
 
         // 전환된 카메라의 저장된 줌 스케일 복원
-        let savedZoomScale = newPosition == .front ? frontCameraZoomScale : backCameraZoomScale
-        setZoomScale(savedZoomScale)
+        if newPosition == .back {
+            let savedZoomScale = backCameraZoomScale
+            setZoomScale(savedZoomScale)
+        }
     }
-    
+
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
     func setZoomScale(_ scale: CGFloat) {
         guard let device = videoDeviceInput?.device else { return }
@@ -292,9 +298,7 @@ class CameraManager: NSObject, ObservableObject {
             currentZoomScale = scale
 
             // 현재 카메라 포지션에 따라 줌 스케일 저장
-            if device.position == .front {
-                frontCameraZoomScale = scale
-            } else if device.position == .back {
+            if device.position == .back {
                 backCameraZoomScale = scale
             }
 

@@ -41,21 +41,22 @@ struct CameraBottomControlView: View {
                     .transition(.move(edge: .trailing).combined(with: .opacity))
                 } else {
                     Spacer()
-
-                    Button(action: {
-                        if !viewModel.isTimerRunning {
-                            viewModel.toggleZoomControl()
+                    if !viewModel.isUsingFrontCamera {
+                        Button(action: {
+                            if !viewModel.isTimerRunning {
+                                viewModel.toggleZoomControl()
+                            }
+                        }) {
+                            VStack(spacing: 2) {
+                                Text(String(format: "%.1fx", viewModel.zoomScale))
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 55, height: 55)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                            .opacity(viewModel.isTimerRunning ? 0.5 : 1.0)
                         }
-                    }) {
-                        VStack(spacing: 2) {
-                            Text(String(format: "%.1fx", viewModel.zoomScale))
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                        .frame(width: 55, height: 55)
-                        .background(Color.black.opacity(0.6))
-                        .clipShape(Circle())
-                        .opacity(viewModel.isTimerRunning ? 0.5 : 1.0)
                     }
                 }
             }
