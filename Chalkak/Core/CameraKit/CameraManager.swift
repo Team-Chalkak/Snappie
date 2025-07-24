@@ -259,8 +259,8 @@ class CameraManager: NSObject, ObservableObject {
 
         do {
             let newInput = try AVCaptureDeviceInput(device: newDevice)
-            if session.canAddInput(videoDeviceInput) {
-                session.addInput(videoDeviceInput)
+            if session.canAddInput(newInput) {
+                session.addInput(newInput)
                 videoDeviceInput = newInput
                 configureFrameRate(for: newDevice)
                 initialCameraPosition = newPosition
