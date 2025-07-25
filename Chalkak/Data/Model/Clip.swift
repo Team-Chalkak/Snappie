@@ -35,6 +35,11 @@ class Clip {
     /// 시간별로 기록된 카메라 높이 정보.
     var heightList: [TimeStampedHeight]
     
+    /// 트리밍된 시간을 계산한 정보.
+    var currentTrimmedDuration: Double {
+        return endPoint - startPoint
+    }
+    
     /// 새로운 Clip 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 클립의 고유 ID (기본값은 UUID).
