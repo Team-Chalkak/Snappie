@@ -89,11 +89,17 @@ struct ButtonGlassEllipse: View {
 }
 
 #Preview {
-    ButtonGlassPill(contentType: .text("pill"), isActive: true) {
-        print("룰루")
+    SnappieButton(.glassPill(
+        contentType: .text("pill"),
+        isActive: true)
+    ) {
+        print("glassPill button tapped")
     }
     
-    ButtonGlassEllipse(contentType: .text(".5"), isActive: true) {
-        print("룰루")
+    SnappieButton(.glassEllipse(
+        contentType: .text(".5"),
+        isActive: false)
+    ) {
+        print("glassEllipse button tapped")
     }
 }
