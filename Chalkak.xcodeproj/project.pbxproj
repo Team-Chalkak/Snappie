@@ -586,6 +586,9 @@
 				C5C12EA92E325A1800C4DC6D /* SolidButtonStyler.swift */,
 				C5C12EAB2E325A3B00C4DC6D /* IconButtonStyler.swift */,
 				C5C12EAD2E325A5800C4DC6D /* GlassButtonStyler.swift */,
+				C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */,
+				C5C12EA52E32214000C4DC6D /* ButtonIcon.swift */,
+				C5C12EA72E3227D100C4DC6D /* ButtonGlass.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -595,9 +598,6 @@
 			children = (
 				C5F7B69E2E2EB7AB0066B59C /* IconView.swift */,
 				C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */,
-				C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */,
-				C5C12EA52E32214000C4DC6D /* ButtonIcon.swift */,
-				C5C12EA72E3227D100C4DC6D /* ButtonGlass.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
