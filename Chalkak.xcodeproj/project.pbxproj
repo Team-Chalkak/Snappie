@@ -35,7 +35,6 @@
 		993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F302E267E0C0059B70A /* CameraRecordView.swift */; };
 		993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F312E267E0C0059B70A /* CameraTopControlView.swift */; };
 		993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F322E267E0C0059B70A /* CircleIconButton.swift */; };
-		993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */; };
 		993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F342E267E0C0059B70A /* ZoomSlider.swift */; };
 		993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F362E267E0C0059B70A /* CameraView.swift */; };
 		993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F372E267E0C0059B70A /* CameraViewModel.swift */; };
@@ -65,6 +64,11 @@
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
 		99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */; };
+		B64788642E3323C40091A067 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788632E3323C10091A067 /* RecordButton.swift */; };
+		B64788662E3324130091A067 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788652E3324020091A067 /* TorchMode.swift */; };
+		B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */; };
+		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
 		C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */; };
 		C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */; };
@@ -77,7 +81,6 @@
 		C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B69E2E2EB7AB0066B59C /* IconView.swift */; };
 		C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */; };
 		C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */; };
-		B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB62AD2E2E8B7700207590 /* TorchMode.swift */; };
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
 		C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */; };
@@ -135,7 +138,6 @@
 		993A1F302E267E0C0059B70A /* CameraRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraRecordView.swift; sourceTree = "<group>"; };
 		993A1F312E267E0C0059B70A /* CameraTopControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTopControlView.swift; sourceTree = "<group>"; };
 		993A1F322E267E0C0059B70A /* CircleIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleIconButton.swift; sourceTree = "<group>"; };
-		993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerOptionSelectView.swift; sourceTree = "<group>"; };
 		993A1F342E267E0C0059B70A /* ZoomSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomSlider.swift; sourceTree = "<group>"; };
 		993A1F362E267E0C0059B70A /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		993A1F372E267E0C0059B70A /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
@@ -168,6 +170,9 @@
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
 		99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Ext.swift"; sourceTree = "<group>"; };
+		B64788632E3323C10091A067 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		B64788652E3324020091A067 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
+		B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLevelIndicator.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
@@ -181,7 +186,6 @@
 		C5F7B69E2E2EB7AB0066B59C /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonSolid.swift; sourceTree = "<group>"; };
 		C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyleType.swift; sourceTree = "<group>"; };
-		B6AB62AD2E2E8B7700207590 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
 		C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarySaver.swift; sourceTree = "<group>"; };
@@ -347,7 +351,7 @@
 		993A1F2A2E267E0C0059B70A /* Enum */ = {
 			isa = PBXGroup;
 			children = (
-				B6AB62AD2E2E8B7700207590 /* TorchMode.swift */,
+				B64788652E3324020091A067 /* TorchMode.swift */,
 				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
 			);
 			path = Enum;
@@ -364,13 +368,14 @@
 		993A1F352E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */,
+				B64788632E3323C10091A067 /* RecordButton.swift */,
 				993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */,
 				993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */,
 				993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */,
 				993A1F302E267E0C0059B70A /* CameraRecordView.swift */,
 				993A1F312E267E0C0059B70A /* CameraTopControlView.swift */,
 				993A1F322E267E0C0059B70A /* CircleIconButton.swift */,
-				993A1F332E267E0C0059B70A /* TimerOptionSelectView.swift */,
 				993A1F342E267E0C0059B70A /* ZoomSlider.swift */,
 			);
 			path = SubViews;
@@ -762,6 +767,7 @@
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
 				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
+				B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */,
 				993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */,
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
@@ -792,7 +798,8 @@
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				C5C12EA82E3227D100C4DC6D /* ButtonGlass.swift in Sources */,
-				B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */,
+				B6AB62AE2E2E8DBE00207590 /* (null) in Sources */,
+				B64788662E3324130091A067 /* TorchMode.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
 				C5F7B69C2E2EB25F0066B59C /* Icon.swift in Sources */,
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
@@ -803,7 +810,6 @@
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
-				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
 				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
 				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
@@ -814,6 +820,7 @@
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
@@ -827,6 +834,7 @@
 				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
 				C5C12EA62E32214000C4DC6D /* ButtonIcon.swift in Sources */,
+				B68307542E327F9400517979 /* (null) in Sources */,
 				C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
