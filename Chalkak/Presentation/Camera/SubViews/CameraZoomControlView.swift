@@ -29,7 +29,7 @@ struct CameraZoomControlView: View {
     ]
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             // 줌 인디케이터
             HStack(spacing: 8) {
                 ForEach(zoomRanges, id: \.label) { range in
@@ -64,7 +64,8 @@ struct CameraZoomControlView: View {
                         viewModel.selectZoomScale(newValue)
                     }
                 )
-                .frame(width: 280, height: 40)
+                // TODO: width 고정값 수정
+                .frame(width: 320, height: 40)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }

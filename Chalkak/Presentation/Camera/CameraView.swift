@@ -45,7 +45,7 @@ struct CameraView: View {
                 Spacer()
 
                 CameraBottomControlView(viewModel: viewModel)
-            }
+            }.padding(.bottom, 16)
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
@@ -61,4 +61,3 @@ struct CameraView: View {
         }
     }
 }
-
