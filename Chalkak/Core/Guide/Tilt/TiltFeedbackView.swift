@@ -64,17 +64,17 @@ struct TiltFeedbackView: View {
         // 가이드 동그라미
         Circle()
             .stroke(lineWidth: 1)
-            .frame(width: 10, height: 10)
-            .foregroundStyle(isProperPosition ? Color.blue : Color.white)
+            .frame(width: 12, height: 12)
+            .foregroundStyle(isProperPosition ? SnappieColor.primaryNormal : Color.matcha50)
             .overlay(
                 // 피드백 동그라미
                 Circle()
-                    .frame(width: 6, height: 6)
+                    .frame(width: 8.5, height: 8.5)
                     .offset(
                         x: isProperPosition ? 0 : offsetX,
                         y: isProperPosition ? 0 : offsetY
                     )
-                    .foregroundStyle(isProperPosition ? Color.blue : Color.white)
+                    .foregroundStyle(isProperPosition ? SnappieColor.primaryNormal : Color.matcha50)
                     .animation(.easeInOut(duration: 0.3), value: isProperPosition)
             )
     }
