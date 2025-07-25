@@ -25,13 +25,19 @@ import SwiftUI
       1) "내보내기" 버튼이 표시됨
       2) "다음" 버튼 → 기존 Project에 새로운 Clip 모델 추가
  
- ## 서브뷰
+ ## 구성 요소(서브뷰)
  - VideoPreviewView: 영상의 현재 구간을 보여주는 프리뷰 뷰
  - TrimmingControlView: 영상 재생 버튼과 트리밍 타임라인 UI를 포함한 조작 패널
  
  ## 호출 위치
  - CameraView → ClipEditView로 이동
  - 호출 예시:
+    ClipEditView(
+        clipURL: url,
+        guide: guide,
+        cameraSetting: cameraSetting,
+        timeStampedTiltList: timeStampedTiltList
+    )
  */
 struct ClipEditView: View {
     // 1. Input properties

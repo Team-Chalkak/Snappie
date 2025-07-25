@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
+		9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078C2E340459006BE89C /* VideoControlPanelView.swift */; };
+		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
 		93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A137662E32756A00777CF8 /* VideoControlView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
@@ -113,6 +116,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
+		9340078C2E340459006BE89C /* VideoControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlPanelView.swift; sourceTree = "<group>"; };
+		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
 		93A137662E32756A00777CF8 /* VideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -417,6 +423,9 @@
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
 				993A1F412E267E0C0059B70A /* VideoPreviewView.swift */,
 				93A137662E32756A00777CF8 /* VideoControlView.swift */,
+				9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */,
+				9340078C2E340459006BE89C /* VideoControlPanelView.swift */,
+				9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -806,9 +815,11 @@
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
+				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
+				9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
@@ -828,6 +839,7 @@
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
+				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
 				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
