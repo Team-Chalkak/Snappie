@@ -71,20 +71,19 @@ struct ButtonGlassEllipse: View {
     
     // body
     var body: some View {
-        Button (action: action) {
-            Button(action: action) {
-                switch contentType {
-                case .icon(let icon):
-                    IconView(
-                        iconType: icon,
-                        scale: styler.iconScale()
-                    )
-                case .text(let text):
-                    Text(text)
-                        .font(SnappieFont.style(styler.fontStyle()))
-                }
+        Button(action: action) {
+            switch contentType {
+            case .icon(let icon):
+                IconView(
+                iconType: icon,
+                scale: styler.iconScale()
+                )
+            case .text(let text):
+                Text(text)
+                    .font(SnappieFont.style(styler.fontStyle()))
             }
         }
+        .frame(width: styler.height(), alignment: .center)
         .buttonStyle(SnappieButtonStyle(styler: styler))
     }
 }
@@ -94,7 +93,7 @@ struct ButtonGlassEllipse: View {
         print("룰루")
     }
     
-    ButtonGlassEllipse(contentType: .text("ellipse"), isActive: true) {
+    ButtonGlassEllipse(contentType: .text(".5"), isActive: true) {
         print("룰루")
     }
 }
