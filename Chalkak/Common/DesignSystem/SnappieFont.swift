@@ -15,13 +15,13 @@ import SwiftUI
  ### 기본 사용
  ```swift
  Text("Dynamic Font")
-     .font(SnappieFont.style(.recordTimer))
+     .font(SnappieFont.style(.proBody1))
  ```
  
  ### 크기 다르게 쓰고 싶을 때
  ```swift
  Text("Dynamic Font")
-     .font(SnappieFont.style(.recordTimer, size: 15))
+     .font(SnappieFont.style(.proBody1, size: 15))
  ```
 
  */
