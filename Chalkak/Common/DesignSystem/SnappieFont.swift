@@ -61,7 +61,7 @@ enum SnappieFont {
         case proLabel1
         case proLabel2
         case proLabel3
-        case proCaption
+        case proCaption1
         
         case roundCaption1
         case roundCaption2
@@ -72,7 +72,7 @@ enum SnappieFont {
         
         var fontName: FontType {
             switch self {
-            case .proBody1, .proLabel1, .proLabel2, .proLabel3, .proCaption:
+            case .proBody1, .proLabel1, .proLabel2, .proLabel3, .proCaption1:
                     .sfPro
                 
             case .roundCaption1, .roundCaption2:
@@ -93,7 +93,7 @@ enum SnappieFont {
                 14
             case .proLabel3:
                 14
-            case .proCaption:
+            case .proCaption1:
                 14
                 
             case .roundCaption1:
@@ -120,7 +120,7 @@ enum SnappieFont {
                     .medium
             case .proLabel3:
                     .semibold
-            case .proCaption:
+            case .proCaption1:
                     .regular
             case .roundCaption1:
                     .regular
@@ -153,7 +153,7 @@ enum SnappieFont {
                 self.getSpacing(scale: -2)
             case .proLabel3:
                 self.getSpacing(scale: -2)
-            case .proCaption:
+            case .proCaption1:
                 self.getSpacing(scale: -1.2)
 
             case .roundCaption1:
