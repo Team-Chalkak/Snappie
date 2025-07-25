@@ -23,8 +23,8 @@ struct CameraZoomControlView: View {
 
     // 줌 활성범위
     private let zoomRanges = [
-        ZoomRange(label: ".5", min: 0.0, max: 0.9, activeWidth: 50),
-        ZoomRange(label: "1", min: 1.0, max: 1.9, activeWidth: 60),
+        ZoomRange(label: ".5", min: 0.0, max: 0.95, activeWidth: 50),
+        ZoomRange(label: "1", min: 0.95, max: 1.9, activeWidth: 60),
         ZoomRange(label: "2", min: 2.0, max: .infinity, activeWidth: 60)
     ]
 
