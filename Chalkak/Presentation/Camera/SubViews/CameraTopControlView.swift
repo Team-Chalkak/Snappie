@@ -23,12 +23,17 @@ struct CameraTopControlView: View {
                     .scaleEffect(viewModel.timerCountdown > 0 ? 1.2 : 1.0)
                     .animation(.easeInOut(duration: 0.5), value: viewModel.timerCountdown)
             } else if viewModel.isRecording {
-                Text(viewModel.formattedTime)
-                    .foregroundColor(.black)
-                    .font(.system(size: 18, weight: .medium))
-                    .padding(.all, 8)
-                    .background(.white)
-                    .cornerRadius(10)
+                HStack(spacing: 3) {
+                    Circle()
+                        .fill(SnappieColor.redRecording)
+                        .frame(width: 8, height: 8)
+                    Text(viewModel.formattedTime)
+                        .font(SnappieFont.style(.kronaLabel1))
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(SnappieColor.gradientFillNormal)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 CameraDefaultTopControlView(viewModel: viewModel)
             }
