@@ -70,8 +70,6 @@ struct ClipEditView: View {
                 .ignoresSafeArea()
             
             VStack(alignment: .center, spacing: 16, content: {
-                
-                //TODO: 네비게이션바 컴포넌트 사용
                 SnappieNavigationBar(
                     navigationTitle: "클립 편집",
                     leftButtonType: .backward {
