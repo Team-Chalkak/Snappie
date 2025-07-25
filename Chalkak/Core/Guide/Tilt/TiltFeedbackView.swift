@@ -38,18 +38,46 @@ import SwiftUI
 */
 struct TiltFeedbackView: View {
     // MARK: - Properties
+    // MARK: input properties
     /// X축 기울기 오프셋 값: 기기의 좌우 기울기
     var offsetX: CGFloat
     
     /// Y축 기울기 오프셋 값: 기기의 앞뒤 기울기
     var offsetY: CGFloat
     
+    // MARK: computed properties
+    /// 자주 사용되는 offset 절대값
+    var absOffsetX: CGFloat {
+        abs(offsetX)
+    }
+    
+    var absOffsetY: CGFloat {
+        abs(offsetY)
+    }
+    
     /// 현재 위치가 적절한 범위 내에 있는지 확인하는 계산 프로퍼티
     var isProperPosition: Bool {
-        if abs(offsetX) < 3 && abs(offsetY) < 3 {
+        if absOffsetX < 3 && absOffsetY < 3 {
             return true
         } else {
             return false
+        }
+    }
+    
+    /// 원의 투명도 결정하는 계산 프로퍼티
+    var circleOpacity: Double {
+        // 50 이상이면 안보이게
+        if absOffsetX > 50 || absOffsetY > 50 {
+            return 0
+        }
+        // 40부터 50까지 디졸브
+        else if absOffsetX > 40 || absOffsetY > 40 {
+            let offsetToCalc = max(absOffsetX, absOffsetY)
+            return (50 - offsetToCalc) / 10
+        }
+        // 40 미만이면 100프로
+        else {
+            return 1
         }
     }
     
@@ -77,6 +105,8 @@ struct TiltFeedbackView: View {
                     .foregroundStyle(isProperPosition ? SnappieColor.primaryNormal : Color.matcha50)
                     .animation(.easeInOut(duration: 0.3), value: isProperPosition)
             )
+            .opacity(circleOpacity)
+            .animation(.smooth, value: circleOpacity)
     }
 }
 
@@ -85,6 +115,6 @@ struct TiltFeedbackView: View {
         Color.black.opacity(0.7)
             .ignoresSafeArea()
         
-        TiltFeedbackView(offsetX: 2, offsetY: 2)
+        TiltFeedbackView(offsetX: -40, offsetY: -45)
     }
 }
