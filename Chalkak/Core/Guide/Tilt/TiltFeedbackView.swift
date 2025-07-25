@@ -70,12 +70,21 @@ struct TiltFeedbackView: View {
                 // 피드백 동그라미
                 Circle()
                     .frame(width: 6, height: 6)
-                    .offset(x: offsetX, y: offsetY)
+                    .offset(
+                        x: isProperPosition ? 0 : offsetX,
+                        y: isProperPosition ? 0 : offsetY
+                    )
                     .foregroundStyle(isProperPosition ? Color.blue : Color.white)
+                    .animation(.easeInOut(duration: 0.3), value: isProperPosition)
             )
     }
 }
 
 #Preview {
-    TiltFeedbackView(offsetX: 0, offsetY: 0)
+    ZStack {
+        Color.black.opacity(0.7)
+            .ignoresSafeArea()
+        
+        TiltFeedbackView(offsetX: 2, offsetY: 2)
+    }
 }
