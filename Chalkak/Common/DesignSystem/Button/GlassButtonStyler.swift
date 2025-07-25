@@ -39,14 +39,17 @@ struct GlassPillStyler: ButtonStyler {
     func background(isPressed: Bool, isEnabled: Bool) -> AnyView {
         return AnyView(
             ZStack {
+                SnappieColor.darkHeavy.opacity(0.6)
+                
+                if isActive {
+                    SnappieColor.darkHeavy.opacity(0.2)
+                }
+                
                 LinearGradient(
                     gradient: SnappieColor.gradientFillNormal,
                     startPoint: UnitPoint(x: 0.03, y: 0.08),
                     endPoint: UnitPoint(x: 0.95, y: 0.96)
                 )
-                if isActive {
-                    SnappieColor.darkHeavy.opacity(0.3)
-                }
             }
             .mask(Capsule())
         )
@@ -85,12 +88,20 @@ struct GlassEllipseStyler: ButtonStyler {
     
     func background(isPressed: Bool, isEnabled: Bool) -> AnyView {
         return AnyView(
-            LinearGradient(
-                gradient: SnappieColor.gradientFillNormal,
-                startPoint: UnitPoint(x: 0.03, y: 0.08),
-                endPoint: UnitPoint(x: 0.95, y: 0.96)
-            )
-            .frame(width: 26, height: 26)
+            ZStack {
+                SnappieColor.darkHeavy.opacity(0.6)
+                
+                if isActive {
+                    SnappieColor.darkHeavy.opacity(0.2)
+                }
+                
+                LinearGradient(
+                    gradient: SnappieColor.gradientFillNormal,
+                    startPoint: UnitPoint(x: 0.03, y: 0.08),
+                    endPoint: UnitPoint(x: 0.95, y: 0.96)
+                )
+            }
+            .frame(width: height(), height: height())
             .mask(Circle())
         )
     }
