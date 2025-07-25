@@ -16,7 +16,6 @@ struct VideoControlView: View {
     @State private var isOverlayVisible: Bool = true
     
     var body: some View {
-        
         VStack(alignment: .center, spacing: 16 ,content: {
             
             videoPreview
@@ -29,15 +28,18 @@ struct VideoControlView: View {
     //MARK: - 비디오프리뷰 + 오버레이
     private var videoPreview: some View {
         ZStack {
+            // 영상
             VideoPreviewView(
                 previewImage: editViewModel.previewImage,
                 player: editViewModel.player,
                 isDragging: isDragging
             )
 
+            // 오버레이
             if isOverlayVisible, let overlayImage = overlayImage {
                 Image(uiImage: overlayImage)
                     .resizable()
+                    .scaledToFit()
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
@@ -63,7 +65,7 @@ struct VideoControlView: View {
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.matcha600)
+                        .fill(SnappieColor.primaryStrong)
                 )
             
             if overlayImage != nil {
@@ -73,7 +75,7 @@ struct VideoControlView: View {
                     Image(systemName: isOverlayVisible ? "eye.fill" : "eye.slash.fill")
                         .resizable()
                         .frame(width: 28, height: 20)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 })
             } else {
                 Spacer()

@@ -66,7 +66,7 @@ struct ClipEditView: View {
     // 4. body
     var body: some View {
         ZStack {
-            Color.deepGreen700
+            SnappieColor.darkHeavy
                 .ignoresSafeArea()
             
             VStack(alignment: .center, spacing: 18, content: {
@@ -81,6 +81,7 @@ struct ClipEditView: View {
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
             })
+            .padding(.vertical, 16)
         }
         .task {
             if guide != nil {

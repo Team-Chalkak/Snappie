@@ -32,11 +32,13 @@ struct VideoPreviewView: View {
                     .aspectRatio(9.0 / 16.0, contentMode: .fit)
             } else if let player = player {
                 VideoPlayer(player: player)
+                    .disabled(true)
                     .aspectRatio(9.0 / 16.0, contentMode: .fit)
                     .clipped()
             } else {
                 Text("영상을 불러오는 중...")
             }
         }
+        .frame(maxHeight: .infinity)
     }
 }
