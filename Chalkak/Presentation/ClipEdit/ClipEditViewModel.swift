@@ -291,6 +291,7 @@ final class ClipEditViewModel: ObservableObject {
         return Clip(
             id: clipID,
             videoURL: clipURL,
+            originalDuration: duration,
             startPoint: startPoint,
             endPoint: endPoint,
             tiltList: timeStampedTiltList,
