@@ -13,7 +13,7 @@ struct CameraBottomControlView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack {
-                if viewModel.showingZoomControl && !viewModel.isTimerRunning {
+                if viewModel.showingZoomControl && !viewModel.isTimerRunning && !viewModel.isUsingFrontCamera {
                     HStack(spacing: 15) {
                         ZoomSlider(
                             zoomScale: viewModel.zoomScale,

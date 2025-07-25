@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "silhouette.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

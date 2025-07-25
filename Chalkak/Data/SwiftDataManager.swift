@@ -109,6 +109,7 @@ class SwiftDataManager {
     func createClip(
         id: String,
         videoURL: URL,
+        originalDuration: Double,
         startPoint: Double = 0,
         endPoint: Double,
         tiltList: [TimeStampedTilt] = [],
@@ -117,6 +118,7 @@ class SwiftDataManager {
         let clip = Clip(
             id: id,
             videoURL: videoURL,
+            originalDuration: originalDuration,
             startPoint: startPoint,
             endPoint: endPoint,
             tiltList: tiltList,

@@ -65,6 +65,18 @@
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
 		99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */; };
+		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
+		C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */; };
+		C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */; };
+		C5C12EA62E32214000C4DC6D /* ButtonIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA52E32214000C4DC6D /* ButtonIcon.swift */; };
+		C5C12EA82E3227D100C4DC6D /* ButtonGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA72E3227D100C4DC6D /* ButtonGlass.swift */; };
+		C5C12EAA2E325A1800C4DC6D /* SolidButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA92E325A1800C4DC6D /* SolidButtonStyler.swift */; };
+		C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EAB2E325A3B00C4DC6D /* IconButtonStyler.swift */; };
+		C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EAD2E325A5800C4DC6D /* GlassButtonStyler.swift */; };
+		C5F7B69C2E2EB25F0066B59C /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B69B2E2EB25F0066B59C /* Icon.swift */; };
+		C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B69E2E2EB7AB0066B59C /* IconView.swift */; };
+		C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */; };
+		C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AB62AD2E2E8B7700207590 /* TorchMode.swift */; };
 		C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */; };
 		C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */; };
@@ -157,6 +169,18 @@
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
 		99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Ext.swift"; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
+		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
+		C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButtonStyle.swift; sourceTree = "<group>"; };
+		C5C12EA52E32214000C4DC6D /* ButtonIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonIcon.swift; sourceTree = "<group>"; };
+		C5C12EA72E3227D100C4DC6D /* ButtonGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonGlass.swift; sourceTree = "<group>"; };
+		C5C12EA92E325A1800C4DC6D /* SolidButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolidButtonStyler.swift; sourceTree = "<group>"; };
+		C5C12EAB2E325A3B00C4DC6D /* IconButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButtonStyler.swift; sourceTree = "<group>"; };
+		C5C12EAD2E325A5800C4DC6D /* GlassButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButtonStyler.swift; sourceTree = "<group>"; };
+		C5F7B69B2E2EB25F0066B59C /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
+		C5F7B69E2E2EB7AB0066B59C /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
+		C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonSolid.swift; sourceTree = "<group>"; };
+		C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyleType.swift; sourceTree = "<group>"; };
 		B6AB62AD2E2E8B7700207590 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMerger.swift; sourceTree = "<group>"; };
 		C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
@@ -492,6 +516,7 @@
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
 				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
+				C5F7B69D2E2EB78D0066B59C /* Component */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -547,6 +572,31 @@
 			path = Enum;
 			sourceTree = "<group>";
 		};
+		C5C12EAF2E325CD100C4DC6D /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				C5F7B6A22E2F6AD20066B59C /* ButtonStyleType.swift */,
+				C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */,
+				C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */,
+				C5C12EA92E325A1800C4DC6D /* SolidButtonStyler.swift */,
+				C5C12EAB2E325A3B00C4DC6D /* IconButtonStyler.swift */,
+				C5C12EAD2E325A5800C4DC6D /* GlassButtonStyler.swift */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		C5F7B69D2E2EB78D0066B59C /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				C5F7B69E2E2EB7AB0066B59C /* IconView.swift */,
+				C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */,
+				C5F7B6A02E2F6A2A0066B59C /* ButtonSolid.swift */,
+				C5C12EA52E32214000C4DC6D /* ButtonIcon.swift */,
+				C5C12EA72E3227D100C4DC6D /* ButtonGlass.swift */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
 		C5FB3EC22E2E0E2900A4C1BE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -560,6 +610,8 @@
 			children = (
 				C5FB3EC72E2E110500A4C1BE /* SnappieFont.swift */,
 				C5FB3ECD2E2E1C1200A4C1BE /* SnappieColor.swift */,
+				C5F7B69B2E2EB25F0066B59C /* Icon.swift */,
+				C5C12EAF2E325CD100C4DC6D /* Button */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -709,12 +761,14 @@
 				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
+				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
 				993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */,
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
 				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
@@ -723,6 +777,7 @@
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
+				C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */,
 				9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
@@ -737,18 +792,24 @@
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
+				C5C12EA82E3227D100C4DC6D /* ButtonGlass.swift in Sources */,
 				B6AB62AE2E2E8DBE00207590 /* TorchMode.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
+				C5F7B69C2E2EB25F0066B59C /* Icon.swift in Sources */,
+				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
+				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
 				993A1F6C2E267E0C0059B70A /* TimerOptionSelectView.swift in Sources */,
+				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
 				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
+				C5C12EAA2E325A1800C4DC6D /* SolidButtonStyler.swift in Sources */,
 				993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */,
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
@@ -763,7 +824,10 @@
 				C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
+				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
+				C5C12EA62E32214000C4DC6D /* ButtonIcon.swift in Sources */,
+				C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
