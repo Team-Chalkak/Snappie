@@ -14,9 +14,12 @@ struct CameraPreviewView: UIViewRepresentable {
     let currentZoomScale: CGFloat
     let isUsingFrontCamera: Bool
     @Binding var showGrid: Bool
+    let isTimerRunning: Bool
+    let timerCountdown: Int
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
+        var countdownLabel: UILabel?
         var handleFocus: ((CGPoint) -> Void)?
         var handlePinchZoom: ((CGFloat) -> Void)?
         var isUsingFrontCamera: Bool = false
@@ -171,6 +174,34 @@ struct CameraPreviewView: UIViewRepresentable {
             gridLayer?.removeFromSuperlayer()
             gridLayer = nil
         }
+        
+        func showCountdown(_ countdown: Int) {
+            // 기존 카운트다운 라벨 제거
+            countdownLabel?.removeFromSuperview()
+            
+            // 카운트다운 라벨 생성
+            let label = UILabel()
+            label.text = "\(countdown)"
+            label.textColor = UIColor(SnappieColor.labelPrimaryNormal)
+            label.font = UIFont(name: "KronaOne-Regular", size: 164)
+            label.textAlignment = .center
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            addSubview(label)
+            
+            // CameraFrame 중앙 배치
+            NSLayoutConstraint.activate([
+                label.centerXAnchor.constraint(equalTo: centerXAnchor),
+                label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ])
+            
+            countdownLabel = label
+        }
+        
+        func hideCountdown() {
+            countdownLabel?.removeFromSuperview()
+            countdownLabel = nil
+        }
     }
    
     func makeUIView(context: Context) -> VideoPreviewView {
@@ -191,6 +222,13 @@ struct CameraPreviewView: UIViewRepresentable {
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {
         showGrid ? uiView.showGrid() : uiView.hideGrid()
+        
+        // 카운트다운
+        if isTimerRunning, timerCountdown > 0 {
+            uiView.showCountdown(timerCountdown)
+        } else {
+            uiView.hideCountdown()
+        }
         
         // 외부에서 줌 스케일이 변경되었을 때 동기화
         uiView.updateInitialZoomScale(currentZoomScale)
