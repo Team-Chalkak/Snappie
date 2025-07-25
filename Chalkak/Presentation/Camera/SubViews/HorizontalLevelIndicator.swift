@@ -2,7 +2,7 @@
 //  HorizontalLevelIndicator.swift
 //  Chalkak
 //
-//  Created by Finn on 7/24/25.
+//  Created by 정종문 on 7/24/25.
 //
 
 import SwiftUI
