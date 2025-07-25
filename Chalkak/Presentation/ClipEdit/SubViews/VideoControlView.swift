@@ -48,35 +48,36 @@ struct VideoControlView: View {
     
     //MARK: - 컨트롤 세션(재생 버튼, 영상 길이, 가이드 on/off)
     private var controlSession: some View {
-        HStack(alignment: .center, spacing: 109, content: {
-            Button(action: {
+        HStack(alignment: .center, spacing: 108, content: {
+            
+            SnappieButton(
+                .iconBackground(
+                    icon: editViewModel.isPlaying ? .pauseFill : .playFill,
+                    size: .medium
+                )
+            ) {
                 editViewModel.togglePlayback()
-            }, label: {
-                Image(editViewModel.isPlaying ? "pauseBtn" : "playBtn")
-                    .resizable()
-                    .frame(width: 32, height: 32)
-                    .foregroundColor(.white)
-            })
+            }
             
             //TODO: - duration 적용되면 여기 사용!
-            Text("0.00초")
-                .foregroundColor(.black)
-                .padding(.horizontal, 8)
+            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
+                .font(SnappieFont.style(.proLabel3))
+                .padding(.horizontal, 9.5)
                 .padding(.vertical, 6)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(SnappieColor.primaryStrong)
                 )
             
             if overlayImage != nil {
-                Button(action: {
+                SnappieButton(
+                    .iconBackground(
+                        //TODO: - 아이콘 on/off시 버튼 ui 변경
+                        icon: isOverlayVisible ? .silhouette : .silhouette,
+                        size: .medium)
+                ) {
                     isOverlayVisible.toggle()
-                }, label: {
-                    Image(systemName: isOverlayVisible ? "eye.fill" : "eye.slash.fill")
-                        .resizable()
-                        .frame(width: 28, height: 20)
-                        .foregroundStyle(.white)
-                })
+                }
             } else {
                 Spacer()
             }
@@ -87,7 +88,7 @@ struct VideoControlView: View {
 
 private extension VideoControlView {
     enum Layout {
-        static let horizontalSpacing: CGFloat = 42
+        static let horizontalSpacing: CGFloat = 50
         static let cornerRadius: CGFloat = 20
     }
 }

@@ -69,9 +69,31 @@ struct ClipEditView: View {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
             
-            VStack(alignment: .center, spacing: 18, content: {
+            VStack(alignment: .center, spacing: 16, content: {
                 
                 //TODO: 네비게이션바 컴포넌트 사용
+                SnappieNavigationBar(
+                    navigationTitle: "클립 편집",
+                    leftButtonType: .backward {
+                        coordinator.popLast()
+                    },
+                    rightButtonType: guide != nil ?
+                        .oneButton(
+                            // 두번째 촬영 이후
+                            .init(label: "완료") {
+                                showActionSheet = true
+                            }
+                        ) :
+                        .oneButton(
+                            // 첫번째 촬영
+                            .init(label: "다음") {
+                                editViewModel.saveProjectData()
+                                coordinator.push(
+                                    .overlay(clip: editViewModel.createClipData())
+                                )
+                            }
+                        )
+                )
 
                 VideoControlView(
                     isDragging: isDragging,
@@ -81,70 +103,39 @@ struct ClipEditView: View {
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
             })
-            .padding(.vertical, 16)
+            .padding(.bottom, 14)
+        }
+        .navigationBarBackButtonHidden(true)
+        .confirmationDialog(
+            "A Short Title is Best",
+            isPresented: $showActionSheet,
+            titleVisibility: .visible
+        ) {
+            Button("촬영 이어가기") {
+                // 트리밍한 클립 프로젝트에 추가
+                editViewModel.appendClipToCurrentProject()
+                
+                // 가이드 카메라로 이동
+                if let guide = guide {
+                    coordinator.push(.boundingBox(guide: guide))
+                }
+            }
+
+            Button("촬영 프로세스 마치기") {
+                // 트리밍한 클립 프로젝트에 추가
+                editViewModel.appendClipToCurrentProject()
+                
+                coordinator.push(.boundingBox(guide: nil))
+            }
+
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("이어서 찍거나 전체 영상 편집으로 이동할 수 있습니다.")
         }
         .task {
             if guide != nil {
                 editViewModel.applyReferenceDuration()
             }
-        }
-        .navigationTitle("클립 편집")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing , content: {
-                if guide != nil {
-                    /// 두번째 이후 촬영
-                    Button(action: {
-                        Task {
-                            showActionSheet = true
-                        }
-                    }, label: {
-                        if editViewModel.videoManager.isProcessing {
-                            ProgressView()
-                        } else {
-                            Text("완료")
-                        }
-                    })
-                    .confirmationDialog(
-                        "A Short Title is Best",
-                        isPresented: $showActionSheet,
-                        titleVisibility: .visible
-                    ) {
-                        Button("촬영 이어가기") {
-                            // 트리밍한 클립 프로젝트에 추가
-                            editViewModel.appendClipToCurrentProject()
-                            
-                            // 가이드 카메라로 이동
-                            if let guide = guide {
-                                coordinator.push(.boundingBox(guide: guide))
-                            }
-                        }
-
-                        Button("촬영 프로세스 마치기") {
-                            // 트리밍한 클립 프로젝트에 추가
-                            editViewModel.appendClipToCurrentProject()
-                            
-                            coordinator.push(.boundingBox(guide: nil))
-                        }
-
-                        Button("Cancel", role: .cancel) { }
-                    } message: {
-                        Text("이어서 찍거나 전체 영상 편집으로 이동할 수 있습니다.")
-                    }
-                } else {
-                    /// 첫 촬영
-                    Button(action: {
-                        // 프로젝트 swiftdata에 저장
-                        editViewModel.saveProjectData()
-                        // 오버레이 생성 화면으로 이동
-                        coordinator.push(
-                            .overlay(clip: editViewModel.createClipData())
-                        )
-                    }, label: {
-                        Text("다음")
-                    })
-                }
-            })
         }
     }
 }

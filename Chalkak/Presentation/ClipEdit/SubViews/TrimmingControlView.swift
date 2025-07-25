@@ -32,17 +32,9 @@ struct TrimmingControlView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8, content: {
             Divider()
+                .foregroundStyle(Color.deepGreen50.opacity(0.1))
             
-            HStack(content: {
-                //TODO: 현재 영상 시간
-                Text("00:00")
-                
-                Spacer()
-                
-                //TODO: 원본 영상 길이
-                Text("00.15")
-            })
-            .padding(.horizontal, 24)
+            TrimmingTimeDisplayView(editViewModel: editViewModel)
             
             TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
                 .padding(.horizontal, 26)

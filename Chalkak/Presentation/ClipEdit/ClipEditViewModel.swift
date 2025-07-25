@@ -49,14 +49,18 @@ final class ClipEditViewModel: ObservableObject {
     @Published var clipID: String? = nil
     
     @Published var videoManager = VideoManager()
+    
+    // 3. 계산 프로퍼티
+    /// 현재 트리밍된 영상 길이 (초 단위)
+    var currentTrimmedDuration: Double {
+        endPoint - startPoint
+    }
 
-    // 3. Private 저장 프로퍼티
+    // 4. Private 저장 프로퍼티
     private var asset: AVAsset?
     private var imageGenerator: AVAssetImageGenerator?
     private var timeObserverToken: Any?
     private var debounceTimer: Timer?
-    
-    // 4. 기타 상수
     private let thumbnailCount = 10
 
     // 5. init & deinit

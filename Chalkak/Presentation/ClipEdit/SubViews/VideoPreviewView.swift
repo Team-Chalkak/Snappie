@@ -39,6 +39,5 @@ struct VideoPreviewView: View {
                 Text("영상을 불러오는 중...")
             }
         }
-        .frame(maxHeight: .infinity)
     }
 }
