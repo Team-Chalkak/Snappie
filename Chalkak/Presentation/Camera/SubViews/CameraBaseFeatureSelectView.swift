@@ -16,19 +16,19 @@ struct CameraBaseFeatureSelectView: View {
         }
         .frame(maxWidth: .infinity)
 
-        ButtonIconWithText(title: "Flash", icon: viewModel.currentFlashIcon, isActive: viewModel.torchMode != .off) {
+        SnappieButton(.iconWithText(title: "Flash", icon: viewModel.currentFlashIcon, isActive: viewModel.torchMode != .off)) {
             viewModel.switchTorch()
+        }.frame(maxWidth: .infinity)
+
+        SnappieButton(.iconWithText(title: "Grid", icon: .grid, isActive: viewModel.isGrid)) {
+            viewModel.switchGrid()
         }
         .frame(maxWidth: .infinity)
 
-        ButtonIconWithText(title: "Grid", icon: .grid, isActive: viewModel.isGrid) {
-            viewModel.switchGrid()
-        }
-            .frame(maxWidth: .infinity)
-
-        ButtonIconWithText(title: "Level", icon: .level, isActive: viewModel.isHorizontalLevelActive) {
+        SnappieButton(.iconWithText(title: "Level", icon: .level, isActive: viewModel.isHorizontalLevelActive)) {
             viewModel.switchHorizontalLevel()
         }
+
         .frame(maxWidth: .infinity)
     }
 }

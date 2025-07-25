@@ -13,19 +13,13 @@ struct CameraDefaultTopControlView: View {
     var body: some View {
         VStack(spacing: 16) {
             HStack(alignment: .center) {
-                Button(action: viewModel.switchCameraControls) {
-                    Image(viewModel.showingCameraControl ? Icon.chevronUp.rawValue : Icon.chevronDown.rawValue)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 18, height: 18)
+                SnappieButton(.glassPill(
+                    contentType: .icon(viewModel.showingCameraControl ? .chevronUp : .chevronDown),
+                    isActive: viewModel.showingCameraControl
+                )) {
+                    viewModel.switchCameraControls()
                 }
-                .buttonStyle(SnappieButtonStyle(
-                    styler: GlassPillStyler(
-                        contentType: .icon(viewModel.showingCameraControl ? .chevronUp : .chevronDown),
-                        isActive: viewModel.showingCameraControl
-                    )
-                ))
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .center)
                 .disabled(viewModel.isTimerRunning) // 타이머 중 비활성화
             }
             if viewModel.showingCameraControl && !viewModel.isTimerRunning {

@@ -13,8 +13,9 @@ struct CameraRecordView: View {
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {}) {
-                Image(systemName: "square.stack")
-                    .font(.system(size: 54))
+                Image(systemName: "film.stack")
+                    .font(.system(size: 32))
+                    .foregroundStyle(SnappieColor.primaryLight)
             }
             Spacer()
             
@@ -31,17 +32,10 @@ struct CameraRecordView: View {
             
             Spacer()
             
-            Button(action: viewModel.changeCamera) {
-                Image(Icon.conversion.rawValue)
-                    .font(.system(size: 20))
+            SnappieButton(.solidSecondary(contentType: .icon(.conversion), size: .medium, isOutlined: false)
+            ) {
+                viewModel.changeCamera()
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 6)
-            .frame(width: 56, height: 32)
-            .background(
-                Capsule()
-                    .fill(SnappieColor.containerFillNormal)
-            )
         }
         .padding(.bottom, 20)
         .padding(.horizontal, 20)
