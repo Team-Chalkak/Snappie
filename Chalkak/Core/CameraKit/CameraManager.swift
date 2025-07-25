@@ -113,6 +113,40 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    /// 부드러운 초점 전환 촬영 세팅
+    private func configureSmoothFocus(for device: AVCaptureDevice) {
+        do {
+            try device.lockForConfiguration()
+
+            // 자동 초점 활성화
+            if device.isSmoothAutoFocusSupported {
+                device.isSmoothAutoFocusEnabled = true
+            }
+
+            // 자동 초점
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+
+            // 자동 노출
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            }
+
+            /// 자동 조정 모드 설정
+            ///  - .none = 제한 없음 (가까운 곳~먼 곳 다 초점 가능)
+            ///  - .near = 가까운 곳만 초점
+            ///  - .far = 먼 곳만 초점
+            if device.isAutoFocusRangeRestrictionSupported {
+                device.autoFocusRangeRestriction = .none
+            }
+
+            device.unlockForConfiguration()
+        } catch {
+            print("부드러운 초점 설정 오류: \(error)")
+        }
+    }
+
     /// 후면 카메라 중 가장 좋은 성능의 카메라(가상 카메라 우선)를 찾아서 반환
     private func findBestBackCamera() -> AVCaptureDevice? {
         let deviceTypes: [AVCaptureDevice.DeviceType] = [
@@ -148,6 +182,9 @@ class CameraManager: NSObject, ObservableObject {
             }
 
             configureFrameRate(for: device)
+
+            // 부드러운 초점 전환 설정
+            configureSmoothFocus(for: device)
 
             // 오디오 입력 추가
             if let audioDevice = AVCaptureDevice.default(for: .audio) {
@@ -215,12 +252,28 @@ class CameraManager: NSObject, ObservableObject {
         do {
             try device.lockForConfiguration()
 
+            // 부드러운 초점 전환을 위한 설정
+            if device.isSmoothAutoFocusSupported {
+                device.isSmoothAutoFocusEnabled = true
+            }
+
             // 초점,노출 지점접근
             device.focusPointOfInterest = point
             device.exposurePointOfInterest = point
 
-            device.focusMode = .autoFocus
-            device.exposureMode = .autoExpose
+            // 초점
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            } else if device.isFocusModeSupported(.autoFocus) {
+                device.focusMode = .autoFocus
+            }
+
+            // 노출
+            if device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposureMode = .continuousAutoExposure
+            } else if device.isExposureModeSupported(.autoExpose) {
+                device.exposureMode = .autoExpose
+            }
 
             device.unlockForConfiguration()
         } catch {
@@ -263,6 +316,7 @@ class CameraManager: NSObject, ObservableObject {
                 session.addInput(newInput)
                 videoDeviceInput = newInput
                 configureFrameRate(for: newDevice)
+                configureSmoothFocus(for: newDevice)
                 initialCameraPosition = newPosition
             }
 
