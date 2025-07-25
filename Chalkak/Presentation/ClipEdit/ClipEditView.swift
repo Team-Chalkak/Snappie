@@ -69,7 +69,7 @@ struct ClipEditView: View {
             Color.deepGreen700
                 .ignoresSafeArea()
             
-            VStack(alignment: .center, spacing: 20, content: {
+            VStack(alignment: .center, spacing: 18, content: {
                 
                 //TODO: 네비게이션바 컴포넌트 사용
 
@@ -120,16 +120,10 @@ struct ClipEditView: View {
                         }
 
                         Button("촬영 프로세스 마치기") {
-                            Task {
-                                // 현재까지 작업하던 영상 합쳐서 미리보기 화면으로 보내기
-                                editViewModel.appendClipToCurrentProject()
-                                do {
-                                    let finalURL = try await editViewModel.mergeVideo()
-                                    coordinator.push(.projectPreview(finalVideoURL: finalURL))
-                                } catch {
-                                    print("⚠️ mergeVideo 실패: \(error)")
-                                }
-                            }
+                            // 트리밍한 클립 프로젝트에 추가
+                            editViewModel.appendClipToCurrentProject()
+                            
+                            coordinator.push(.boundingBox(guide: nil))
                         }
 
                         Button("Cancel", role: .cancel) { }

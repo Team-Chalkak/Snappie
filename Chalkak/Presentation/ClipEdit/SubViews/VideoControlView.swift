@@ -40,8 +40,8 @@ struct VideoControlView: View {
                     .resizable()
             }
         }
-        .frame(width: Layout.width, height: Layout.height)
         .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
+        .padding(.horizontal, Layout.horizontalSpacing)
     }
     
     //MARK: - 컨트롤 세션(재생 버튼, 영상 길이, 가이드 on/off)
@@ -79,14 +79,13 @@ struct VideoControlView: View {
                 Spacer()
             }
         })
-        .frame(width: 346)
+        .padding(.horizontal, 23)
     }
 }
 
 private extension VideoControlView {
     enum Layout {
-        static let width: CGFloat = 288
-        static let height: CGFloat = 512
+        static let horizontalSpacing: CGFloat = 42
         static let cornerRadius: CGFloat = 20
     }
 }

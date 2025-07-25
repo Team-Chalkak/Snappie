@@ -30,7 +30,7 @@ struct TrimmingControlView: View {
     @Binding var isDragging: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 10, content: {
+        VStack(alignment: .center, spacing: 8, content: {
             Divider()
             
             HStack(content: {
@@ -47,8 +47,6 @@ struct TrimmingControlView: View {
             TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
                 .padding(.horizontal, 26)
             
-            Spacer()
         })
-        .frame(height: 119)
     }
 }
