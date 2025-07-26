@@ -27,6 +27,6 @@ struct CameraTopControlView: View {
             } else {
                 CameraDefaultTopControlView(viewModel: viewModel)
             }
-        }.padding(.top, 50)
+        }.padding(.top, 20)
     }
 }
