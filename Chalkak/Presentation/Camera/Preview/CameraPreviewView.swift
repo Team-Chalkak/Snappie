@@ -220,26 +220,52 @@ struct CameraPreviewView: UIViewRepresentable {
         }
         
         func showCountdown(_ countdown: Int) {
-            // 기존 카운트다운 라벨 제거
-            countdownLabel?.removeFromSuperview()
+            let timerText = "\(countdown)"
             
-            // 카운트다운 라벨 생성
-            let label = UILabel()
-            label.text = "\(countdown)"
-            label.textColor = UIColor(SnappieColor.labelPrimaryNormal)
-            label.font = UIFont(name: "KronaOne-Regular", size: 164)
-            label.textAlignment = .center
-            label.translatesAutoresizingMaskIntoConstraints = false
+            /// 카운트다운에 필요한 라벨 생성함수
+            func createLabel(text: String, alpha: CGFloat = 1.0) -> UILabel {
+                let label = UILabel()
+                label.text = text
+                label.textColor = UIColor(SnappieColor.labelPrimaryNormal)
+                label.font = UIFont(name: "KronaOne-Regular", size: 164)
+                label.textAlignment = .center
+                label.translatesAutoresizingMaskIntoConstraints = false
+                label.alpha = alpha
+                return label
+            }
             
-            addSubview(label)
-            
-            // CameraFrame 중앙 배치
-            NSLayoutConstraint.activate([
-                label.centerXAnchor.constraint(equalTo: centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: centerYAnchor)
-            ])
-            
-            countdownLabel = label
+            // 이미 카운트다운중일때 숫자교체 디졸브
+            if let existingLabel = countdownLabel, existingLabel.text != timerText {
+                let newLabel = createLabel(text: timerText, alpha: 0)
+                addSubview(newLabel)
+                
+                // 카메라 프레임기준 중앙 배치
+                NSLayoutConstraint.activate([
+                    newLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+                    newLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+                ])
+                
+                // 디졸브애니메이션
+                UIView.animate(withDuration: 0.4, animations: {
+                    existingLabel.alpha = 0
+                    newLabel.alpha = 1
+                }) { _ in
+                    existingLabel.removeFromSuperview()
+                }
+                
+                countdownLabel = newLabel
+            } else if countdownLabel == nil {
+                // 처음 생성하는 경우
+                let label = createLabel(text: timerText)
+                addSubview(label)
+                
+                NSLayoutConstraint.activate([
+                    label.centerXAnchor.constraint(equalTo: centerXAnchor),
+                    label.centerYAnchor.constraint(equalTo: centerYAnchor)
+                ])
+                
+                countdownLabel = label
+            }
         }
         
         func hideCountdown() {
