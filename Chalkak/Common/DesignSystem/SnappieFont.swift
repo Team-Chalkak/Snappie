@@ -115,9 +115,9 @@ enum SnappieFont {
             case .proBody1:
                     .regular
             case .proLabel1:
-                    .medium
+                    .semibold
             case .proLabel2:
-                    .medium
+                    .semibold
             case .proLabel3:
                     .semibold
             case .proCaption1:
