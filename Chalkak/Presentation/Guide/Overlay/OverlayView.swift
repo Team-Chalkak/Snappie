@@ -38,6 +38,10 @@ struct OverlayView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @State private var guide: Guide?
     
+    private var usingGuideText: String {
+        overlayViewModel.isOverlayReady ? "가이드로 촬영하기" : " "
+    }
+    
     // 3. init
     init(clip: Clip) {
         self.clip = clip
@@ -45,50 +49,94 @@ struct OverlayView: View {
     }
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20, content: {
-            if overlayViewModel.isOverlayReady {
-                Spacer().frame(height: 1)
+        ZStack {
+            SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
+            
+            VStack(alignment: .center) {
+                SnappieNavigationBar(
+                    leftButtonType: .backward {
+                        dismiss()
+                    },
+                    rightButtonType: .none
+                )
+                .padding(.top, 12)
                 
-                Text("생성된 가이드를 확인해보세요")
-                
-                OverlayDisplayView(overlayViewModel: overlayViewModel)
-                
-                Spacer()
-                
-            } else {
-                ProgressView("윤곽선 생성 중...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .foregroundStyle(.white)
-                    .tint(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.5))
-                    .cornerRadius(10)
-            }
-        })
-        .navigationBarBackButtonHidden()
-        .navigationTitle("가이드 확인")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button("뒤로") {
-                    dismiss()
+                if overlayViewModel.isOverlayReady {
+                    Spacer().frame(height: 1)
+                    
+                    Text("다음 촬영을 위한 가이드가 생성되었어요.")
+                        .snappieStyle(.proBody1)
+                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    
+                    OverlayDisplayView(overlayViewModel: overlayViewModel)
+                        .aspectRatio(329 / 585, contentMode: .fill)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 16)
+                        .padding(.bottom, 20)
+                    
+                    Spacer()
+                    
+                } else {
+                    // 대신 스켈레톤 뷰
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .foregroundStyle(.white)
+                        .tint(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(10)
                 }
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("다음") {
-                    /// 가이드 객체 생성
+                
+                Button(action: {
                     if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
                         guide = newGuide
                         coordinator.push(.boundingBox(guide: newGuide))
-                    } else {
-                        print("❌ guide 생성 실패")
                     }
+                }) {
+                    Text(usingGuideText)
+                        .snappieStyle(.proLabel1)
+                        .padding(.horizontal, 24)
                 }
+                .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
+                .padding(.bottom, 43)
             }
         }
         .onDisappear {
             overlayViewModel.dismissOverlay()
         }
+    }
+}
+
+private extension OverlayView {
+    enum Context {
+        
+    }
+
+    enum Layout {
+        
+    }
+}
+
+struct OverlayView_Previews: PreviewProvider {
+    static var previews: some View {
+        let mockClip = Clip(
+            id: UUID().uuidString,
+            videoURL: URL(fileURLWithPath: "https://github.com/user-attachments/assets/d644553d-7709-4ecb-a7d8-6097c31e52ab"),
+            originalDuration: 21.0,
+            endPoint: 21.0,
+            createdAt: Date()
+        )
+
+        NavigationStack {
+            OverlayView(clip: mockClip)
+                .environmentObject(MockCoordinator())
+        }
+    }
+}
+
+// MARK: - Mock Coordinator
+class MockCoordinator: Coordinator {
+    override func push(_ destination: Path) {
+        print("Mock push to destination: \(destination)")
     }
 }
