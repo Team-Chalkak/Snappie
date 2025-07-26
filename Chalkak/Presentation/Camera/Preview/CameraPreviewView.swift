@@ -50,8 +50,8 @@ struct CameraPreviewView: UIViewRepresentable {
                 return
             }
             
-            // 감도 개선- 줌스케일 40%로 제한
-            let zoomSensitivity: CGFloat = 0.4
+            // 감도 개선- 줌스케일 10%로 제한
+            let zoomSensitivity: CGFloat = 0.1
             // 감도기반 줌스케일 보정값 적용
             let adjustScale = 1.0 + (gesture.scale - 1.0) * zoomSensitivity
             switch gesture.state {
