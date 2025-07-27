@@ -93,7 +93,6 @@ final class ProjectEditViewModel: ObservableObject {
                 preferredTrackID: kCMPersistentTrackID_Invalid
             )
         else {
-            print("트랙 생성 실패")
             return
         }
 
@@ -129,6 +128,7 @@ final class ProjectEditViewModel: ObservableObject {
             player.removeTimeObserver(token)
         }
         addTimeObserver()
+        addEndObserver()
     }
 
     private func addTimeObserver() {
@@ -147,6 +147,19 @@ final class ProjectEditViewModel: ObservableObject {
             }
         }
     }
+    
+    private func addEndObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: player.currentItem,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            // 재생이 끝나면 isPlaying false, 헤드 리셋
+            self.isPlaying = false
+            self.seekTo(time: 0)
+        }
+    }
 
     func updatePreviewImage(at time: Double) async {
         guard let gen = imageGenerator else { return }
@@ -159,8 +172,14 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func togglePlayback() {
+        if playHead >= totalDuration {
+            seekTo(time: 0)
+        }
+        
         isPlaying.toggle()
-        if isPlaying { player.play() } else { player.pause() }
+        if isPlaying { player.play() } else {
+            player.pause()
+        }
     }
 
     func seekTo(time: Double) {
