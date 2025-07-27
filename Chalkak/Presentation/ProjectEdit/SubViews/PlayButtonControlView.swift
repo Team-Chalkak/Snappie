@@ -14,10 +14,7 @@ struct PlayButtonControlView: View {
     var body: some View {
         HStack {
             Spacer()
-
-            Button(action: {
-                onPlayPauseTapped()
-            }) {
+            Button(action: onPlayPauseTapped) {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                     .resizable()
                     .frame(width: 36, height: 36)
@@ -27,7 +24,6 @@ struct PlayButtonControlView: View {
                     .clipShape(Circle())
                     .shadow(radius: 3)
             }
-
             Spacer()
         }
         .padding(.vertical, 12)

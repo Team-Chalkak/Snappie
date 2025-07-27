@@ -10,129 +10,95 @@ import AVFoundation
 
 struct ClipTrimmingView: View {
     let clip: EditableClip
-    let isTrimming: Bool
-    let isDragging: Binding<Bool>
+    @Binding var isDragging: Bool
     let onToggleTrimming: () -> Void
-    let onTrimChanged: (_ newStart: Double, _ newEnd: Double) -> Void
+    let onTrimChanged: (Double, Double) -> Void
 
-    @State private var thumbnails: [UIImage] = []
-    @State private var width: CGFloat = 160
-
-    private let thumbnailCount = 10
+    private let pxPerSecond: CGFloat = 50
+    private let clipSpacing: CGFloat = 8
     private let thumbnailHeight: CGFloat = 60
+
+    /// 뷰 전체 너비 (고정)
+    private var fullWidth: CGFloat {
+        CGFloat(clip.originalDuration) * pxPerSecond
+    }
 
     var body: some View {
         ZStack(alignment: .leading) {
-            // 썸네일
+            // 1) 전체 썸네일
             HStack(spacing: 0) {
-                ForEach(thumbnails.indices, id: \.self) { index in
-                    Image(uiImage: thumbnails[index])
+                ForEach(clip.thumbnails.indices, id: \.self) { i in
+                    Image(uiImage: clip.thumbnails[i])
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: thumbnailWidth, height: thumbnailHeight)
+                        .frame(
+                            width: fullWidth / CGFloat(clip.thumbnails.count),
+                            height: thumbnailHeight
+                        )
                         .clipped()
                 }
             }
+            .frame(width: fullWidth, height: thumbnailHeight)
+            .contentShape(Rectangle())
+            .onTapGesture { onToggleTrimming() }
+            .padding(.horizontal, clipSpacing/2)
 
-            // 트리밍 어두운 영역
-            if isTrimming {
-                let leftRatio = clip.startPoint / clip.originalDuration
-                let rightRatio = 1 - (clip.endPoint / clip.originalDuration)
+            // 2) 마스크 & 테두리 & 핸들 (트리밍 모드일 때만)
+            if clip.isTrimming {
+                let leftW  = CGFloat(clip.startPoint / clip.originalDuration) * fullWidth
+                let midW   = CGFloat(clip.trimmedDuration / clip.originalDuration) * fullWidth
+                let rightW = fullWidth - leftW - midW
 
+                // 어두운 마스크
                 HStack(spacing: 0) {
-                    Rectangle()
-                        .fill(Color.black.opacity(0.5))
-                        .frame(width: width * leftRatio)
-
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: width * (1 - leftRatio - rightRatio))
-
-                    Rectangle()
-                        .fill(Color.black.opacity(0.5))
-                        .frame(width: width * rightRatio)
+                    Color.black.opacity(0.5).frame(width: leftW)
+                    Color.clear.frame(width: midW)
+                    Color.black.opacity(0.5).frame(width: rightW)
                 }
+                .frame(width: fullWidth, height: thumbnailHeight)
 
-                // 트리밍 박스 테두리
+                // 노란 테두리
                 RoundedRectangle(cornerRadius: 4)
                     .stroke(Color.yellow, lineWidth: 2)
-                    .frame(
-                        width: width * (clip.endPoint - clip.startPoint) / clip.originalDuration,
-                        height: thumbnailHeight
-                    )
-                    .offset(x: width * clip.startPoint / clip.originalDuration)
+                    .frame(width: midW, height: thumbnailHeight)
+                    .offset(x: leftW)
 
-                // 핸들 제스처
-                handle(at: .leading)
-                handle(at: .trailing)
+                // 핸들 (시작/끝)
+                handle(isStart: true,  leftW: leftW, midW: midW)
+                handle(isStart: false, leftW: leftW, midW: midW)
             }
         }
-        .frame(width: width, height: thumbnailHeight)
-        .onAppear {
-            generateThumbnails()
-        }
-        .contentShape(Rectangle()) // 탭 인식
-        .onTapGesture {
-            onToggleTrimming()
-        }
+        .frame(width: fullWidth, height: thumbnailHeight)
     }
 
-    // MARK: - 핸들
     @ViewBuilder
-    private func handle(at edge: HorizontalAlignment) -> some View {
-        let isStart = edge == .leading
-        let handleSize: CGFloat = 10
-        let offsetX = isStart
-            ? width * clip.startPoint / clip.originalDuration
-            : width * clip.endPoint / clip.originalDuration - handleSize
+    private func handle(isStart: Bool, leftW: CGFloat, midW: CGFloat) -> some View {
+        let size: CGFloat = 10
+        let xOffset = isStart
+            ? leftW
+            : (leftW + midW - size)
 
         RoundedRectangle(cornerRadius: 3)
             .fill(Color.yellow)
-            .frame(width: handleSize, height: thumbnailHeight)
-            .offset(x: offsetX)
+            .frame(width: size, height: thumbnailHeight)
+            .offset(x: xOffset)
             .gesture(
                 DragGesture()
-                    .onChanged { gesture in
-                        isDragging.wrappedValue = true
-                        let ratio = max(0, min(gesture.location.x / width, 1))
-                        let time = ratio * clip.originalDuration
-
+                    .onChanged { g in
+                        isDragging = true
+                        let ratio = min(max(g.location.x / fullWidth, 0), 1)
+                        let t = Double(ratio) * clip.originalDuration
                         if isStart {
-                            let newStart = min(time, clip.endPoint - 0.1)
+                            let newStart = min(t, clip.endPoint - 0.1)
                             onTrimChanged(newStart, clip.endPoint)
                         } else {
-                            let newEnd = max(time, clip.startPoint + 0.1)
+                            let newEnd = max(t, clip.startPoint + 0.1)
                             onTrimChanged(clip.startPoint, newEnd)
                         }
                     }
                     .onEnded { _ in
-                        isDragging.wrappedValue = false  // ✅ 드래그 끝
+                        isDragging = false
                     }
             )
-    }
-
-    // MARK: - 썸네일 생성
-    private func generateThumbnails() {
-        let asset = AVAsset(url: clip.url)
-        let generator = AVAssetImageGenerator(asset: asset)
-        generator.appliesPreferredTrackTransform = true
-        generator.maximumSize = CGSize(width: 100, height: 100)
-
-        let interval = clip.originalDuration / Double(thumbnailCount)
-        let times = (0..<thumbnailCount).map {
-            NSValue(time: CMTime(seconds: Double($0) * interval, preferredTimescale: 600))
-        }
-
-        thumbnails = []
-        for time in times {
-            if let cgImage = try? generator.copyCGImage(at: time.timeValue, actualTime: nil) {
-                thumbnails.append(UIImage(cgImage: cgImage))
-            }
-        }
-    }
-
-    // MARK: - 유틸
-    private var thumbnailWidth: CGFloat {
-        width / CGFloat(thumbnailCount)
     }
 }

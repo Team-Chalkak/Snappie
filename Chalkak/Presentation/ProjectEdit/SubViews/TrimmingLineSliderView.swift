@@ -18,86 +18,44 @@ struct TrimminglineSliderView: View {
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
 
-    @State private var timelineWidth: CGFloat = 0
+//    @State private var scrollOffset: CGFloat = 0
+
+    private let pxPerSecond: CGFloat = 50
+    private let clipSpacing: CGFloat = 8
+    private let timelineHeight: CGFloat = 60
+
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // ─── 시간 표시 ──────────────────
-            HStack {
-                Text(formattedTime(playHeadPosition)).font(.caption)
-                Spacer()
-                Text(formattedTime(totalDuration)).font(.caption)
-            }
+        GeometryReader { geo in
+            let halfW = geo.size.width / 2
 
-            // ─── 스크롤 & 플레이헤드 ──────────
-            GeometryReader { geo in
-                let containerW = geo.size.width
-
-                ScrollViewReader { reader in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 0) {
-                            ForEach(clips) { clip in
-                                ClipTrimmingView(
-                                    clip: clip,
-                                    isTrimming: clip.isTrimming,
-                                    isDragging: $isDragging,
-                                    onToggleTrimming: { onToggleTrimming(clip.id) },
-                                    onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) }
-                                )
-                                .frame(width: clipWidth(for: clip), height: 60)
-                            }
-
-                            // 플레이헤드 위치에 맞춘 dummy 뷰
-                            Color.clear
-                                .frame(width: 1, height: 1)
-                                .id("scroll-target")
-                                .offset(x: relativeX(in: timelineWidth))
-                        }
-                        .background(GeometryReader {
-                            Color.clear
-                                .preference(key: TimelineWidthKey.self, value: $0.size.width)
-                        })
-                    }
-                    // 플레이헤드
-                    .overlay(alignment: .center) {
-                        Rectangle()
-                            .fill(Color.red)
-                            .frame(width: 2, height: 60)
-                    }
-                    // 전체 타임라인 너비 파악
-                    .onPreferenceChange(TimelineWidthKey.self) { timelineWidth = $0 }
-                    // 플레이헤드 이동 시 자동 스크롤
-                    .onChange(of: playHeadPosition) { _ in
-                        withAnimation { reader.scrollTo("scroll-target", anchor: .center) }
+            ZStack(alignment: .leading) {
+                // → HStack 을 패딩 후 offset 으로 좌측으로 밀기
+                HStack(spacing: clipSpacing) {
+                    ForEach(clips) { clip in
+                        ClipTrimmingView(
+                            clip: clip,
+                            isDragging: $isDragging,
+                            onToggleTrimming: { onToggleTrimming(clip.id) },
+                            onTrimChanged:   { s,e in onTrimChanged(clip.id, s, e) }
+                        )
                     }
                 }
+                .padding(.horizontal, halfW)
+                // 플레이헤드(가운데)에 현재 프레임이 오도록
+                .offset(x: -CGFloat(playHeadPosition) * pxPerSecond)
+                .frame(width: geo.size.width + CGFloat(totalDuration) * pxPerSecond, // content width 크게 잡아두고
+                       height: timelineHeight,
+                       alignment: .leading)
+                .clipped()
+
+                // 중앙 고정 플레이헤드
+                Rectangle()
+                    .fill(Color.red)
+                    .frame(width: 2, height: timelineHeight)
+                    .position(x: halfW, y: timelineHeight/2)
             }
-            .frame(height: 60)
         }
-    }
-
-    // MARK: - 헬퍼
-    private func formattedTime(_ sec: Double) -> String {
-        let t = Int(sec)
-        return "\(t/60):\(String(format: "%02d", t%60))"
-    }
-
-    private func relativeX(in totalW: CGFloat) -> CGFloat {
-        guard totalDuration > 0 else { return 0 }
-        let ratio = CGFloat(playHeadPosition / totalDuration)
-        return ratio * totalW
-    }
-
-    private func clipWidth(for clip: EditableClip) -> CGFloat {
-        // 예: 화면 너비 기준 비율
-        let screenW = UIScreen.main.bounds.width - 32
-        return screenW * CGFloat(clip.trimmedDuration / totalDuration)
-    }
-}
-
-private struct TimelineWidthKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+        .frame(height: timelineHeight)
     }
 }

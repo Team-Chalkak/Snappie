@@ -15,17 +15,16 @@ struct ProjectEditView: View {
         VStack(spacing: 0) {
             Spacer().frame(height: 16)
 
-            // 프리뷰 영상
             VideoPreviewView(
                 previewImage: viewModel.previewImage,
                 player: viewModel.player,
                 isDragging: viewModel.isDragging,
                 overlayImage: nil
             )
+            .frame(maxWidth: .infinity, maxHeight: 300)
 
             Divider().padding(.vertical, 8)
 
-            // 타임라인 및 시간 표시P
             TrimminglineSliderView(
                 clips: $viewModel.editableClips,
                 playHeadPosition: $viewModel.playHead,
@@ -39,16 +38,13 @@ struct ProjectEditView: View {
 
             Divider()
 
-            // 재생 컨트롤
             PlayButtonControlView(
                 isPlaying: $viewModel.isPlaying,
                 onPlayPauseTapped: viewModel.togglePlayback
             )
         }
         .padding(.horizontal, 16)
-        .onAppear {
-            viewModel.loadProject()
-        }
+        .onAppear { viewModel.loadProject() }
         .navigationTitle("프로젝트 트리밍")
         .navigationBarTitleDisplayMode(.inline)
     }
