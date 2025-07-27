@@ -28,17 +28,18 @@ struct TrimmingLineView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
-    private let totalWidth: CGFloat = 345
-    private let thumbnailWidth: CGFloat = Layout.thumbnailWidth
-    private let handleWidth: CGFloat = Layout.handleWidth
-
     var body: some View {
-        let duration = editViewModel.duration
-        let startRatio = editViewModel.startPoint / duration
-        let endRatio = editViewModel.endPoint / duration
+        /// 내부 상수 선언
+        let totalWidth: CGFloat = Layout.totalWidth
+        let thumbnailLineWidth: CGFloat = Layout.thumbnailLineWidth
+        let handleWidth: CGFloat = Layout.handleWidth
+        let thumbnailHeight: CGFloat = Layout.thumbnailHeight
 
-        let startX = handleWidth + startRatio * thumbnailWidth
-        let endX = handleWidth + endRatio * thumbnailWidth
+        /// 뷰모델에서 계산
+        let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
+        let startX = max(0, editViewModel.startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
+        let endX = max(startX + 1, editViewModel.endX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
+        let duration = editViewModel.duration
 
         ZStack(alignment: .leading) {
             // 썸네일 라인 + 어두운 좌우 핸들
@@ -50,7 +51,7 @@ struct TrimmingLineView: View {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: thumbnailWidth / CGFloat(editViewModel.thumbnails.count), height: Layout.thumbnailHeight)
+                            .frame(width: thumbnailUnitWidth, height: thumbnailHeight)
                     }
                 }
                 .clipped()
@@ -65,7 +66,7 @@ struct TrimmingLineView: View {
                 bottomLeadingRadius: 6
             )
             .fill(SnappieColor.darkHeavy.opacity(0.6))
-            .frame(width: startX, height: Layout.thumbnailHeight)
+            .frame(width: startX, height: thumbnailHeight)
 
             // 어두운 오버레이 (우측)
             UnevenRoundedRectangle(
@@ -73,18 +74,18 @@ struct TrimmingLineView: View {
                 topTrailingRadius: 6
             )
             .fill(SnappieColor.darkHeavy.opacity(0.6))
-            .frame(width: totalWidth - endX, height: Layout.thumbnailHeight)
-            .position(x: endX + (totalWidth - endX) / 2, y: Layout.thumbnailHeight / 2)
+            .frame(width: totalWidth - endX, height: thumbnailHeight)
+            .position(x: endX + (totalWidth - endX) / 2, y: thumbnailHeight / 2)
 
             // 트리밍 박스
             Rectangle()
                 .stroke(SnappieColor.primaryNormal, lineWidth: 2)
-                .frame(width: endX - startX, height: 58)
-                .position(x: (startX + endX) / 2, y: Layout.thumbnailHeight / 2)
+                .frame(width: endX - startX, height: Layout.trimmingBoxHeight)
+                .position(x: (startX + endX) / 2, y: thumbnailHeight / 2)
 
             // 밝은 핸들 - 왼쪽 (드래그 가능)
             TrimmingHandleView(isStart: true)
-                .position(x: startX - handleWidth / 2, y: Layout.thumbnailHeight / 2)
+                .position(x: startX - handleWidth / 2, y: thumbnailHeight / 2)
                 .gesture(
                     DragGesture()
                         .onChanged { gesture in
@@ -93,7 +94,7 @@ struct TrimmingLineView: View {
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
-                            let ratio = max(0, min(x / thumbnailWidth, 1))
+                            let ratio = max(0, min(x / thumbnailLineWidth, 1))
                             let newStart = min(ratio * duration, editViewModel.endPoint - 0.1)
 
                             editViewModel.updateStart(newStart)
@@ -106,7 +107,7 @@ struct TrimmingLineView: View {
 
             // 밝은 핸들 - 오른쪽 (드래그 가능)
             TrimmingHandleView(isStart: false)
-                .position(x: endX + handleWidth / 2, y: Layout.thumbnailHeight / 2)
+                .position(x: endX + handleWidth / 2, y: thumbnailHeight / 2)
                 .gesture(
                     DragGesture()
                         .onChanged { gesture in
@@ -115,7 +116,7 @@ struct TrimmingLineView: View {
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
-                            let ratio = max(0, min(x / thumbnailWidth, 1))
+                            let ratio = max(0, min(x / thumbnailLineWidth, 1))
                             let newEnd = max(ratio * duration, editViewModel.startPoint + 0.1)
 
                             editViewModel.updateEnd(newEnd)
@@ -133,12 +134,18 @@ struct TrimmingLineView: View {
 // MARK: - Layout Constants
 private extension TrimmingLineView {
     enum Layout {
+        // 전체 뷰 너비
+        static let totalWidth: CGFloat = 345
+        
         // 썸네일
         static let thumbnailHeight: CGFloat = 60
-        static let thumbnailWidth: CGFloat = 305
+        static let thumbnailLineWidth: CGFloat = 305
         
         // 핸들
         static let handleWidth: CGFloat = 20
+        
+        // 트리밍박스 : 썸네일 높이 - 2
+        static let trimmingBoxHeight: CGFloat = 58
 
         // 첫번째 프레임 강조 박스
         static let frameBoxCornerRadius: CGFloat = 6

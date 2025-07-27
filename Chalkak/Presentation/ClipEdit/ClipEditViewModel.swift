@@ -173,25 +173,25 @@ final class ClipEditViewModel: ObservableObject {
         isPlaying ? playPreview() : player?.pause()
     }
     
-    /// 트리밍 라인에서 사용할 썸네일의 너비를 계산
-    func thumbnailWidth(for totalWidth: CGFloat) -> CGFloat {
-        guard thumbnails.count > 0 else { return 0 }
-        return totalWidth / CGFloat(thumbnails.count)
+    // 썸네일 하나의 너비 계산
+    func thumbnailUnitWidth(for thumbnailLineWidth: CGFloat) -> CGFloat {
+        let availableWidth = thumbnailLineWidth
+        let count = max(thumbnails.count, 1)
+        return availableWidth / CGFloat(count)
     }
 
-    /// 왼쪽 트리밍 핸들 위치 - 트리밍 시작 핸들의 X 위치를 계산
-    func startX(for totalWidth: CGFloat) -> CGFloat {
-        return CGFloat(startPoint / duration) * totalWidth
+    // startX 계산 (좌측 핸들의 오른쪽 끝)
+    func startX(thumbnailLineWidth: CGFloat, handleWidth: CGFloat) -> CGFloat {
+        guard duration > 0 else { return handleWidth }
+        let ratio = startPoint / duration
+        return handleWidth + ratio * thumbnailLineWidth
     }
 
-    /// 오른쪽 트리밍 핸들 위치 - 트리밍 종료 핸들의 X 위치를 계산
-    func endX(for totalWidth: CGFloat) -> CGFloat {
-        return CGFloat(endPoint / duration) * totalWidth
-    }
-
-    /// 두 핸들 사이의 간격(트리밍 너비)을 계산
-    func trimmingWidth(for totalWidth: CGFloat) -> CGFloat {
-        return endX(for: totalWidth) - startX(for: totalWidth)
+    // endX 계산 (우측 핸들의 왼쪽 끝)
+    func endX(thumbnailLineWidth: CGFloat, handleWidth: CGFloat) -> CGFloat {
+        guard duration > 0 else { return handleWidth + thumbnailLineWidth }
+        let ratio = endPoint / duration
+        return handleWidth + ratio * thumbnailLineWidth
     }
     
     /// 트리밍 시작 시점부터 재생을 시작하고, 종료 시점에 도달하면 자동으로 정지
