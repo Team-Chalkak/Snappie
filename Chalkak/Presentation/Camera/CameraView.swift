@@ -32,8 +32,8 @@ struct CameraView: View {
             )
             .aspectRatio(9 / 16, contentMode: .fit)
             .clipped()
-            .padding(.top, 12)
-            .padding(.horizontal, 16)
+            .padding(.top, Layout.preViewTopPadding)
+            .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
 
             // 수평 레벨 표시
@@ -47,7 +47,7 @@ struct CameraView: View {
                 Spacer()
 
                 CameraBottomControlView(viewModel: viewModel)
-            }.padding(.horizontal, 8)
+            }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
@@ -67,5 +67,13 @@ struct CameraView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
+    }
+}
+
+private extension CameraView {
+    enum Layout {
+        static let preViewTopPadding: CGFloat = 12
+        static let preViewHorizontalPadding: CGFloat = 16
+        static let cameraControlHorizontalPadding: CGFloat = 8
     }
 }
