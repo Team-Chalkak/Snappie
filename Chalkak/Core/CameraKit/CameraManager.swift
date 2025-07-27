@@ -82,6 +82,7 @@ class CameraManager: NSObject, ObservableObject {
                 for range in format.videoSupportedFrameRateRanges {
                     // 지금까지 찾은 것보다 더 높은 해상도인지 확인
                     if range.maxFrameRate >= 60, currentResolution > maxResolution {
+                        print(format)
                         targetFormat = format
                         maxResolution = currentResolution
                         break // 60fps 찾으면 break
@@ -118,7 +119,7 @@ class CameraManager: NSObject, ObservableObject {
         do {
             try device.lockForConfiguration()
 
-            // 자동 초점 활성화
+            // smooth 초점전환방식 활성화
             if device.isSmoothAutoFocusSupported {
                 device.isSmoothAutoFocusEnabled = true
             }
@@ -206,12 +207,10 @@ class CameraManager: NSObject, ObservableObject {
                 videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             }
 
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.session.startRunning()
-                DispatchQueue.main.async {
-                    // 최초 카메라 설정 시 1.0 줌배율적용
-                    self?.setZoomScale(self?.backCameraZoomScale ?? 1.0)
-                }
+            // 세션 시작은 startSession() 메서드를 통해 명시적으로 호출하도록 변경
+            // 최초 카메라 설정 시 1.0 줌배율적용
+            DispatchQueue.main.async {
+                self.setZoomScale(self.backCameraZoomScale)
             }
         } catch {
             print("카메라 설정 오류: \(error)")
@@ -246,33 +245,53 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     /// 터치한 위치값에 대한 초점을 조정하는 메소드
+//    func focusAtPoint(_ point: CGPoint) {
+//        guard let device = videoDeviceInput?.device else { return }
+//
+//        do {
+//            try device.lockForConfiguration()
+//
+//            // 부드러운 초점 전환을 위한 설정
+//            if device.isSmoothAutoFocusSupported {
+//                device.isSmoothAutoFocusEnabled = true
+//            }
+//
+//            // 초점,노출 지점접근
+//            device.focusPointOfInterest = point
+//            device.exposurePointOfInterest = point
+//
+//            // 초점
+//            if device.isFocusModeSupported(.continuousAutoFocus) {
+//                device.focusMode = .continuousAutoFocus
+//            } else if device.isFocusModeSupported(.autoFocus) {
+//                device.focusMode = .autoFocus
+//            }
+//
+//            // 노출
+//            if device.isExposureModeSupported(.continuousAutoExposure) {
+//                device.exposureMode = .continuousAutoExposure
+//            } else if device.isExposureModeSupported(.autoExpose) {
+//                device.exposureMode = .autoExpose
+//            }
+//
+//            device.unlockForConfiguration()
+//        } catch {
+//            print("디바이스 설정 변경오류\(error)")
+//        }
+//    }
     func focusAtPoint(_ point: CGPoint) {
         guard let device = videoDeviceInput?.device else { return }
 
         do {
             try device.lockForConfiguration()
 
-            // 부드러운 초점 전환을 위한 설정
-            if device.isSmoothAutoFocusSupported {
-                device.isSmoothAutoFocusEnabled = true
-            }
-
-            // 초점,노출 지점접근
+            // 포인트 설정
             device.focusPointOfInterest = point
             device.exposurePointOfInterest = point
 
-            // 초점
+            // 최소한 초점 모드는 보장 (중복이어도 안전함)
             if device.isFocusModeSupported(.continuousAutoFocus) {
                 device.focusMode = .continuousAutoFocus
-            } else if device.isFocusModeSupported(.autoFocus) {
-                device.focusMode = .autoFocus
-            }
-
-            // 노출
-            if device.isExposureModeSupported(.continuousAutoExposure) {
-                device.exposureMode = .continuousAutoExposure
-            } else if device.isExposureModeSupported(.autoExpose) {
-                device.exposureMode = .autoExpose
             }
 
             device.unlockForConfiguration()
