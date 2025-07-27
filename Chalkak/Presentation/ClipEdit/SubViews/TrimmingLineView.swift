@@ -42,7 +42,7 @@ struct TrimmingLineView: View {
         let duration = editViewModel.duration
 
         ZStack(alignment: .leading) {
-            // 썸네일 라인 + 어두운 좌우 핸들
+            // 1. 썸네일 라인 + 어두운 좌우 핸들
             HStack(spacing: 0) {
                 TrimmingHandleView(isStart: true)
 
@@ -60,7 +60,7 @@ struct TrimmingLineView: View {
             }
             .frame(width: totalWidth, height: Layout.thumbnailHeight)
 
-            // 어두운 오버레이 (좌측)
+            // 2-1. 어두운 오버레이 (좌측)
             UnevenRoundedRectangle(
                 topLeadingRadius: 6,
                 bottomLeadingRadius: 6
@@ -68,7 +68,7 @@ struct TrimmingLineView: View {
             .fill(SnappieColor.darkHeavy.opacity(0.6))
             .frame(width: startX, height: thumbnailHeight)
 
-            // 어두운 오버레이 (우측)
+            // 2-2. 어두운 오버레이 (우측)
             UnevenRoundedRectangle(
                 bottomTrailingRadius: 6,
                 topTrailingRadius: 6
@@ -77,13 +77,13 @@ struct TrimmingLineView: View {
             .frame(width: totalWidth - endX, height: thumbnailHeight)
             .position(x: endX + (totalWidth - endX) / 2, y: thumbnailHeight / 2)
 
-            // 트리밍 박스
+            // 3. 트리밍 박스
             Rectangle()
                 .stroke(SnappieColor.primaryNormal, lineWidth: 2)
                 .frame(width: endX - startX, height: Layout.trimmingBoxHeight)
                 .position(x: (startX + endX) / 2, y: thumbnailHeight / 2)
 
-            // 밝은 핸들 - 왼쪽 (드래그 가능)
+            // 4-1. 밝은 핸들 - 왼쪽 (드래그 가능)
             TrimmingHandleView(isStart: true)
                 .position(x: startX - handleWidth / 2, y: thumbnailHeight / 2)
                 .gesture(
@@ -105,7 +105,7 @@ struct TrimmingLineView: View {
                         }
                 )
 
-            // 밝은 핸들 - 오른쪽 (드래그 가능)
+            // 4-2. 밝은 핸들 - 오른쪽 (드래그 가능)
             TrimmingHandleView(isStart: false)
                 .position(x: endX + handleWidth / 2, y: thumbnailHeight / 2)
                 .gesture(
@@ -125,6 +125,15 @@ struct TrimmingLineView: View {
                             isDragging = false
                             editViewModel.seek(to: editViewModel.endPoint)
                         }
+                )
+            
+            // 5. 영상 첫번째 프레임 강조 박스
+            RoundedRectangle(cornerRadius: Layout.frameBoxCornerRadius)
+                .stroke(Layout.frameBoxStrokeColor, lineWidth: 2)
+                .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
+                .position(
+                    x: startX + Layout.frameBoxOffsetX,
+                    y: thumbnailHeight / 2
                 )
         }
         .frame(width: totalWidth, height: Layout.thumbnailHeight)
@@ -149,9 +158,9 @@ private extension TrimmingLineView {
 
         // 첫번째 프레임 강조 박스
         static let frameBoxCornerRadius: CGFloat = 6
-        static let frameBoxWidth: CGFloat = 34
-        static let frameBoxHeight: CGFloat = 57
-        static let frameBoxOffsetX: CGFloat = 21
-        static let frameBoxStrokeColor: Color = .white
+        static let frameBoxWidth: CGFloat = 38
+        static let frameBoxHeight: CGFloat = 56
+        static let frameBoxOffsetX: CGFloat = 19
+        static let frameBoxStrokeColor: Color = SnappieColor.labelPrimaryNormal
     }
 }
