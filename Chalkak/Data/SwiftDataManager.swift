@@ -167,6 +167,18 @@ class SwiftDataManager {
         return guide
     }
 
+    /// `Guide` 저장하고 Project에 연결
+    func saveGuideToProject(projectID: String, guide: Guide) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("해당 ID(\(projectID))의 Project를 찾을 수 없습니다.")
+            return
+        }
+        
+        project.guide = guide
+        context.insert(guide) // guide도 context에 삽입
+        saveContext()
+    }
+    
     /// `Guide` 가져오기
     func fetchGuide(forClipID clipID: String) -> Guide? {
         let predicate = #Predicate<Guide> { $0.clipID == clipID }

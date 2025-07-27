@@ -10,6 +10,7 @@ import AVKit
 
 struct ProjectEditView: View {
     @StateObject private var viewModel = ProjectEditViewModel()
+    @EnvironmentObject private var coordinator: Coordinator
 
     var body: some View {
         VStack(spacing: 0) {
@@ -33,7 +34,10 @@ struct ProjectEditView: View {
                 totalDuration: viewModel.totalDuration,
                 onSeek: viewModel.seekTo,
                 onToggleTrimming: viewModel.toggleTrimmingMode,
-                onTrimChanged: viewModel.updateTrimRange
+                onTrimChanged: viewModel.updateTrimRange,
+                onAddClipTapped: {
+                    coordinator.push(.boundingBox(guide: viewModel.guide ?? nil))
+                }
             )
 
             Divider()

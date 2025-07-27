@@ -11,12 +11,15 @@ import SwiftUI
 
 @MainActor
 final class ProjectEditViewModel: ObservableObject {
+    private var project: Project?
+    
     @Published var editableClips: [EditableClip] = []
     @Published var isPlaying = false
     @Published var playHead: Double = 0
     @Published var player = AVPlayer()
     @Published var previewImage: UIImage? = nil
     @Published var isDragging = false
+    @Published var guide: Guide? = nil
 
     private var currentComposition: AVMutableComposition?
     private var timeObserverToken: Any?
@@ -30,6 +33,9 @@ final class ProjectEditViewModel: ObservableObject {
             print("프로젝트를 찾을 수 없습니다.")
             return
         }
+        
+        self.project = project
+        self.guide = project.guide
 
         let sorted = project.clipList.sorted { $0.createdAt < $1.createdAt }
 
@@ -98,11 +104,11 @@ final class ProjectEditViewModel: ObservableObject {
             let dur   = CMTime(seconds: clip.trimmedDuration, preferredTimescale: 600)
             let range = CMTimeRange(start: start, duration: dur)
 
-            if let t = asset.tracks(withMediaType: .video).first {
-                try? vidTrack.insertTimeRange(range, of: t, at: cursor)
+            if let track = asset.tracks(withMediaType: .video).first {
+                try? vidTrack.insertTimeRange(range, of: track, at: cursor)
             }
-            if let t = asset.tracks(withMediaType: .audio).first {
-                try? audTrack.insertTimeRange(range, of: t, at: cursor)
+            if let track = asset.tracks(withMediaType: .audio).first {
+                try? audTrack.insertTimeRange(range, of: track, at: cursor)
             }
             cursor = cursor + dur
         }
