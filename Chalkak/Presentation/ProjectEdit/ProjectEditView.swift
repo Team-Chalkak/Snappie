@@ -22,7 +22,6 @@ struct ProjectEditView: View {
                 isDragging: viewModel.isDragging,
                 overlayImage: nil
             )
-            .frame(maxWidth: .infinity, maxHeight: 300)
 
             Divider().padding(.vertical, 8)
 

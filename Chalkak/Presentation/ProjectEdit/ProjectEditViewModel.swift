@@ -114,11 +114,14 @@ final class ProjectEditViewModel: ObservableObject {
         }
 
         currentComposition = composition
+        let previewComposition = composition.makePreviewVideoComposition(using: editableClips)
         let item = AVPlayerItem(asset: composition)
+        item.videoComposition = previewComposition
         player.replaceCurrentItem(with: item)
 
         imageGenerator = AVAssetImageGenerator(asset: composition)
         imageGenerator?.appliesPreferredTrackTransform = true
+        imageGenerator?.videoComposition = previewComposition
 
         Task { await updatePreviewImage(at: playHead) }
 
