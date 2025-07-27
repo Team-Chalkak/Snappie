@@ -12,6 +12,9 @@ import SwiftUI
 @MainActor
 final class ProjectEditViewModel: ObservableObject {
     private var project: Project?
+    private var currentComposition: AVMutableComposition?
+    private var timeObserverToken: Any?
+    private var imageGenerator: AVAssetImageGenerator?
     
     @Published var editableClips: [EditableClip] = []
     @Published var isPlaying = false
@@ -20,10 +23,10 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var previewImage: UIImage? = nil
     @Published var isDragging = false
     @Published var guide: Guide? = nil
-
-    private var currentComposition: AVMutableComposition?
-    private var timeObserverToken: Any?
-    private var imageGenerator: AVAssetImageGenerator?
+    
+    var totalDuration: Double {
+        editableClips.reduce(0) { $0 + $1.trimmedDuration }
+    }
 
     func loadProject() {
         guard
@@ -205,8 +208,11 @@ final class ProjectEditViewModel: ObservableObject {
         editableClips[idx].endPoint   = max(0, min(end,   editableClips[idx].originalDuration))
         setupPlayer()
     }
-
-    var totalDuration: Double {
-        editableClips.reduce(0) { $0 + $1.trimmedDuration }
+    
+    func deleteClip(id: String) {
+        if let idx = editableClips.firstIndex(where: { $0.id == id }) {
+            editableClips.remove(at: idx)
+            setupPlayer()
+        }
     }
 }

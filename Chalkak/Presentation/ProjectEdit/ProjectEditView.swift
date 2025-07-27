@@ -16,12 +16,33 @@ struct ProjectEditView: View {
         VStack(spacing: 0) {
             Spacer().frame(height: 16)
 
-            VideoPreviewView(
-                previewImage: viewModel.previewImage,
-                player: viewModel.player,
-                isDragging: viewModel.isDragging,
-                overlayImage: nil
-            )
+            ZStack {
+                VideoPreviewView(
+                    previewImage: viewModel.previewImage,
+                    player: viewModel.player,
+                    isDragging: viewModel.isDragging,
+                    overlayImage: nil
+                )
+                
+                // 선택된 클립이 있을 때만 Delete 버튼 표시
+                if let trimmingClip = viewModel.editableClips.first(where: { $0.isTrimming }) {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            viewModel.deleteClip(id: trimmingClip.id)
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .imageScale(.large)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .clipShape(Circle())
+                        }
+                        Spacer()
+                    }
+                    .padding(.bottom, 8)
+                }
+            }
 
             PlayButtonControlView(
                 isPlaying: $viewModel.isPlaying,
