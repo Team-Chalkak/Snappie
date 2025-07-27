@@ -23,18 +23,28 @@ struct TrimmingTimeDisplayView: View {
     
     var body: some View {
         HStack(content: {
-            //TODO: 현재 영상 시간
+            //왼쪽 - 00:00으로 고정
             Text("00:00")
                 .font(SnappieFont.style(.roundCaption1))
                 .foregroundStyle(SnappieColor.primaryHeavy)
             
             Spacer()
             
-            //TODO: 원본 영상 길이
-            Text("00.15")
+            //오른쪽 - 원본 영상길이
+            Text(formatTime(editViewModel.duration))
                 .font(SnappieFont.style(.roundCaption1))
                 .foregroundStyle(SnappieColor.primaryHeavy)
         })
         .padding(.horizontal, 24)
+    }
+    
+    //MARK: - Function
+    //Time Formatter
+    private func formatTime(_ seconds: Double) -> String {
+        guard !seconds.isNaN && !seconds.isInfinite else { return "00:00" }
+        let totalSeconds = Int(seconds)
+        let minutes = totalSeconds / 60
+        let secs = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, secs)
     }
 }
