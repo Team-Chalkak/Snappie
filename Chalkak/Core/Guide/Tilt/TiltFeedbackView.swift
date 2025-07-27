@@ -45,6 +45,10 @@ struct TiltFeedbackView: View {
     /// Y축 기울기 오프셋 값: 기기의 앞뒤 기울기
     var offsetY: CGFloat
     
+    // MARK: State properties
+    /// 디졸브 애니메이션을 위한 opacity 상태
+    @State private var dissolveOpacity: Double = 1.0
+    
     // MARK: computed properties
     /// 자주 사용되는 offset 절대값
     var absOffsetX: CGFloat {
@@ -105,8 +109,21 @@ struct TiltFeedbackView: View {
                     .foregroundStyle(isProperPosition ? SnappieColor.primaryNormal : Color.matcha50)
                     .animation(.easeInOut(duration: 0.3), value: isProperPosition)
             )
-            .opacity(circleOpacity)
+            .opacity(circleOpacity * dissolveOpacity)
             .animation(.smooth, value: circleOpacity)
+            .onChange(of: isProperPosition) { oldValue, newValue in
+                if newValue && !oldValue {
+                    // isProperPosition이 false에서 true로 변경될 때 1초간 디졸브
+                    withAnimation(.easeOut(duration: 1.0)) {
+                        dissolveOpacity = 0.0
+                    }
+                } else if !newValue && oldValue {
+                    // isProperPosition이 true에서 false로 변경될 때 즉시 다시 나타남
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        dissolveOpacity = 1.0
+                    }
+                }
+            }
     }
 }
 
