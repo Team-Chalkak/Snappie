@@ -28,13 +28,7 @@ struct GuideCameraView: View {
     
     var body: some View {
         ZStack {
-            if viewModel.isAligned {
-                Color.blue
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-            }
-
-            CameraView(guide: guide, viewModel: cameraViewModel)
+            CameraView(guide: guide, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
                 .onAppear {
                     cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
                         viewModel.liveBoundingBoxes = bboxes

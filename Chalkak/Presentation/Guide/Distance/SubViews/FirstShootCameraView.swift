@@ -13,7 +13,7 @@ struct FirstShootCameraView: View {
 
     var body: some View {
         ZStack {
-            CameraView(guide: nil, viewModel: cameraViewModel)
+            CameraView(guide: nil, isAligned: false, viewModel: cameraViewModel)
         }
         .onAppear() {
             viewModel.deleteUserDefault()
