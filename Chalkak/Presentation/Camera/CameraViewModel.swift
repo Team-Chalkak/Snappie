@@ -118,6 +118,20 @@ class CameraViewModel: ObservableObject {
         model.requestAndCheckPermissions()
     }
 
+    /// 카메라 세션 시작
+    func startCamera() {
+        model.startSession()
+    }
+
+    /// 카메라 세션 중지
+    func stopCamera() {
+        // 녹화중이면 녹화 중지
+        if isRecording {
+            stopVideoRecording()
+        }
+        model.stopSession()
+    }
+
     func toggleTimerOption() {
         // Cycle through timer options: off -> 3s -> 5s -> 10s -> off
         switch selectedTimerDuration {
@@ -131,7 +145,7 @@ class CameraViewModel: ObservableObject {
             selectedTimerDuration = .off
         }
     }
-    
+
     var currentTimerIcon: Icon {
         switch selectedTimerDuration {
         case .off:
@@ -144,7 +158,7 @@ class CameraViewModel: ObservableObject {
             return .timer10sec
         }
     }
-    
+
     var currentFlashIcon: Icon {
         switch torchMode {
         case .off:
@@ -155,7 +169,6 @@ class CameraViewModel: ObservableObject {
             return .flashAuto
         }
     }
-
 
     private func startTimerCountdown() {
         isTimerRunning = true

@@ -61,5 +61,11 @@ struct CameraView: View {
             )
             )
         }
+        .onAppear {
+            viewModel.startCamera()
+        }
+        .onDisappear {
+            viewModel.stopCamera()
+        }
     }
 }

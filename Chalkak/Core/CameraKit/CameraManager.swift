@@ -399,6 +399,26 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    /// 카메라 세션 시작
+    func startSession() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            if !self.session.isRunning {
+                self.session.startRunning()
+            }
+        }
+    }
+
+    /// 카메라 세션 중지
+    func stopSession() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            if self.session.isRunning {
+                self.session.stopRunning()
+            }
+        }
+    }
+
     private func checkAudioPermission() {
         // 오디오 권한 확인
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
