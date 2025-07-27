@@ -142,11 +142,31 @@ final class ProjectEditViewModel: ObservableObject {
         ) { [weak self] time in
             guard let self = self else { return }
             let secs = CMTimeGetSeconds(time)
-            self.playHead = secs
-            Task { await self.updatePreviewImage(at: secs) }
-            if secs >= self.totalDuration {
-                self.isPlaying = false
-                self.player.pause()
+            
+            DispatchQueue.main.async {
+                self.playHead = secs
+                
+                Task { await self.updatePreviewImage(at: secs) }
+                
+                if let clip = self.editableClips.first(where: { $0.isTrimming }) {
+                    let allStart = self.allClipStart(of: clip)
+                    let allEnd = allStart + clip.trimmedDuration
+                    if secs >= allEnd {
+                        self.player.seek(
+                            to: CMTime(seconds: allStart, preferredTimescale: 600),
+                            toleranceBefore: .zero, toleranceAfter: .zero
+                        )
+                        // 계속 재생 중이라면, play() 호출 유지
+                        if self.isPlaying {
+                            self.player.play()
+                        }
+                    }
+                } else {
+                    if secs >= self.totalDuration {
+                        self.isPlaying = false
+                        self.player.pause()
+                    }
+                }
             }
         }
     }
@@ -175,6 +195,23 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func togglePlayback() {
+        if let clip = editableClips.first(where: { $0.isTrimming }) {
+            let allStart = allClipStart(of: clip)
+            let allEnd = allStart + clip.trimmedDuration
+            
+            if playHead < allStart || playHead >= allEnd {
+                seekTo(time: allStart)
+            }
+            
+            isPlaying.toggle()
+            if isPlaying {
+                player.play()
+            } else {
+                player.pause()
+            }
+            return
+        }
+        
         if playHead >= totalDuration {
             seekTo(time: 0)
         }
@@ -214,5 +251,10 @@ final class ProjectEditViewModel: ObservableObject {
             editableClips.remove(at: idx)
             setupPlayer()
         }
+    }
+    
+    func allClipStart(of clip: EditableClip) -> Double {
+      let idx = editableClips.firstIndex { $0.id == clip.id }!
+      return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
     }
 }
