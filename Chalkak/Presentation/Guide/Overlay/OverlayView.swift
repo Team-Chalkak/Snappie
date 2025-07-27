@@ -39,7 +39,9 @@ struct OverlayView: View {
     @State private var guide: Guide?
     
     private var usingGuideText: String {
-        overlayViewModel.isOverlayReady ? "가이드로 촬영하기" : " "
+        overlayViewModel.isOverlayReady
+            ? Context.buttonTitle
+            : Context.buttonPlaceholder
     }
     
     // 3. init
@@ -51,92 +53,83 @@ struct OverlayView: View {
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
-            
-            VStack(alignment: .center) {
-                SnappieNavigationBar(
-                    leftButtonType: .backward {
-                        dismiss()
-                    },
-                    rightButtonType: .none
-                )
-                .padding(.top, 12)
                 
-                if overlayViewModel.isOverlayReady {
-                    Spacer().frame(height: 1)
-                    
-                    Text("다음 촬영을 위한 가이드가 생성되었어요.")
-                        .snappieStyle(.proBody1)
-                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                    
-                    OverlayDisplayView(overlayViewModel: overlayViewModel)
-                        .aspectRatio(329 / 585, contentMode: .fill)
-                        .padding(.horizontal, 32)
-                        .padding(.top, 16)
-                        .padding(.bottom, 20)
-                    
-                    Spacer()
-                    
-                } else {
-                    // 대신 스켈레톤 뷰
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .foregroundStyle(.white)
-                        .tint(.white)
-                        .padding()
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(10)
-                }
-                
-                Button(action: {
-                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
-                        guide = newGuide
-                        coordinator.push(.boundingBox(guide: newGuide))
-                    }
-                }) {
-                    Text(usingGuideText)
-                        .snappieStyle(.proLabel1)
-                        .padding(.horizontal, 24)
-                }
-                .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
-                .padding(.bottom, 43)
+            if overlayViewModel.isOverlayReady {
+                ContentView
+                    .transition(.opacity)
+            } else {
+                // 대신 스켈레톤 뷰
+                OverlaySkeletonView()
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.1), value: overlayViewModel.isOverlayReady)
         .onDisappear {
             overlayViewModel.dismissOverlay()
+        }
+    }
+    
+    private var ContentView: some View {
+        VStack(alignment: .center) {
+            SnappieNavigationBar(
+                leftButtonType: .backward {
+                    dismiss()
+                },
+                rightButtonType: .none
+            )
+            .padding(.top, Layout.navBarTopPadding)
+            
+            Spacer().frame(height: Layout.spacerHeight)
+            
+            Text(Context.guideGeneratedMessage)
+                .snappieStyle(.proBody1)
+                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+            
+            OverlayDisplayView(overlayViewModel: overlayViewModel)
+                .aspectRatio(
+                    Layout.aspectRatioWidth / Layout.aspectRatioHeight,
+                    contentMode: .fill)
+                .padding(.horizontal, Layout.displayHorizontalPadding)
+                .padding(.top, Layout.displayTopPadding)
+                .padding(.bottom, Layout.displayBottomPadding)
+            
+            Spacer()
+            
+            Button(action: {
+                if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
+                    guide = newGuide
+                    coordinator.push(.boundingBox(guide: newGuide))
+                }
+            }) {
+                Text(usingGuideText)
+                    .snappieStyle(.proLabel1)
+                    .padding(.horizontal, Layout.buttonHorizontalPadding)
+            }
+            .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
+            .padding(.bottom, Layout.buttonBottomPadding)
         }
     }
 }
 
 private extension OverlayView {
     enum Context {
-        
+        static let guideGeneratedMessage =
+            "다음 촬영을 위한 가이드가 생성되었어요."
+        static let buttonTitle = "가이드로 촬영하기"
+        static let buttonPlaceholder = " "
     }
 
     enum Layout {
-        
-    }
-}
+        static let navBarTopPadding: CGFloat = 12
+        static let spacerHeight: CGFloat = 1
 
-struct OverlayView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockClip = Clip(
-            id: UUID().uuidString,
-            videoURL: URL(fileURLWithPath: "https://github.com/user-attachments/assets/d644553d-7709-4ecb-a7d8-6097c31e52ab"),
-            originalDuration: 21.0,
-            endPoint: 21.0,
-            createdAt: Date()
-        )
+        static let aspectRatioWidth: CGFloat = 329
+        static let aspectRatioHeight: CGFloat = 585
+        static let displayHorizontalPadding: CGFloat = 32
+        static let displayTopPadding: CGFloat = 16
+        static let displayBottomPadding: CGFloat = 20
 
-        NavigationStack {
-            OverlayView(clip: mockClip)
-                .environmentObject(MockCoordinator())
-        }
-    }
-}
-
-// MARK: - Mock Coordinator
-class MockCoordinator: Coordinator {
-    override func push(_ destination: Path) {
-        print("Mock push to destination: \(destination)")
+        static let buttonHorizontalPadding: CGFloat = 24
+        static let buttonBottomPadding: CGFloat = 43
     }
 }
