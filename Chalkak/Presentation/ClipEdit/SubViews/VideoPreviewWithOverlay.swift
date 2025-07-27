@@ -53,9 +53,13 @@ struct VideoPreviewWithOverlay: View {
         .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
         .padding(.horizontal, Layout.horizontalSpacing)
     }
+}
 
-    private enum Layout {
+// MARK: - Layout Constants
+private extension VideoPreviewWithOverlay {
+    enum Layout {
         static let horizontalSpacing: CGFloat = 50
         static let cornerRadius: CGFloat = 20
     }
 }
+
