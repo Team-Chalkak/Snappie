@@ -23,6 +23,17 @@ struct ProjectEditView: View {
                 overlayImage: nil
             )
 
+            PlayButtonControlView(
+                isPlaying: $viewModel.isPlaying,
+                onPlayPauseTapped: viewModel.togglePlayback
+            )
+            
+            PlayTimeView(
+                currentTime: viewModel.playHead,
+                totalDuration: viewModel.totalDuration,
+                trimmingClip: viewModel.editableClips.first(where: { $0.isTrimming })
+            )
+            
             Divider().padding(.vertical, 8)
 
             TrimminglineSliderView(
@@ -37,13 +48,6 @@ struct ProjectEditView: View {
                 onAddClipTapped: {
                     coordinator.push(.boundingBox(guide: viewModel.guide ?? nil))
                 }
-            )
-
-            Divider()
-
-            PlayButtonControlView(
-                isPlaying: $viewModel.isPlaying,
-                onPlayPauseTapped: viewModel.togglePlayback
             )
         }
         .padding(.horizontal, 16)
