@@ -18,23 +18,22 @@ struct TrimminglineSliderView: View {
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
 
-    @State private var scrollOffset: CGFloat = 0.0
-    @State private var timelineWidth: CGFloat = 0.0
+    @State private var timelineWidth: CGFloat = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            // 시간 표시 (현재 시간 / 전체 길이)
+            // ─── 시간 표시 ──────────────────
             HStack {
-                Text(formattedTime(playHeadPosition))
-                    .font(.caption)
+                Text(formattedTime(playHeadPosition)).font(.caption)
                 Spacer()
-                Text(formattedTime(totalDuration))
-                    .font(.caption)
+                Text(formattedTime(totalDuration)).font(.caption)
             }
 
-            // 타임라인 클립 썸네일 + 핸들
-            GeometryReader { geometry in
-                ScrollViewReader { scrollReader in
+            // ─── 스크롤 & 플레이헤드 ──────────
+            GeometryReader { geo in
+                let containerW = geo.size.width
+
+                ScrollViewReader { reader in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 0) {
                             ForEach(clips) { clip in
@@ -42,58 +41,59 @@ struct TrimminglineSliderView: View {
                                     clip: clip,
                                     isTrimming: clip.isTrimming,
                                     isDragging: $isDragging,
-                                    onToggleTrimming: {
-                                        onToggleTrimming(clip.id)
-                                    },
-                                    onTrimChanged: { newStart, newEnd in
-                                        onTrimChanged(clip.id, newStart, newEnd)
-                                    }
+                                    onToggleTrimming: { onToggleTrimming(clip.id) },
+                                    onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) }
                                 )
+                                .frame(width: clipWidth(for: clip), height: 60)
                             }
-                            // dummy ID
+
+                            // 플레이헤드 위치에 맞춘 dummy 뷰
                             Color.clear
                                 .frame(width: 1, height: 1)
                                 .id("scroll-target")
+                                .offset(x: relativeX(in: timelineWidth))
                         }
                         .background(GeometryReader {
-                            Color.clear.preference(key: TimelineWidthKey.self, value: $0.size.width)
+                            Color.clear
+                                .preference(key: TimelineWidthKey.self, value: $0.size.width)
                         })
-                        .onPreferenceChange(TimelineWidthKey.self) { width in
-                            timelineWidth = width
-                        }
                     }
+                    // 플레이헤드
                     .overlay(alignment: .center) {
                         Rectangle()
                             .fill(Color.red)
                             .frame(width: 2, height: 60)
                     }
-                    .onChange(of: playHeadPosition) { newTime in
-                        scrollToPlayhead(reader: scrollReader, container: geometry.size)
+                    // 전체 타임라인 너비 파악
+                    .onPreferenceChange(TimelineWidthKey.self) { timelineWidth = $0 }
+                    // 플레이헤드 이동 시 자동 스크롤
+                    .onChange(of: playHeadPosition) { _ in
+                        withAnimation { reader.scrollTo("scroll-target", anchor: .center) }
                     }
                 }
             }
-            .frame(height: 80)
+            .frame(height: 60)
         }
     }
 
-    // MARK: - 시간 포맷 함수
-    private func formattedTime(_ seconds: Double) -> String {
-        let totalSeconds = Int(seconds)
-        let mins = totalSeconds / 60
-        let secs = totalSeconds % 60
-        return String(format: "%d:%02d", mins, secs)
+    // MARK: - 헬퍼
+    private func formattedTime(_ sec: Double) -> String {
+        let t = Int(sec)
+        return "\(t/60):\(String(format: "%02d", t%60))"
     }
 
-    // MARK: - 재생 중 자동 스크롤
-    private func scrollToPlayhead(reader: ScrollViewProxy, container: CGSize) {
-        let relativeX = CGFloat(playHeadPosition / totalDuration) * timelineWidth
-        let scrollX = max(0, relativeX - container.width / 2)
-        withAnimation {
-            reader.scrollTo("playhead-scroll", anchor: .leading)
-        }
+    private func relativeX(in totalW: CGFloat) -> CGFloat {
+        guard totalDuration > 0 else { return 0 }
+        let ratio = CGFloat(playHeadPosition / totalDuration)
+        return ratio * totalW
+    }
+
+    private func clipWidth(for clip: EditableClip) -> CGFloat {
+        // 예: 화면 너비 기준 비율
+        let screenW = UIScreen.main.bounds.width - 32
+        return screenW * CGFloat(clip.trimmedDuration / totalDuration)
     }
 }
-
 
 private struct TimelineWidthKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
