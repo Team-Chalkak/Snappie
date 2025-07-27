@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		992EE7D22E34578C0079AFBF /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
 		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
@@ -113,6 +114,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -226,6 +228,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		992EE7FA2E364B810079AFBF /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */,
+				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
 		993A1CBD2E2049D50059B70A = {
 			isa = PBXGroup;
 			children = (
@@ -403,7 +414,7 @@
 		993A1F3D2E267E0C0059B70A /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
+				992EE7FA2E364B810079AFBF /* SubViews */,
 				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
 				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
 			);
@@ -789,6 +800,7 @@
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
 				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
+				992EE7D22E34578C0079AFBF /* OverlaySkeletonView.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
@@ -1019,7 +1031,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = SM37WHUJB5;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
@@ -1053,7 +1065,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = SM37WHUJB5;
+				DEVELOPMENT_TEAM = F83F8K6223;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
