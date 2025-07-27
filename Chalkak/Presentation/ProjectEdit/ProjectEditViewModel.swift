@@ -164,6 +164,9 @@ final class ProjectEditViewModel: ObservableObject {
         let cm = CMTime(seconds: time, preferredTimescale: 600)
         player.seek(to: cm, toleranceBefore: .zero, toleranceAfter: .zero)
         playHead = time
+        Task {
+            await updatePreviewImage(at: time)
+        }
     }
 
     func toggleTrimmingMode(for clipID: String) {
