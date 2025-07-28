@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		992EE7D22E34578C0079AFBF /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */; };
+		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
+		9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078C2E340459006BE89C /* VideoControlPanelView.swift */; };
+		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
+		934007912E3652C5006BE89C /* TrimmingHandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934007902E3652BD006BE89C /* TrimmingHandleView.swift */; };
+		93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A137662E32756A00777CF8 /* VideoControlView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
 		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
@@ -45,7 +50,6 @@
 		993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */; };
 		993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */; };
 		993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */; };
-		993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */; };
 		993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F412E267E0C0059B70A /* VideoPreviewView.swift */; };
 		993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F432E267E0C0059B70A /* ClipEditView.swift */; };
 		993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */; };
@@ -68,6 +72,8 @@
 		B64788642E3323C40091A067 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788632E3323C10091A067 /* RecordButton.swift */; };
 		B64788662E3324130091A067 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788652E3324020091A067 /* TorchMode.swift */; };
 		B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */; };
+		B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788692E33A34F0091A067 /* ZoomButton.swift */; };
+		B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */; };
 		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
@@ -115,6 +121,11 @@
 
 /* Begin PBXFileReference section */
 		992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
+		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
+		9340078C2E340459006BE89C /* VideoControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlPanelView.swift; sourceTree = "<group>"; };
+		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
+		934007902E3652BD006BE89C /* TrimmingHandleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingHandleView.swift; sourceTree = "<group>"; };
+		93A137662E32756A00777CF8 /* VideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,7 +163,6 @@
 		993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayViewModel.swift; sourceTree = "<group>"; };
 		993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingControlView.swift; sourceTree = "<group>"; };
 		993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineView.swift; sourceTree = "<group>"; };
-		993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplay.swift; sourceTree = "<group>"; };
 		993A1F412E267E0C0059B70A /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
 		993A1F432E267E0C0059B70A /* ClipEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditView.swift; sourceTree = "<group>"; };
 		993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipEditViewModel.swift; sourceTree = "<group>"; };
@@ -178,6 +188,8 @@
 		B64788632E3323C10091A067 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		B64788652E3324020091A067 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLevelIndicator.swift; sourceTree = "<group>"; };
+		B64788692E33A34F0091A067 /* ZoomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButton.swift; sourceTree = "<group>"; };
+		B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraZoomControlView.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
@@ -385,10 +397,12 @@
 		993A1F352E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */,
 				B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */,
 				B64788632E3323C10091A067 /* RecordButton.swift */,
 				993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */,
 				993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */,
+				B64788692E33A34F0091A067 /* ZoomButton.swift */,
 				993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */,
 				993A1F302E267E0C0059B70A /* CameraRecordView.swift */,
 				993A1F312E267E0C0059B70A /* CameraTopControlView.swift */,
@@ -424,10 +438,14 @@
 		993A1F422E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				934007902E3652BD006BE89C /* TrimmingHandleView.swift */,
 				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
-				993A1F402E267E0C0059B70A /* TrimmingTimeDisplay.swift */,
 				993A1F412E267E0C0059B70A /* VideoPreviewView.swift */,
+				93A137662E32756A00777CF8 /* VideoControlView.swift */,
+				9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */,
+				9340078C2E340459006BE89C /* VideoControlPanelView.swift */,
+				9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -791,6 +809,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
+				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
 				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
@@ -817,9 +836,11 @@
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
+				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
+				9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
@@ -839,9 +860,11 @@
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
+				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
 				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
+				934007912E3652C5006BE89C /* TrimmingHandleView.swift in Sources */,
 				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
@@ -852,11 +875,13 @@
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */,
 				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
+				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,
 				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,

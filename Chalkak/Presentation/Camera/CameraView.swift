@@ -26,12 +26,14 @@ struct CameraView: View {
                 onPinchZoom: viewModel.selectZoomScale,
                 currentZoomScale: viewModel.zoomScale,
                 isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                showGrid: $viewModel.isGrid
+                showGrid: $viewModel.isGrid,
+                isTimerRunning: viewModel.isTimerRunning,
+                timerCountdown: viewModel.timerCountdown
             )
             .aspectRatio(9 / 16, contentMode: .fit)
             .clipped()
-            .padding(.top, 12)
-            .padding(.horizontal, 16)
+            .padding(.top, Layout.preViewTopPadding)
+            .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
 
             // 수평 레벨 표시
@@ -45,7 +47,7 @@ struct CameraView: View {
                 Spacer()
 
                 CameraBottomControlView(viewModel: viewModel)
-            }
+            }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
@@ -59,6 +61,19 @@ struct CameraView: View {
             )
             )
         }
+        .onAppear {
+            viewModel.startCamera()
+        }
+        .onDisappear {
+            viewModel.stopCamera()
+        }
     }
 }
 
+private extension CameraView {
+    enum Layout {
+        static let preViewTopPadding: CGFloat = 12
+        static let preViewHorizontalPadding: CGFloat = 16
+        static let cameraControlHorizontalPadding: CGFloat = 8
+    }
+}

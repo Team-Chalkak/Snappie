@@ -33,7 +33,7 @@ struct ButtonIconNormal: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))
@@ -64,7 +64,7 @@ struct ButtonIconSolid: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))
@@ -95,7 +95,7 @@ struct ButtonIconBackground: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))

@@ -11,7 +11,7 @@ struct CameraDefaultTopControlView: View {
     @ObservedObject var viewModel: CameraViewModel
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             HStack(alignment: .center) {
                 SnappieButton(.glassPill(
                     contentType: .icon(viewModel.showingCameraControl ? .chevronUp : .chevronDown),
@@ -23,7 +23,7 @@ struct CameraDefaultTopControlView: View {
                 .disabled(viewModel.isTimerRunning) // 타이머 중 비활성화
             }
             if viewModel.showingCameraControl && !viewModel.isTimerRunning {
-                HStack(spacing: 32) {
+                HStack {
                     CameraBaseFeatureSelectView(viewModel: viewModel)
                 }
                 .padding(.horizontal, 20)

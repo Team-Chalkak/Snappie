@@ -23,30 +23,20 @@ struct VideoPreviewView: View {
     let previewImage: UIImage?
     let player: AVPlayer?
     let isDragging: Bool
-    let overlayImage: UIImage?
 
     var body: some View {
-        ZStack {
-            Group {
-                if isDragging, let previewImage = previewImage {
-                    Image(uiImage: previewImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 296, height: 526)
-                } else if let player = player {
-                    VideoPlayer(player: player)
-                        .frame(width: 296, height: 526)
-                } else {
-                    Text("영상을 불러오는 중...")
-                        .frame(width: 296, height: 526)
-                }
-            }
-
-            if let overlayImage = overlayImage {
-                Image(uiImage: overlayImage)
+        Group {
+            if isDragging, let previewImage = previewImage {
+                Image(uiImage: previewImage)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 296, height: 526)
+                    .aspectRatio(9.0 / 16.0, contentMode: .fit)
+            } else if let player = player {
+                VideoPlayer(player: player)
+                    .disabled(true)
+                    .aspectRatio(9.0 / 16.0, contentMode: .fit)
+                    .clipped()
+            } else {
+                Text("영상을 불러오는 중...")
             }
         }
     }
