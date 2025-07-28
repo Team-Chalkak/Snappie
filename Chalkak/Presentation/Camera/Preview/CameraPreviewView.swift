@@ -245,6 +245,7 @@ struct CameraPreviewView: UIViewRepresentable {
                     newLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
                 ])
                 
+                // TODO: 애니메이션 변환 필요
                 // 디졸브애니메이션
                 UIView.animate(withDuration: 0.4, animations: {
                     existingLabel.alpha = 0
