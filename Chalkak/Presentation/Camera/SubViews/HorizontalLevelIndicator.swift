@@ -39,10 +39,44 @@ struct HorizontalLevelIndicatorView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            levelLine(fixedWidth: 20, tiltedWidth: 48, isReversed: false)
-            Spacer().frame(width: 25)
-            levelLine(fixedWidth: 20, tiltedWidth: 48, isReversed: true)
+        ZStack {
+            // 고정 기준선들 (회전 X )
+            HStack(spacing: 0) {
+                // 왼쪽고정선 20px
+                Rectangle()
+                    .frame(width: 20, height: 1)
+                    .foregroundColor(lineColor)
+
+                // 일직선 영역
+                Color.clear
+                    .frame(width: 121, height: 1)
+
+                // 오른쪽고정선 20px
+                Rectangle()
+                    .frame(width: 20, height: 1)
+                    .foregroundColor(lineColor)
+            }
+
+            HStack(spacing: 0) {
+                Color.clear
+                    .frame(width: 20, height: 1)
+                // 일직선 왼쪽 48px + 중간부 공백 25px + 오른쪽 48px
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .frame(width: 48, height: 1)
+                        .foregroundColor(lineColor)
+
+                    Color.clear
+                        .frame(width: 25, height: 1)
+
+                    Rectangle()
+                        .frame(width: 48, height: 1)
+                        .foregroundColor(lineColor)
+                }
+                .rotationEffect(.degrees(tiltAngle), anchor: .center)
+                Color.clear
+                    .frame(width: 20, height: 1)
+            }
         }
         .frame(height: 50)
         .opacity(opacity)
@@ -65,33 +99,6 @@ struct HorizontalLevelIndicatorView: View {
             horizontalTimer?.invalidate()
             horizontalTimer = nil
         }
-    }
-
-    private func levelLine(fixedWidth: CGFloat, tiltedWidth: CGFloat, isReversed: Bool) -> some View {
-        HStack(spacing: 0) {
-            if !isReversed {
-                fixedLine(width: fixedWidth)
-                tiltedLine(width: tiltedWidth)
-            } else {
-                tiltedLine(width: tiltedWidth)
-                fixedLine(width: fixedWidth)
-            }
-        }
-    }
-
-    /// 고정선(양끝 20px)
-    private func fixedLine(width: CGFloat) -> some View {
-        Rectangle()
-            .frame(width: width, height: 1)
-            .foregroundColor(lineColor)
-    }
-
-    /// 유동선 (가운데 48px)
-    private func tiltedLine(width: CGFloat) -> some View {
-        Rectangle()
-            .frame(width: width, height: 1)
-            .foregroundColor(lineColor)
-            .rotationEffect(.degrees(tiltAngle), anchor: .center)
     }
 
     /// 수평일때 or 각도가15도이상 벗어났을때  dissove처리를 위한 메소드
