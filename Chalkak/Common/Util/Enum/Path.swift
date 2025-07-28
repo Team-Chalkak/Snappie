@@ -10,6 +10,6 @@ import Foundation
 enum Path: Hashable {
     case clipEdit(clipURL: URL, guide: Guide?, cameraSetting: CameraSetting, TimeStampedTiltList: [TimeStampedTilt])
     case overlay(clip: Clip)
-    case boundingBox(guide: Guide)
+    case boundingBox(guide: Guide?)
     case projectPreview(finalVideoURL: URL)
 }
