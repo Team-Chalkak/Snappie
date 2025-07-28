@@ -41,9 +41,13 @@ struct VideoPreviewView: View {
                 ZStack {
                     Rectangle()
                         .fill(SnappieColor.darkStrong)
-                    Text("영상을 불러오는 중...")
+                    
+                    ProgressView()
                         .foregroundColor(SnappieColor.primaryLight)
                         .font(SnappieFont.style(.kronaLabel1))
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(2.0)
+                        .tint(SnappieColor.primaryLight)
                 }
                 .aspectRatio(9.0 / 16.0, contentMode: .fit)
             }
