@@ -18,8 +18,13 @@ struct HorizontalLevelIndicatorView: View {
         abs(gravityX) < 0.05
     }
 
-    // 기울기 각도
+    // 기울기 각도(수평 보정 tilt 보정값과 동일하게 0.05이하일때 스냅 붙음)
     private var tiltAngle: Double {
+        // 수평 상태일 때는 색상변화만 주지않고, 각도 역시 0.0으로 수평값으로 보정값이 적용
+        if isHorizontal {
+            return 0.0
+        }
+
         let maxAngle = 30.0 // 최대 표시 각도 (15도까지 보여주지만 maxAngle값을 높게잡아야 기울기가 올라감)
         let clampedGravity = max(-0.5, min(0.5, gravityX))
         return clampedGravity * maxAngle * 2
@@ -107,15 +112,15 @@ struct HorizontalLevelIndicatorView: View {
             horizontalTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self.opacity = 0
-                    self.hiddenByHorizontal = true // 수평으로 인해 숨겨짐 표시
+                    self.hiddenByHorizontal = true // 수평시 숨겨짐 상태
                 }
             }
         } else {
-            // 수평이 아니면 타이머 취소하고 다시 표시
+            // 수평이 아니면 타이머 취소하고 표시
             horizontalTimer?.invalidate()
             horizontalTimer = nil
 
-            // 수평 상태로 숨겨진 상태였다면 다시 표시
+            // 수평 상태로 숨겨진 상태였다면 각도가 어긋났으니 다시 등장
             if hiddenByHorizontal {
                 hiddenByHorizontal = false
                 withAnimation(.easeInOut(duration: 0.3)) {
