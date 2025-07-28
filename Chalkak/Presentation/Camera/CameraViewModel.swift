@@ -61,17 +61,6 @@ class CameraViewModel: ObservableObject {
     var minZoomScale: CGFloat { 0.5 }
     var maxZoomScale: CGFloat { 6.0 }
 
-    // 현재 카메라 타입 표시
-    var currentCameraTypeSymbol: String {
-        if zoomScale < 1.0 {
-            return "0.5×" // 울트라 와이드
-        } else if zoomScale <= 2.0 {
-            return "1×" // 와이드
-        } else {
-            return "2×" // 망원
-        }
-    }
-
     private var timer: Timer?
     private var timerCountdownTimer: Timer?
     private var dataCollectionTimer: Timer?
@@ -85,8 +74,6 @@ class CameraViewModel: ObservableObject {
         let seconds = recordingTime % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-
-    // MARK: - init
 
     init() {
         model = CameraManager()
