@@ -44,7 +44,8 @@ extension SnappieNavigationBar {
                     SnappieButton(
                         .iconBackground(
                             icon: .chevronBackward,
-                            size: .medium
+                            size: .medium,
+                            isActive: true
                         ),
                         action: action
                     )
@@ -53,7 +54,8 @@ extension SnappieNavigationBar {
                     SnappieButton(
                         .iconBackground(
                             icon: .dismiss,
-                            size: .medium
+                            size: .medium,
+                            isActive: true
                         ),
                         action: action
                     )

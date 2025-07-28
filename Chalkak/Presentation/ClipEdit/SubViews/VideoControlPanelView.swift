@@ -38,7 +38,8 @@ struct VideoControlPanelView: View {
             SnappieButton(
                 .iconBackground(
                     icon: editViewModel.isPlaying ? .pauseFill : .playFill,
-                    size: .medium
+                    size: .medium,
+                    isActive: true
                 )
             ) {
                 editViewModel.togglePlayback()
@@ -56,8 +57,9 @@ struct VideoControlPanelView: View {
             if overlayImage != nil {
                 SnappieButton(
                     .iconBackground(
-                        icon: isOverlayVisible ? .silhouette : .silhouette,
-                        size: .medium
+                        icon: .silhouette,
+                        size: .medium,
+                        isActive: isOverlayVisible
                     )
                 ) {
                     isOverlayVisible.toggle()

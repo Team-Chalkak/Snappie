@@ -99,6 +99,7 @@ struct IconSolidStyler: ButtonStyler {
 // MARK: - Icon Background Button Styler
 struct IconBackgroundStyler: ButtonStyler {
     let size: ButtonSizeType
+    let isActive: Bool
     
     func height() -> CGFloat {
         size == .large
@@ -126,7 +127,7 @@ struct IconBackgroundStyler: ButtonStyler {
     
     func foregroundColor(isPressed: Bool, isEnabled: Bool) -> Color {
         guard isEnabled else { return Color.gray }
-        return isEnabled ? SnappieColor.labelPrimaryNormal : SnappieColor.labelPrimaryDisable
+        return (isEnabled && isActive) ? SnappieColor.labelPrimaryNormal : SnappieColor.labelPrimaryDisable
     }
     
     func fontStyle() -> SnappieFont.Style {

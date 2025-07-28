@@ -75,6 +75,7 @@ struct ButtonIconBackground: View {
     // input properties
     let icon: Icon
     let size: ButtonSizeType
+    let isActive: Bool
     let action: () -> Void
     
     // styler propety
@@ -83,12 +84,14 @@ struct ButtonIconBackground: View {
     // init
     init(icon: Icon,
          size: ButtonSizeType,
+         isActive: Bool,
          action: @escaping () -> Void
     ) {
         self.icon = icon
         self.size = size
         self.action = action
-        self.styler = IconBackgroundStyler(size: size)
+        self.isActive = isActive
+        self.styler = IconBackgroundStyler(size: size, isActive: isActive)
     }
     // body
     var body: some View {
@@ -165,7 +168,8 @@ struct ButtonIconWithText: View {
             
             SnappieButton(.iconBackground(
                 icon: .flashOn,
-                size: .large
+                size: .large,
+                isActive: true
             )) {
                 print("iconNormal button tapped")
             }

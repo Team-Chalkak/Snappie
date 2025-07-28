@@ -70,8 +70,8 @@ struct SnappieButton: View {
         case .iconSolid(let icon, let size):
             ButtonIconSolid(icon: icon, size: size, action: action)
             
-        case .iconBackground(let icon, let size):
-            ButtonIconBackground(icon: icon, size: size, action: action)
+        case .iconBackground(let icon, let size, let isActive):
+            ButtonIconBackground(icon: icon, size: size, isActive: isActive, action: action)
             
         case .iconWithText(let title, let icon, let isActive):
             ButtonIconWithText(title: title, icon: icon, isActive: isActive, action: action)
@@ -128,7 +128,8 @@ struct SnappieButton: View {
             // iconBackground
             SnappieButton(.iconBackground(
                 icon: .flashOn,
-                size: .large
+                size: .large,
+                isActive: false
             )) {
                 print("iconNormal button tapped")
             }

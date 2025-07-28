@@ -22,7 +22,7 @@ enum ButtonType{
     
     case iconNormal(icon: Icon, size: ButtonSizeType)
     case iconSolid(icon: Icon, size: ButtonSizeType)
-    case iconBackground(icon: Icon, size: ButtonSizeType)
+    case iconBackground(icon: Icon, size: ButtonSizeType, isActive: Bool)
     case iconWithText(title: String, icon: Icon, isActive: Bool)
     
     case glassPill(contentType: ButtonContentType, isActive: Bool)
