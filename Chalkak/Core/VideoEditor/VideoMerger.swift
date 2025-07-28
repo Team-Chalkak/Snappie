@@ -111,14 +111,13 @@ struct VideoMerger {
             throw VideoMergerError.videoTrackCreationFailed
         }
         
-        // TODO: 오디오 기능 도입되면 주석 해제(ssol)
         // 3. 오디오 트랙 생성
-//        guard let audioTrack = composition.addMutableTrack(
-//            withMediaType: .audio,
-//            preferredTrackID: Int32(kCMPersistentTrackID_Invalid)
-//        ) else {
-//            throw VideoMergerError.audioTrackCreationFailed
-//        }
+        guard let audioTrack = composition.addMutableTrack(
+            withMediaType: .audio,
+            preferredTrackID: Int32(kCMPersistentTrackID_Invalid)
+        ) else {
+            throw VideoMergerError.audioTrackCreationFailed
+        }
         
         // 4. 각 애셋을 순차적으로 합치기
         for (index, asset) in assets.enumerated() {
@@ -133,16 +132,14 @@ struct VideoMerger {
                 let videoTracks = try await asset.loadTracks(withMediaType: .video)
                 guard !videoTracks.isEmpty else { continue }
                 
-                // TODO: 오디오 기능 도입되면 주석 해제(ssol)
-//            // 오디오 트랙이 있으면 추가
-//            let audioTracks = try await asset.loadTracks(withMediaType: .audio)
-//            guard !audioTracks.isEmpty else { continue }
+            // 오디오 트랙이 있으면 추가
+            let audioTracks = try await asset.loadTracks(withMediaType: .audio)
+            guard !audioTracks.isEmpty else { continue }
                 
                 // 비디오
                 try videoTrack.insertTimeRange(timeRangeToInsert, of: videoTracks[0], at: lastTime)
                 
-                // TODO: 오디오 기능 도입되면 주석 해제(ssol)
-//                try audioTrack.insertTimeRange(timeRangeToInsert, of: audioTracks[0], at: lastTime)
+                try audioTrack.insertTimeRange(timeRangeToInsert, of: audioTracks[0], at: lastTime)
                 
                 lastTime = CMTimeAdd(lastTime, timeRangeToInsert.duration)
                 
