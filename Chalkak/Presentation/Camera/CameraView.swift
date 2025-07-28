@@ -34,9 +34,7 @@ struct CameraView: View {
                     onPinchZoom: viewModel.selectZoomScale,
                     currentZoomScale: viewModel.zoomScale,
                     isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                    showGrid: $viewModel.isGrid,
-                    isTimerRunning: viewModel.isTimerRunning,
-                    timerCountdown: viewModel.timerCountdown
+                    showGrid: $viewModel.isGrid
                 )
                 .aspectRatio(9 / 16, contentMode: .fit)
                 .clipped()
@@ -47,6 +45,15 @@ struct CameraView: View {
                         .font(SnappieFont.style(.kronaExtra))
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
                         .opacity(feedbackOpacity)
+                }
+                
+                // 타이머 카운트다운 오버레이
+                if viewModel.isTimerRunning && viewModel.timerCountdown > 0 {
+                    Text("\(viewModel.timerCountdown)")
+                        .font(SnappieFont.style(.kronaExtra))
+                        .foregroundColor(SnappieColor.labelPrimaryNormal)
+                        .transition(.opacity)
+                        .animation(.easeOut(duration: 0.4), value: viewModel.timerCountdown)
                 }
             }
             .padding(.top, Layout.preViewTopPadding)
