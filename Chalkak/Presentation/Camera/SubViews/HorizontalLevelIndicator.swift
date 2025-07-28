@@ -45,40 +45,24 @@ struct HorizontalLevelIndicatorView: View {
 
     var body: some View {
         ZStack {
-            // 고정 기준선들 (회전 X )
+            /// 양옆 고정 기준선들 (회전하지 않음)
+            ///  양옆 고정 20px + 중앙 공백 121
             HStack(spacing: 0) {
-                // 왼쪽고정선 20px
-                Rectangle()
-                    .frame(width: 20, height: 1)
-                    .foregroundColor(lineColor)
-                // 일직선영역 공백 비워두기
-                Color.clear
-                    .frame(width: 121, height: 1)
-                // 오른쪽고정선 20px
-                Rectangle()
-                    .frame(width: 20, height: 1)
-                    .foregroundColor(lineColor)
+                levelLine(width: 20) // 왼쪽 고정선
+                spacer(width: 121) // 일직선 시소 영역(공백)
+                levelLine(width: 20) // 오른쪽 고정선
             }
-
+            /// 회전하는 시소 부분
+            /// 양옆 공백 20 px + 중앙 일직선 121
             HStack(spacing: 0) {
-                Color.clear
-                    .frame(width: 20, height: 1)
-                // 일직선(왼쪽 48px + 중간부(공백 25px) + 오른쪽 48px)
+                spacer(width: 20)
                 HStack(spacing: 0) {
-                    Rectangle()
-                        .frame(width: 48, height: 1)
-                        .foregroundColor(lineColor)
-
-                    Color.clear
-                        .frame(width: 25, height: 1)
-
-                    Rectangle()
-                        .frame(width: 48, height: 1)
-                        .foregroundColor(lineColor)
+                    levelLine(width: 48)
+                    spacer(width: 25) // 중앙 선 사이 공백
+                    levelLine(width: 48)
                 }
                 .rotationEffect(.degrees(tiltAngle), anchor: .center)
-                Color.clear
-                    .frame(width: 20, height: 1)
+                spacer(width: 20)
             }
         }
         .frame(height: 50)
@@ -102,6 +86,18 @@ struct HorizontalLevelIndicatorView: View {
             horizontalTimer?.invalidate()
             horizontalTimer = nil
         }
+    }
+
+    /// 수평선
+    private func levelLine(width: CGFloat) -> some View {
+        Rectangle()
+            .frame(width: width, height: 1)
+            .foregroundColor(lineColor)
+    }
+
+    /// 투명 여백
+    private func spacer(width: CGFloat) -> some View {
+        Color.clear.frame(width: width, height: 1)
     }
 
     /// 수평일때 or 각도가15도이상 벗어났을때  dissove처리를 위한 메소드
