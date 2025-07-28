@@ -268,15 +268,21 @@ final class ClipEditViewModel: ObservableObject {
         let clip = saveClipData()
         let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
+        
+        // 프로젝트 이름 자동 생성
+        let projectCount = SwiftDataManager.shared.fetchAllProjects().count
+        let generatedTitle = "프로젝트 \(projectCount + 1)"
+        
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
             guide: nil,
             clips: [clip],
             cameraSetting: cameraSetting,
-            referenceDuration: clip.endPoint - clip.startPoint
+            title: generatedTitle,
+            referenceDuration: clip.endPoint - clip.startPoint,
+            coverImage: nil
         )
     
-        
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }

@@ -74,14 +74,18 @@ class SwiftDataManager {
         guide: Guide? = nil,
         clips: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
-        referenceDuration: Double? = nil
+        title: String? = nil,
+        referenceDuration: Double? = nil,
+        coverImage: Data? = nil
     ) -> Project {
         let project = Project(
             id: id,
             guide: guide,
             clipList: clips,
             cameraSetting: cameraSetting,
-            referenceDuration: referenceDuration
+            title: title ?? "",
+            referenceDuration: referenceDuration,
+            coverImage: coverImage
         )
         context.insert(project)
         return project
@@ -101,6 +105,12 @@ class SwiftDataManager {
     /// `Project` 삭제
     func deleteProject(_ project: Project) {
         context.delete(project)
+    }
+    
+    /// 모든 프로젝트 조회
+    func fetchAllProjects() -> [Project] {
+        let descriptor = FetchDescriptor<Project>()
+        return (try? context.fetch(descriptor)) ?? []
     }
 
     // MARK: - Clip

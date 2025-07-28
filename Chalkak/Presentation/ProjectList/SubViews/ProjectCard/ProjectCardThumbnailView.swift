@@ -74,7 +74,7 @@ struct ProjectCardThumbnailView: View {
         time: 150.8,
         moveToProjectEdit: {
             print("moveToProjectEdit")
-        },
+        }
     )
     .frame(width: 173)
 }
