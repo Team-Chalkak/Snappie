@@ -67,6 +67,8 @@
 		B64788642E3323C40091A067 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788632E3323C10091A067 /* RecordButton.swift */; };
 		B64788662E3324130091A067 /* TorchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788652E3324020091A067 /* TorchMode.swift */; };
 		B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */; };
+		B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788692E33A34F0091A067 /* ZoomButton.swift */; };
+		B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */; };
 		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
@@ -176,6 +178,8 @@
 		B64788632E3323C10091A067 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		B64788652E3324020091A067 /* TorchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchMode.swift; sourceTree = "<group>"; };
 		B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLevelIndicator.swift; sourceTree = "<group>"; };
+		B64788692E33A34F0091A067 /* ZoomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButton.swift; sourceTree = "<group>"; };
+		B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraZoomControlView.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
@@ -374,10 +378,12 @@
 		993A1F352E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */,
 				B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */,
 				B64788632E3323C10091A067 /* RecordButton.swift */,
 				993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */,
 				993A1F2E2E267E0C0059B70A /* CameraBottomControlView.swift */,
+				B64788692E33A34F0091A067 /* ZoomButton.swift */,
 				993A1F2F2E267E0C0059B70A /* CameraDefaultTopControlView.swift */,
 				993A1F302E267E0C0059B70A /* CameraRecordView.swift */,
 				993A1F312E267E0C0059B70A /* CameraTopControlView.swift */,
@@ -840,11 +846,13 @@
 				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */,
 				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
+				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,
 				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,

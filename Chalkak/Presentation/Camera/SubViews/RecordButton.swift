@@ -2,7 +2,7 @@
 //  RecordButton.swift
 //  Chalkak
 //
-//  Created by finn on 7/25/25.
+//  Created by 정종문 on 7/25/25.
 //
 
 import SwiftUI
