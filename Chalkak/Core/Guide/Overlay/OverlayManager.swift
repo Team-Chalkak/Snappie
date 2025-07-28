@@ -96,11 +96,13 @@ class OverlayManager: ObservableObject {
                     if let cgImage = self.context.createCGImage(ciImage, from: ciImage.extent) {
                         self.maskedUIImage = UIImage(cgImage: cgImage)
                     }
-                    
-                    // 마스크 생성 후 바로 윤곽선 효과 적용
-                    self.applyOutlineEffect(completion: completion)
                 }
-
+                
+                // 마스크 생성 후 바로 윤곽선 효과 적용
+                self.applyOutlineEffect(from: ciImage) {
+                    DispatchQueue.main.async { completion() }
+                }
+                
             } catch {
                 print("❌ Vision 처리 실패:", error)
                 DispatchQueue.main.async { completion() }
@@ -110,18 +112,14 @@ class OverlayManager: ObservableObject {
 
     //MARK: - 실루엣 오버레이 이미지 생성
     ///마스크 이미지에서 경계선을 검출하여 윤곽선 이미지 생성
-    func applyOutlineEffect(completion: @escaping () -> Void) {
-        guard let inputImage = maskedCIImage else { 
-            completion()
-            return 
-        }
+    func applyOutlineEffect(from inputImage: CIImage, completion: @escaping () -> Void) {
 
         /// CIImage → CGImage
         guard let cgImage = context.createCGImage(inputImage, from: inputImage.extent),
               let dataProvider = cgImage.dataProvider,
               let pixelData = dataProvider.data else {
             print("❌ CGImage 변환 실패")
-            completion()
+            DispatchQueue.main.async { completion() }
             return
         }
 
@@ -146,7 +144,7 @@ class OverlayManager: ObservableObject {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else {
             print("❌ CGContext 생성 실패")
-            completion()
+            DispatchQueue.main.async { completion() }
             return
         }
 
@@ -180,8 +178,8 @@ class OverlayManager: ObservableObject {
         /// 최종 윤곽선 이미지 생성
         if let cgOutline = context.makeImage() {
             let outlineUIImage = UIImage(cgImage: cgOutline)
-            DispatchQueue.main.async {
-                self.outlineImage = outlineUIImage
+            DispatchQueue.main.async { [weak self] in
+                self?.outlineImage = outlineUIImage
                 completion()
             }
         } else {

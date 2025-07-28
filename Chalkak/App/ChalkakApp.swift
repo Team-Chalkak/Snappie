@@ -39,6 +39,7 @@ struct ChalkakApp: App {
 
                         case .overlay(let clip):
                             OverlayView(clip: clip)
+                                .toolbar(.hidden, for: .navigationBar)
 
                         case .boundingBox(let guide):
                             BoundingBoxView(guide: guide)
