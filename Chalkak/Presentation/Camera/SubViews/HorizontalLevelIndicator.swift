@@ -46,11 +46,9 @@ struct HorizontalLevelIndicatorView: View {
                 Rectangle()
                     .frame(width: 20, height: 1)
                     .foregroundColor(lineColor)
-
-                // 일직선 영역
+                // 일직선영역 공백 비워두기
                 Color.clear
                     .frame(width: 121, height: 1)
-
                 // 오른쪽고정선 20px
                 Rectangle()
                     .frame(width: 20, height: 1)
@@ -60,7 +58,7 @@ struct HorizontalLevelIndicatorView: View {
             HStack(spacing: 0) {
                 Color.clear
                     .frame(width: 20, height: 1)
-                // 일직선 왼쪽 48px + 중간부 공백 25px + 오른쪽 48px
+                // 일직선(왼쪽 48px + 중간부(공백 25px) + 오른쪽 48px)
                 HStack(spacing: 0) {
                     Rectangle()
                         .frame(width: 48, height: 1)
