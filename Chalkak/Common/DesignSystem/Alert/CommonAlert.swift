@@ -4,22 +4,8 @@
 //
 //  Created by finn on 7/29/25.
 //
+
 import SwiftUI
-
-/*
-사용 예시
-@State private var showAlert = false
-
-// 취소 액션 생략 dismiss 효과
-.alert(.deleteProject, isPresented: $showAlert) {
-    deleteProject()
-}
-
-// 취소 액션 처리
-.alert(.deleteProject, isPresented: $showAlert, 
-       cancelAction: { print("취소됨") },
-       confirmAction: { deleteProject() })
-*/
 
 /// 공통 Alert 타입 정의
 enum AlertType {
@@ -29,7 +15,7 @@ enum AlertType {
     case retakeCurrentVideo
     case endShooting
     case exitWhileRecording
-    
+
     var title: String {
         switch self {
         case .deleteProject: return "프로젝트를 삭제하시겠습니까?"
@@ -40,7 +26,7 @@ enum AlertType {
         case .exitWhileRecording: return "다시 찍으시겠어요?"
         }
     }
-    
+
     var message: String {
         switch self {
         case .deleteProject: return "프로젝트와 클립이 모두 삭제됩니다."
@@ -51,7 +37,7 @@ enum AlertType {
         case .exitWhileRecording: return "지금 나가면 방금 찍은 영상이 지워져요."
         }
     }
-    
+
     var confirmText: String {
         switch self {
         case .deleteProject: return "삭제"
@@ -64,6 +50,20 @@ enum AlertType {
     }
 }
 
+/*
+ 사용 예시
+ @State private var showAlert = false
+
+ // 취소 액션 생략 dismiss 효과
+ .alert(.deleteProject, isPresented: $showAlert) {
+     deleteProject()
+ }
+
+ // 취소 액션 처리
+ .alert(.deleteProject, isPresented: $showAlert,
+        cancelAction: { print("취소됨") },
+        confirmAction: { deleteProject() })
+ */
 
 extension View {
     func alert(
@@ -82,4 +82,3 @@ extension View {
         }
     }
 }
-
