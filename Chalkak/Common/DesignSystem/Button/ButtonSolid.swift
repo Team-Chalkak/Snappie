@@ -80,3 +80,20 @@ struct ButtonSolidSecondary: View {
         .buttonStyle(SnappieButtonStyle(styler: styler))
     }
 }
+
+#Preview {
+    SnappieButton(.solidPrimary(
+        title: "label",
+        size: .large
+    )) {
+        print("solidPrimary button tapped")
+    }
+    
+    SnappieButton(.solidSecondary(
+        contentType: .icon(.arrowBackward),
+        size: .large,
+        isOutlined: false
+    )) {
+        print("solidPrimary button tapped")
+    }
+}

@@ -28,13 +28,7 @@ struct GuideCameraView: View {
     
     var body: some View {
         ZStack {
-            if viewModel.isAligned {
-                Color.blue
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-            }
-
-            CameraView(guide: guide, viewModel: cameraViewModel)
+            CameraView(guide: guide, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
                 .onAppear {
                     cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
                         viewModel.liveBoundingBoxes = bboxes
@@ -47,6 +41,9 @@ struct GuideCameraView: View {
                     .aspectRatio(contentMode: .fit)
                     .allowsHitTesting(false)
                     .scaleEffect(x: cameraViewModel.isUsingFrontCamera ? -1 : 1, y: 1)
+                    .padding(.top, 12)
+                    .padding(.horizontal, 16)
+                    .frame(maxHeight: .infinity, alignment: .top)
             } else {
                 Text("윤곽선 이미지 없음")
                     .foregroundColor(.gray)

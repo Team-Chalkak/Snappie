@@ -25,13 +25,19 @@ import SwiftUI
       1) "내보내기" 버튼이 표시됨
       2) "다음" 버튼 → 기존 Project에 새로운 Clip 모델 추가
  
- ## 서브뷰
+ ## 구성 요소(서브뷰)
  - VideoPreviewView: 영상의 현재 구간을 보여주는 프리뷰 뷰
  - TrimmingControlView: 영상 재생 버튼과 트리밍 타임라인 UI를 포함한 조작 패널
  
  ## 호출 위치
  - CameraView → ClipEditView로 이동
  - 호출 예시:
+    ClipEditView(
+        clipURL: url,
+        guide: guide,
+        cameraSetting: cameraSetting,
+        timeStampedTiltList: timeStampedTiltList
+    )
  */
 struct ClipEditView: View {
     // 1. Input properties
@@ -44,6 +50,7 @@ struct ClipEditView: View {
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
     @State private var autoPlayEnabled = true
+    @State private var showActionSheet = false
     
     // 3. init
     init(
@@ -64,66 +71,74 @@ struct ClipEditView: View {
     
     // 4. body
     var body: some View {
-        VStack(alignment: .center, spacing: 20, content: {
-            Spacer().frame(height: 20)
+        ZStack {
+            SnappieColor.darkHeavy
+                .ignoresSafeArea()
+            
+            VStack(alignment: .center, spacing: 16, content: {
+                SnappieNavigationBar(
+                    navigationTitle: "클립 편집",
+                    leftButtonType: .backward {
+                        coordinator.popLast()
+                    },
+                    rightButtonType: guide != nil ?
+                        .oneButton(
+                            // 두번째 촬영 이후
+                            .init(label: "완료") {
+                                showActionSheet = true
+                            }
+                        ) :
+                        .oneButton(
+                            // 첫번째 촬영
+                            .init(label: "다음") {
+                                editViewModel.saveProjectData()
+                                coordinator.push(
+                                    .overlay(clip: editViewModel.createClipData())
+                                )
+                            }
+                        )
+                )
 
-            Text("사용할 부분만 트리밍 해주세요")
+                VideoControlView(
+                    isDragging: isDragging,
+                    overlayImage: guide?.outlineImage,
+                    editViewModel: editViewModel
+                )
 
-            VideoPreviewView(
-                previewImage: editViewModel.previewImage,
-                player: editViewModel.player,
-                isDragging: isDragging,
-                overlayImage: guide?.outlineImage
-            )
+                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+            })
+            .padding(.bottom, 14)
+        }
+        .navigationBarBackButtonHidden(true)
+        .confirmationDialog(
+            "A Short Title is Best",
+            isPresented: $showActionSheet,
+            titleVisibility: .visible
+        ) {
+            Button("촬영 이어가기") {
+                // 트리밍한 클립 프로젝트에 추가
+                editViewModel.appendClipToCurrentProject()
+                
+                // 가이드 카메라로 이동
+                if let guide = guide {
+                    coordinator.push(.boundingBox(guide: guide))
+                }
+            }
 
-            TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
-        })
+            Button("촬영 프로세스 마치기") {
+                // 트리밍한 클립 프로젝트에 추가
+                editViewModel.appendClipToCurrentProject()
+                
+                coordinator.push(.boundingBox(guide: nil))
+            }
+
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("이어서 찍거나 전체 영상 편집으로 이동할 수 있습니다.")
+        }
         .task {
             if guide != nil {
                 editViewModel.applyReferenceDuration()
-            }
-        }
-        .navigationTitle("영상 트리밍")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if guide != nil {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        Task {
-                            // 현재까지 작업하던 영상 합쳐서 미리보기 화면으로 보내기
-                            editViewModel.appendClipToCurrentProject()
-                            let finalURL = try await editViewModel.mergeVideo()
-                            coordinator.push(.projectPreview(finalVideoURL: finalURL))
-                        }
-                    } label: {
-                        if editViewModel.videoManager.isProcessing {
-                            ProgressView()
-                        } else {
-                            Text("완료하기")
-                        }
-                    }
-                    .disabled(editViewModel.videoManager.isProcessing)
-                }
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("다음") {
-                    if guide == nil {
-                        // 프로젝트 swiftdata에 저장
-                        editViewModel.saveProjectData()
-                        // 오버레이 생성 화면으로 이동
-                        coordinator.push(
-                            .overlay(clip: editViewModel.createClipData())
-                        )
-                    } else {
-                        // 트리밍한 클립 프로젝트에 추가
-                        editViewModel.appendClipToCurrentProject()
-                        // 가이드 카메라로 이동
-                        if let guide = guide {
-                            coordinator.push(.boundingBox(guide: guide))
-                        }
-                    }
-                }
             }
         }
     }

@@ -32,7 +32,7 @@ struct OverlayDisplayView: View {
                 Image(uiImage: firstFrame)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: Layout.overlayWidth, height: Layout.overlayHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
             }
 
             /// ✅ 오버레이: 윤곽선
@@ -40,7 +40,6 @@ struct OverlayDisplayView: View {
                 Image(uiImage: outline)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: Layout.overlayWidth, height: Layout.overlayHeight)
             } else {
                 Text("윤곽선 이미지 없음")
                     .foregroundColor(.gray)

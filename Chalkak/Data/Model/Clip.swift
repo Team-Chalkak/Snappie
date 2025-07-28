@@ -44,6 +44,7 @@ class Clip {
     /// - Parameters:
     ///   - id: 클립의 고유 ID (기본값은 UUID).
     ///   - videoData: 영상의 데이터.
+    ///   - originalDuration: 원본 영상의 총 길이.
     ///   - startPoint: 시작 시점 (초 단위).
     ///   - endPoint: 종료 시점 (초 단위).
     ///   - createdAt: 생성일자 (기본값은 현재 시각).

@@ -84,3 +84,81 @@ struct SnappieButton: View {
         }
     }
 }
+
+#Preview("solidButtons") {
+    // solidPrimary
+    SnappieButton(.solidPrimary(
+        title: "label",
+        size: .large
+    )) {
+        print("solidPrimary button tapped")
+    }
+    
+    // solidSecondary
+    SnappieButton(.solidSecondary(
+        contentType: .icon(.arrowBackward),
+        size: .large,
+        isOutlined: false
+    )) {
+        print("solidPrimary button tapped")
+    }
+}
+
+#Preview("iconButtons") {
+    ZStack {
+        SnappieColor.primaryHeavy
+        
+        VStack {
+            // iconNormal
+            SnappieButton(.iconNormal(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            // iconSolid
+            SnappieButton(.iconSolid(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            // iconBackground
+            SnappieButton(.iconBackground(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            // iconWithText
+            SnappieButton(.iconWithText(
+                title: "Timer",
+                icon: .timer3sec,
+                isActive: true
+            )) {
+                print("iconWithText button tapped")
+            }
+        }
+    }
+}
+
+#Preview("glassButtons") {
+    // glassPill
+    SnappieButton(.glassPill(
+        contentType: .text("pill"),
+        isActive: true)
+    ) {
+        print("glassPill button tapped")
+    }
+    
+    // glassEllipse
+    SnappieButton(.glassEllipse(
+        contentType: .text(".5"),
+        isActive: false)
+    ) {
+        print("glassEllipse button tapped")
+    }
+}

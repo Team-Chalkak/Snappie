@@ -2,7 +2,7 @@
 //  TorchMode.swift
 //  Chalkak
 //
-//  Created by finn on 7/21/25.
+//  Created by 정종문 on 7/21/25.
 //
 
 /// 카메라 토치 모드(플래시) 정의

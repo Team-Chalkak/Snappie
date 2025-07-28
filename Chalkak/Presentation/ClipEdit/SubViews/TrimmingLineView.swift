@@ -14,7 +14,7 @@ import SwiftUI
  좌우 핸들을 드래그해 트리밍 범위를 설정하며, 미리보기 이미지도 실시간으로 갱신된다.
 
  ## 주요 기능
- - 썸네일 라인 표시
+ - 썸네일 라인 표시 (고정 305pt)
  - 트리밍 범위 시각화 및 드래그 제스처 처리
  - 트리밍 시작/종료 지점에 따른 프리뷰 이미지 갱신
 
@@ -22,149 +22,145 @@ import SwiftUI
  - TrimmingControlView 내부에서 사용
  - 호출 예시 : TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
  */
+import SwiftUI
+
 struct TrimmingLineView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
     var body: some View {
-        GeometryReader { geometry in
-            let totalWidth = geometry.size.width
-            let thumbnailWidth = editViewModel.thumbnailWidth(for: totalWidth)
-            let startX = editViewModel.startX(for: totalWidth)
-            let endX = editViewModel.endX(for: totalWidth)
-            let trimmingWidth = editViewModel.trimmingWidth(for: totalWidth)
+        /// 내부 상수 선언
+        let totalWidth: CGFloat = Layout.totalWidth
+        let thumbnailLineWidth: CGFloat = Layout.thumbnailLineWidth
+        let handleWidth: CGFloat = Layout.handleWidth
+        let thumbnailHeight: CGFloat = Layout.thumbnailHeight
 
-            ZStack(alignment: .leading) {
-                // 1. 썸네일 라인
+        /// 뷰모델에서 계산
+        let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
+        let startX = max(0, editViewModel.startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
+        let endX = max(startX + 1, editViewModel.endX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
+        let duration = editViewModel.duration
+
+        ZStack(alignment: .leading) {
+            // 1. 썸네일 라인 + 어두운 좌우 핸들
+            HStack(spacing: 0) {
+                TrimmingHandleView(isStart: true)
+
                 HStack(spacing: 0) {
-                    ForEach(editViewModel.thumbnails, id: \.self) { image in
+                    ForEach(Array(editViewModel.thumbnails.enumerated()), id: \.offset) { _, image in
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: thumbnailWidth, height: Layout.thumbnailHeight)
-                            .clipped()
+                            .scaledToFill()
+                            .frame(width: thumbnailUnitWidth, height: thumbnailHeight)
                     }
                 }
+                .clipped()
 
-                // 2. 어두운 양옆 영역
-                HStack(spacing: 0) {
-                    Rectangle().fill(Color.black.opacity(0.5)).frame(width: startX)
-                    Rectangle().fill(Color.clear).frame(width: trimmingWidth)
-                    Rectangle().fill(Color.black.opacity(0.5))
-                }
-
-                // 3. 트리밍 테두리
-                RoundedRectangle(cornerRadius: Layout.trimmingCornerRadius)
-                    .strokeBorder(Color.yellow, lineWidth: Layout.trimmingLineWidth)
-                    .frame(width: trimmingWidth, height: Layout.thumbnailHeight)
-                    .position(x: startX + trimmingWidth / 2, y: Layout.timelineY)
-
-                // 4. 핸들 (좌/우)
-                draggableHandleView(positionX: startX, totalWidth: totalWidth, isStart: true)
-                draggableHandleView(positionX: endX, totalWidth: totalWidth, isStart: false)
-
-                // 5. 영상 첫번째 프레임 강조 박스
-                RoundedRectangle(cornerRadius: Layout.frameBoxCornerRadius)
-                    .stroke(Layout.frameBoxStrokeColor, lineWidth: 2)
-                    .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
-                    .position(x: startX + Layout.frameBoxOffsetX, y: Layout.timelineY)
+                TrimmingHandleView(isStart: false)
             }
-            .gesture(
-                DragGesture()
-                    .onChanged { gesture in
-                        isDragging = true
-                        editViewModel.player?.pause()
-                        editViewModel.isPlaying = false
+            .frame(width: totalWidth, height: Layout.thumbnailHeight)
 
-                        let locationRatio = gesture.location.x / geometry.size.width
-                        let centerTime = locationRatio * editViewModel.duration
-                        let currentCenter = (editViewModel.startPoint + editViewModel.endPoint) / 2
-                        let delta = centerTime - currentCenter
-
-                        editViewModel.shiftTrimmingRange(by: delta)
-
-                        Task {
-                            await editViewModel.updatePreviewImage(at: editViewModel.startPoint)
-                        }
-                    }
-                    .onEnded { _ in
-                        isDragging = false
-                        editViewModel.seek(to: editViewModel.startPoint)
-                    }
+            // 2-1. 어두운 오버레이 (좌측)
+            UnevenRoundedRectangle(
+                topLeadingRadius: 6,
+                bottomLeadingRadius: 6
             )
-        }
-        .frame(height: Layout.timelineHeight)
-    }
+            .fill(SnappieColor.darkHeavy.opacity(0.6))
+            .frame(width: startX, height: thumbnailHeight)
 
-    //MARK: - Function
-    /// 핸들 공통 View + 제스처
-    private func draggableHandleView(positionX: CGFloat, totalWidth: CGFloat, isStart: Bool) -> some View {
-        handleView()
-            .position(x: positionX, y: Layout.timelineY)
-            .gesture(
-                DragGesture()
-                    .onChanged { gesture in
-                        isDragging = true
-                        editViewModel.player?.pause()
-                        editViewModel.isPlaying = false
+            // 2-2. 어두운 오버레이 (우측)
+            UnevenRoundedRectangle(
+                bottomTrailingRadius: 6,
+                topTrailingRadius: 6
+            )
+            .fill(SnappieColor.darkHeavy.opacity(0.6))
+            .frame(width: totalWidth - endX, height: thumbnailHeight)
+            .position(x: endX + (totalWidth - endX) / 2, y: thumbnailHeight / 2)
 
-                        let locationX = gesture.location.x / totalWidth * editViewModel.duration
+            // 3. 트리밍 박스
+            Rectangle()
+                .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+                .frame(width: endX - startX, height: Layout.trimmingBoxHeight)
+                .position(x: (startX + endX) / 2, y: thumbnailHeight / 2)
 
-                        if isStart {
-                            let newStart = max(
-                                0,
-                                min(locationX, editViewModel.endPoint - 0.1)
-                            )
+            // 4-1. 밝은 핸들 - 왼쪽 (드래그 가능)
+            TrimmingHandleView(isStart: true)
+                .position(x: startX - handleWidth / 2, y: thumbnailHeight / 2)
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            isDragging = true
+                            editViewModel.player?.pause()
+                            editViewModel.isPlaying = false
+
+                            let x = gesture.location.x - handleWidth
+                            let ratio = max(0, min(x / thumbnailLineWidth, 1))
+                            let newStart = min(ratio * duration, editViewModel.endPoint - 0.1)
+
                             editViewModel.updateStart(newStart)
-                        } else {
-                            let newEnd = min(
-                                editViewModel.duration,
-                                max(locationX, editViewModel.startPoint + 0.1)
-                            )
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            editViewModel.seek(to: editViewModel.startPoint)
+                        }
+                )
+
+            // 4-2. 밝은 핸들 - 오른쪽 (드래그 가능)
+            TrimmingHandleView(isStart: false)
+                .position(x: endX + handleWidth / 2, y: thumbnailHeight / 2)
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            isDragging = true
+                            editViewModel.player?.pause()
+                            editViewModel.isPlaying = false
+
+                            let x = gesture.location.x - handleWidth
+                            let ratio = max(0, min(x / thumbnailLineWidth, 1))
+                            let newEnd = max(ratio * duration, editViewModel.startPoint + 0.1)
+
                             editViewModel.updateEnd(newEnd)
                         }
-                    }
-                    .onEnded { _ in
-                        isDragging = false
-                        let seekTime = isStart ? editViewModel.startPoint : editViewModel.endPoint
-                        editViewModel.seek(to: seekTime)
-                    }
-            )
-    }
-
-    /// 핸들 UI 재사용 함수
-    private func handleView() -> some View {
-        RoundedRectangle(cornerRadius: Layout.handleCornerRadius)
-            .fill(Color.yellow)
-            .frame(width: Layout.handleWidth, height: Layout.handleHeight)
+                        .onEnded { _ in
+                            isDragging = false
+                            editViewModel.seek(to: editViewModel.endPoint)
+                        }
+                )
+            
+            // 5. 영상 첫번째 프레임 강조 박스
+            RoundedRectangle(cornerRadius: Layout.frameBoxCornerRadius)
+                .stroke(Layout.frameBoxStrokeColor, lineWidth: 2)
+                .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
+                .position(
+                    x: startX + Layout.frameBoxOffsetX,
+                    y: thumbnailHeight / 2
+                )
+        }
+        .frame(width: totalWidth, height: Layout.thumbnailHeight)
     }
 }
 
 // MARK: - Layout Constants
-
 private extension TrimmingLineView {
     enum Layout {
-        /// 썸네일
+        // 전체 뷰 너비
+        static let totalWidth: CGFloat = 345
+        
+        // 썸네일
         static let thumbnailHeight: CGFloat = 60
+        static let thumbnailLineWidth: CGFloat = 305
+        
+        // 핸들
+        static let handleWidth: CGFloat = 20
+        
+        // 트리밍박스 : 썸네일 높이 - 2
+        static let trimmingBoxHeight: CGFloat = 58
 
-        /// 타임라인 위치
-        static let timelineY: CGFloat = 30
-        static let timelineHeight: CGFloat = 60
-
-        /// 트리밍 테두리
-        static let trimmingCornerRadius: CGFloat = 4
-        static let trimmingLineWidth: CGFloat = 2
-
-        /// 핸들
-        static let handleCornerRadius: CGFloat = 3
-        static let handleWidth: CGFloat = 10
-        static let handleHeight: CGFloat = 60
-
-        /// 영상 첫번째 프레임 표시
+        // 첫번째 프레임 강조 박스
         static let frameBoxCornerRadius: CGFloat = 6
-        static let frameBoxWidth: CGFloat = 34
-        static let frameBoxHeight: CGFloat = 57
-        static let frameBoxOffsetX: CGFloat = 21
-        static let frameBoxStrokeColor: Color = .white
+        static let frameBoxWidth: CGFloat = 38
+        static let frameBoxHeight: CGFloat = 56
+        static let frameBoxOffsetX: CGFloat = 19
+        static let frameBoxStrokeColor: Color = SnappieColor.labelPrimaryNormal
     }
 }

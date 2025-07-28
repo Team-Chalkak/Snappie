@@ -53,7 +53,9 @@ final class OverlayViewModel: ObservableObject {
         extractor.extractFrame(from: clip.videoURL, at: clip.startPoint) { [weak self] in
             DispatchQueue.main.async {
                 self?.isLoading = false
-                self?.isOverlayReady = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self?.isOverlayReady = true
+                }
             }
         }
     }

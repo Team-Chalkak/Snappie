@@ -71,30 +71,35 @@ struct ButtonGlassEllipse: View {
     
     // body
     var body: some View {
-        Button (action: action) {
-            Button(action: action) {
-                switch contentType {
-                case .icon(let icon):
-                    IconView(
-                        iconType: icon,
-                        scale: styler.iconScale()
-                    )
-                case .text(let text):
-                    Text(text)
-                        .font(SnappieFont.style(styler.fontStyle()))
-                }
+        Button(action: action) {
+            switch contentType {
+            case .icon(let icon):
+                IconView(
+                iconType: icon,
+                scale: styler.iconScale()
+                )
+            case .text(let text):
+                Text(text)
+                    .font(SnappieFont.style(styler.fontStyle()))
             }
         }
+        .frame(width: styler.height(), alignment: .center)
         .buttonStyle(SnappieButtonStyle(styler: styler))
     }
 }
 
 #Preview {
-    ButtonGlassPill(contentType: .text("pill"), isActive: true) {
-        print("룰루")
+    SnappieButton(.glassPill(
+        contentType: .text("pill"),
+        isActive: true)
+    ) {
+        print("glassPill button tapped")
     }
     
-    ButtonGlassEllipse(contentType: .text("ellipse"), isActive: true) {
-        print("룰루")
+    SnappieButton(.glassEllipse(
+        contentType: .text(".5"),
+        isActive: false)
+    ) {
+        print("glassEllipse button tapped")
     }
 }

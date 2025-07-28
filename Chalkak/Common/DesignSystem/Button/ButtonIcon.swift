@@ -33,7 +33,7 @@ struct ButtonIconNormal: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))
@@ -64,7 +64,7 @@ struct ButtonIconSolid: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))
@@ -95,7 +95,7 @@ struct ButtonIconBackground: View {
         Button (action: action) {
             IconView(
                 iconType: icon,
-                scale: styler.iconScale(),
+                scale: styler.iconScale()
             )
         }
         .buttonStyle(SnappieButtonStyle(styler: styler))
@@ -145,7 +145,34 @@ struct ButtonIconWithText: View {
 
 
 #Preview {
-    ButtonIconWithText(title: "Timer", icon: .timer3sec, isActive: true) {
-        print("")
+    ZStack {
+        SnappieColor.primaryHeavy
+        
+        VStack {
+            SnappieButton(.iconNormal(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            SnappieButton(.iconSolid(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            SnappieButton(.iconBackground(
+                icon: .flashOn,
+                size: .large
+            )) {
+                print("iconNormal button tapped")
+            }
+            
+            SnappieButton(.iconWithText(title: "Timer", icon: .timer3sec, isActive: true)) {
+                print("iconWithText button tapped")
+            }
+        }
     }
 }

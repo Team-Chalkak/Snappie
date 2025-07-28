@@ -15,13 +15,13 @@ import SwiftUI
  ### 기본 사용
  ```swift
  Text("Dynamic Font")
-     .font(SnappieFont.style(.recordTimer))
+     .font(SnappieFont.style(.proBody1))
  ```
  
  ### 크기 다르게 쓰고 싶을 때
  ```swift
  Text("Dynamic Font")
-     .font(SnappieFont.style(.recordTimer, size: 15))
+     .font(SnappieFont.style(.proBody1, size: 15))
  ```
 
  */
@@ -61,6 +61,7 @@ enum SnappieFont {
         case proLabel1
         case proLabel2
         case proLabel3
+        case proCaption1
         
         case roundCaption1
         case roundCaption2
@@ -71,7 +72,7 @@ enum SnappieFont {
         
         var fontName: FontType {
             switch self {
-            case .proBody1, .proLabel1, .proLabel2, .proLabel3:
+            case .proBody1, .proLabel1, .proLabel2, .proLabel3, .proCaption1:
                     .sfPro
                 
             case .roundCaption1, .roundCaption2:
@@ -92,10 +93,14 @@ enum SnappieFont {
                 14
             case .proLabel3:
                 14
+            case .proCaption1:
+                14
+                
             case .roundCaption1:
                 12
             case .roundCaption2:
                 10
+                
             case .kronaLabel1:
                 14
             case .kronaCaption1:
@@ -110,15 +115,18 @@ enum SnappieFont {
             case .proBody1:
                     .regular
             case .proLabel1:
-                    .medium
+                    .semibold
             case .proLabel2:
-                    .medium
+                    .semibold
             case .proLabel3:
                     .semibold
+            case .proCaption1:
+                    .regular
             case .roundCaption1:
                     .regular
             case .roundCaption2:
                     .regular
+                
             case .kronaLabel1:
                     .regular
             case .kronaCaption1:
@@ -145,10 +153,14 @@ enum SnappieFont {
                 self.getSpacing(scale: -2)
             case .proLabel3:
                 self.getSpacing(scale: -2)
+            case .proCaption1:
+                self.getSpacing(scale: -1.2)
+
             case .roundCaption1:
                 self.getSpacing(scale: -1.2)
             case .roundCaption2:
                 self.getSpacing(scale: -2)
+                
             case .kronaLabel1:
                 self.getSpacing(scale: -2)
             case .kronaCaption1:
