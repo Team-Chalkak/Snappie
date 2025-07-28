@@ -95,6 +95,7 @@
 		C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */; };
 		C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */; };
 		C5886D422E37778B000566C5 /* ProjectInfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */; };
+		C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D452E37AEDB000566C5 /* ProjectListView.swift */; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
 		C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */; };
 		C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */; };
@@ -229,6 +230,7 @@
 		C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoMenuView.swift; sourceTree = "<group>"; };
 		C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardMenuView.swift; sourceTree = "<group>"; };
 		C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoTextView.swift; sourceTree = "<group>"; };
+		C5886D452E37AEDB000566C5 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
 		C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButtonStyle.swift; sourceTree = "<group>"; };
@@ -700,6 +702,7 @@
 			isa = PBXGroup;
 			children = (
 				C5886D372E375B13000566C5 /* SubViews */,
+				C5886D452E37AEDB000566C5 /* ProjectListView.swift */,
 				C5886D352E375A94000566C5 /* ProjectListViewModel.swift */,
 			);
 			path = ProjectList;
@@ -1007,6 +1010,7 @@
 				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
+				C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */,
 				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,

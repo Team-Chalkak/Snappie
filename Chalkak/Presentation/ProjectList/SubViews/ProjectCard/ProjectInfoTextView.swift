@@ -33,7 +33,7 @@ struct ProjectInfoTextView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .center, spacing: 2) {
                 // 조회가 되면 없어지는 빨간 원
-                if !isCurrentProject && isSeen {
+                if !isCurrentProject && !isSeen {
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundStyle(Color.redRecording)
@@ -58,9 +58,9 @@ struct ProjectInfoTextView: View {
 
 #Preview {
     ProjectInfoTextView(
-        isCurrentProject: true,
+        isCurrentProject: false,
         projectTitle: "Project title",
-        isSeen: true,
+        isSeen: false,
         timeCreated: Date()
     )
     .frame(width: 300, height: 300)
