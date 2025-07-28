@@ -30,6 +30,8 @@ class Project: Identifiable {
     /// 이후 클립 편집 시 초기값으로 사용.
     var referenceDuration: Double?
     
+    /// 유저가 새 프로젝트를 확인했는지 여부
+    var isChecked: Bool = false
 
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
@@ -41,12 +43,14 @@ class Project: Identifiable {
         guide: Guide? = nil,
         clipList: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
-        referenceDuration: Double? = nil
+        referenceDuration: Double? = nil,
+        isChecked: Bool = true
     ) {
         self.id = id
         self.guide = guide
         self.clipList = clipList
         self.cameraSetting = cameraSetting
         self.referenceDuration = referenceDuration
+        self.isChecked = isChecked
     }
 }
