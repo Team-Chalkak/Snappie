@@ -112,6 +112,18 @@ class SwiftDataManager {
         let descriptor = FetchDescriptor<Project>()
         return (try? context.fetch(descriptor)) ?? []
     }
+    
+    /// 프로젝트에 'coverImage' 업데이트
+    func updateProjectCoverImage(projectID: String, coverImage: UIImage) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("⚠️ 해당 Project(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+
+        project.coverImage = coverImage.jpegData(compressionQuality: 0.8)
+        saveContext()
+    }
+    
 
     // MARK: - Clip
 

@@ -126,4 +126,15 @@ final class OverlayViewModel: ObservableObject {
         return guide
     }
     
+    /// 커버이미지(첫 클립 첫 프레임 이미지(extractedImage)) Project에 저장
+    @MainActor
+    func saveCoverImageToProject() {
+        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+           let cover = extractedImage {
+            SwiftDataManager.shared.updateProjectCoverImage(
+                projectID: projectID,
+                coverImage: cover
+            )
+        }
+    }
 }

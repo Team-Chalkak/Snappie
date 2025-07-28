@@ -98,6 +98,7 @@ struct OverlayView: View {
             Button(action: {
                 if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
                     guide = newGuide
+                    overlayViewModel.saveCoverImageToProject()
                     coordinator.push(.boundingBox(guide: newGuide))
                 }
             }) {
