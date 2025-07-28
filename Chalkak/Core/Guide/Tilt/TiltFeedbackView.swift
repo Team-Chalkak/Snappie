@@ -77,7 +77,7 @@ struct TiltFeedbackView: View {
         // 40부터 50까지 디졸브
         else if absOffsetX > 40 || absOffsetY > 40 {
             let offsetToCalc = max(absOffsetX, absOffsetY)
-            return (50 - offsetToCalc) / 10
+            return ((50 - offsetToCalc) / 10)
         }
         // 40 미만이면 100프로
         else {

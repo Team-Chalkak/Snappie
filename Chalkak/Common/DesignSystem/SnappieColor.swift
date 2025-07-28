@@ -35,4 +35,7 @@ enum SnappieColor {
     static let containerFillNormal: Color = SnappieColor.darkStrong
     static let redRecording: Color = Color("red-recording")
     static let gradientFillNormal = Gradient(colors: [ Color("matcha-200").opacity(0.2), Color("deep-green-600").opacity(0.15)])
+    static var overlayStroke: CGColor? {
+        return UIColor(named: "matcha-100")?.cgColor
+    }
 }

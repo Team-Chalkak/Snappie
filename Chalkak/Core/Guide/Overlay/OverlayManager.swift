@@ -152,7 +152,9 @@ class OverlayManager: ObservableObject {
         context.clear(CGRect(x: 0, y: 0, width: width, height: height))
 
         /// 윤곽선 색상, 두께
-        context.setStrokeColor(UIColor.white.cgColor)
+        if let strokeColor = SnappieColor.overlayStroke {
+            context.setStrokeColor(strokeColor)
+        }
         context.setLineWidth(1)
 
         /// 마스크 이미지의 알파 경계를 따라 선 그리기
