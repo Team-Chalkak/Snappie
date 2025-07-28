@@ -9,14 +9,21 @@ import SwiftUI
 
 struct CameraRecordView: View {
     @ObservedObject var viewModel: CameraViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     var body: some View {
         HStack(spacing: 0) {
-            Button(action: {}) {
-                Image(systemName: "film.stack")
-                    .font(.system(size: 32))
-                    .foregroundStyle(SnappieColor.primaryLight)
+            Button(action: {
+                coordinator.push(.projectEdit)
+            }) {
+                ZStack {
+                    // TODO: - 이미지 표시 위한 분기 처리 필요
+                    Color.gray
+                        .frame(width: 70, height: 70)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
+            
             Spacer()
             
             RecordButton(

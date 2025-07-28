@@ -120,8 +120,9 @@ final class OverlayViewModel: ObservableObject {
             cameraHeight: 1.0
         )
         
-        SwiftDataManager.shared.saveContext()
-        
+        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID") {
+            SwiftDataManager.shared.saveGuideToProject(projectID: projectID, guide: guide)
+        }
         return guide
     }
     

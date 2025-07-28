@@ -36,7 +36,7 @@ struct ChalkakApp: App {
                                 cameraSetting: cameraSetting,
                                 timeStampedTiltList: timeStampedTiltList
                             )
-
+                            
                         case .overlay(let clip):
                             OverlayView(clip: clip)
                                 .toolbar(.hidden, for: .navigationBar)
@@ -48,6 +48,9 @@ struct ChalkakApp: App {
                             
                         case .projectPreview(finalVideoURL: let finalVideoURL):
                             ProjectPreviewView(finalVideoURL: finalVideoURL)
+                        
+                        case .projectEdit:
+                            ProjectEditView()
                         }
                     }
             }

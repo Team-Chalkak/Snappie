@@ -7,12 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		992EE7D22E34578C0079AFBF /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
 		9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078C2E340459006BE89C /* VideoControlPanelView.swift */; };
 		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
 		934007912E3652C5006BE89C /* TrimmingHandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934007902E3652BD006BE89C /* TrimmingHandleView.swift */; };
 		93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A137662E32756A00777CF8 /* VideoControlView.swift */; };
+		992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */; };
+		992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */; };
+		992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */; };
+		992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */; };
+		992EE7CC2E32AEE00079AFBF /* EditableClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7CB2E32AED70079AFBF /* EditableClip.swift */; };
+		992EE7CE2E32AF030079AFBF /* ClipTrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */; };
+		992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */; };
+		992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */; };
+		992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */; };
+		992EE8112E36CECD0079AFBF /* ProjectTrimmingLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8102E36CEBE0079AFBF /* ProjectTrimmingLineView.swift */; };
+		992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8122E36CF020079AFBF /* ProjectTrimmingHandle.swift */; };
+		992EE8152E36CF660079AFBF /* ProjectTimeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8142E36CF600079AFBF /* ProjectTimeBoardView.swift */; };
+		992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
 		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
@@ -45,7 +57,6 @@
 		993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F362E267E0C0059B70A /* CameraView.swift */; };
 		993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F372E267E0C0059B70A /* CameraViewModel.swift */; };
 		993A1F702E267E0C0059B70A /* ShootState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F382E267E0C0059B70A /* ShootState.swift */; };
-		993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */; };
 		993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3B2E267E0C0059B70A /* OverlayView.swift */; };
 		993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */; };
 		993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */; };
@@ -76,6 +87,8 @@
 		B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */; };
 		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
+		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
 		C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */; };
 		C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */; };
@@ -120,12 +133,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
 		9340078C2E340459006BE89C /* VideoControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlPanelView.swift; sourceTree = "<group>"; };
 		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
 		934007902E3652BD006BE89C /* TrimmingHandleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingHandleView.swift; sourceTree = "<group>"; };
 		93A137662E32756A00777CF8 /* VideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlView.swift; sourceTree = "<group>"; };
+		992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditView.swift; sourceTree = "<group>"; };
+		992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditViewModel.swift; sourceTree = "<group>"; };
+		992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineSliderView.swift; sourceTree = "<group>"; };
+		992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButtonControlView.swift; sourceTree = "<group>"; };
+		992EE7CB2E32AED70079AFBF /* EditableClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableClip.swift; sourceTree = "<group>"; };
+		992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipTrimmingView.swift; sourceTree = "<group>"; };
+		992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVMutableComposition + Ext.swift"; sourceTree = "<group>"; };
+		992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTimeView.swift; sourceTree = "<group>"; };
+		992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectThumbnailsView.swift; sourceTree = "<group>"; };
+		992EE8102E36CEBE0079AFBF /* ProjectTrimmingLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTrimmingLineView.swift; sourceTree = "<group>"; };
+		992EE8122E36CF020079AFBF /* ProjectTrimmingHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTrimmingHandle.swift; sourceTree = "<group>"; };
+		992EE8142E36CF600079AFBF /* ProjectTimeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTimeBoardView.swift; sourceTree = "<group>"; };
+		992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTimelineView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,7 +183,6 @@
 		993A1F362E267E0C0059B70A /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		993A1F372E267E0C0059B70A /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		993A1F382E267E0C0059B70A /* ShootState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootState.swift; sourceTree = "<group>"; };
-		993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		993A1F3B2E267E0C0059B70A /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
 		993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayViewModel.swift; sourceTree = "<group>"; };
 		993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingControlView.swift; sourceTree = "<group>"; };
@@ -191,6 +215,8 @@
 		B64788692E33A34F0091A067 /* ZoomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButton.swift; sourceTree = "<group>"; };
 		B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraZoomControlView.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
+		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
 		C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButtonStyle.swift; sourceTree = "<group>"; };
@@ -240,13 +266,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		992EE7FA2E364B810079AFBF /* SubViews */ = {
+		992EE7C02E32AC820079AFBF /* ProjectEdit */ = {
 			isa = PBXGroup;
 			children = (
-				992EE7D12E3457820079AFBF /* OverlaySkeletonView.swift */,
-				993A1F3A2E267E0C0059B70A /* OverlayDisplayView.swift */,
+				992EE7CA2E32AECF0079AFBF /* Model */,
+				992EE7C92E32AEBE0079AFBF /* SubViews */,
+				992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */,
+				992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */,
+			);
+			path = ProjectEdit;
+			sourceTree = "<group>";
+		};
+		992EE7C92E32AEBE0079AFBF /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */,
+				992EE8142E36CF600079AFBF /* ProjectTimeBoardView.swift */,
+				992EE8122E36CF020079AFBF /* ProjectTrimmingHandle.swift */,
+				992EE8102E36CEBE0079AFBF /* ProjectTrimmingLineView.swift */,
+				992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */,
+				992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */,
+				992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */,
+				992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */,
+				992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */,
 			);
 			path = SubViews;
+			sourceTree = "<group>";
+		};
+		992EE7CA2E32AECF0079AFBF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				992EE7CB2E32AED70079AFBF /* EditableClip.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		993A1CBD2E2049D50059B70A = {
@@ -256,6 +308,7 @@
 				993A1F7D2E267E0C0059B70A /* ChalkakTests */,
 				993A1F812E267E0C0059B70A /* ChalkakUITests */,
 				993A1CC72E2049D50059B70A /* Products */,
+				C5886D292E371D26000566C5 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -428,9 +481,9 @@
 		993A1F3D2E267E0C0059B70A /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				992EE7FA2E364B810079AFBF /* SubViews */,
 				993A1F3C2E267E0C0059B70A /* OverlayViewModel.swift */,
 				993A1F3B2E267E0C0059B70A /* OverlayView.swift */,
+				C5886D2F2E371D9B000566C5 /* SubViews */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -476,6 +529,7 @@
 				993A1F392E267E0C0059B70A /* Camera */,
 				993A1F452E267E0C0059B70A /* ClipEdit */,
 				993A1F482E267E0C0059B70A /* ProjectPreview */,
+				992EE7C02E32AC820079AFBF /* ProjectEdit */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -564,6 +618,7 @@
 		993A21802E26AB9C0059B70A /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */,
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
 				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
@@ -610,6 +665,22 @@
 				99C93A0D2E27BB0300F42541 /* Path.swift */,
 			);
 			path = Enum;
+			sourceTree = "<group>";
+		};
+		C5886D292E371D26000566C5 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		C5886D2F2E371D9B000566C5 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */,
+				C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		C5C12EAF2E325CD100C4DC6D /* Button */ = {
@@ -812,6 +883,8 @@
 				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
+				992EE7CC2E32AEE00079AFBF /* EditableClip.swift in Sources */,
+				992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */,
 				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
 				B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */,
@@ -819,11 +892,12 @@
 				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
 				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
-				992EE7D22E34578C0079AFBF /* OverlaySkeletonView.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
+				992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */,
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
+				992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
 				C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */,
@@ -838,11 +912,14 @@
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
+				C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */,
+				C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
 				9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
+				992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */,
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
 				C5C12EB12E33684F00C4DC6D /* SnappieNavigationBar.swift in Sources */,
@@ -857,6 +934,7 @@
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
+				992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
@@ -868,25 +946,30 @@
 				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
+				992EE7CE2E32AF030079AFBF /* ClipTrimmingView.swift in Sources */,
 				C5C12EB42E3380B900C4DC6D /* NavigationButtonHStack.swift in Sources */,
 				C5C12EAA2E325A1800C4DC6D /* SolidButtonStyler.swift in Sources */,
 				993A1F6F2E267E0C0059B70A /* CameraViewModel.swift in Sources */,
+				992EE8152E36CF660079AFBF /* ProjectTimeBoardView.swift in Sources */,
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
-				993A1F712E267E0C0059B70A /* OverlayDisplayView.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
+				992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
+				992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */,
 				B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */,
 				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
-				993A1F762E267E0C0059B70A /* TrimmingTimeDisplay.swift in Sources */,
+				992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */,
 				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,
 				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				993A1F782E267E0C0059B70A /* ClipEditView.swift in Sources */,
 				993A1F792E267E0C0059B70A /* ClipEditViewModel.swift in Sources */,
+				992EE8112E36CECD0079AFBF /* ProjectTrimmingLineView.swift in Sources */,
 				C5FB3ED12E2E8EAF00A4C1BE /* Text + Ext.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
+				992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
@@ -1056,7 +1139,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = F83F8K6223;
+				DEVELOPMENT_TEAM = ZUGAVD3728;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
@@ -1090,7 +1173,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = F83F8K6223;
+				DEVELOPMENT_TEAM = ZUGAVD3728;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
