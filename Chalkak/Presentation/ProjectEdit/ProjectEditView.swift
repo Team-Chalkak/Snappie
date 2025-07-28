@@ -20,8 +20,7 @@ struct ProjectEditView: View {
                 VideoPreviewView(
                     previewImage: viewModel.previewImage,
                     player: viewModel.player,
-                    isDragging: viewModel.isDragging,
-                    overlayImage: nil
+                    isDragging: viewModel.isDragging
                 )
                 
                 // 선택된 클립이 있을 때만 Delete 버튼 표시
