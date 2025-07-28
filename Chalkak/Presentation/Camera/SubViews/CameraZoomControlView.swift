@@ -19,15 +19,15 @@ struct CameraZoomControlView: View {
     ]
 
     private var zoomIndicator: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Layout.zoomIndicatorSpacing) {
             ForEach(Array(zoomRanges.enumerated()), id: \.element.label) { index, range in
                 zoomButton(for: range, at: index)
             }
         }
-        .padding(.all, 8)
-        .background(SnappieColor.darkHeavy.opacity(0.3))
+        .padding(.all, Layout.zoomIndicatorPadding)
+        .background(SnappieColor.darkHeavy.opacity(Layout.zoomIndicatorBackgroundOpacity))
         .clipShape(Capsule())
-        .offset(y: viewModel.showingZoomControl ? -10 : 0)
+        .offset(y: viewModel.showingZoomControl ? Layout.zoomIndicatorOffset : 0)
     }
 
     private var zoomSliderView: some View {
@@ -37,19 +37,8 @@ struct CameraZoomControlView: View {
             maxZoom: viewModel.maxZoomScale,
             onValueChanged: viewModel.selectZoomScale
         )
-        .frame(width: 320, height: 40)
+        .frame(width: Layout.zoomSliderWidth, height: Layout.zoomSliderHeight)
         .transition(.move(edge: .top).combined(with: .opacity))
-    }
-
-    var body: some View {
-        VStack(spacing: 8) {
-            zoomIndicator
-
-            if viewModel.showingZoomControl && !viewModel.isTimerRunning {
-                zoomSliderView
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.showingZoomControl)
     }
 
     private func zoomButton(for range: ZoomRange, at index: Int) -> some View {
@@ -70,7 +59,7 @@ struct CameraZoomControlView: View {
         guard !viewModel.isTimerRunning,
               !range.isActive(viewModel.zoomScale) else { return }
 
-        withAnimation(.easeInOut(duration: 0.3)) {
+        withAnimation(.easeInOut(duration: Layout.animationDuration)) {
             viewModel.selectZoomScale(range.preset)
         }
     }
@@ -78,10 +67,33 @@ struct CameraZoomControlView: View {
     private func handleLongPressGesture() {
         guard !viewModel.isTimerRunning else { return }
 
-        withAnimation(.easeInOut(duration: 0.3)) {
+        withAnimation(.easeInOut(duration: Layout.animationDuration)) {
             viewModel.toggleZoomControl()
         }
     }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            zoomIndicator
+
+            if viewModel.showingZoomControl && !viewModel.isTimerRunning {
+                zoomSliderView
+            }
+        }
+        .animation(.easeInOut(duration: Layout.animationDuration), value: viewModel.showingZoomControl)
+        .padding(.bottom, Layout.zoomControlBottomPadding)
+    }
+}
+
+private extension Layout {
+    static let zoomControlBottomPadding: CGFloat = 13
+    static let animationDuration: CGFloat = 0.3
+    static let zoomIndicatorSpacing: CGFloat = 8
+    static let zoomIndicatorPadding: CGFloat = 8
+    static let zoomIndicatorBackgroundOpacity: CGFloat = 0.3
+    static let zoomIndicatorOffset: CGFloat = -8
+    static let zoomSliderWidth: CGFloat = 349
+    static let zoomSliderHeight: CGFloat = 48
 }
 
 /// 줌 범위 설정
