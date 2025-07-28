@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CameraView: View {
     let guide: Guide?
+    let isAligned: Bool
 
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
@@ -18,7 +19,11 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
+            if isAligned {
+                SnappieColor.primaryStrong.edgesIgnoringSafeArea(.all)
+            } else {
+                SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
+            }
 
             CameraPreviewView(
                 session: viewModel.session,
