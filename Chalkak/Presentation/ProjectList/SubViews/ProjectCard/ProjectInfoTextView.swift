@@ -47,6 +47,8 @@ struct ProjectInfoTextView: View {
                         ? SnappieColor.labelPrimaryDisable
                         : SnappieColor.labelPrimaryNormal
                     )
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             }
             // 날짜
             Text(timeCreatedString)

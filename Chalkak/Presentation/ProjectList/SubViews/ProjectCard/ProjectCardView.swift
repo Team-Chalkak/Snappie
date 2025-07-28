@@ -84,6 +84,13 @@ struct ProjectCardView: View {
             isPresented: $showEditTitleAlert,
             actions: {
                 TextField(projectTitle, text: $titleToChange)
+                    .onChange(of: titleToChange) { oldValue, newValue in
+                        // 13글자 입력 제한
+                        if newValue.count > 13 {
+                            titleToChange = String(newValue.prefix(13))
+                        }
+                    }
+                
                 Button("취소") { }
                 
                 Button("저장") {
