@@ -49,8 +49,8 @@ struct ChalkakApp: App {
                         case .projectPreview(finalVideoURL: let finalVideoURL):
                             ProjectPreviewView(finalVideoURL: finalVideoURL)
                         
-                        case .projectEdit:
-                            ProjectEditView()
+                        case .projectEdit(let projectID):
+                            ProjectEditView(projectID: projectID)
                             
                         case .projectList:
                             ProjectListView()
