@@ -39,56 +39,14 @@ struct ProjectListView: View {
                 
                 // 컨텐츠
                 if viewModel.projects.isEmpty {
-                    emptyProjectView
+                    EmptyProjectView()
                 }
                 else {
-                    nonEmptyProjectView
+                    NonEmptyProjectView(viewModel: viewModel)
                 }
             }
         }
         .navigationBarBackButtonHidden()
-    }
-}
-
-extension ProjectListView {
-    var emptyProjectView: some View {
-        VStack {
-            Spacer()
-            
-            Text("프로젝트가 비어 있어요.\n촬영을 시작하여 새 프로젝트를 만들어볼까요?")
-                .multilineTextAlignment(.center)
-                .font(SnappieFont.style(.proLabel1))
-                .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                .lineSpacing(10)
-            
-            Spacer()
-        }
-    }
-    
-    var nonEmptyProjectView: some View {
-        ScrollView {
-            LazyVGrid(columns: gridItems, spacing: 16) {
-                ForEach(viewModel.projects) { project in
-                    ProjectCardView(
-                        isCurrentProject: viewModel.isCurrentProject(project),
-                        image: Image(uiImage: UIImage(data: project.coverImage ?? Data()) ?? UIImage()),
-                        time: 150, //TODO: 전체 길이 계산해서 넣기
-                        projectTitle: project.title,
-                        isSeen: project.isChecked,
-                        timeCreated: project.createdAt,
-                        moveToProjectEdit: {
-                            coordinator.push(.projectEdit)
-                        },
-                        deleteProject: {
-                            viewModel.deleteProject(project)
-                        },
-                        editProjectTitle: { newTitle in
-                            viewModel.editProjectTitle(project: project, newTitle: newTitle)
-                        }                    )
-                }
-            }
-            .padding(.horizontal, 16)
-        }
     }
 }
 

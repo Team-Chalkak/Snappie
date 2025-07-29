@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
+/// 프로젝트 리스트 뷰모델
 @MainActor
 final class ProjectListViewModel: ObservableObject {
     @Published var projects: [Project] = []

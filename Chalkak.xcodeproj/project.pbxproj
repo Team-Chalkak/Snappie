@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
+		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
 		9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078C2E340459006BE89C /* VideoControlPanelView.swift */; };
 		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
@@ -140,6 +142,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
+		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
 		9340078C2E340459006BE89C /* VideoControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlPanelView.swift; sourceTree = "<group>"; };
 		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
@@ -711,6 +715,8 @@
 		C5886D372E375B13000566C5 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */,
+				9332D8572E38A229002C47F6 /* EmptyProjectView.swift */,
 				C5886D402E3775DC000566C5 /* ProjectCard */,
 			);
 			path = SubViews;
@@ -926,6 +932,7 @@
 			files = (
 				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
 				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
+				9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */,
 				C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
@@ -1003,6 +1010,7 @@
 				992EE8152E36CF660079AFBF /* ProjectTimeBoardView.swift in Sources */,
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
+				9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */,
 				992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
 				992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */,
