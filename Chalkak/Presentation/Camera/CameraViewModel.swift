@@ -24,6 +24,8 @@ class CameraViewModel: ObservableObject {
 
     @Published var isTimerRunning = false
     @Published var selectedTimerDuration: TimerOptions = .off
+    @Published var showTimerFeedback: TimerOptions? = nil // 타이머 설정 피드백 표시
+    private var feedbackTimer: Timer? // 타이머 피드백 라벨 1초 유지를 위한 타이머
 
     @Published var showingCameraControl = false
     @Published var torchMode: TorchMode = .off
@@ -59,17 +61,6 @@ class CameraViewModel: ObservableObject {
     var minZoomScale: CGFloat { 0.5 }
     var maxZoomScale: CGFloat { 6.0 }
 
-    // 현재 카메라 타입 표시
-    var currentCameraTypeSymbol: String {
-        if zoomScale < 1.0 {
-            return "0.5×" // 울트라 와이드
-        } else if zoomScale <= 2.0 {
-            return "1×" // 와이드
-        } else {
-            return "2×" // 망원
-        }
-    }
-
     private var timer: Timer?
     private var timerCountdownTimer: Timer?
     private var dataCollectionTimer: Timer?
@@ -83,8 +74,6 @@ class CameraViewModel: ObservableObject {
         let seconds = recordingTime % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-
-    // MARK: - init
 
     init() {
         model = CameraManager()
@@ -133,7 +122,6 @@ class CameraViewModel: ObservableObject {
     }
 
     func toggleTimerOption() {
-        // Cycle through timer options: off -> 3s -> 5s -> 10s -> off
         switch selectedTimerDuration {
         case .off:
             selectedTimerDuration = .three
@@ -143,6 +131,18 @@ class CameraViewModel: ObservableObject {
             selectedTimerDuration = .ten
         case .ten:
             selectedTimerDuration = .off
+        }
+
+        // 설정시 피드백 표시
+        if selectedTimerDuration != .off {
+            feedbackTimer?.invalidate()
+
+            showTimerFeedback = selectedTimerDuration
+
+            // 1초 디졸브를 위한 타이머(타이머가 몇초 설정되었음을 알려주기 위한 숫자라벨)
+            feedbackTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
+                self?.showTimerFeedback = nil
+            }
         }
     }
 
