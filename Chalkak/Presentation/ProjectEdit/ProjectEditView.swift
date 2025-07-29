@@ -33,24 +33,25 @@ struct ProjectEditView: View {
                     player: viewModel.player,
                     isDragging: viewModel.isDragging
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 
                 // 선택된 클립이 있을 때만 Delete 버튼 표시
                 if let trimmingClip = viewModel.editableClips.first(where: { $0.isTrimming }) {
-                    HStack {
+                    VStack {
                         Spacer()
                         Button(action: {
                             viewModel.deleteClip(id: trimmingClip.id)
                         }) {
                             Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .imageScale(.large)
-                                .padding()
-                                .background(Color(.systemGray6))
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(SnappieColor.redRecording)
+                                .padding(8)
+                                .frame(width: 40, height: 40, alignment: .center)
+                                .background(SnappieColor.containerFillNormal)
                                 .clipShape(Circle())
                         }
-                        Spacer()
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 16)
                 }
             }
 
