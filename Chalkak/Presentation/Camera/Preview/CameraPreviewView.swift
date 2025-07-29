@@ -14,12 +14,9 @@ struct CameraPreviewView: UIViewRepresentable {
     let currentZoomScale: CGFloat
     let isUsingFrontCamera: Bool
     @Binding var showGrid: Bool
-    let isTimerRunning: Bool
-    let timerCountdown: Int
     
     class VideoPreviewView: UIView {
         var gridLayer: CAShapeLayer?
-        var countdownLabel: UILabel?
         var handleFocus: ((CGPoint) -> Void)?
         var handlePinchZoom: ((CGFloat) -> Void)?
         var isUsingFrontCamera: Bool = false
@@ -218,60 +215,6 @@ struct CameraPreviewView: UIViewRepresentable {
             gridLayer?.removeFromSuperlayer()
             gridLayer = nil
         }
-        
-        func showCountdown(_ countdown: Int) {
-            let timerText = "\(countdown)"
-            
-            /// 카운트다운에 필요한 라벨 생성함수
-            func createLabel(text: String, alpha: CGFloat = 1.0) -> UILabel {
-                let label = UILabel()
-                label.text = text
-                label.textColor = UIColor(SnappieColor.labelPrimaryNormal)
-                label.font = UIFont(name: "KronaOne-Regular", size: 164)
-                label.textAlignment = .center
-                label.translatesAutoresizingMaskIntoConstraints = false
-                label.alpha = alpha
-                return label
-            }
-            
-            // 이미 카운트다운중일때 숫자교체 디졸브
-            if let existingLabel = countdownLabel, existingLabel.text != timerText {
-                let newLabel = createLabel(text: timerText, alpha: 0)
-                addSubview(newLabel)
-                
-                // 카메라 프레임기준 중앙 배치
-                NSLayoutConstraint.activate([
-                    newLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-                    newLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-                ])
-                
-                // 디졸브애니메이션
-                UIView.animate(withDuration: 0.4, animations: {
-                    existingLabel.alpha = 0
-                    newLabel.alpha = 1
-                }) { _ in
-                    existingLabel.removeFromSuperview()
-                }
-                
-                countdownLabel = newLabel
-            } else if countdownLabel == nil {
-                // 처음 생성하는 경우
-                let label = createLabel(text: timerText)
-                addSubview(label)
-                
-                NSLayoutConstraint.activate([
-                    label.centerXAnchor.constraint(equalTo: centerXAnchor),
-                    label.centerYAnchor.constraint(equalTo: centerYAnchor)
-                ])
-                
-                countdownLabel = label
-            }
-        }
-        
-        func hideCountdown() {
-            countdownLabel?.removeFromSuperview()
-            countdownLabel = nil
-        }
     }
    
     func makeUIView(context: Context) -> VideoPreviewView {
@@ -292,13 +235,6 @@ struct CameraPreviewView: UIViewRepresentable {
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {
         showGrid ? uiView.showGrid() : uiView.hideGrid()
-        
-        // 카운트다운
-        if isTimerRunning, timerCountdown > 0 {
-            uiView.showCountdown(timerCountdown)
-        } else {
-            uiView.hideCountdown()
-        }
         
         // 외부에서 줌 스케일이 변경되었을 때 동기화
         uiView.updateInitialZoomScale(currentZoomScale)

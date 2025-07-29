@@ -126,4 +126,34 @@ final class OverlayViewModel: ObservableObject {
         return guide
     }
     
+    /// 커버이미지(첫 클립 첫 프레임 이미지(extractedImage)) Project에 저장
+    @MainActor
+    func saveCoverImageToProject() {
+        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+           let originalImage = extractedImage,
+           let croppedImage = croppedToSquare(image: originalImage) {
+            SwiftDataManager.shared.updateProjectCoverImage(
+                projectID: projectID,
+                coverImage: croppedImage
+            )
+        }
+    }
+    
+    /// 정사각형 중앙 크롭 이미지 반환 함수
+    func croppedToSquare(image: UIImage) -> UIImage? {
+        let originalWidth  = image.size.width
+        let originalHeight = image.size.height
+        let sideLength = min(originalWidth, originalHeight)
+
+        let originX = (originalWidth - sideLength) / 2.0
+        let originY = (originalHeight - sideLength) / 2.0
+
+        let cropRect = CGRect(x: originX, y: originY, width: sideLength, height: sideLength)
+
+        guard let cgImage = image.cgImage?.cropping(to: cropRect) else {
+            return nil
+        }
+
+        return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
+    }
 }

@@ -74,14 +74,20 @@ class SwiftDataManager {
         guide: Guide? = nil,
         clips: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
-        referenceDuration: Double? = nil
+        title: String? = nil,
+        referenceDuration: Double? = nil,
+        coverImage: Data? = nil,
+        createdAt: Date = Date()
     ) -> Project {
         let project = Project(
             id: id,
             guide: guide,
             clipList: clips,
             cameraSetting: cameraSetting,
-            referenceDuration: referenceDuration
+            title: title ?? "",
+            referenceDuration: referenceDuration,
+            coverImage: coverImage,
+            createdAt: createdAt
         )
         context.insert(project)
         return project
@@ -102,6 +108,30 @@ class SwiftDataManager {
     func deleteProject(_ project: Project) {
         context.delete(project)
     }
+    
+    /// 모든 프로젝트 조회
+    func fetchAllProjects() -> [Project] {
+        let descriptor = FetchDescriptor<Project>()
+        return (try? context.fetch(descriptor)) ?? []
+    }
+    
+    /// 프로젝트에 'coverImage' 업데이트
+    func updateProjectCoverImage(projectID: String, coverImage: UIImage) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("⚠️ 해당 Project(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+
+        project.coverImage = coverImage.jpegData(compressionQuality: 0.8)
+        saveContext()
+    }
+    
+    /// 프로젝트 '타이틀' 변경(업데이트)
+    func updateProjectTitle(project: Project, newTitle: String) {
+        project.title = newTitle
+        saveContext()
+    }
+    
 
     // MARK: - Clip
 

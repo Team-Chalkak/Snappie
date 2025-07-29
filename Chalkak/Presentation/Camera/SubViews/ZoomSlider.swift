@@ -21,6 +21,7 @@ struct ZoomSlider: View {
             ZStack {
                 Capsule()
                     .fill(SnappieColor.containerFillNormal)
+                    .opacity(0.6)
                     .frame(height: 50)
                 
                 ZoomSliderLines(geometry: geometry)

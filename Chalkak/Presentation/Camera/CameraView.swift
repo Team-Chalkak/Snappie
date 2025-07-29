@@ -16,6 +16,8 @@ struct CameraView: View {
 
     @State private var clipUrl: URL?
     @State private var navigateToEdit = false
+    @State private var feedbackOpacity: Double = 0
+    @State private var fadeOutTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -25,18 +27,35 @@ struct CameraView: View {
                 SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
             }
 
-            CameraPreviewView(
-                session: viewModel.session,
-                tabToFocus: viewModel.focusAtPoint,
-                onPinchZoom: viewModel.selectZoomScale,
-                currentZoomScale: viewModel.zoomScale,
-                isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                showGrid: $viewModel.isGrid,
-                isTimerRunning: viewModel.isTimerRunning,
-                timerCountdown: viewModel.timerCountdown
-            )
-            .aspectRatio(9 / 16, contentMode: .fit)
-            .clipped()
+            ZStack {
+                CameraPreviewView(
+                    session: viewModel.session,
+                    tabToFocus: viewModel.focusAtPoint,
+                    onPinchZoom: viewModel.selectZoomScale,
+                    currentZoomScale: viewModel.zoomScale,
+                    isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                    showGrid: $viewModel.isGrid
+                )
+                .aspectRatio(9 / 16, contentMode: .fit)
+                .clipped()
+
+                // 타이머 설정 오버레이
+                if viewModel.showTimerFeedback != nil {
+                    Text("\(viewModel.showTimerFeedback!.rawValue)")
+                        .font(SnappieFont.style(.kronaExtra))
+                        .foregroundColor(SnappieColor.labelPrimaryNormal)
+                        .opacity(feedbackOpacity)
+                }
+                
+                // 타이머 카운트다운 오버레이
+                if viewModel.isTimerRunning && viewModel.timerCountdown > 0 {
+                    Text("\(viewModel.timerCountdown)")
+                        .font(SnappieFont.style(.kronaExtra))
+                        .foregroundColor(SnappieColor.labelPrimaryNormal)
+                        .transition(.opacity)
+                        .animation(.easeOut(duration: 0.4), value: viewModel.timerCountdown)
+                }
+            }
             .padding(.top, Layout.preViewTopPadding)
             .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
@@ -53,6 +72,30 @@ struct CameraView: View {
 
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
+        }
+        .onChange(of: viewModel.showTimerFeedback) { _, newValue in
+            fadeOutTask?.cancel()
+
+            if newValue != nil {
+                // 즉시 opacity 1
+                feedbackOpacity = 1
+                fadeOutTask = Task {
+                    do {
+                        // 대기 1초
+                        try await Task.sleep(nanoseconds: 700_000_000)
+
+                        // 태스크가 취소되지 않았다면 페이드아웃
+                        if !Task.isCancelled {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                // nil 로 하면 fadeout이 적용되지않아서 opacity로 조절
+                                feedbackOpacity = 0
+                            }
+                        }
+                    } catch {
+                        print("Error: \(error)")
+                    }
+                }
+            }
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url

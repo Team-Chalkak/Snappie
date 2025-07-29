@@ -7,68 +7,112 @@
 
 import SwiftUI
 
+struct CameraZoomControlView: View {
+    @ObservedObject var viewModel: CameraViewModel
+    @State private var longPressStarted = false
+
+    // 줌 활성범위
+    private let zoomRanges = [
+        ZoomRange(label: ".5", min: 0.0, max: 0.95, preset: 0.5),
+        ZoomRange(label: "1", min: 0.95, max: 1.9, preset: 1.0),
+        ZoomRange(label: "2", min: 2.0, max: .infinity, preset: 2.0)
+    ]
+
+    private var zoomIndicator: some View {
+        HStack(spacing: Layout.zoomIndicatorSpacing) {
+            ForEach(Array(zoomRanges.enumerated()), id: \.element.label) { index, range in
+                zoomButton(for: range, at: index)
+            }
+        }
+        .padding(.all, Layout.zoomIndicatorPadding)
+        .background(SnappieColor.darkHeavy.opacity(Layout.zoomIndicatorBackgroundOpacity))
+        .clipShape(Capsule())
+        .offset(y: viewModel.showingZoomControl ? Layout.zoomIndicatorOffset : 0)
+    }
+
+    private var zoomSliderView: some View {
+        ZoomSlider(
+            zoomScale: viewModel.zoomScale,
+            minZoom: viewModel.minZoomScale,
+            maxZoom: viewModel.maxZoomScale,
+            onValueChanged: viewModel.selectZoomScale
+        )
+        .frame(width: Layout.zoomSliderWidth, height: Layout.zoomSliderHeight)
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
+    private func zoomButton(for range: ZoomRange, at index: Int) -> some View {
+        let config = range.buttonConfiguration(for: viewModel.zoomScale)
+
+        return ZoomButton(
+            text: config.text,
+            isActive: config.isActive,
+            width: config.width
+        )
+        .zoomButtonGestures(
+            onTap: { handleTapGesture(for: range) },
+            onLongPress: handleLongPressGesture
+        )
+    }
+
+    private func handleTapGesture(for range: ZoomRange) {
+        guard !viewModel.isTimerRunning,
+              !range.isActive(viewModel.zoomScale) else { return }
+
+        withAnimation(.easeInOut(duration: Layout.animationDuration)) {
+            viewModel.selectZoomScale(range.preset)
+        }
+    }
+
+    private func handleLongPressGesture() {
+        guard !viewModel.isTimerRunning else { return }
+
+        withAnimation(.easeInOut(duration: Layout.animationDuration)) {
+            viewModel.toggleZoomControl()
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            zoomIndicator
+
+            if viewModel.showingZoomControl && !viewModel.isTimerRunning {
+                zoomSliderView
+            }
+        }
+        .animation(.easeInOut(duration: Layout.animationDuration), value: viewModel.showingZoomControl)
+        .padding(.bottom, Layout.zoomControlBottomPadding)
+    }
+}
+
+private extension Layout {
+    static let zoomControlBottomPadding: CGFloat = 13
+    static let animationDuration: CGFloat = 0.3
+    static let zoomIndicatorSpacing: CGFloat = 8
+    static let zoomIndicatorPadding: CGFloat = 8
+    static let zoomIndicatorBackgroundOpacity: CGFloat = 0.3
+    static let zoomIndicatorOffset: CGFloat = -8
+    static let zoomSliderWidth: CGFloat = 349
+    static let zoomSliderHeight: CGFloat = 48
+}
+
+/// 줌 범위 설정
+/// 라벨(.5,1,2 고정텍스트), 최소값~최대값(각각 인디케이터들이 활성화되는 줌 범위), 활성 너비, 기본값 설정
 private struct ZoomRange {
     let label: String
     let min: CGFloat
     let max: CGFloat
-    let activeWidth: CGFloat
+    let activeWidth: CGFloat = 60
+    let preset: CGFloat
 
     func isActive(_ currentZoom: CGFloat) -> Bool {
         return currentZoom >= min && currentZoom < max
     }
-}
 
-struct CameraZoomControlView: View {
-    @ObservedObject var viewModel: CameraViewModel
-
-    // 줌 활성범위
-    private let zoomRanges = [
-        ZoomRange(label: ".5", min: 0.0, max: 0.95, activeWidth: 50),
-        ZoomRange(label: "1", min: 0.95, max: 1.9, activeWidth: 60),
-        ZoomRange(label: "2", min: 2.0, max: .infinity, activeWidth: 60)
-    ]
-
-    var body: some View {
-        VStack(spacing: 8) {
-            // 줌 인디케이터
-            HStack(spacing: 8) {
-                ForEach(zoomRanges, id: \.label) { range in
-                    ZoomButton(
-                        text: range.isActive(viewModel.zoomScale) ?
-                            String(format: "%.1fx", viewModel.zoomScale) : range.label,
-                        isActive: range.isActive(viewModel.zoomScale),
-                        width: range.isActive(viewModel.zoomScale) ? range.activeWidth : 32
-                    )
-                }
-            }
-            .padding(.all, 8)
-            .background(SnappieColor.darkHeavy.opacity(0.3))
-            .clipShape(Capsule())
-            .offset(y: viewModel.showingZoomControl ? -10 : 0) // 인디케이터 상승 인터렉션
-            // 롱프레스 줌 슬라이더 적용
-            .onLongPressGesture(minimumDuration: 0.5) {
-                if !viewModel.isTimerRunning {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        viewModel.toggleZoomControl()
-                    }
-                }
-            }
-
-            // 인디케이터 하단 줌 슬라이더
-            if viewModel.showingZoomControl && !viewModel.isTimerRunning {
-                ZoomSlider(
-                    zoomScale: viewModel.zoomScale,
-                    minZoom: viewModel.minZoomScale,
-                    maxZoom: viewModel.maxZoomScale,
-                    onValueChanged: { newValue in
-                        viewModel.selectZoomScale(newValue)
-                    }
-                )
-                // TODO: width 고정값 수정
-                .frame(width: 320, height: 40)
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.showingZoomControl)
+    func buttonConfiguration(for currentZoom: CGFloat) -> (text: String, width: CGFloat, isActive: Bool) {
+        let isActive = isActive(currentZoom)
+        let text = isActive ? String(format: "%.1fx", currentZoom) : label
+        let width = isActive ? activeWidth : 32
+        return (text, width, isActive)
     }
 }

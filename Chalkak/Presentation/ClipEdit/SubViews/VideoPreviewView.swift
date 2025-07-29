@@ -36,20 +36,16 @@ struct VideoPreviewView: View {
                     .aspectRatio(9.0 / 16.0, contentMode: .fit)
                     .clipped()
             } else {
-                //TODO: hifi 나오면 다시 한번 확인
                 // 로딩 중일 때도 동일한 aspectRatio 공간 확보 임시 뷰
-                ZStack {
-                    Rectangle()
-                        .fill(SnappieColor.darkStrong)
-                    
-                    ProgressView()
-                        .foregroundColor(SnappieColor.primaryLight)
-                        .font(SnappieFont.style(.kronaLabel1))
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(2.0)
-                        .tint(SnappieColor.primaryLight)
-                }
-                .aspectRatio(9.0 / 16.0, contentMode: .fit)
+                ProgressView()
+                    .tint(SnappieColor.primaryLight)
+                    .scaleEffect(2.0)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .background(
+                        Rectangle()
+                            .fill(SnappieColor.darkStrong)
+                            .aspectRatio(9.0 / 16.0, contentMode: .fit)
+                    )
             }
         }
     }
