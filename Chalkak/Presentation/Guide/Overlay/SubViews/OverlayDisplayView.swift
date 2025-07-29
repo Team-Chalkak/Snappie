@@ -40,17 +40,7 @@ struct OverlayDisplayView: View {
                 Image(uiImage: outline)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-            } else {
-                Text("윤곽선 이미지 없음")
-                    .foregroundColor(.gray)
             }
         }
-    }
-}
-
-private extension OverlayDisplayView {
-    enum Layout {
-        static let overlayWidth: CGFloat = 296
-        static let overlayHeight: CGFloat = 526
     }
 }

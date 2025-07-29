@@ -77,13 +77,20 @@ struct OverlayView: View {
                 },
                 rightButtonType: .none
             )
-            .padding(.top, Layout.navBarTopPadding)
             
             Spacer().frame(height: Layout.spacerHeight)
             
-            Text(Context.guideGeneratedMessage)
-                .snappieStyle(.proBody1)
-                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+            if overlayViewModel.overlayManager.outlineImage != nil {
+                Text(Context.guideGeneratedMessage)
+                    .snappieStyle(.proBody1)
+                    .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    .multilineTextAlignment(.center)
+            } else {
+                Text(Context.guideFailedMessage)
+                    .snappieStyle(.proBody1)
+                    .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    .multilineTextAlignment(.center)
+            }
             
             OverlayDisplayView(overlayViewModel: overlayViewModel)
                 .aspectRatio(
@@ -95,20 +102,22 @@ struct OverlayView: View {
             
             Spacer()
             
-            Button(action: {
-                if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
-                    guide = newGuide
-                    overlayViewModel.saveCoverImageToProject()
-                    coordinator.push(.boundingBox(guide: newGuide))
+            if overlayViewModel.overlayManager.outlineImage != nil {
+                Button(action: {
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
+                        guide = newGuide
+                        overlayViewModel.saveCoverImageToProject()
+                        coordinator.push(.boundingBox(guide: newGuide))
+                    }
+                }) {
+                    Text(Context.buttonTitle)
+                        .snappieStyle(.proLabel1)
+                        .padding(.horizontal, Layout.buttonHorizontalPadding)
                 }
-            }) {
-                Text(usingGuideText)
-                    .snappieStyle(.proLabel1)
-                    .padding(.horizontal, Layout.buttonHorizontalPadding)
+                .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
             }
-            .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
-            .padding(.bottom, Layout.buttonBottomPadding)
         }
+        .padding(.bottom, Layout.buttonBottomPadding)
     }
 }
 
@@ -116,12 +125,12 @@ private extension OverlayView {
     enum Context {
         static let guideGeneratedMessage =
             "다음 촬영을 위한 가이드가 생성되었어요."
+        static let guideFailedMessage = "가이드 생성에 실패했어요.\n인물이 나오는 장면을 촬영해주세요."
         static let buttonTitle = "가이드로 촬영하기"
         static let buttonPlaceholder = " "
     }
 
     enum Layout {
-        static let navBarTopPadding: CGFloat = 12
         static let spacerHeight: CGFloat = 1
 
         static let aspectRatioWidth: CGFloat = 329
@@ -131,6 +140,6 @@ private extension OverlayView {
         static let displayBottomPadding: CGFloat = 20
 
         static let buttonHorizontalPadding: CGFloat = 24
-        static let buttonBottomPadding: CGFloat = 43
+        static let buttonBottomPadding: CGFloat = 10
     }
 }
