@@ -14,7 +14,7 @@ struct CameraRecordView: View {
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {
-                coordinator.push(.projectEdit)
+                coordinator.push(.projectList)
             }) {
                 ZStack {
                     // TODO: - 이미지 표시 위한 분기 처리 필요

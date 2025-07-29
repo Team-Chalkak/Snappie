@@ -51,7 +51,11 @@ struct ChalkakApp: App {
                         
                         case .projectEdit:
                             ProjectEditView()
+                            
+                        case .projectList:
+                            ProjectListView()
                         }
+                        
                     }
             }
             .environmentObject(coordinator)

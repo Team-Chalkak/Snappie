@@ -13,4 +13,5 @@ enum Path: Hashable {
     case boundingBox(guide: Guide?)
     case projectPreview(finalVideoURL: URL)
     case projectEdit
+    case projectList
 }
