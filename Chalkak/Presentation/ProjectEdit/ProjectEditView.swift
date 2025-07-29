@@ -23,9 +23,11 @@ struct ProjectEditView: View {
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
                     // TODO: confirmation dialog 띄우기(ssol)
+                    // 임시로 현재 화면 빠져나가도록 처리했습니다. 추후 수정 예정
+                    coordinator.popLast()
                 },
                 rightButtonType: .oneButton(.init(label: "내보내기") {
-                    // TODO: 영상 저장 로직(ssol)
+                    // TODO: 영상 사진 앱으로 내보내기 로직 연결(ssol)
                 })
             )
             .padding(.bottom, 16)
