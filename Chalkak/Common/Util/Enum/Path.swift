@@ -12,7 +12,7 @@ enum Path: Hashable {
     case overlay(clip: Clip)
     case boundingBox(guide: Guide?)
 
-    case projectPreview(finalVideoURL: URL)
+    case projectPreview
     case projectEdit(projectID: String)
 
     case projectList
