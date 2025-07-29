@@ -26,7 +26,7 @@ struct NonEmptyProjectView: View {
                         image: Image(uiImage: UIImage(data: project.coverImage ?? Data()) ?? UIImage()),
                         time: 150, // TODO: 전체 길이 계산해서 넣기
                         projectTitle: project.title,
-                        isSeen: project.isChecked,
+                        isChecked: project.isChecked,
                         timeCreated: project.createdAt,
                         moveToProjectEdit: {
                             coordinator.push(.projectEdit)

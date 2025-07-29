@@ -16,7 +16,7 @@ struct ProjectInfoTextView: View {
     /// 제목
     let projectTitle: String
     /// 조회가 됐던 프로젝트인지 확인용 변수
-    let isSeen: Bool
+    let isChecked: Bool
     /// 날짜
     let timeCreated: Date
     
@@ -33,7 +33,7 @@ struct ProjectInfoTextView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .center, spacing: 2) {
                 // 조회가 되면 없어지는 빨간 원
-                if !isCurrentProject && !isSeen {
+                if !isCurrentProject && !isChecked {
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundStyle(Color.redRecording)
@@ -62,7 +62,7 @@ struct ProjectInfoTextView: View {
     ProjectInfoTextView(
         isCurrentProject: false,
         projectTitle: "Project title",
-        isSeen: false,
+        isChecked: false,
         timeCreated: Date()
     )
     .frame(width: 300, height: 300)
