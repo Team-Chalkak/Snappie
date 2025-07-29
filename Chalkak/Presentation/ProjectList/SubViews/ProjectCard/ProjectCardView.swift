@@ -13,7 +13,7 @@ struct ProjectCardView: View {
     /// 촬영중인 프로젝트면 disable하기위한 Bool 변수
     let isCurrentProject: Bool
     
-    /// 썸네일 이미지입니다.
+    /// 커버 이미지입니다.
     let image: Image
     /// 프로젝트의 총길이(sec 단위)를 넘겨주시면 여기서 계산해서 쓰도록 하겠습니다
     let time: Double
@@ -42,7 +42,7 @@ struct ProjectCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // 이미지 썸네일
-            ProjectCardThumbnailView(
+            ProjectCardCoverImageView(
                 isCurrentProject: isCurrentProject,
                 image: image,
                 time: time,
@@ -65,6 +65,7 @@ struct ProjectCardView: View {
             )
         }
         .alert(
+            //TODO: 핀의 커스템 알럿으로 대체
             "프로젝트를 삭제하시겠습니까?",
             isPresented: $showDeleteProjectAlert,
             actions: {
@@ -95,7 +96,7 @@ struct ProjectCardView: View {
                 
                 Button("저장") {
                     // 이름 변경 반영
-                    editProjectTitle(projectTitle)
+                    editProjectTitle(titleToChange)
                 }
             },
             message: {

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
+		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
 		9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078C2E340459006BE89C /* VideoControlPanelView.swift */; };
 		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
@@ -92,7 +94,7 @@
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D352E375A94000566C5 /* ProjectListViewModel.swift */; };
 		C5886D392E375B33000566C5 /* ProjectCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D382E375B33000566C5 /* ProjectCardView.swift */; };
-		C5886D3B2E375B46000566C5 /* ProjectCardThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */; };
+		C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */; };
 		C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */; };
 		C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */; };
 		C5886D422E37778B000566C5 /* ProjectInfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */; };
@@ -141,6 +143,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
+		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
 		9340078C2E340459006BE89C /* VideoControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlPanelView.swift; sourceTree = "<group>"; };
 		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
@@ -228,7 +232,7 @@
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
 		C5886D382E375B33000566C5 /* ProjectCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardView.swift; sourceTree = "<group>"; };
-		C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardThumbnailView.swift; sourceTree = "<group>"; };
+		C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardCoverImageView.swift; sourceTree = "<group>"; };
 		C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoMenuView.swift; sourceTree = "<group>"; };
 		C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardMenuView.swift; sourceTree = "<group>"; };
 		C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoTextView.swift; sourceTree = "<group>"; };
@@ -714,6 +718,8 @@
 		C5886D372E375B13000566C5 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */,
+				9332D8572E38A229002C47F6 /* EmptyProjectView.swift */,
 				C5886D402E3775DC000566C5 /* ProjectCard */,
 			);
 			path = SubViews;
@@ -723,7 +729,7 @@
 			isa = PBXGroup;
 			children = (
 				C5886D382E375B33000566C5 /* ProjectCardView.swift */,
-				C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */,
+				C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */,
 				C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */,
 				C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */,
 				C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */,
@@ -929,6 +935,7 @@
 			files = (
 				C5FB3ECE2E2E1C1200A4C1BE /* SnappieColor.swift in Sources */,
 				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
+				9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */,
 				C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
@@ -986,7 +993,7 @@
 				992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
-				C5886D3B2E375B46000566C5 /* ProjectCardThumbnailView.swift in Sources */,
+				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
 				C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */,
@@ -1006,6 +1013,7 @@
 				992EE8152E36CF660079AFBF /* ProjectTimeBoardView.swift in Sources */,
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
+				9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */,
 				992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */,
 				B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
