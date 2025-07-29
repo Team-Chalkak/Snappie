@@ -142,6 +142,21 @@ class SwiftDataManager {
         return (try? context.fetch(descriptor)) ?? []
     }
     
+    /// 뱃지 표시용 확인하지 않은 프로젝트 조회 (guide가 있고, 현재 촬영 중이 아닌 것)
+    func getUncheckedProjectsForBadge() -> [Project] {
+        let predicate = #Predicate<Project> { project in
+            project.isChecked == false && project.guide != nil
+        }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
+        
+        // 현재 촬영 중인 프로젝트 제외
+        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
+            return uncheckedProjects
+        }
+        return uncheckedProjects.filter { $0.id != currentProjectID }
+    }
+    
     /// 프로젝트 확인 상태 업데이트
     func markProjectAsChecked(projectID: String) {
         guard let project = fetchProject(byID: projectID) else {

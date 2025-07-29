@@ -11,17 +11,12 @@ import SwiftUI
 struct CameraRecordView: View {
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    @State private var hasBadge = false
 
-    @Query(filter: #Predicate<Project> { project in
-        project.isChecked == false && project.guide != nil
-    }) private var uncheckedProjects: [Project]
-
-    // unchecked시 현재 촬영 중인 프로젝트를 제외
-    private var uncheckedProjectsExcludingCurrent: [Project] {
-        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
-            return uncheckedProjects
-        }
-        return uncheckedProjects.filter { $0.id != currentProjectID }
+    // SwiftDataManager를 통한 뱃지 상태 확인
+    private func updateBadgeState() {
+        let uncheckedProjects = SwiftDataManager.shared.getUncheckedProjectsForBadge()
+        hasBadge = !uncheckedProjects.isEmpty
     }
 
     var body: some View {
@@ -29,7 +24,7 @@ struct CameraRecordView: View {
             Button(action: {
                 coordinator.push(.projectList)
             }) {
-                Image(uncheckedProjectsExcludingCurrent.isEmpty ? "projectList" : "projectListBadge")
+                Image(hasBadge ? "projectListBadge" : "projectList")
                     .frame(width: 48, height: 48)
             }
 
@@ -55,6 +50,13 @@ struct CameraRecordView: View {
         }
         .padding(.bottom, Layout.recordButtonBottomPadding)
         .padding(.horizontal, Layout.recordButtonHorizontalPadding)
+        .onAppear {
+            updateBadgeState()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in
+            // SwiftData 변경사항이 있을 때 뱃지 상태 업데이트
+            updateBadgeState()
+        }
     }
 }
 
