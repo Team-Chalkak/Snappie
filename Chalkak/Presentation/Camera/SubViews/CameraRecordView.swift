@@ -16,12 +16,20 @@ struct CameraRecordView: View {
         project.isChecked == false
     }) private var uncheckedProjects: [Project]
 
+    // unchecked시 현재 촬영 중인 프로젝트를 제외
+    private var uncheckedProjectsExcludingCurrent: [Project] {
+        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
+            return uncheckedProjects
+        }
+        return uncheckedProjects.filter { $0.id != currentProjectID }
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {
                 coordinator.push(.projectList)
             }) {
-                Image(uncheckedProjects.isEmpty ? "projectList" : "projectListBadge")
+                Image(uncheckedProjectsExcludingCurrent.isEmpty ? "projectList" : "projectListBadge")
                     .frame(width: 48, height: 48)
             }
 
