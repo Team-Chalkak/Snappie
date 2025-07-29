@@ -17,7 +17,6 @@
 		992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */; };
 		992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */; };
 		992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */; };
-		992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */; };
 		992EE7CC2E32AEE00079AFBF /* EditableClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7CB2E32AED70079AFBF /* EditableClip.swift */; };
 		992EE7CE2E32AF030079AFBF /* ClipTrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */; };
 		992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */; };
@@ -90,9 +89,9 @@
 		B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */; };
 		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		B68A46CF2E38A25D0062F04E /* SnappieProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A46CE2E38A25D0062F04E /* SnappieProgress.swift */; };
+		B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */; };
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
-		B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
@@ -103,6 +102,7 @@
 		C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */; };
 		C5886D422E37778B000566C5 /* ProjectInfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */; };
 		C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D452E37AEDB000566C5 /* ProjectListView.swift */; };
+		C5886D482E3902CC000566C5 /* PlayInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D472E3902CC000566C5 /* PlayInfoView.swift */; };
 		C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */; };
 		C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */; };
 		C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */; };
@@ -157,7 +157,6 @@
 		992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditView.swift; sourceTree = "<group>"; };
 		992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditViewModel.swift; sourceTree = "<group>"; };
 		992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineSliderView.swift; sourceTree = "<group>"; };
-		992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButtonControlView.swift; sourceTree = "<group>"; };
 		992EE7CB2E32AED70079AFBF /* EditableClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableClip.swift; sourceTree = "<group>"; };
 		992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipTrimmingView.swift; sourceTree = "<group>"; };
 		992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVMutableComposition + Ext.swift"; sourceTree = "<group>"; };
@@ -233,9 +232,9 @@
 		B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraZoomControlView.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B68A46CE2E38A25D0062F04E /* SnappieProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieProgress.swift; sourceTree = "<group>"; };
+		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
-		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
@@ -245,6 +244,7 @@
 		C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardMenuView.swift; sourceTree = "<group>"; };
 		C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoTextView.swift; sourceTree = "<group>"; };
 		C5886D452E37AEDB000566C5 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
+		C5886D472E3902CC000566C5 /* PlayInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayInfoView.swift; sourceTree = "<group>"; };
 		C5C12E9F2E2FED5500C4DC6D /* ButtonStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyler.swift; sourceTree = "<group>"; };
 		C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButton.swift; sourceTree = "<group>"; };
 		C5C12EA32E31CDFB00C4DC6D /* SnappieButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieButtonStyle.swift; sourceTree = "<group>"; };
@@ -316,7 +316,7 @@
 				992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */,
 				992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */,
 				992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */,
-				992EE7C72E32AE190079AFBF /* PlayButtonControlView.swift */,
+				C5886D472E3902CC000566C5 /* PlayInfoView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -979,6 +979,7 @@
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
 				C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */,
+				C5886D482E3902CC000566C5 /* PlayInfoView.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
@@ -1013,7 +1014,6 @@
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
-				992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,

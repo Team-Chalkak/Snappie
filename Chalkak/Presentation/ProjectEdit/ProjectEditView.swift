@@ -29,7 +29,6 @@ struct ProjectEditView: View {
                 })
             )
             .padding(.bottom, 16)
-            .padding(.horizontal, -16)
 
             ZStack {
                 VideoPreviewView(
@@ -58,17 +57,16 @@ struct ProjectEditView: View {
                     .padding(.bottom, 16)
                 }
             }
-
-            PlayButtonControlView(
-                isPlaying: $viewModel.isPlaying,
-                onPlayPauseTapped: viewModel.togglePlayback
-            )
             
-            PlayTimeView(
+            // 재생 일시정지 버튼 & 시간표시하는 서브뷰
+            PlayInfoView(
+                isPlaying: $viewModel.isPlaying,
+                onPlayPauseTapped: viewModel.togglePlayback,
                 currentTime: viewModel.playHead,
                 totalDuration: viewModel.totalDuration,
                 trimmingClip: viewModel.editableClips.first(where: { $0.isTrimming })
             )
+            .padding(.vertical, 16)
             
             Divider().padding(.vertical, 8)
 
@@ -86,8 +84,5 @@ struct ProjectEditView: View {
                 }
             )
         }
-        .padding(.horizontal, 16)
-        .navigationTitle("프로젝트 트리밍")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
