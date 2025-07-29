@@ -20,8 +20,10 @@ struct ProjectCardView: View {
     
     /// 제목
     let projectTitle: String
+    
     /// 조회가 됐던 프로젝트인지 확인용 변수
-    let isSeen: Bool
+    let isChecked: Bool
+    
     /// 날짜
     let timeCreated: Date
     
@@ -53,7 +55,7 @@ struct ProjectCardView: View {
             ProjectInfoMenuView(
                 isCurrentProject: isCurrentProject,
                 projectTitle: projectTitle,
-                isSeen: isSeen,
+                isChecked: isChecked,
                 timeCreated: timeCreated,
                 moveToProjectEdit: moveToProjectEdit,
                 showEditTitleAlert: {
@@ -116,7 +118,7 @@ struct ProjectCardView: View {
                 image: Image("pinggu"),
                 time: 140,
                 projectTitle: "Project Title",
-                isSeen: true,
+                isChecked: true,
                 timeCreated: Date(),
                 moveToProjectEdit: {
                     print("moveToProjectEdit")
@@ -131,7 +133,7 @@ struct ProjectCardView: View {
                 image: Image("pinggu"),
                 time: 140,
                 projectTitle: "Project Title",
-                isSeen: true,
+                isChecked: true,
                 timeCreated: Date(),
                 moveToProjectEdit: {
                     print("moveToProjectEdit")

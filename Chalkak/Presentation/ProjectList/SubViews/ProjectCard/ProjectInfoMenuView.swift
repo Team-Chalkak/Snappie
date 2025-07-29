@@ -12,7 +12,7 @@ struct ProjectInfoMenuView: View {
     // MARK: input properties
     let isCurrentProject: Bool
     let projectTitle: String
-    let isSeen: Bool
+    let isChecked: Bool
     let timeCreated: Date
     // actions
     let moveToProjectEdit: () -> Void
@@ -26,7 +26,7 @@ struct ProjectInfoMenuView: View {
             ProjectInfoTextView(
                 isCurrentProject: isCurrentProject,
                 projectTitle: projectTitle,
-                isSeen: isSeen,
+                isChecked: isChecked,
                 timeCreated: timeCreated
             )
             .contentShape(Rectangle())
@@ -53,7 +53,7 @@ struct ProjectInfoMenuView: View {
     ProjectInfoMenuView(
         isCurrentProject: false,
         projectTitle: "제목",
-        isSeen: true,
+        isChecked: true,
         timeCreated: Date(),
         moveToProjectEdit: {
             print("moveToProjectEdit")
