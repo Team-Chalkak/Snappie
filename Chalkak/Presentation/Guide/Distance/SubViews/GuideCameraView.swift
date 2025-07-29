@@ -12,10 +12,10 @@ struct GuideCameraView: View {
 
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
-    
+
     init(guide: Guide?) {
         self.guide = guide
-        
+
         let cameraVM = CameraViewModel()
         self._cameraViewModel = StateObject(wrappedValue: cameraVM)
         self._viewModel = StateObject(
@@ -25,7 +25,7 @@ struct GuideCameraView: View {
             )
         )
     }
-    
+
     var body: some View {
         ZStack {
             CameraView(guide: guide, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
@@ -45,9 +45,10 @@ struct GuideCameraView: View {
                     .padding(.horizontal, 16)
                     .frame(maxHeight: .infinity, alignment: .top)
             } else {
-                Text("윤곽선 이미지 없음")
-                    .foregroundColor(.gray)
+                Text("가이드를 생성하지못했어요.\n인물이 나오는 장면을 촬영해주세요")
+                    .foregroundColor(SnappieColor.labelPrimaryNormal)
                     .allowsHitTesting(false)
+                    .multilineTextAlignment(.center)
             }
 
             // Tilt 피드백 뷰

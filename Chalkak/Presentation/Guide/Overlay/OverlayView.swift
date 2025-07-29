@@ -17,7 +17,7 @@ import SwiftUI
  - 첫 프레임 + 윤곽선 오버레이 시각화
  - 뒤로가기 및 다음 버튼을 통한 뷰 전환
  - OverlayViewModel과 연동하여 오버레이 상태 관리
- 
+
  ## 데이터 흐름
  - "뒤로" 버튼 선택 시: 오버레이 상태 초기화 (`dismissOverlay()`)
  - "다음" 버튼 선택 시:
@@ -25,7 +25,7 @@ import SwiftUI
 
  ## 호출 위치
  - ClipEditView → OverlayView로 이동
- - 호출 예시: 
+ - 호출 예시:
  */
 struct OverlayView: View {
     // 1. Input properties
@@ -37,23 +37,23 @@ struct OverlayView: View {
     @State private var navigateToCameraView = false
     @EnvironmentObject private var coordinator: Coordinator
     @State private var guide: Guide?
-    
+
     private var usingGuideText: String {
-        overlayViewModel.isOverlayReady
+        overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil
             ? Context.buttonTitle
             : Context.buttonPlaceholder
     }
-    
+
     // 3. init
     init(clip: Clip) {
         self.clip = clip
         self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
     }
-    
+
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
-                
+
             if overlayViewModel.isOverlayReady {
                 ContentView
                     .transition(.opacity)
@@ -68,7 +68,7 @@ struct OverlayView: View {
             overlayViewModel.dismissOverlay()
         }
     }
-    
+
     private var ContentView: some View {
         VStack(alignment: .center) {
             SnappieNavigationBar(
@@ -78,44 +78,43 @@ struct OverlayView: View {
                 rightButtonType: .none
             )
             .padding(.top, Layout.navBarTopPadding)
-            
+
             Spacer().frame(height: Layout.spacerHeight)
-            
-            Text(Context.guideGeneratedMessage)
-                .snappieStyle(.proBody1)
-                .foregroundStyle(SnappieColor.labelPrimaryNormal)
-            
+
             OverlayDisplayView(overlayViewModel: overlayViewModel)
                 .aspectRatio(
                     Layout.aspectRatioWidth / Layout.aspectRatioHeight,
-                    contentMode: .fill)
+                    contentMode: .fill
+                )
                 .padding(.horizontal, Layout.displayHorizontalPadding)
                 .padding(.top, Layout.displayTopPadding)
                 .padding(.bottom, Layout.displayBottomPadding)
-            
+
             Spacer()
-            
-            Button(action: {
-                if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
-                    guide = newGuide
-                    overlayViewModel.saveCoverImageToProject()
-                    coordinator.push(.boundingBox(guide: newGuide))
+
+            if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
+                Button(action: {
+                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
+                        guide = newGuide
+                        overlayViewModel.saveCoverImageToProject()
+                        coordinator.push(.boundingBox(guide: newGuide))
+                    }
+                }) {
+                    Text(usingGuideText)
+                        .snappieStyle(.proLabel1)
+                        .padding(.horizontal, Layout.buttonHorizontalPadding)
                 }
-            }) {
-                Text(usingGuideText)
-                    .snappieStyle(.proLabel1)
-                    .padding(.horizontal, Layout.buttonHorizontalPadding)
+                .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
+                .padding(.bottom, Layout.buttonBottomPadding)
+            } else {
+                Spacer().frame(height: Layout.buttonBottomPadding)
             }
-            .buttonStyle(SnappieButtonStyle(styler: SolidPrimaryStyler(size: .large)))
-            .padding(.bottom, Layout.buttonBottomPadding)
         }
     }
 }
 
 private extension OverlayView {
     enum Context {
-        static let guideGeneratedMessage =
-            "다음 촬영을 위한 가이드가 생성되었어요."
         static let buttonTitle = "가이드로 촬영하기"
         static let buttonPlaceholder = " "
     }
