@@ -46,6 +46,12 @@ struct CameraRecordView: View {
         .onAppear {
             Task { @MainActor in
                 viewModel.updateBadgeState()
+                
+                // 프로젝트 완료 후 홈으로 돌아왔을 때 알림 표시
+                if UserDefaults.standard.bool(forKey: "showProjectSavedAlert") {
+                    UserDefaults.standard.set(false, forKey: "showProjectSavedAlert")
+                    viewModel.showProjectSavedNotification()
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in

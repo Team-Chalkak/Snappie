@@ -58,6 +58,7 @@ class CameraViewModel: ObservableObject {
     @Published var zoomScale: CGFloat = 1.0
     @Published var isUsingFrontCamera: Bool = false
     @Published var hasBadge: Bool = false
+    @Published var showProjectSavedAlert: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
@@ -386,5 +387,11 @@ class CameraViewModel: ObservableObject {
     func updateBadgeState() {
         let uncheckedProjects = SwiftDataManager.shared.getUncheckedProjectsForBadge()
         hasBadge = !uncheckedProjects.isEmpty
+    }
+    
+    /// 프로젝트 저장 알림 표시
+    @MainActor
+    func showProjectSavedNotification() {
+        showProjectSavedAlert = true
     }
 }

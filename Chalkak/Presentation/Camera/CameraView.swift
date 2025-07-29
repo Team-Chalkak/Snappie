@@ -140,6 +140,7 @@ struct CameraView: View {
         .alert(.finishShooting, isPresented: $showExitAlert) {
             handleExitCamera()
         }
+        .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
     }
 
     private func handleExitCamera() {
