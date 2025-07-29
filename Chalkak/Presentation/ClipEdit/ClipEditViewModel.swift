@@ -273,6 +273,9 @@ final class ClipEditViewModel: ObservableObject {
         let projectCount = SwiftDataManager.shared.fetchAllProjects().count
         let generatedTitle = "프로젝트 \(projectCount + 1)"
         
+        // 프로젝트 생성 시간
+        let createdAt = Date()
+        
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
             guide: nil,
@@ -280,7 +283,8 @@ final class ClipEditViewModel: ObservableObject {
             cameraSetting: cameraSetting,
             title: generatedTitle,
             referenceDuration: clip.endPoint - clip.startPoint,
-            coverImage: nil
+            coverImage: nil,
+            createdAt: createdAt
         )
     
         SwiftDataManager.shared.saveContext()

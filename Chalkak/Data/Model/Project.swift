@@ -39,6 +39,9 @@ class Project: Identifiable {
     /// 프로젝트 커버 이미지 - 첫번째 영상 첫번째 프레임으로 설정
     var coverImage: Data?
     
+    /// 프로젝트 생성 시간
+    var createdAt: Date
+    
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 고유 식별자 (기본값은 자동 생성된 UUID).
@@ -52,7 +55,8 @@ class Project: Identifiable {
         title: String = "",
         referenceDuration: Double? = nil,
         isChecked: Bool = true,
-        coverImage: Data? = nil
+        coverImage: Data? = nil,
+        createdAt: Date = Date()
     ) {
         self.id = id
         self.guide = guide
@@ -62,5 +66,7 @@ class Project: Identifiable {
         self.referenceDuration = referenceDuration
         self.isChecked = isChecked
         self.coverImage = coverImage
+        self.createdAt = createdAt
+        
     }
 }

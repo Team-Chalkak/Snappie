@@ -1,5 +1,5 @@
 //
-//  ProjectCardThumbnailView.swift
+//  ProjectCardCoverImageView.swift
 //  Chalkak
 //
 //  Created by 석민솔 on 7/28/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// 썸네일이랑 프로젝트 시간 보여주는 부분
-struct ProjectCardThumbnailView: View {
+/// 커버 이미지랑 프로젝트 시간 보여주는 부분
+struct ProjectCardCoverImageView: View {
     // MARK: input properties
     /// 촬영중인 프로젝트면 disable하기위한 Bool 변수
     let isCurrentProject: Bool
@@ -68,7 +68,7 @@ struct ProjectCardThumbnailView: View {
 }
 
 #Preview {
-    ProjectCardThumbnailView(
+    ProjectCardCoverImageView(
         isCurrentProject: false,
         image: Image("pinggu"),
         time: 150.8,

@@ -76,7 +76,8 @@ class SwiftDataManager {
         cameraSetting: CameraSetting? = nil,
         title: String? = nil,
         referenceDuration: Double? = nil,
-        coverImage: Data? = nil
+        coverImage: Data? = nil,
+        createdAt: Date = Date()
     ) -> Project {
         let project = Project(
             id: id,
@@ -85,7 +86,8 @@ class SwiftDataManager {
             cameraSetting: cameraSetting,
             title: title ?? "",
             referenceDuration: referenceDuration,
-            coverImage: coverImage
+            coverImage: coverImage,
+            createdAt: createdAt
         )
         context.insert(project)
         return project

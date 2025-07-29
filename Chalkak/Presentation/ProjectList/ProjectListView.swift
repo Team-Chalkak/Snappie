@@ -45,12 +45,11 @@ struct ProjectListView: View {
                 )
                 
                 // 컨텐츠
-                // TODO: 뷰모델에서 프로젝트들 받아와서 아래 extension에 넣어둔 뷰 코드들을 if문에 분기처리에 맞게 넣어주세요! 어떤 변수로 진행하실지 잘 모르겠어서 일단 뷰만 두 개 냅다 만들어놓았습니다..!
-                if projects.count > 0 {
-                    nonEmptyProjectView
+                if viewModel.projects.isEmpty {
+                    emptyProjectView
                 }
                 else {
-                    emptyProjectView
+                    nonEmptyProjectView
                 }
             }
         }
@@ -75,15 +74,14 @@ extension ProjectListView {
     var nonEmptyProjectView: some View {
         ScrollView {
             LazyVGrid(columns: gridItems, spacing: 16) {
-                // TODO: foreach문을 바꿔주세요. 카드뷰 안의 값들은 모두 더미입니다.
                 ForEach(projects) { project in
                     ProjectCardView(
-                        isCurrentProject: false,
-                        image: Image("pinggu"),
-                        time: 150,
-                        projectTitle: "프로젝트 name",
-                        isSeen: true,
-                        timeCreated: Date(),
+                        isCurrentProject: viewModel.isCurrentProject(project),
+                        image: Image(uiImage: UIImage(data: project.coverImage ?? Data()) ?? UIImage()),
+                        time: 150, //TODO: 전체 길이 계산해서 넣기
+                        projectTitle: project.title,
+                        isSeen: project.isChecked,
+                        timeCreated: project.createdAt,
                         moveToProjectEdit: {
                             coordinator.push(.projectEdit)
                         },

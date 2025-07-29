@@ -91,7 +91,7 @@
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D352E375A94000566C5 /* ProjectListViewModel.swift */; };
 		C5886D392E375B33000566C5 /* ProjectCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D382E375B33000566C5 /* ProjectCardView.swift */; };
-		C5886D3B2E375B46000566C5 /* ProjectCardThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */; };
+		C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */; };
 		C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */; };
 		C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */; };
 		C5886D422E37778B000566C5 /* ProjectInfoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */; };
@@ -226,7 +226,7 @@
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
 		C5886D382E375B33000566C5 /* ProjectCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardView.swift; sourceTree = "<group>"; };
-		C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardThumbnailView.swift; sourceTree = "<group>"; };
+		C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardCoverImageView.swift; sourceTree = "<group>"; };
 		C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoMenuView.swift; sourceTree = "<group>"; };
 		C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardMenuView.swift; sourceTree = "<group>"; };
 		C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectInfoTextView.swift; sourceTree = "<group>"; };
@@ -720,7 +720,7 @@
 			isa = PBXGroup;
 			children = (
 				C5886D382E375B33000566C5 /* ProjectCardView.swift */,
-				C5886D3A2E375B46000566C5 /* ProjectCardThumbnailView.swift */,
+				C5886D3A2E375B46000566C5 /* ProjectCardCoverImageView.swift */,
 				C5886D3C2E376A4D000566C5 /* ProjectInfoMenuView.swift */,
 				C5886D3E2E376DE2000566C5 /* ProjectCardMenuView.swift */,
 				C5886D412E37778B000566C5 /* ProjectInfoTextView.swift */,
@@ -983,7 +983,7 @@
 				992EE7C82E32AE200079AFBF /* PlayButtonControlView.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
-				C5886D3B2E375B46000566C5 /* ProjectCardThumbnailView.swift in Sources */,
+				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
 				C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */,
