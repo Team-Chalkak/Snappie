@@ -11,20 +11,13 @@ import SwiftUI
 struct CameraRecordView: View {
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    @State private var hasBadge = false
-
-    // SwiftDataManager를 통한 뱃지 상태 확인
-    private func updateBadgeState() {
-        let uncheckedProjects = SwiftDataManager.shared.getUncheckedProjectsForBadge()
-        hasBadge = !uncheckedProjects.isEmpty
-    }
 
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {
                 coordinator.push(.projectList)
             }) {
-                Image(hasBadge ? "projectListBadge" : "projectList")
+                Image(viewModel.hasBadge ? "projectListBadge" : "projectList")
                     .frame(width: 48, height: 48)
             }
 
@@ -51,11 +44,15 @@ struct CameraRecordView: View {
         .padding(.bottom, Layout.recordButtonBottomPadding)
         .padding(.horizontal, Layout.recordButtonHorizontalPadding)
         .onAppear {
-            updateBadgeState()
+            Task { @MainActor in
+                viewModel.updateBadgeState()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in
             // SwiftData 변경사항이 있을 때 뱃지 상태 업데이트
-            updateBadgeState()
+            Task { @MainActor in
+                viewModel.updateBadgeState()
+            }
         }
     }
 }
