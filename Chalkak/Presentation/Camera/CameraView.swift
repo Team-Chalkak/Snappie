@@ -18,6 +18,7 @@ struct CameraView: View {
     @State private var navigateToEdit = false
     @State private var feedbackOpacity: Double = 0
     @State private var fadeOutTask: Task<Void, Never>?
+    @State private var showExitAlert = false
 
     var body: some View {
         ZStack {
@@ -46,7 +47,7 @@ struct CameraView: View {
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
                         .opacity(feedbackOpacity)
                 }
-                
+
                 // 타이머 카운트다운 오버레이
                 if viewModel.isTimerRunning && viewModel.timerCountdown > 0 {
                     Text("\(viewModel.timerCountdown)")
@@ -65,8 +66,29 @@ struct CameraView: View {
                 HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
 
+            // 두번째 촬영부터-중간이탈버튼
+            if guide != nil {
+                VStack {
+                    HStack {
+                        SnappieButton(.iconBackground(
+                            icon: .dismiss,
+                            size: .large,
+                            isActive: true
+                        )) {
+                            showExitAlert = true
+                        }
+                        .padding(.leading, 30)
+                        .padding(.top, 25)
+
+                        Spacer()
+                    }
+
+                    Spacer()
+                }
+            }
+
             VStack {
-                CameraTopControlView(viewModel: viewModel)
+                CameraTopControlView(viewModel: viewModel, guide: guide)
 
                 Spacer()
 
@@ -115,6 +137,14 @@ struct CameraView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
+        .alert(.finishShooting, isPresented: $showExitAlert) {
+            handleExitCamera()
+        }
+    }
+
+    private func handleExitCamera() {
+        viewModel.stopCamera()
+        coordinator.removeAll()
     }
 }
 

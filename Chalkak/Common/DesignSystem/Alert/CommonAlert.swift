@@ -42,7 +42,7 @@ enum AlertType {
         switch self {
         case .deleteProject: return "삭제"
         case .retakeVideo: return "나가기"
-        case .finishShooting: return "확인"
+        case .finishShooting: return "나가기"
         case .retakeCurrentVideo: return "확인"
         case .endShooting: return "종료"
         case .exitWhileRecording: return "확인"
@@ -76,8 +76,8 @@ extension View {
             Alert(
                 title: Text(type.title),
                 message: Text(type.message),
-                primaryButton: .default(Text(type.confirmText), action: confirmAction),
-                secondaryButton: .cancel(Text("취소"), action: cancelAction)
+                primaryButton: .cancel(Text("취소"), action: cancelAction),
+                secondaryButton: .default(Text(type.confirmText), action: confirmAction)
             )
         }
     }
