@@ -12,34 +12,43 @@ import SwiftData
 /// ProjectPreviewView의 뷰모델
 final class ProjectPreviewViewModel: ObservableObject {
     // MARK: - Properties
-    let finalVideoURL: URL
-    let player: AVPlayer
-    let photoLibrarySaver: PhotoLibrarySaver = .init()
-    @Published var isExportFinished: Bool = false
+    private var finalVideoURL: URL?
+    let photoLibrarySaver = PhotoLibrarySaver()
     
-    // MARK: - init
-    init(finalVideoURL: URL) {
-        self.finalVideoURL = finalVideoURL
-        self.player = AVPlayer(url: finalVideoURL)
-        player.play()
+    @Published var player: AVPlayer?
+    @Published var isMerging: Bool = false
+    @Published var videoManager = VideoManager()
+    
+    /// 영상 병합 및 플레이어 세팅
+    @MainActor
+    func startMerging() async {
+        isMerging = true
+        do {
+            let url = try await videoManager.processAndSaveVideo()
+            self.finalVideoURL = url
+            self.player = AVPlayer(url: url)
+            self.player?.play()
+        } catch {
+            print("⚠️ mergeVideo 실패: \(error.localizedDescription)")
+        }
+        isMerging = false 
     }
     
     // MARK: - Methods
     /// 비디오를 사진 라이브러리에 저장
     func exportToPhotos() async {
-        await photoLibrarySaver.saveVideoToLibrary(videoURL: self.finalVideoURL)
-        
-        DispatchQueue.main.sync {
-            self.isExportFinished = true
-        }
+        guard let finalVideoURL else { return }
+        await photoLibrarySaver.saveVideoToLibrary(videoURL: finalVideoURL)
     }
-    
+
     /// 합본 영상을 임시 저장소에서 제거
     func cleanupTemporaryVideoFile() async {
-        do {
-            try FileManager.default.removeItem(at: finalVideoURL)
-        } catch {
-            print("영상 임시 저장소에서 제거 실패: \(error.localizedDescription)")
-        }
+        guard let finalVideoURL else { return }
+        try? FileManager.default.removeItem(at: finalVideoURL)
+    }
+    
+    /// UserDefaults에서 currentProjectID 제거
+    func clearCurrentProjectID() {
+        UserDefaults.standard.set(nil, forKey: "currentProjectID")
     }
 }
