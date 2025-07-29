@@ -18,8 +18,13 @@ struct HorizontalLevelIndicatorView: View {
         abs(gravityX) < 0.05
     }
 
-    // 기울기 각도
+    // 기울기 각도(수평 보정 tilt 보정값과 동일하게 0.05이하일때 스냅 붙음)
     private var tiltAngle: Double {
+        // 수평 상태일 때는 색상변화만 주지않고, 각도 역시 0.0으로 수평값으로 보정값이 적용
+        if isHorizontal {
+            return 0.0
+        }
+
         let maxAngle = 30.0 // 최대 표시 각도 (15도까지 보여주지만 maxAngle값을 높게잡아야 기울기가 올라감)
         let clampedGravity = max(-0.5, min(0.5, gravityX))
         return clampedGravity * maxAngle * 2
@@ -39,10 +44,26 @@ struct HorizontalLevelIndicatorView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            levelLine(fixedWidth: 20, tiltedWidth: 48, isReversed: false)
-            Spacer().frame(width: 25)
-            levelLine(fixedWidth: 20, tiltedWidth: 48, isReversed: true)
+        ZStack {
+            /// 양옆 고정 기준선들 (회전하지 않음)
+            ///  양옆 고정 20px + 중앙 공백 121
+            HStack(spacing: 0) {
+                levelLine(width: 20) // 왼쪽 고정선
+                spacer(width: 121) // 일직선 시소 영역(공백)
+                levelLine(width: 20) // 오른쪽 고정선
+            }
+            /// 회전하는 시소 부분
+            /// 양옆 공백 20 px + 중앙 일직선 121
+            HStack(spacing: 0) {
+                spacer(width: 20)
+                HStack(spacing: 0) {
+                    levelLine(width: 48)
+                    spacer(width: 25) // 중앙 선 사이 공백
+                    levelLine(width: 48)
+                }
+                .rotationEffect(.degrees(tiltAngle), anchor: .center)
+                spacer(width: 20)
+            }
         }
         .frame(height: 50)
         .opacity(opacity)
@@ -67,31 +88,16 @@ struct HorizontalLevelIndicatorView: View {
         }
     }
 
-    private func levelLine(fixedWidth: CGFloat, tiltedWidth: CGFloat, isReversed: Bool) -> some View {
-        HStack(spacing: 0) {
-            if !isReversed {
-                fixedLine(width: fixedWidth)
-                tiltedLine(width: tiltedWidth)
-            } else {
-                tiltedLine(width: tiltedWidth)
-                fixedLine(width: fixedWidth)
-            }
-        }
-    }
-
-    /// 고정선(양끝 20px)
-    private func fixedLine(width: CGFloat) -> some View {
+    /// 수평선
+    private func levelLine(width: CGFloat) -> some View {
         Rectangle()
             .frame(width: width, height: 1)
             .foregroundColor(lineColor)
     }
 
-    /// 유동선 (가운데 48px)
-    private func tiltedLine(width: CGFloat) -> some View {
-        Rectangle()
-            .frame(width: width, height: 1)
-            .foregroundColor(lineColor)
-            .rotationEffect(.degrees(tiltAngle), anchor: .center)
+    /// 투명 여백
+    private func spacer(width: CGFloat) -> some View {
+        Color.clear.frame(width: width, height: 1)
     }
 
     /// 수평일때 or 각도가15도이상 벗어났을때  dissove처리를 위한 메소드
@@ -102,15 +108,15 @@ struct HorizontalLevelIndicatorView: View {
             horizontalTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self.opacity = 0
-                    self.hiddenByHorizontal = true // 수평으로 인해 숨겨짐 표시
+                    self.hiddenByHorizontal = true // 수평시 숨겨짐 상태
                 }
             }
         } else {
-            // 수평이 아니면 타이머 취소하고 다시 표시
+            // 수평이 아니면 타이머 취소하고 표시
             horizontalTimer?.invalidate()
             horizontalTimer = nil
 
-            // 수평 상태로 숨겨진 상태였다면 다시 표시
+            // 수평 상태로 숨겨진 상태였다면 각도가 어긋났으니 다시 등장
             if hiddenByHorizontal {
                 hiddenByHorizontal = false
                 withAnimation(.easeInOut(duration: 0.3)) {
