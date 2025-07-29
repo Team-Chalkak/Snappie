@@ -18,9 +18,11 @@ class CameraViewModel: ObservableObject {
     let session: AVCaptureSession
     private var horizontalLevelCancellable: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
+    private let swiftDataManager = SwiftDataManager.shared
 
     // 비디오 저장 완료 이벤트를 View로 전달
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
+    
 
     @Published var isTimerRunning = false
     @Published var selectedTimerDuration: TimerOptions = .off

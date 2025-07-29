@@ -76,6 +76,7 @@ class SwiftDataManager {
         cameraSetting: CameraSetting? = nil,
         title: String? = nil,
         referenceDuration: Double? = nil,
+        isChecked: Bool = false,
         coverImage: Data? = nil,
         createdAt: Date = Date()
     ) -> Project {
@@ -86,6 +87,7 @@ class SwiftDataManager {
             cameraSetting: cameraSetting,
             title: title ?? "",
             referenceDuration: referenceDuration,
+            isChecked: isChecked,
             coverImage: coverImage,
             createdAt: createdAt
         )
@@ -107,6 +109,7 @@ class SwiftDataManager {
     /// `Project` 삭제
     func deleteProject(_ project: Project) {
         context.delete(project)
+        saveContext()
     }
     
     /// 모든 프로젝트 조회
@@ -129,6 +132,23 @@ class SwiftDataManager {
     /// 프로젝트 '타이틀' 변경(업데이트)
     func updateProjectTitle(project: Project, newTitle: String) {
         project.title = newTitle
+        saveContext()
+    }
+    
+    /// 확인하지 않은 프로젝트 조회
+    func getUncheckedProjects() -> [Project] {
+        let predicate = #Predicate<Project> { $0.isChecked == false }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return (try? context.fetch(descriptor)) ?? []
+    }
+    
+    /// 프로젝트 확인 상태 업데이트
+    func markProjectAsChecked(projectID: String) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("⚠️ 해당 Project(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+        project.isChecked = true
         saveContext()
     }
     
