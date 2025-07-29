@@ -48,8 +48,6 @@ final class ClipEditViewModel: ObservableObject {
     @Published var previewImage: UIImage?
     @Published var clipID: String? = nil
     
-    @Published var videoManager = VideoManager()
-    
     // 3. 계산 프로퍼티
     /// 현재 트리밍된 영상 길이 (초 단위)
     var currentTrimmedDuration: Double {
@@ -337,10 +335,5 @@ final class ClipEditViewModel: ObservableObject {
 
         project.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
-    }
-    
-    /// 작업하던 프로젝트의 영상 합치기
-    func mergeVideo() async throws -> URL {
-        try await self.videoManager.processAndSaveVideo()
     }
 }

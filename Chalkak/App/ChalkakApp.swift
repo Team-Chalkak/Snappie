@@ -46,8 +46,8 @@ struct ChalkakApp: App {
                                 .toolbar(.hidden, for: .navigationBar)
                             
                             
-                        case .projectPreview(finalVideoURL: let finalVideoURL):
-                            ProjectPreviewView(finalVideoURL: finalVideoURL)
+                        case .projectPreview:
+                            ProjectPreviewView()
                         
                         case .projectEdit(let projectID):
                             ProjectEditView(projectID: projectID)
