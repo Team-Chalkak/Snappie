@@ -8,13 +8,24 @@
 import SwiftUI
 import AVKit
 
+/// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
     @StateObject private var viewModel = ProjectEditViewModel()
     @EnvironmentObject private var coordinator: Coordinator
 
     var body: some View {
         VStack(spacing: 0) {
-            Spacer().frame(height: 16)
+            SnappieNavigationBar(
+                navigationTitle: "프로젝트 편집",
+                leftButtonType: .backward {
+                    // TODO: confirmation dialog 띄우기(ssol)
+                },
+                rightButtonType: .oneButton(.init(label: "내보내기") {
+                    // TODO: 영상 저장 로직(ssol)
+                })
+            )
+            .padding(.bottom, 16)
+            .padding(.horizontal, -16)
 
             ZStack {
                 VideoPreviewView(
