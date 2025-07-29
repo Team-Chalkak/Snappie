@@ -27,10 +27,14 @@ final class ProjectEditViewModel: ObservableObject {
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
+    
+    // init
+    init(projectID: String) {
+        loadProject(of: projectID)
+    }
 
-    func loadProject() {
+    func loadProject(of projectID: String) {
         guard
-            let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
             let project = SwiftDataManager.shared.fetchProject(byID: projectID)
         else {
             print("프로젝트를 찾을 수 없습니다.")

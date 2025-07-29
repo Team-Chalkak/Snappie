@@ -54,7 +54,7 @@ class Project: Identifiable {
         cameraSetting: CameraSetting? = nil,
         title: String = "",
         referenceDuration: Double? = nil,
-        isChecked: Bool = true,
+        isChecked: Bool = false,
         coverImage: Data? = nil,
         createdAt: Date = Date()
     ) {
@@ -67,6 +67,5 @@ class Project: Identifiable {
         self.isChecked = isChecked
         self.coverImage = coverImage
         self.createdAt = createdAt
-        
     }
 }

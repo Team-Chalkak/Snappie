@@ -5,23 +5,32 @@
 //  Created by 정종문 on 7/14/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CameraRecordView: View {
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
+    @Query(filter: #Predicate<Project> { project in
+        project.isChecked == false
+    }) private var uncheckedProjects: [Project]
+
+    // unchecked시 현재 촬영 중인 프로젝트를 제외
+    private var uncheckedProjectsExcludingCurrent: [Project] {
+        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
+            return uncheckedProjects
+        }
+        return uncheckedProjects.filter { $0.id != currentProjectID }
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {
                 coordinator.push(.projectList)
             }) {
-                ZStack {
-                    // TODO: - 이미지 표시 위한 분기 처리 필요
-                    Color.gray
-                        .frame(width: Layout.recordButtonSize.width, height: Layout.recordButtonSize.height)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                Image(uncheckedProjectsExcludingCurrent.isEmpty ? "projectList" : "projectListBadge")
+                    .frame(width: 48, height: 48)
             }
 
             Spacer()

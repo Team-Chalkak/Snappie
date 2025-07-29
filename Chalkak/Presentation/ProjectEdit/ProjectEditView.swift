@@ -10,8 +10,12 @@ import AVKit
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
-    @StateObject private var viewModel = ProjectEditViewModel()
+    @StateObject private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    
+    init(projectID: String) {
+        self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -83,7 +87,6 @@ struct ProjectEditView: View {
             )
         }
         .padding(.horizontal, 16)
-        .onAppear { viewModel.loadProject() }
         .navigationTitle("프로젝트 트리밍")
         .navigationBarTitleDisplayMode(.inline)
     }

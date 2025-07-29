@@ -11,32 +11,57 @@ import SwiftUI
 /// 합본 영상을 확인하고 갤러리로 내보내기 할 수 있는 뷰
 struct ProjectPreviewView: View {
     // MARK: Property Wrappers
-    @StateObject var viewModel: ProjectPreviewViewModel
-    
-    // MARK: init
-    init(finalVideoURL: URL) {
-        _viewModel = StateObject(wrappedValue: ProjectPreviewViewModel(finalVideoURL: finalVideoURL))
-    }
+    @StateObject private var viewModel = ProjectPreviewViewModel()
+    @EnvironmentObject private var coordinator: Coordinator
+    @State private var showSuccessAlert = false
     
     // MARK: body
     var body: some View {
-        VStack {
-            VideoPlayer(player: viewModel.player)
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("내보내기") {
-                    Task {
-                        await viewModel.exportToPhotos()
-                    }
+        ZStack {
+            SnappieColor.darkHeavy.ignoresSafeArea()
+
+            VStack(alignment: .center, spacing: 8, content: {
+                SnappieNavigationBar(
+                    leftButtonType: .dismiss {
+                        viewModel.clearCurrentProjectID()
+                        coordinator.removeAll()
+                    },
+                    rightButtonType: .oneButton(.init(
+                        label: "내보내기",
+                        action: {
+                            Task {
+                                await viewModel.exportToPhotos()
+                                showSuccessAlert = true
+                            }
+                        }
+                    ))
+                )
+
+                if let player = viewModel.player {
+                    VideoPlayer(player: player)
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Spacer()
                 }
+            })
+        }
+        .navigationBarBackButtonHidden()
+        .snappieAlert(isPresented: $showSuccessAlert, message: "프로젝트 저장됨")
+        .snappieProgressAlert(
+            isPresented: $viewModel.isMerging,
+            isLoading: $viewModel.isMerging,
+            loadingMessage: "영상 생성 중...",
+            completionMessage: ""
+        )
+        .onAppear {
+            Task {
+                await viewModel.startMerging()
             }
         }
-        .alert("영상 저장이 완료되었어요", isPresented: $viewModel.isExportFinished) { }
         .onDisappear {
-            // 뷰 해제 및 앱 백그라운드 상황에서도 삭제 작업 보장
+            // ✅ 원래 네가 작성한 클린업 로직 유지
             let taskID = UIApplication.shared.beginBackgroundTask(withName: "cleanTempVideo")
-            
+
             Task.detached {
                 await viewModel.cleanupTemporaryVideoFile()
                 UIApplication.shared.endBackgroundTask(taskID)
@@ -46,5 +71,5 @@ struct ProjectPreviewView: View {
 }
 
 #Preview {
-    ProjectPreviewView(finalVideoURL: URL(fileURLWithPath: ""))
+    ProjectPreviewView()
 }

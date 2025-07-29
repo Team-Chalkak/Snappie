@@ -128,8 +128,7 @@ struct ClipEditView: View {
             Button("촬영 프로세스 마치기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
-                
-                coordinator.push(.boundingBox(guide: nil))
+                coordinator.push(.projectPreview)
             }
 
             Button("Cancel", role: .cancel) { }
