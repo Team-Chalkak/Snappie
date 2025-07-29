@@ -20,14 +20,6 @@ struct ProjectListView: View {
         GridItem(spacing: 15, alignment: .leading)
     ]
     
-    // TODO: dummy projects입니다 vm 구현하시고 없애주세요!
-    let projects: [Project] = [
-        Project(id: UUID().uuidString, guide: nil, clipList: [], cameraSetting: nil, referenceDuration: nil),
-        Project(id: UUID().uuidString, guide: nil, clipList: [], cameraSetting: nil, referenceDuration: nil),
-        Project(id: UUID().uuidString, guide: nil, clipList: [], cameraSetting: nil, referenceDuration: nil),
-        Project(id: UUID().uuidString, guide: nil, clipList: [], cameraSetting: nil, referenceDuration: nil)
-    ]
-    
     // MARK: body
     var body: some View {
         ZStack {
@@ -76,7 +68,7 @@ extension ProjectListView {
     var nonEmptyProjectView: some View {
         ScrollView {
             LazyVGrid(columns: gridItems, spacing: 16) {
-                ForEach(projects) { project in
+                ForEach(viewModel.projects) { project in
                     ProjectCardView(
                         isCurrentProject: viewModel.isCurrentProject(project),
                         image: Image(uiImage: UIImage(data: project.coverImage ?? Data()) ?? UIImage()),
@@ -88,13 +80,11 @@ extension ProjectListView {
                             coordinator.push(.projectEdit)
                         },
                         deleteProject: {
-                            // TODO: 뷰모델에서 프로젝트 지우는 로직을 입력해주세요
+                            viewModel.deleteProject(project)
                         },
-                        editProjectTitle: { title in
-                            // TODO: 뷰모델에서 프로젝트 이름 수정하는 로직을 입력해주세요(위 title로 바꾸는 함수를 작성하시면 됩니닷)
-                            // ex. editProjectTitle(title: title) <- 요런식으로!
-                        }
-                    )
+                        editProjectTitle: { newTitle in
+                            viewModel.editProjectTitle(project: project, newTitle: newTitle)
+                        }                    )
                 }
             }
             .padding(.horizontal, 16)

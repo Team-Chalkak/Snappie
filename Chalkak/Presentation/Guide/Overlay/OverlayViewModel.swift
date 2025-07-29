@@ -130,11 +130,30 @@ final class OverlayViewModel: ObservableObject {
     @MainActor
     func saveCoverImageToProject() {
         if let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
-           let cover = extractedImage {
+           let originalImage = extractedImage,
+           let croppedImage = croppedToSquare(image: originalImage) {
             SwiftDataManager.shared.updateProjectCoverImage(
                 projectID: projectID,
-                coverImage: cover
+                coverImage: croppedImage
             )
         }
+    }
+    
+    /// 정사각형 중앙 크롭 이미지 반환 함수
+    func croppedToSquare(image: UIImage) -> UIImage? {
+        let originalWidth  = image.size.width
+        let originalHeight = image.size.height
+        let sideLength = min(originalWidth, originalHeight)
+
+        let originX = (originalWidth - sideLength) / 2.0
+        let originY = (originalHeight - sideLength) / 2.0
+
+        let cropRect = CGRect(x: originX, y: originY, width: sideLength, height: sideLength)
+
+        guard let cgImage = image.cgImage?.cropping(to: cropRect) else {
+            return nil
+        }
+
+        return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
     }
 }

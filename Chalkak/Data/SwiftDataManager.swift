@@ -126,6 +126,12 @@ class SwiftDataManager {
         saveContext()
     }
     
+    /// 프로젝트 '타이틀' 변경(업데이트)
+    func updateProjectTitle(project: Project, newTitle: String) {
+        project.title = newTitle
+        saveContext()
+    }
+    
 
     // MARK: - Clip
 

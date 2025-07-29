@@ -65,6 +65,7 @@ struct ProjectCardView: View {
             )
         }
         .alert(
+            //TODO: 핀의 커스템 알럿으로 대체
             "프로젝트를 삭제하시겠습니까?",
             isPresented: $showDeleteProjectAlert,
             actions: {
@@ -95,7 +96,7 @@ struct ProjectCardView: View {
                 
                 Button("저장") {
                     // 이름 변경 반영
-                    editProjectTitle(projectTitle)
+                    editProjectTitle(titleToChange)
                 }
             },
             message: {
