@@ -13,7 +13,7 @@ struct CameraRecordView: View {
     @EnvironmentObject private var coordinator: Coordinator
 
     @Query(filter: #Predicate<Project> { project in
-        project.isChecked == false
+        project.isChecked == false && project.guide != nil
     }) private var uncheckedProjects: [Project]
 
     // unchecked시 현재 촬영 중인 프로젝트를 제외

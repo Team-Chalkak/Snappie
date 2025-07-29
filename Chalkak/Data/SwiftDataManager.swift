@@ -121,7 +121,7 @@ class SwiftDataManager {
     /// 프로젝트에 'coverImage' 업데이트
     func updateProjectCoverImage(projectID: String, coverImage: UIImage) {
         guard let project = fetchProject(byID: projectID) else {
-            print("⚠️ 해당 Project(\(projectID))를 찾을 수 없습니다.")
+            print("해당 Project(\(projectID))를 찾을 수 없습니다.")
             return
         }
 
@@ -145,14 +145,19 @@ class SwiftDataManager {
     /// 프로젝트 확인 상태 업데이트
     func markProjectAsChecked(projectID: String) {
         guard let project = fetchProject(byID: projectID) else {
-            print("⚠️ 해당 Project(\(projectID))를 찾을 수 없습니다.")
+            print("해당 Project(\(projectID))를 찾을 수 없습니다.")
             return
         }
+        
         project.isChecked = true
         saveContext()
+        
+        // 뱃지 상태 최신화
+        DispatchQueue.main.async {
+            try? self.context.save()
+        }
     }
     
-
     // MARK: - Clip
 
     /// `Clip` 생성: Clip 객체 데이터로
