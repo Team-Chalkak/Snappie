@@ -86,6 +86,7 @@
 		B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788692E33A34F0091A067 /* ZoomButton.swift */; };
 		B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */; };
 		B68307542E327F9400517979 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
@@ -222,6 +223,7 @@
 		B64788692E33A34F0091A067 /* ZoomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButton.swift; sourceTree = "<group>"; };
 		B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraZoomControlView.swift; sourceTree = "<group>"; };
 		B655A8672E26A4EE0060E2C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
@@ -465,6 +467,7 @@
 			isa = PBXGroup;
 			children = (
 				B647886B2E33A5A00091A067 /* CameraZoomControlView.swift */,
+				B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */,
 				B64788672E3324350091A067 /* HorizontalLevelIndicator.swift */,
 				B64788632E3323C10091A067 /* RecordButton.swift */,
 				993A1F2D2E267E0C0059B70A /* CameraBaseFeatureSelectView.swift */,
@@ -1004,6 +1007,7 @@
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
 				992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */,
+				B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
 				992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */,
 				B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */,
