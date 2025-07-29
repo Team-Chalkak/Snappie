@@ -17,7 +17,7 @@ import SwiftUI
  - 첫 프레임 + 윤곽선 오버레이 시각화
  - 뒤로가기 및 다음 버튼을 통한 뷰 전환
  - OverlayViewModel과 연동하여 오버레이 상태 관리
- 
+
  ## 데이터 흐름
  - "뒤로" 버튼 선택 시: 오버레이 상태 초기화 (`dismissOverlay()`)
  - "다음" 버튼 선택 시:
@@ -25,7 +25,7 @@ import SwiftUI
 
  ## 호출 위치
  - ClipEditView → OverlayView로 이동
- - 호출 예시: 
+ - 호출 예시:
  */
 struct OverlayView: View {
     // 1. Input properties
@@ -37,23 +37,17 @@ struct OverlayView: View {
     @State private var navigateToCameraView = false
     @EnvironmentObject private var coordinator: Coordinator
     @State private var guide: Guide?
-    
-    private var usingGuideText: String {
-        overlayViewModel.isOverlayReady
-            ? Context.buttonTitle
-            : Context.buttonPlaceholder
-    }
-    
+
     // 3. init
     init(clip: Clip) {
         self.clip = clip
         self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
     }
-    
+
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
-                
+
             if overlayViewModel.isOverlayReady {
                 ContentView
                     .transition(.opacity)
@@ -68,7 +62,7 @@ struct OverlayView: View {
             overlayViewModel.dismissOverlay()
         }
     }
-    
+
     private var ContentView: some View {
         VStack(alignment: .center) {
             SnappieNavigationBar(
@@ -95,14 +89,15 @@ struct OverlayView: View {
             OverlayDisplayView(overlayViewModel: overlayViewModel)
                 .aspectRatio(
                     Layout.aspectRatioWidth / Layout.aspectRatioHeight,
-                    contentMode: .fill)
+                    contentMode: .fill
+                )
                 .padding(.horizontal, Layout.displayHorizontalPadding)
                 .padding(.top, Layout.displayTopPadding)
                 .padding(.bottom, Layout.displayBottomPadding)
-            
+
             Spacer()
-            
-            if overlayViewModel.overlayManager.outlineImage != nil {
+
+            if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
                     if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
                         guide = newGuide
