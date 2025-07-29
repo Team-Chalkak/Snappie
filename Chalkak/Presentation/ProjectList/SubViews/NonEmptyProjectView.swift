@@ -29,7 +29,7 @@ struct NonEmptyProjectView: View {
                         isChecked: project.isChecked,
                         timeCreated: project.createdAt,
                         moveToProjectEdit: {
-                            coordinator.push(.projectEdit)
+                            coordinator.push(.projectEdit(projectID: project.id))
                         },
                         deleteProject: {
                             viewModel.deleteProject(project)
