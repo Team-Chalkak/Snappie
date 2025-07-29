@@ -42,6 +42,9 @@ class Project: Identifiable {
     /// 프로젝트 생성 시간
     var createdAt: Date
     
+    /// 전체 프로젝트 영상 길이
+    var totalDuration: Double
+    
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 고유 식별자 (기본값은 자동 생성된 UUID).
@@ -56,7 +59,8 @@ class Project: Identifiable {
         referenceDuration: Double? = nil,
         isChecked: Bool = false,
         coverImage: Data? = nil,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        totalDuration: Double = 0
     ) {
         self.id = id
         self.guide = guide
@@ -67,5 +71,6 @@ class Project: Identifiable {
         self.isChecked = isChecked
         self.coverImage = coverImage
         self.createdAt = createdAt
+        self.totalDuration = totalDuration
     }
 }
