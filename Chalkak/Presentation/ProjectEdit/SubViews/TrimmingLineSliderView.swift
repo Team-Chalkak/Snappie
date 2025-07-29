@@ -71,10 +71,12 @@ struct TrimminglineSliderView: View {
             .frame(height: rulerHeight + timelineHeight)
             
             // Playhead
-            Rectangle()
-                .fill(Color.red)
+            RoundedRectangle(cornerRadius: 2)
+                .fill(Color.matcha50)
                 .frame(width: 2, height: rulerHeight + timelineHeight)
-                .position(x: UIScreen.main.bounds.width/2, y: (rulerHeight + timelineHeight)/2)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .allowsHitTesting(false)
         }
+        .frame(height: rulerHeight + timelineHeight)
     }
 }
