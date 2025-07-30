@@ -35,15 +35,15 @@ struct ProjectTimelineView: View {
                     )
                 }
                 Button(action: onAddClipTapped) {
-                    // TODO: - 버튼 디자인 변경하면서 Stack 제거
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.gray, lineWidth: 1)
-                            .frame(width: timelineHeight, height: timelineHeight)
-                        Image(systemName: "plus").font(.title2)
-                    }
+                    Image("union")
+                        .padding(.horizontal, 16)
+                        .frame(height: timelineHeight)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(SnappieColor.primaryLight)
+                        )
                 }
-                .frame(width: timelineHeight, height: timelineHeight)
+                .padding(.leading, 2)
             }
             .padding(.horizontal, halfWidth)
             .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
