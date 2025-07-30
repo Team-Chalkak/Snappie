@@ -71,9 +71,9 @@ struct OverlayView: View {
                 },
                 rightButtonType: .none
             )
-            
+
             Spacer().frame(height: Layout.spacerHeight)
-            
+
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Text(Context.guideGeneratedMessage)
                     .snappieStyle(.proBody1)
@@ -85,7 +85,7 @@ struct OverlayView: View {
                     .foregroundStyle(SnappieColor.labelPrimaryNormal)
                     .multilineTextAlignment(.center)
             }
-            
+
             OverlayDisplayView(overlayViewModel: overlayViewModel)
                 .aspectRatio(
                     Layout.aspectRatioWidth / Layout.aspectRatioHeight,
@@ -118,9 +118,9 @@ struct OverlayView: View {
 
 private extension OverlayView {
     enum Context {
-        static let guideGeneratedMessage = "다음 촬영을 위한 가이드가 생성되었어요."
+        static let guideGeneratedMessage = "촬영을 위한 가이드가 만들어졌어요."
         static let guideFailedMessage = "가이드 생성에 실패했어요.\n인물이 나오는 장면을 촬영해주세요."
-        static let buttonTitle = "가이드로 촬영하기"
+        static let buttonTitle = "다음 장면 촬영하기"
         static let buttonPlaceholder = " "
     }
 

@@ -78,7 +78,7 @@ struct ClipEditView: View {
 
             VStack(alignment: .center, spacing: 16, content: {
                 SnappieNavigationBar(
-                    navigationTitle: "클립 편집",
+                    navigationTitle: "장면 다듬기",
                     leftButtonType: .backward {
                         showRetakeAlert = true
                     },
