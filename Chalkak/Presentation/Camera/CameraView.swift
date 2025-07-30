@@ -145,6 +145,7 @@ struct CameraView: View {
 
     private func handleExitCamera() {
         viewModel.stopCamera()
+        UserDefaults.standard.set(nil, forKey: "currentProjectID")
         coordinator.removeAll()
     }
 }
