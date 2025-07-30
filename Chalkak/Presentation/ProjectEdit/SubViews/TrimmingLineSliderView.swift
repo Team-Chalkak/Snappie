@@ -22,7 +22,8 @@ struct TrimminglineSliderView: View {
     private let pxPerSecond: CGFloat = 50
     private let clipSpacing: CGFloat = 8
     private let timelineHeight: CGFloat = 60
-    private let rulerHeight: CGFloat = 20
+    private let rulerHeight: CGFloat = 23
+    private let timeBoardPadding: CGFloat = 11
 
     @State private var dragOffset: CGFloat = 0
 
@@ -37,6 +38,7 @@ struct TrimminglineSliderView: View {
                     pxPerSecond: pxPerSecond,
                     rulerHeight: rulerHeight
                 )
+                .padding(.bottom, timeBoardPadding)
                 
                 // 타임 라인
                 ProjectTimelineView(
@@ -73,10 +75,10 @@ struct TrimminglineSliderView: View {
             // Playhead
             RoundedRectangle(cornerRadius: 2)
                 .fill(Color.matcha50)
-                .frame(width: 2, height: rulerHeight + timelineHeight)
+                .frame(width: 2, height: rulerHeight + timelineHeight + timeBoardPadding)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .allowsHitTesting(false)
         }
-        .frame(height: rulerHeight + timelineHeight)
+        .frame(height: rulerHeight + timeBoardPadding + timelineHeight)
     }
 }

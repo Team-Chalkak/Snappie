@@ -19,11 +19,15 @@ struct ClipTrimmingView: View {
     private let thumbnailHeight: CGFloat = 60
 
     private var fullWidth: CGFloat {
-        CGFloat(clip.originalDuration) * pxPerSecond
+        if clip.isTrimming {
+            CGFloat(clip.originalDuration) * pxPerSecond
+        } else {
+            CGFloat(clip.trimmedDuration) * pxPerSecond
+        }
     }
 
     var body: some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: .center) {
             ProjectThumbnailsView(clip: clip, fullWidth: fullWidth)
                 .onTapGesture { onToggleTrimming() }
                 .padding(.horizontal, clipSpacing/2)
@@ -38,6 +42,9 @@ struct ClipTrimmingView: View {
                 )
             }
         }
-        .frame(width: fullWidth, height: thumbnailHeight)
+        .frame(
+            width: clip.isTrimming ? fullWidth + 40 : fullWidth,
+            height: thumbnailHeight
+        )
     }
 }

@@ -23,27 +23,45 @@ struct ProjectTimelineView: View {
     let onAddClipTapped: () -> Void
 
     var body: some View {
+        
+        ForEach(Array(clips.enumerated()), id: \.offset) { index, item in
+            HStack {
+                Circle()
+                if index != clips.count - 1 {
+                    Rectangle()
+                }
+            }
+        }
+        
         GeometryReader { geo in
             let halfWidth = geo.size.width / 2
-            HStack(spacing: clipSpacing) {
-                ForEach(clips) { clip in
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(Array(clips.enumerated()), id: \.offset) { index, clip in
+                    
                     ClipTrimmingView(
                         clip: clip,
                         isDragging: $isDragging,
                         onToggleTrimming: { onToggleTrimming(clip.id) },
                         onTrimChanged:   { s,e in onTrimChanged(clip.id, s, e) }
                     )
-                }
-                Button(action: onAddClipTapped) {
-                    // TODO: - 버튼 디자인 변경하면서 Stack 제거
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.gray, lineWidth: 1)
-                            .frame(width: timelineHeight, height: timelineHeight)
-                        Image(systemName: "plus").font(.title2)
+                    
+                    // 이어져있는것처럼 만들어주는 작은 선 컴포넌트
+                    if index != clips.count - 1 {
+                        Rectangle()
+                            .frame(width: 2, height: 8)
+                            .foregroundStyle(SnappieColor.primaryLight)
                     }
                 }
-                .frame(width: timelineHeight, height: timelineHeight)
+                Button(action: onAddClipTapped) {
+                    Image("union")
+                        .padding(.horizontal, 16)
+                        .frame(height: timelineHeight)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(SnappieColor.primaryLight)
+                        )
+                }
+                .padding(.leading, 2)
             }
             .padding(.horizontal, halfWidth)
             .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)

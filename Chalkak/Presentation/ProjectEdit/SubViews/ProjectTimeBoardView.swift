@@ -17,18 +17,18 @@ struct ProjectTimeBoardView: View {
     var body: some View {
         GeometryReader { geo in
             let halfWidth = geo.size.width / 2
-            HStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
                 ForEach(0...Int(totalDuration), id: \.self) { sec in
                     VStack(spacing: 2) {
                         if sec % 2 == 1 {
-                            Text("\(sec)")
+                            Text("\(sec)초")
                                 .font(.caption2)
                         } else {
-                            Circle().frame(width: 2, height: 2)
+                            Circle().frame(width: 5, height: 5)
                         }
-                        Spacer()
                     }
                     .frame(width: pxPerSecond, height: rulerHeight)
+                    .foregroundStyle(SnappieColor.darkLight)
                 }
             }
             .padding(.horizontal, halfWidth)

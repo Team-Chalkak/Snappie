@@ -86,5 +86,9 @@ struct ProjectEditView: View {
                 }
             )
         }
+        .background(
+            SnappieColor.darkHeavy
+                .ignoresSafeArea()
+        )
     }
 }
