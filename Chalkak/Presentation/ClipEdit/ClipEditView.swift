@@ -24,11 +24,11 @@ import SwiftUI
  ├─ guide != nil
       1) "내보내기" 버튼이 표시됨
       2) "다음" 버튼 → 기존 Project에 새로운 Clip 모델 추가
- 
+
  ## 구성 요소(서브뷰)
  - VideoPreviewView: 영상의 현재 구간을 보여주는 프리뷰 뷰
  - TrimmingControlView: 영상 재생 버튼과 트리밍 타임라인 UI를 포함한 조작 패널
- 
+
  ## 호출 위치
  - CameraView → ClipEditView로 이동
  - 호출 예시:
@@ -51,7 +51,8 @@ struct ClipEditView: View {
     @State private var isDragging = false
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
-    
+    @State private var showRetakeAlert = false
+
     // 3. init
     init(
         clipURL: URL,
@@ -63,23 +64,23 @@ struct ClipEditView: View {
             clipURL: clipURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: timeStampedTiltList
-            )
+        )
         )
         self.guide = guide
         self.cameraSetting = cameraSetting
     }
-    
+
     // 4. body
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
-            
+
             VStack(alignment: .center, spacing: 16, content: {
                 SnappieNavigationBar(
                     navigationTitle: "클립 편집",
                     leftButtonType: .backward {
-                        coordinator.popLast()
+                        showRetakeAlert = true
                     },
                     rightButtonType: guide != nil ?
                         .oneButton(
@@ -118,7 +119,7 @@ struct ClipEditView: View {
             Button("촬영 이어가기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
-                
+
                 // 가이드 카메라로 이동
                 if let guide = guide {
                     coordinator.push(.boundingBox(guide: guide))
@@ -131,9 +132,12 @@ struct ClipEditView: View {
                 coordinator.push(.projectPreview)
             }
 
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) {}
         } message: {
             Text("이어서 찍거나 전체 영상 편집으로 이동할 수 있습니다.")
+        }
+        .alert(.retakeVideo, isPresented: $showRetakeAlert) {
+            coordinator.popLast()
         }
         .task {
             if guide != nil {

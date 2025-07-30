@@ -11,11 +11,13 @@ import SwiftUI
 /// 합본 영상을 확인하고 갤러리로 내보내기 할 수 있는 뷰
 struct ProjectPreviewView: View {
     // MARK: Property Wrappers
+
     @StateObject private var viewModel = ProjectPreviewViewModel()
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExportSuccessAlert = false
-    
+   
     // MARK: body
+
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy.ignoresSafeArea()
@@ -24,6 +26,10 @@ struct ProjectPreviewView: View {
                 SnappieNavigationBar(
                     leftButtonType: .dismiss {
                         viewModel.clearCurrentProjectID()
+
+                        // 홈으로 이동 후 alert를 위한 userdefaults플래그 설정
+                        UserDefaults.standard.set(true, forKey: "showProjectSavedAlert")
+
                         coordinator.removeAll()
                     },
                     rightButtonType: .oneButton(.init(

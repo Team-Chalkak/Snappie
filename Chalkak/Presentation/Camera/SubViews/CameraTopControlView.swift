@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CameraTopControlView: View {
     @ObservedObject var viewModel: CameraViewModel
+    let guide: Guide?
 
     var body: some View {
         HStack {

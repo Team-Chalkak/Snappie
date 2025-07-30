@@ -47,6 +47,7 @@ struct ProjectListView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .snappieAlert(isPresented: $viewModel.showProjectDeletedAlert, message: "프로젝트 삭제됨", showImage: false)
     }
 }
 

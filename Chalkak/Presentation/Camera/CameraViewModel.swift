@@ -22,7 +22,6 @@ class CameraViewModel: ObservableObject {
 
     // 비디오 저장 완료 이벤트를 View로 전달
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
-    
 
     @Published var isTimerRunning = false
     @Published var selectedTimerDuration: TimerOptions = .off
@@ -58,6 +57,8 @@ class CameraViewModel: ObservableObject {
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
     @Published var isUsingFrontCamera: Bool = false
+    @Published var hasBadge: Bool = false
+    @Published var showProjectSavedAlert: Bool = false
 
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
@@ -94,6 +95,11 @@ class CameraViewModel: ObservableObject {
         loadSavedSettings()
 
         configure()
+
+        // 뱃지 상태 초기화
+        Task { @MainActor in
+            updateBadgeState()
+        }
 
         // 저장되어있는 줌스케일 적용
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -374,5 +380,18 @@ class CameraViewModel: ObservableObject {
         zoomScale = savedZoomScale
         selectedTimerDuration = TimerOptions(rawValue: savedTimer) ?? .off
         cameraPostion = savedIsFront ? .front : .back
+    }
+
+    /// 뱃지 상태 업데이트
+    @MainActor
+    func updateBadgeState() {
+        let uncheckedProjects = SwiftDataManager.shared.getUncheckedProjectsForBadge()
+        hasBadge = !uncheckedProjects.isEmpty
+    }
+    
+    /// 프로젝트 저장 알림 표시
+    @MainActor
+    func showProjectSavedNotification() {
+        showProjectSavedAlert = true
     }
 }

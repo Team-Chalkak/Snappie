@@ -12,24 +12,12 @@ struct CameraRecordView: View {
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
-    @Query(filter: #Predicate<Project> { project in
-        project.isChecked == false
-    }) private var uncheckedProjects: [Project]
-
-    // unchecked시 현재 촬영 중인 프로젝트를 제외
-    private var uncheckedProjectsExcludingCurrent: [Project] {
-        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
-            return uncheckedProjects
-        }
-        return uncheckedProjects.filter { $0.id != currentProjectID }
-    }
-
     var body: some View {
         HStack(spacing: 0) {
             Button(action: {
                 coordinator.push(.projectList)
             }) {
-                Image(uncheckedProjectsExcludingCurrent.isEmpty ? "projectList" : "projectListBadge")
+                Image(viewModel.hasBadge ? "projectListBadge" : "projectList")
                     .frame(width: 48, height: 48)
             }
 
@@ -55,6 +43,23 @@ struct CameraRecordView: View {
         }
         .padding(.bottom, Layout.recordButtonBottomPadding)
         .padding(.horizontal, Layout.recordButtonHorizontalPadding)
+        .onAppear {
+            Task { @MainActor in
+                viewModel.updateBadgeState()
+                
+                // 프로젝트 완료 후 홈으로 돌아왔을 때 알림 표시
+                if UserDefaults.standard.bool(forKey: "showProjectSavedAlert") {
+                    UserDefaults.standard.set(false, forKey: "showProjectSavedAlert")
+                    viewModel.showProjectSavedNotification()
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in
+            // SwiftData 변경사항이 있을 때 뱃지 상태 업데이트
+            Task { @MainActor in
+                viewModel.updateBadgeState()
+            }
+        }
     }
 }
 

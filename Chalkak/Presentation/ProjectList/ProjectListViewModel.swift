@@ -13,6 +13,7 @@ import SwiftData
 @MainActor
 final class ProjectListViewModel: ObservableObject {
     @Published var projects: [Project] = []
+    @Published var showProjectDeletedAlert: Bool = false
 
     init() {
         fetchProjects()
@@ -37,6 +38,7 @@ final class ProjectListViewModel: ObservableObject {
     func deleteProject(_ project: Project) {
         SwiftDataManager.shared.deleteProject(project)
         fetchProjects()
+        showProjectDeletedAlert = true
     }
     
     /// 프로젝트 이름 변경
