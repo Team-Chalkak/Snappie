@@ -94,9 +94,10 @@ struct ProjectEditView: View {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
         )
+        
         // 뒤로가기 확인 다이얼로그
         .confirmationDialog(
-            "편집된 내용을 저장할까요? 저장하지 않으면 편집 내용이 사라집니다.",
+            "편집된 내용을 저장할까요?",
             isPresented: $showExitConfirmation,
             titleVisibility: .visible
         ) {
@@ -104,16 +105,20 @@ struct ProjectEditView: View {
                 viewModel.saveProjectChanges()
                 coordinator.popLast()
             }
-            Button("저장하지 않고 나가기", role: .destructive) {
+            Button("저장하지 않고 나가기") {
                 coordinator.popLast()
             }
             Button("취소", role: .cancel) {}
+        } message: {
+            Text("저장하지 않으면 편집 내용이 사라집니다.")
         }
+        
         // 내보내기 완료 알림
         .snappieAlert(
             isPresented: $showExportSuccessAlert,
             message: "내보내기 완료"
         )
+        
         // 진행중 로딩 프로그레스
         .snappieProgressAlert(
             isPresented: $isExporting,
