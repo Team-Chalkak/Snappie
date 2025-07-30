@@ -71,19 +71,11 @@ struct ProjectCardView: View {
             )
         }
         .alert(
-            //TODO: 핀의 커스템 알럿으로 대체
-            "프로젝트를 삭제하시겠습니까?",
+            .deleteProject,
             isPresented: $showDeleteProjectAlert,
-            actions: {
-                Button("취소", role: .cancel) { }
-                
-                Button("삭제", role: .destructive) {
-                    // 프로젝트 삭제
-                    deleteProject()
-                }
-            },
-            message: {
-                Text("프로젝트와 클립이 모두 삭제됩니다.")
+            confirmAction: {
+                // 프로젝트 삭제
+                deleteProject()
             }
         )
         .alert(
