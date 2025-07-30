@@ -12,6 +12,7 @@ import SwiftUI
 @MainActor
 final class ProjectEditViewModel: ObservableObject {
     private var project: Project?
+    private let projectID: String
     private var currentComposition: AVMutableComposition?
     private var timeObserverToken: Any?
     private var imageGenerator: AVAssetImageGenerator?
@@ -24,12 +25,18 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var isDragging = false
     @Published var guide: Guide? = nil
 
+    // MARK: – 저장/내보내기용 프로퍼티
+    @Published var isExporting = false
+    private let videoManager = VideoManager()
+    private let photoLibrarySaver = PhotoLibrarySaver()
+
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
 
     // init
     init(projectID: String) {
+        self.projectID = projectID
         loadProject(of: projectID)
     }
 
@@ -296,5 +303,52 @@ final class ProjectEditViewModel: ObservableObject {
     func allClipStart(of clip: EditableClip) -> Double {
         let idx = editableClips.firstIndex { $0.id == clip.id }!
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
+    }
+    
+    // MARK: – 프로젝트 변경사항 저장
+    func saveProjectChanges() {
+        // 프로젝트 엔티티 가져오기
+        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
+            print("프로젝트(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+
+        // 편집된 trim 값 반영
+        for entity in project.clipList {
+            if let edited = editableClips.first(where: { $0.id == entity.id }) {
+                entity.startPoint = edited.startPoint
+                entity.endPoint   = edited.endPoint
+            }
+        }
+
+        // 삭제된 클립 제거
+        let removed = project.clipList.filter { entity in
+            !editableClips.contains(where: { $0.id == entity.id })
+        }
+        removed.forEach { SwiftDataManager.shared.deleteClip($0) }
+
+        // 저장
+        do {
+            try SwiftDataManager.shared.saveContext()
+            print("편집 내용 저장 완료")
+        } catch {
+            print("저장 실패:", error)
+        }
+    }
+    
+    // MARK: – 편집된 영상 갤러리에 내보내기
+    func exportEditedVideoToPhotos() async {
+        isExporting = true
+        defer { isExporting = false }
+
+        do {
+            // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
+            // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
+            let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
+            await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
+            print("내보내기 완료:", finalURL)
+        } catch {
+            print("내보내기 실패:", error)
+        }
     }
 }
