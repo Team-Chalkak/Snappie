@@ -19,7 +19,11 @@ struct ClipTrimmingView: View {
     private let thumbnailHeight: CGFloat = 60
 
     private var fullWidth: CGFloat {
-        CGFloat(clip.originalDuration) * pxPerSecond
+        if clip.isTrimming {
+            CGFloat(clip.originalDuration) * pxPerSecond
+        } else {
+            CGFloat(clip.trimmedDuration) * pxPerSecond
+        }
     }
 
     var body: some View {
