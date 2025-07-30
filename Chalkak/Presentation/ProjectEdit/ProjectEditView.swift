@@ -8,6 +8,7 @@
 import SwiftUI
 import AVKit
 
+/// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
     @StateObject private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
@@ -18,7 +19,18 @@ struct ProjectEditView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Spacer().frame(height: 16)
+            SnappieNavigationBar(
+                navigationTitle: "프로젝트 편집",
+                leftButtonType: .backward {
+                    // TODO: confirmation dialog 띄우기(ssol)
+                    // 임시로 현재 화면 빠져나가도록 처리했습니다. 추후 수정 예정
+                    coordinator.popLast()
+                },
+                rightButtonType: .oneButton(.init(label: "내보내기") {
+                    // TODO: 영상 사진 앱으로 내보내기 로직 연결(ssol)
+                })
+            )
+            .padding(.bottom, 16)
 
             ZStack {
                 VideoPreviewView(
@@ -26,37 +38,37 @@ struct ProjectEditView: View {
                     player: viewModel.player,
                     isDragging: viewModel.isDragging
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 
                 // 선택된 클립이 있을 때만 Delete 버튼 표시
                 if let trimmingClip = viewModel.editableClips.first(where: { $0.isTrimming }) {
-                    HStack {
+                    VStack {
                         Spacer()
                         Button(action: {
                             viewModel.deleteClip(id: trimmingClip.id)
                         }) {
                             Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .imageScale(.large)
-                                .padding()
-                                .background(Color(.systemGray6))
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(SnappieColor.redRecording)
+                                .padding(8)
+                                .frame(width: 40, height: 40, alignment: .center)
+                                .background(SnappieColor.containerFillNormal)
                                 .clipShape(Circle())
                         }
-                        Spacer()
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 16)
                 }
             }
-
-            PlayButtonControlView(
-                isPlaying: $viewModel.isPlaying,
-                onPlayPauseTapped: viewModel.togglePlayback
-            )
             
-            PlayTimeView(
+            // 재생 일시정지 버튼 & 시간표시하는 서브뷰
+            PlayInfoView(
+                isPlaying: $viewModel.isPlaying,
+                onPlayPauseTapped: viewModel.togglePlayback,
                 currentTime: viewModel.playHead,
                 totalDuration: viewModel.totalDuration,
                 trimmingClip: viewModel.editableClips.first(where: { $0.isTrimming })
             )
+            .padding(.vertical, 16)
             
             Divider().padding(.vertical, 8)
 
@@ -74,8 +86,5 @@ struct ProjectEditView: View {
                 }
             )
         }
-        .padding(.horizontal, 16)
-        .navigationTitle("프로젝트 트리밍")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }

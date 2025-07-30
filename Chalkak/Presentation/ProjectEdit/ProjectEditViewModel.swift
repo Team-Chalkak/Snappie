@@ -43,6 +43,9 @@ final class ProjectEditViewModel: ObservableObject {
         
         self.project = project
         self.guide = project.guide
+        
+        // 확인했으니 isChecked처리
+        SwiftDataManager.shared.markProjectAsChecked(projectID: projectID)
 
         let sorted = project.clipList.sorted { $0.createdAt < $1.createdAt }
 

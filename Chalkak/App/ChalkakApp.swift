@@ -51,6 +51,7 @@ struct ChalkakApp: App {
                         
                         case .projectEdit(let projectID):
                             ProjectEditView(projectID: projectID)
+                                .toolbar(.hidden, for: .navigationBar)
                             
                         case .projectList:
                             ProjectListView()
