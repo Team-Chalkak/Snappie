@@ -27,7 +27,7 @@ struct ClipTrimmingView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: .center) {
             ProjectThumbnailsView(clip: clip, fullWidth: fullWidth)
                 .onTapGesture { onToggleTrimming() }
                 .padding(.horizontal, clipSpacing/2)
@@ -42,6 +42,9 @@ struct ClipTrimmingView: View {
                 )
             }
         }
-        .frame(width: fullWidth, height: thumbnailHeight)
+        .frame(
+            width: clip.isTrimming ? fullWidth + 40 : fullWidth,
+            height: thumbnailHeight
+        )
     }
 }

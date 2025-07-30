@@ -26,5 +26,6 @@ struct ProjectThumbnailsView: View {
         }
         .frame(width: fullWidth, height: 60)
         .contentShape(Rectangle())
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }

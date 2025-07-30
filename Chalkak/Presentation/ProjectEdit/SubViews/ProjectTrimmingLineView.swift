@@ -25,10 +25,11 @@ struct ProjectTrimmingLineView: View {
                 Color.clear.frame(width: midW)
                 Color.black.opacity(0.5).frame(width: rightW)
             }
+            .padding(.horizontal, 20)
 
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.yellow, lineWidth: 2)
-                .frame(width: midW, height: thumbnailHeight)
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+                .frame(width: midW+40, height: thumbnailHeight)
                 .offset(x: leftW)
 
             ProjectTrimmingHandle(
@@ -51,6 +52,7 @@ struct ProjectTrimmingLineView: View {
                 onTrimChanged: onTrimChanged,
                 clip: clip
             )
+            .offset(x: 20)
         }
     }
 }
