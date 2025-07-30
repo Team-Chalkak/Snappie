@@ -40,18 +40,7 @@ struct OverlayDisplayView: View {
                 Image(uiImage: outline)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-            } else {
-                Text("가이드를 생성하지못했어요.\n인물이 나오는 장면을 촬영해주세요")
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
             }
         }
-    }
-}
-
-private extension OverlayDisplayView {
-    enum Layout {
-        static let overlayWidth: CGFloat = 296
-        static let overlayHeight: CGFloat = 526
     }
 }

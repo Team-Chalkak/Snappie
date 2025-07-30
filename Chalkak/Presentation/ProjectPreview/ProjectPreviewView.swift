@@ -14,8 +14,8 @@ struct ProjectPreviewView: View {
 
     @StateObject private var viewModel = ProjectPreviewViewModel()
     @EnvironmentObject private var coordinator: Coordinator
-    @State private var showSuccessAlert = false
-
+    @State private var showExportSuccessAlert = false
+   
     // MARK: body
 
     var body: some View {
@@ -37,7 +37,7 @@ struct ProjectPreviewView: View {
                         action: {
                             Task {
                                 await viewModel.exportToPhotos()
-                                showSuccessAlert = true
+                                showExportSuccessAlert = true
                             }
                         }
                     ))
@@ -52,7 +52,7 @@ struct ProjectPreviewView: View {
             })
         }
         .navigationBarBackButtonHidden()
-        .snappieAlert(isPresented: $showSuccessAlert, message: "프로젝트 저장됨")
+        .snappieAlert(isPresented: $showExportSuccessAlert, message: "내보내기 완료")
         .snappieProgressAlert(
             isPresented: $viewModel.isMerging,
             isLoading: $viewModel.isMerging,
