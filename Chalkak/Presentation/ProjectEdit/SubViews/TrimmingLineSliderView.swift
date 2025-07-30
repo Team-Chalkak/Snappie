@@ -23,6 +23,7 @@ struct TrimminglineSliderView: View {
     private let clipSpacing: CGFloat = 8
     private let timelineHeight: CGFloat = 60
     private let rulerHeight: CGFloat = 20
+    private let timeBoardPadding: CGFloat = 11
 
     @State private var dragOffset: CGFloat = 0
 
@@ -37,6 +38,7 @@ struct TrimminglineSliderView: View {
                     pxPerSecond: pxPerSecond,
                     rulerHeight: rulerHeight
                 )
+                .padding(.bottom, timeBoardPadding)
                 
                 // 타임 라인
                 ProjectTimelineView(
