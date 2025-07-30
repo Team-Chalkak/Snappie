@@ -311,8 +311,6 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
-    /// 기존 Project에 새로운 Clip을 추가
-    /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func saveCameraSetting() -> CameraSetting {
         return SwiftDataManager.shared.createCameraSetting(
@@ -323,6 +321,8 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
+    /// 기존 Project에 새로운 Clip을 추가
+    /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
         let clip = saveClipData()
