@@ -21,6 +21,7 @@ struct ProjectListView: View {
     ]
     
     // MARK: body
+
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
@@ -29,7 +30,7 @@ struct ProjectListView: View {
             VStack {
                 // navigation
                 SnappieNavigationBar(
-                    navigationTitle: "프로젝트",
+                    navigationTitle: "내 프로젝트",
                     leftButtonType: .backward {
                         // TODO: 이전 버튼으로 돌아가는 버튼(네비게이션이 아니라 Full screen cover로 진행할 거라서 화면을 없애는 값을 바인딩으로 받아와야 할 것 같아요
                         coordinator.popLast()
