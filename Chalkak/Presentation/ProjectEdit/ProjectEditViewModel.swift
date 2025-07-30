@@ -49,16 +49,29 @@ final class ProjectEditViewModel: ObservableObject {
 
         let sorted = project.clipList.sorted { $0.createdAt < $1.createdAt }
 
-        // 썸네일 미리 생성
-        editableClips = sorted.map { clip in
+        // 안전한 URL 검증 및 썸네일 생성
+        editableClips = sorted.compactMap { clip in
+            // 비디오 파일 URL 검증 및 복구
+            guard let validURL = FileManager.validVideoURL(from: clip.videoURL) else {
+                print("클립 \(clip.id)의 비디오 파일을 찾을 수 없습니다: \(clip.videoURL)")
+                return nil
+            }
+            
+            // URL이 변경되었다면 업데이트
+            if validURL != clip.videoURL {
+                print("클립 \(clip.id)의 URL을 업데이트합니다: \(clip.videoURL) -> \(validURL)")
+                clip.videoURL = validURL
+                SwiftDataManager.shared.saveContext()
+            }
+            
             let thumbs = generateThumbnails(
-                url: clip.videoURL,
+                url: validURL,
                 duration: clip.originalDuration,
                 count: 10
             )
             return EditableClip(
                 id: clip.id,
-                url: clip.videoURL,
+                url: validURL,
                 originalDuration: clip.originalDuration,
                 startPoint: clip.startPoint,
                 endPoint: clip.endPoint,
@@ -74,6 +87,12 @@ final class ProjectEditViewModel: ObservableObject {
         duration: Double,
         count: Int
     ) -> [UIImage] {
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: url) else {
+            print("유효하지 않은 비디오 파일: \(url)")
+            return []
+        }
+        
         let asset = AVAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)
         generator.appliesPreferredTrackTransform = true
@@ -84,8 +103,12 @@ final class ProjectEditViewModel: ObservableObject {
         let interval = duration / Double(count)
         for i in 0..<count {
             let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
-            if let cg = try? generator.copyCGImage(at: time, actualTime: nil) {
+            do {
+                let cg = try generator.copyCGImage(at: time, actualTime: nil)
                 imgs.append(UIImage(cgImage: cg))
+            } catch {
+                print("썸네일 생성 실패 at \(time.seconds)s: \(error)")
+                // 실패한 경우 빈 이미지나 기본 이미지를 추가하지 않고 건너뜀
             }
         }
         return imgs
@@ -108,18 +131,29 @@ final class ProjectEditViewModel: ObservableObject {
 
         var cursor = CMTime.zero
         for clip in editableClips {
+            // URL 유효성 재확인
+            guard FileManager.isValidVideoFile(at: clip.url) else {
+                print("setupPlayer: 유효하지 않은 비디오 파일 건너뛰기: \(clip.url)")
+                continue
+            }
+            
             let asset = AVAsset(url: clip.url)
             let start = CMTime(seconds: clip.startPoint, preferredTimescale: 600)
             let dur   = CMTime(seconds: clip.trimmedDuration, preferredTimescale: 600)
             let range = CMTimeRange(start: start, duration: dur)
 
-            if let track = asset.tracks(withMediaType: .video).first {
-                try? vidTrack.insertTimeRange(range, of: track, at: cursor)
+            do {
+                if let track = asset.tracks(withMediaType: .video).first {
+                    try vidTrack.insertTimeRange(range, of: track, at: cursor)
+                }
+                if let track = asset.tracks(withMediaType: .audio).first {
+                    try audTrack.insertTimeRange(range, of: track, at: cursor)
+                }
+                cursor = cursor + dur
+            } catch {
+                print("트랙 삽입 실패 for clip \(clip.id): \(error)")
+                // 실패한 클립은 건너뛰고 계속 진행
             }
-            if let track = asset.tracks(withMediaType: .audio).first {
-                try? audTrack.insertTimeRange(range, of: track, at: cursor)
-            }
-            cursor = cursor + dur
         }
 
         currentComposition = composition
