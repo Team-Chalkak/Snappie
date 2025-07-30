@@ -263,7 +263,11 @@ final class ClipEditViewModel: ObservableObject {
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
     func saveProjectData() {
-        let clip = saveClipData()
+        guard let clip = saveClipData() else {
+            print("클립 저장에 실패했습니다.")
+            return
+        }
+        
         let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
         // 프로젝트 생성 시간
@@ -297,7 +301,7 @@ final class ClipEditViewModel: ObservableObject {
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
-    func saveClipData() -> Clip {
+    func saveClipData() -> Clip? {
         let clip = createClipData()
         return SwiftDataManager.shared.createClip(clip: clip)
     }
@@ -331,7 +335,10 @@ final class ClipEditViewModel: ObservableObject {
     /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
-        let clip = saveClipData()
+        guard let clip = saveClipData() else {
+            print("클립 저장에 실패했습니다.")
+            return
+        }
 
         guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
