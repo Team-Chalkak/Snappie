@@ -82,6 +82,7 @@ struct ProjectEditView: View {
                 onToggleTrimming: viewModel.toggleTrimmingMode,
                 onTrimChanged: viewModel.updateTrimRange,
                 onAddClipTapped: {
+                    viewModel.setCurrentProjectID()
                     coordinator.push(.boundingBox(guide: viewModel.guide ?? nil))
                 }
             )

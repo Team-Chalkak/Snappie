@@ -264,4 +264,8 @@ final class ProjectEditViewModel: ObservableObject {
       let idx = editableClips.firstIndex { $0.id == clip.id }!
       return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
     }
+    
+    func setCurrentProjectID() {
+        UserDefaults.standard.set(project?.id ?? nil, forKey: "currentProjectID")
+    }
 }
