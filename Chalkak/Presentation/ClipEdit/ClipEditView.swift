@@ -112,11 +112,11 @@ struct ClipEditView: View {
         }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(
-            "A Short Title is Best",
+            "다음 장면을 이어서 촬영할까요?",
             isPresented: $showActionSheet,
             titleVisibility: .visible
         ) {
-            Button("촬영 이어가기") {
+            Button("이어서 촬영하기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
 
@@ -126,15 +126,15 @@ struct ClipEditView: View {
                 }
             }
 
-            Button("촬영 프로세스 마치기") {
+            Button("촬영 마치기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
                 coordinator.push(.projectPreview)
             }
 
-            Button("Cancel", role: .cancel) {}
+            Button("취소", role: .cancel) {}
         } message: {
-            Text("이어서 찍거나 전체 영상 편집으로 이동할 수 있습니다.")
+            Text("지금 이어서 찍거나, 프로젝트를 마무리할 수 있어요.")
         }
         .alert(.retakeVideo, isPresented: $showRetakeAlert) {
             coordinator.popLast()

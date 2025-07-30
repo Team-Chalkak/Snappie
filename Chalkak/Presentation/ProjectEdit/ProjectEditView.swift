@@ -97,7 +97,7 @@ struct ProjectEditView: View {
         
         // 뒤로가기 확인 다이얼로그
         .confirmationDialog(
-            "편집된 내용을 저장할까요?",
+            "편집한 내용을 저장할까요?",
             isPresented: $showExitConfirmation,
             titleVisibility: .visible
         ) {
@@ -110,7 +110,7 @@ struct ProjectEditView: View {
             }
             Button("취소", role: .cancel) {}
         } message: {
-            Text("저장하지 않으면 편집 내용이 사라집니다.")
+            Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }
         
         // 내보내기 완료 알림
