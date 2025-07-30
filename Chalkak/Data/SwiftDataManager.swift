@@ -78,8 +78,7 @@ class SwiftDataManager {
         referenceDuration: Double? = nil,
         isChecked: Bool = false,
         coverImage: Data? = nil,
-        createdAt: Date = Date(),
-        totalDuration: Double = 0
+        createdAt: Date = Date()
     ) -> Project {
         let project = Project(
             id: id,
@@ -90,8 +89,7 @@ class SwiftDataManager {
             referenceDuration: referenceDuration,
             isChecked: isChecked,
             coverImage: coverImage,
-            createdAt: createdAt,
-            totalDuration: totalDuration
+            createdAt: createdAt
         )
         context.insert(project)
         return project

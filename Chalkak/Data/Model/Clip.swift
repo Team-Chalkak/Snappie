@@ -37,7 +37,7 @@ class Clip {
     
     /// 트리밍된 시간을 계산한 정보.
     var currentTrimmedDuration: Double {
-        return endPoint - startPoint
+        max(0, endPoint - startPoint)
     }
     
     /// 새로운 Clip 인스턴스를 초기화합니다.

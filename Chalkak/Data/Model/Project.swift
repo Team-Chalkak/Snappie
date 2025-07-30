@@ -43,7 +43,9 @@ class Project: Identifiable {
     var createdAt: Date
     
     /// 전체 프로젝트 영상 길이
-    var totalDuration: Double
+    var totalDuration: Double {
+        clipList.reduce(0) { $0 + $1.currentTrimmedDuration }
+    }
     
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
@@ -59,8 +61,7 @@ class Project: Identifiable {
         referenceDuration: Double? = nil,
         isChecked: Bool = false,
         coverImage: Data? = nil,
-        createdAt: Date = Date(),
-        totalDuration: Double = 0
+        createdAt: Date = Date()
     ) {
         self.id = id
         self.guide = guide
@@ -71,6 +72,5 @@ class Project: Identifiable {
         self.isChecked = isChecked
         self.coverImage = coverImage
         self.createdAt = createdAt
-        self.totalDuration = totalDuration
     }
 }

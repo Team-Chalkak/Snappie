@@ -282,8 +282,7 @@ final class ClipEditViewModel: ObservableObject {
             title: generatedTitle,
             referenceDuration: clip.endPoint - clip.startPoint,
             coverImage: nil,
-            createdAt: createdAt,
-            totalDuration: clip.currentTrimmedDuration
+            createdAt: createdAt
         )
     
         SwiftDataManager.shared.saveContext()
@@ -335,7 +334,6 @@ final class ClipEditViewModel: ObservableObject {
         }
 
         project.clipList.append(clip)
-        project.totalDuration += clip.currentTrimmedDuration
         SwiftDataManager.shared.saveContext()
     }
 }
