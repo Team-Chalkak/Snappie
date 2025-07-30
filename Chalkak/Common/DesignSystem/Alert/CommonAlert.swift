@@ -15,6 +15,7 @@ enum AlertType {
     case retakeCurrentVideo
     case endShooting
     case exitWhileRecording
+    case resumeProject
 
     var title: String {
         switch self {
@@ -24,6 +25,7 @@ enum AlertType {
         case .retakeCurrentVideo: return "다시 촬영할까요?"
         case .endShooting: return "촬영 종료하기"
         case .exitWhileRecording: return "다시 찍으시겠어요?"
+        case .resumeProject: return "촬영 중이던 프로젝트가 있습니다."
         }
     }
 
@@ -35,6 +37,7 @@ enum AlertType {
         case .retakeCurrentVideo: return "방금 찍은 영상은 저장되지 않아요."
         case .endShooting: return "지금까지 촬영된 클립을 저장하고 카메라로 돌아가시겠어요?"
         case .exitWhileRecording: return "지금 나가면 방금 찍은 영상이 지워져요."
+        case .resumeProject: return "이어찍으시겠습니까?"
         }
     }
 
@@ -46,6 +49,7 @@ enum AlertType {
         case .retakeCurrentVideo: return "확인"
         case .endShooting: return "종료"
         case .exitWhileRecording: return "확인"
+        case .resumeProject: return "이어찍기"
         }
     }
 }
