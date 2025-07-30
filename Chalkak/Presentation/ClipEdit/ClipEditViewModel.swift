@@ -270,7 +270,7 @@ final class ClipEditViewModel: ObservableObject {
         let createdAt = Date()
         
         // 프로젝트 이름 자동 생성
-        let generatedTitle = generateDateBasedTitle(from: createdAt)
+        let generatedTitle = generateTimeBasedTitle(from: createdAt)
         
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
@@ -287,13 +287,12 @@ final class ClipEditViewModel: ObservableObject {
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
-    /// 날짜 기반 이름 자동 생성 함수 - 날짜 Formatter
-    private func generateDateBasedTitle(from date: Date) -> String {
+    /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
+    private func generateTimeBasedTitle(from date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "MMdd"
-        let dateString = formatter.string(from: date)
-        return "프로젝트 \(dateString)"
+        formatter.dateFormat = "HHmm"
+        let timeString = formatter.string(from: date)
+        return "프로젝트 \(timeString)"
     }
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
