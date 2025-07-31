@@ -351,4 +351,8 @@ final class ProjectEditViewModel: ObservableObject {
             print("내보내기 실패:", error)
         }
     }
+    
+    func setCurrentProjectID() {
+        UserDefaults.standard.set(projectID, forKey: "currentProjectID")
+    }
 }
