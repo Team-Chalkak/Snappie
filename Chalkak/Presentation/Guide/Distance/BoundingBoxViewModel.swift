@@ -13,12 +13,39 @@ class BoundingBoxViewModel: ObservableObject {
     @Published var isSettingReference: Bool = false
     @Published var isAligned: Bool = false
     @Published var tiltManager: CameraTiltManager?
+    @Published var guide: Guide?
+    @Published var showResumeAlert = false
     
     // MARK: - init
     init(properTilt: Tilt? = nil, tiltDataCollector: TiltDataCollector? = nil) {
         if let properTilt, let tiltDataCollector {
             self.tiltManager = CameraTiltManager(properTilt: properTilt, dataCollector: tiltDataCollector)
         }
+    }
+    
+    /// 진행중이던 프로젝트 있는지 확인
+    func checkResumeProject() {
+        if UserDefaults.standard.string(forKey: "currentProjectID") != nil {
+            showResumeAlert = true
+        }
+    }
+
+    /// 진행중이던 프로젝트의 가이드 가져오기
+    @MainActor
+    func loadGuideForCurrentProject() {
+        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+              let guide = project.guide else {
+            self.guide = nil
+            return
+        }
+        self.guide = guide
+    }
+
+    /// 진행중이던 프로젝트 없애기
+    func cancelResume() {
+        UserDefaults.standard.removeObject(forKey: "currentProjectID")
+        self.guide = nil
     }
     
     /// 기준 설정
