@@ -12,6 +12,9 @@ import AVKit
 struct ProjectEditView: View {
     @StateObject private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    @State private var showExitConfirmation = false
+    @State private var showExportSuccessAlert = false
+    @State private var isExporting = false
     
     init(projectID: String) {
         self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
@@ -22,16 +25,17 @@ struct ProjectEditView: View {
             SnappieNavigationBar(
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
-                    // TODO: confirmation dialog 띄우기(ssol)
-                    // 임시로 현재 화면 빠져나가도록 처리했습니다. 추후 수정 예정
-                    coordinator.popLast()
+                    showExitConfirmation = true
                 },
                 rightButtonType: .oneButton(.init(label: "내보내기") {
-                    // TODO: 영상 사진 앱으로 내보내기 로직 연결(ssol)
+                    Task {
+                        await viewModel.exportEditedVideoToPhotos()
+                        showExportSuccessAlert = true
+                    }
                 })
             )
             .padding(.bottom, 16)
-
+            
             ZStack {
                 VideoPreviewView(
                     previewImage: viewModel.previewImage,
@@ -89,6 +93,38 @@ struct ProjectEditView: View {
         .background(
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
+        )
+        
+        // 뒤로가기 확인 다이얼로그
+        .confirmationDialog(
+            "편집한 내용을 저장할까요?",
+            isPresented: $showExitConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("저장하기") {
+                viewModel.saveProjectChanges()
+                coordinator.popLast()
+            }
+            Button("저장하지 않고 나가기") {
+                coordinator.popLast()
+            }
+            Button("취소", role: .cancel) {}
+        } message: {
+            Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
+        }
+        
+        // 내보내기 완료 알림
+        .snappieAlert(
+            isPresented: $showExportSuccessAlert,
+            message: "내보내기 완료"
+        )
+        
+        // 진행중 로딩 프로그레스
+        .snappieProgressAlert(
+            isPresented: $isExporting,
+            isLoading: $isExporting,
+            loadingMessage: "영상 내보내는 중...",
+            completionMessage: ""
         )
     }
 }

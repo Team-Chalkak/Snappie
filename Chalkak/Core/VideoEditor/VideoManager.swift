@@ -80,4 +80,21 @@ class VideoManager: ObservableObject {
             throw VideoMergerError.exportFailed
         }
     }
+    
+    func processAndSaveVideo(clips: [EditableClip]) async throws -> URL {
+        // 편집된 클립을 클립 모델 데이터로 변환
+        let mergerClips = clips.map { clip in
+            Clip(
+                id: clip.id,
+                videoURL: clip.url,
+                originalDuration: clip.originalDuration,
+                startPoint: clip.startPoint,
+                endPoint: clip.endPoint
+            )
+        }
+        // VideoMerger 사용해 영상 병합
+        let videoMerger = VideoMerger()
+        let outputURL = try await videoMerger.mergeVideos(from: mergerClips)
+        return outputURL
+    }
 }
