@@ -353,6 +353,6 @@ final class ProjectEditViewModel: ObservableObject {
     }
     
     func setCurrentProjectID() {
-        UserDefaults.standard.set(project?.id ?? nil, forKey: "currentProjectID")
+        UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
 }
