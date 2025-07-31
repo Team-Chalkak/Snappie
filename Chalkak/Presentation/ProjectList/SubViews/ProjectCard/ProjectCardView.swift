@@ -10,6 +10,7 @@ import SwiftUI
 /// 프로젝트 카드 셀 컴포넌트뷰
 struct ProjectCardView: View {
     // MARK: input properties
+
     /// 촬영중인 프로젝트면 disable하기위한 Bool 변수
     let isCurrentProject: Bool
     
@@ -28,6 +29,7 @@ struct ProjectCardView: View {
     let timeCreated: Date
     
     // MARK: actions properties
+
     /// 프로젝트 편집 화면 넘어가기
     let moveToProjectEdit: () -> Void
     /// 삭제 액션 클로저
@@ -36,11 +38,13 @@ struct ProjectCardView: View {
     let editProjectTitle: (String) -> Void
     
     // MARK: State properties
+
     @State var showEditTitleAlert: Bool = false
     @State var showDeleteProjectAlert: Bool = false
     @State var titleToChange: String = ""
     
     // MARK: body
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // 이미지 썸네일
@@ -67,19 +71,11 @@ struct ProjectCardView: View {
             )
         }
         .alert(
-            //TODO: 핀의 커스템 알럿으로 대체
-            "프로젝트를 삭제하시겠습니까?",
+            .deleteProject,
             isPresented: $showDeleteProjectAlert,
-            actions: {
-                Button("취소", role: .cancel) { }
-                
-                Button("삭제", role: .destructive) {
-                    // 프로젝트 삭제
-                    deleteProject()
-                }
-            },
-            message: {
-                Text("프로젝트와 클립이 모두 삭제됩니다.")
+            confirmAction: {
+                // 프로젝트 삭제
+                deleteProject()
             }
         )
         .alert(
@@ -87,14 +83,14 @@ struct ProjectCardView: View {
             isPresented: $showEditTitleAlert,
             actions: {
                 TextField(projectTitle, text: $titleToChange)
-                    .onChange(of: titleToChange) { oldValue, newValue in
+                    .onChange(of: titleToChange) { _, newValue in
                         // 13글자 입력 제한
                         if newValue.count > 13 {
                             titleToChange = String(newValue.prefix(13))
                         }
                     }
                 
-                Button("취소") { }
+                Button("취소") {}
                 
                 Button("저장") {
                     // 이름 변경 반영
@@ -102,7 +98,7 @@ struct ProjectCardView: View {
                 }
             },
             message: {
-                Text("프로젝트와 클립이 모두 삭제됩니다.")
+                Text("새로운 이름을 입력해주세요.")
             }
         )
     }

@@ -263,16 +263,18 @@ final class ClipEditViewModel: ObservableObject {
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
     func saveProjectData() {
-        let clip = saveClipData()
+        guard let clip = saveClipData() else {
+            print("클립 저장에 실패했습니다.")
+            return
+        }
+        
         let cameraSetting = saveCameraSetting()
         let projectID = UUID().uuidString
-        
-        // 프로젝트 이름 자동 생성
-        let projectCount = SwiftDataManager.shared.fetchAllProjects().count
-        let generatedTitle = "프로젝트 \(projectCount + 1)"
-        
         // 프로젝트 생성 시간
         let createdAt = Date()
+        
+        // 프로젝트 이름 자동 생성
+        let generatedTitle = generateTimeBasedTitle(from: createdAt)
         
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
@@ -289,9 +291,17 @@ final class ClipEditViewModel: ObservableObject {
         UserDefaults.standard.set(projectID, forKey: "currentProjectID")
     }
     
+    /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
+    private func generateTimeBasedTitle(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        let timeString = formatter.string(from: date)
+        return "프로젝트 \(timeString)"
+    }
+    
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
-    func saveClipData() -> Clip {
+    func saveClipData() -> Clip? {
         let clip = createClipData()
         return SwiftDataManager.shared.createClip(clip: clip)
     }
@@ -311,8 +321,6 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
-    /// 기존 Project에 새로운 Clip을 추가
-    /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func saveCameraSetting() -> CameraSetting {
         return SwiftDataManager.shared.createCameraSetting(
@@ -323,9 +331,14 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
+    /// 기존 Project에 새로운 Clip을 추가
+    /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
-        let clip = saveClipData()
+        guard let clip = saveClipData() else {
+            print("클립 저장에 실패했습니다.")
+            return
+        }
 
         guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {

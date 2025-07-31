@@ -184,7 +184,13 @@ class SwiftDataManager {
         endPoint: Double,
         tiltList: [TimeStampedTilt] = [],
         heightList: [TimeStampedHeight] = []
-    ) -> Clip {
+    ) -> Clip? {
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: videoURL) else {
+            print("createClip: 유효하지 않은 비디오 파일 URL: \(videoURL)")
+            return nil
+        }
+        
         let clip = Clip(
             id: id,
             videoURL: videoURL,
@@ -199,7 +205,13 @@ class SwiftDataManager {
     }
     
     /// `Clip` 생성: Clip 객체로
-    func createClip(clip: Clip) -> Clip {
+    func createClip(clip: Clip) -> Clip? {
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: clip.videoURL) else {
+            print("createClip: 유효하지 않은 비디오 파일 URL: \(clip.videoURL)")
+            return nil
+        }
+        
         context.insert(clip)
         return clip
     }

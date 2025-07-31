@@ -60,6 +60,10 @@ class CameraViewModel: ObservableObject {
     @Published var hasBadge: Bool = false
     @Published var showProjectSavedAlert: Bool = false
 
+    // 줌 슬라이더 조절이 끝났을시 자동으로 숨김처리를 하기위한 타이머
+    private var zoomSliderAutoHideTimer: Timer?
+    @Published var lastZoomInteraction = Date()
+
     // 줌 범위  수정 가능
     var minZoomScale: CGFloat { 0.5 }
     var maxZoomScale: CGFloat { 6.0 }
@@ -234,6 +238,13 @@ class CameraViewModel: ObservableObject {
         // 전면 카메라에서 줌 제어 비활성화
         guard !isUsingFrontCamera else { return }
         showingZoomControl.toggle()
+
+        // 줌슬라이더 표시되는 순간부터 자동 숨김을 위한 1.5초 타이머 시작
+        if showingZoomControl {
+            startZoomSliderAutoHideTimer()
+        } else {
+            cancelZoomSliderAutoHideTimer()
+        }
     }
 
     func selectZoomScale(_ scale: CGFloat) {
@@ -243,6 +254,12 @@ class CameraViewModel: ObservableObject {
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
         zoomScale = safeScale
         model.setZoomScale(safeScale)
+
+        // 줌 스케일 변경 시 상호작용 시간 업데이트하고 타이머 재시작
+        lastZoomInteraction = Date()
+        if showingZoomControl {
+            startZoomSliderAutoHideTimer()
+        }
     }
 
     func startVideoRecording() {
@@ -388,10 +405,33 @@ class CameraViewModel: ObservableObject {
         let uncheckedProjects = SwiftDataManager.shared.getUncheckedProjectsForBadge()
         hasBadge = !uncheckedProjects.isEmpty
     }
-    
+
     /// 프로젝트 저장 알림 표시
     @MainActor
     func showProjectSavedNotification() {
         showProjectSavedAlert = true
+    }
+
+    private func startZoomSliderAutoHideTimer() {
+        // 기존 타이머 초기화
+        cancelZoomSliderAutoHideTimer()
+
+        // 1.5초 후 숨김처리
+        zoomSliderAutoHideTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
+
+            // 마지막 상호작용으로부터 1.5초가 지났는지 확인
+            let timeSinceLastInteraction = Date().timeIntervalSince(self.lastZoomInteraction)
+            if timeSinceLastInteraction >= 1.5 {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self.showingZoomControl = false
+                }
+            }
+        }
+    }
+
+    private func cancelZoomSliderAutoHideTimer() {
+        zoomSliderAutoHideTimer?.invalidate()
+        zoomSliderAutoHideTimer = nil
     }
 }

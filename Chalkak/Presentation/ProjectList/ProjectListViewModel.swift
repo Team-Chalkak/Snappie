@@ -22,7 +22,13 @@ final class ProjectListViewModel: ObservableObject {
     /// 모든 프로젝트 중 guide가 있는 것만 가져오기
     func fetchProjects() {
         let allProjects = SwiftDataManager.shared.fetchAllProjects()
-        self.projects = allProjects.filter { $0.guide != nil }
+        self.projects = allProjects.filter { project in
+            // guide가 있고, 최소 하나의 유효한 클립이 있는 프로젝트만 표시
+            guard project.guide != nil else { return false }
+            return project.clipList.contains { clip in
+                FileManager.validVideoURL(from: clip.videoURL) != nil
+            }
+        }
     }
     
     /// 현재 유저디폴트의 currentProject인가 확인
