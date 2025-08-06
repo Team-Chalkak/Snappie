@@ -137,15 +137,21 @@ struct CameraView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
-        .alert(.finishShooting, isPresented: $showExitAlert) {
-            handleExitCamera()
+        .alert("촬영을 마치고 나갈까요?", isPresented: $showExitAlert) {
+            Button("취소", role: .cancel) {}
+            Button("나가기", role: .destructive) {
+                handleExitCamera()
+            }
+        } message: {
+            Text("지금까지 찍은 장면은 저장돼요.")
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
     }
 
     private func handleExitCamera() {
-        viewModel.stopCamera()
         UserDefaults.standard.set(nil, forKey: "currentProjectID")
+
+        viewModel.stopCamera()
         coordinator.removeAll()
     }
 }
