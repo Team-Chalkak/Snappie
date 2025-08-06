@@ -82,7 +82,6 @@ class CameraManager: NSObject, ObservableObject {
                 for range in format.videoSupportedFrameRateRanges {
                     // 지금까지 찾은 것보다 더 높은 해상도인지 확인
                     if range.maxFrameRate >= 60, currentResolution > maxResolution {
-                        print(format)
                         targetFormat = format
                         maxResolution = currentResolution
                         break // 60fps 찾으면 break
