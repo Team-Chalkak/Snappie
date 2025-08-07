@@ -62,7 +62,47 @@ class CameraManager: NSObject, ObservableObject {
 
     override init() {
         super.init()
+        checkPermissions()
     }
+    
+    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
+    @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
+    @Published var showPermissionSheet = false
+    @Published var permissionState: PermissionState = .both
+    
+    func checkPermissions() {
+        videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+        
+        updatePermissionState()
+    }
+    
+    private func updatePermissionState() {
+        let videoGranted = videoAuthorizationStatus == .authorized
+        let audioGranted = audioAuthorizationStatus == .authorized
+        
+        switch (videoGranted, audioGranted) {
+        case (true, true):
+            permissionState = .allGranted
+            showPermissionSheet = false
+        case (false, true):
+            permissionState = .cameraOnly
+            showPermissionSheet = true
+        case (true, false):
+            permissionState = .audioOnly
+            showPermissionSheet = true
+        case (false, false):
+            permissionState = .both
+            showPermissionSheet = true
+        }
+    }
+    
+    func openSettings() {
+        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(settingsUrl)
+        }
+    }
+    
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
     private func configureFrameRate(for device: AVCaptureDevice) {
@@ -386,12 +426,19 @@ class CameraManager: NSObject, ObservableObject {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                DispatchQueue.main.async {
+                    self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+                    self?.updatePermissionState()
+                }
                 if granted {
                     self?.checkAudioPermission()
                 }
             }
         case .restricted, .denied:
             print("비디오 권한이 거부되었습니다.")
+            DispatchQueue.main.async {
+                self.updatePermissionState()
+            }
         case .authorized:
             checkAudioPermission()
         @unknown default:
@@ -424,8 +471,11 @@ class CameraManager: NSObject, ObservableObject {
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
-                if granted {
-                    DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    self?.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                    self?.updatePermissionState()
+                    
+                    if self?.permissionState == .allGranted {
                         self?.setUpCamera()
                     }
                 }
@@ -433,16 +483,26 @@ class CameraManager: NSObject, ObservableObject {
         case .restricted, .denied:
             print("오디오 권한이 거부되었습니다.")
             DispatchQueue.main.async {
+                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                self.updatePermissionState()
                 self.setUpCamera() // 오디오 권한 없이 계속 진행
             }
         case .authorized:
             DispatchQueue.main.async {
+                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                self.updatePermissionState()
                 self.setUpCamera()
             }
         @unknown default:
             break
         }
     }
+    
+    
+    
+    
+    
+    
 
     func startRecording() {
         guard !isRecording else { return }

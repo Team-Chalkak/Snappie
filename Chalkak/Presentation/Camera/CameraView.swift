@@ -10,7 +10,8 @@ import SwiftUI
 struct CameraView: View {
     let guide: Guide?
     let isAligned: Bool
-
+    
+    @StateObject private var cameraManager = CameraManager()
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
@@ -27,7 +28,7 @@ struct CameraView: View {
             } else {
                 SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
             }
-
+            
             ZStack {
                 CameraPreviewView(
                     session: viewModel.session,
@@ -39,7 +40,7 @@ struct CameraView: View {
                 )
                 .aspectRatio(9 / 16, contentMode: .fit)
                 .clipped()
-
+                
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
                     Text("\(viewModel.showTimerFeedback!.rawValue)")
@@ -47,7 +48,7 @@ struct CameraView: View {
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
                         .opacity(feedbackOpacity)
                 }
-
+                
                 // 타이머 카운트다운 오버레이
                 if viewModel.isTimerRunning && viewModel.timerCountdown > 0 {
                     Text("\(viewModel.timerCountdown)")
@@ -60,12 +61,12 @@ struct CameraView: View {
             .padding(.top, Layout.preViewTopPadding)
             .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
-
+            
             // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
                 HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
-
+            
             // 두번째 촬영부터-중간이탈버튼
             if guide != nil {
                 VStack {
@@ -79,25 +80,25 @@ struct CameraView: View {
                         }
                         .padding(.leading, 30)
                         .padding(.top, 25)
-
+                        
                         Spacer()
                     }
-
+                    
                     Spacer()
                 }
             }
-
+            
             VStack {
                 CameraTopControlView(viewModel: viewModel, guide: guide)
-
+                
                 Spacer()
-
+                
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
         }
         .onChange(of: viewModel.showTimerFeedback) { _, newValue in
             fadeOutTask?.cancel()
-
+            
             if newValue != nil {
                 // 즉시 opacity 1
                 feedbackOpacity = 1
@@ -105,7 +106,7 @@ struct CameraView: View {
                     do {
                         // 대기 1초
                         try await Task.sleep(nanoseconds: 700_000_000)
-
+                        
                         // 태스크가 취소되지 않았다면 페이드아웃
                         if !Task.isCancelled {
                             withAnimation(.easeOut(duration: 0.3)) {
@@ -122,7 +123,7 @@ struct CameraView: View {
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
             let cameraSetting = viewModel.saveCameraSettingToUserDefaults()
-
+            
             coordinator.push(.clipEdit(
                 clipURL: url,
                 guide: guide,
@@ -133,6 +134,7 @@ struct CameraView: View {
         }
         .onAppear {
             viewModel.startCamera()
+            cameraManager.checkPermissions()
         }
         .onDisappear {
             viewModel.stopCamera()
@@ -141,7 +143,12 @@ struct CameraView: View {
             handleExitCamera()
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
+        
+        .sheet(isPresented: $cameraManager.showPermissionSheet) {
+            CameraPermissionSheet(cameraManager: cameraManager)
+        }
     }
+    
 
     private func handleExitCamera() {
         viewModel.stopCamera()
