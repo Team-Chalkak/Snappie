@@ -65,6 +65,7 @@ class CameraManager: NSObject, ObservableObject {
         checkPermissions()
     }
     
+    // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
     @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var showPermissionSheet = false
