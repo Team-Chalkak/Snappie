@@ -13,56 +13,75 @@ struct CameraPermissionSheet: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 32){
+            ZStack{
+                SnappieColor.darkHeavy.ignoresSafeArea()
                 
-                VStack(alignment: .center, spacing: 24){
-                    Text("카메라와 마이크 접근 권한 필요")
-                        .font(.title)
-                    Text("앱 설정에서 카메라와 마이크의\n접근 설정을 허용해 주세요.")
-                        .multilineTextAlignment(.center)
-                }
-                
-                VStack(spacing: 20) {
-                    HStack(spacing: 20){
+                VStack(alignment: .leading, spacing: 40){
+                    
+                    VStack(alignment: .center, spacing: 24){
+                        Text("카메라와 마이크 접근 권한 필요")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Color.matcha50)
+                        Text("앱 설정에서 카메라와 마이크의\n접근 설정을 허용해 주세요.")
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 24) {
+                        HStack(spacing: 8){
+                            
+                            permissionIconCamera
+                            
+                            VStack (alignment: .leading, spacing: 6){
+                                Text("카메라 접근 권한")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(Color.matcha50)
+                                Text("영상을 녹화하기 위해 접근 권한이 필요해요.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(Color.matcha50)
+                            }
+                        }
                         
-                        permissionIconCamera
-                        
-                        VStack (alignment: .leading, spacing: 16){
-                            Text("카메라 접근 권한")
-                                .font(.title2)
-                            Text("영상을 녹화하기 위해 접근 권한이 필요해요.")
+                        HStack(spacing: 8){
+                            
+                            permissionIconAudio
+                            
+                            VStack (alignment: .leading, spacing: 6){
+                                Text("마이크 접근 권한")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(Color.matcha50)
+                                Text("소리를 녹음하기 위해 접근 권한이 필요해요.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(Color.matcha50)
+                            }
                         }
                     }
                     
-                    HStack(spacing: 20){
-                        
-                        permissionIconAudio
-                        
-                        VStack (alignment: .leading, spacing: 16){
-                            Text("마이크 접근 권한")
-                                .font(.title2)
-                            Text("소리를 녹음하기 위해 접근 권한이 필요해요.")
+                    Spacer()
+                    
+                    VStack (alignment: .center){
+                        SnappieButton(.solidPrimary(
+                            title: "설정 열기",
+                            size: .large
+                        )) {
+                            cameraManager.openSettings()
+                            dismiss()
                         }
+                        .disabled(false)
                     }
-                }
-                
-                Spacer()
-                
-                Button {
-                    cameraManager.openSettings()
-                    dismiss()
-                } label: {
-                    Text("설정 열기")
-                }
-                    .font(.headline)
-                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(Color.blue)
-                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 48)
             }
             
         }
+        .presentationBackground(.regularMaterial)
+        .presentationCornerRadius(20)
         
     }
     
@@ -71,21 +90,16 @@ struct CameraPermissionSheet: View {
     private var permissionIconCamera: some View {
         switch cameraManager.permissionState {
         case .allGranted:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.green)
+            Image("cameraAuthorized")
+
         case .cameraOnly:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.green)
+            Image("cameraAuthorized")
+            
         case .audioOnly:
-            Image(systemName: "camera.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.red)
+            Image("cameraDenied")
+            
         case .both:
-            Image(systemName: "camera.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.red)
+            Image("cameraDenied")
         }
     }
     
@@ -94,21 +108,16 @@ struct CameraPermissionSheet: View {
     private var permissionIconAudio: some View {
         switch cameraManager.permissionState {
         case .allGranted:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.green)
+            Image("micAuthorized")
+            
         case .cameraOnly:
-            Image(systemName: "microphone.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.red)
+            Image("micDenied")
+            
         case .audioOnly:
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
-                .foregroundColor(.green)
+            Image("micAuthorized")
+            
         case .both:
-            Image(systemName: "microphone.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.red)
+            Image("micDenied")
         }
     }
 }
@@ -116,6 +125,6 @@ struct CameraPermissionSheet: View {
                     
 
 
-//#Preview {
-//    CameraPermissionSheet()
-//}
+#Preview {
+    CameraPermissionSheet(cameraManager: CameraManager())
+}

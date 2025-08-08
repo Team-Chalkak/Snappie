@@ -86,10 +86,10 @@ class CameraManager: NSObject, ObservableObject {
         case (true, true):
             permissionState = .allGranted
             showPermissionSheet = false
-        case (false, true):
+        case (true, false):
             permissionState = .cameraOnly
             showPermissionSheet = true
-        case (true, false):
+        case (false, true):
             permissionState = .audioOnly
             showPermissionSheet = true
         case (false, false):
