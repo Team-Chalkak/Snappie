@@ -78,10 +78,6 @@ class CameraManager: NSObject, ObservableObject {
         videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
         
-        print("📱 앱 실행 시 권한 상태:")
-        print("비디오: \(videoAuthorizationStatus)")
-        print("오디오: \(audioAuthorizationStatus)")
-        
         updatePermissionState()
     }
     
@@ -91,16 +87,11 @@ class CameraManager: NSObject, ObservableObject {
         let videoNotDetermined = videoAuthorizationStatus == .notDetermined  // ✅ 추가
         let audioNotDetermined = audioAuthorizationStatus == .notDetermined   // ✅ 추가
         
-        print("🔍 권한 상태 체크:")
-        print("비디오 권한: \(videoAuthorizationStatus) (허용됨: \(videoGranted)) (미결정: \(videoNotDetermined))")
-        print("오디오 권한: \(audioAuthorizationStatus) (허용됨: \(audioGranted)) (미결정: \(audioNotDetermined))")
-        print("권한 요청 중: \(isRequestingPermissions)")
-        
         switch (videoGranted, audioGranted) {
         case (true, true):
             permissionState = .allGranted
             showPermissionSheet = false
-            print("✅ 모든 권한 허용")
+
             
         case (false, true):
             permissionState = .cameraOnly
@@ -108,7 +99,7 @@ class CameraManager: NSObject, ObservableObject {
             let shouldShow = !isRequestingPermissions &&
             (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
             showPermissionSheet = shouldShow
-            print("📷 카메라 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 거부됨=\(videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted))")
+   
             
         case (true, false):
             permissionState = .audioOnly
@@ -116,7 +107,7 @@ class CameraManager: NSObject, ObservableObject {
             let shouldShow = !isRequestingPermissions &&
             (audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted)
             showPermissionSheet = shouldShow
-            print("🎤 오디오 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 거부됨=\(audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted))")
+
             
         case (false, false):
             permissionState = .both
@@ -125,7 +116,7 @@ class CameraManager: NSObject, ObservableObject {
             let audioDenied = audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted
             let shouldShow = !isRequestingPermissions && (videoDenied || audioDenied)
             showPermissionSheet = shouldShow
-            print("❌ 모든 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 비디오거부=\(videoDenied), 오디오거부=\(audioDenied))")
+
         }
     }
 
@@ -140,9 +131,9 @@ class CameraManager: NSObject, ObservableObject {
         // 비디오 권한 확인
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
-            print("📷 비디오 권한 요청 시작")
+
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                print("📷 비디오 권한 결과: \(granted)")
+ 
                 DispatchQueue.main.async {
                     self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
                     // 오디오 권한도 확인
@@ -150,14 +141,14 @@ class CameraManager: NSObject, ObservableObject {
                 }
             }
         case .restricted, .denied:
-            print("📷 비디오 권한이 이미 거부됨")
+ 
             DispatchQueue.main.async {
                 self.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
                 // 비디오가 거부되어도 오디오 권한 확인
                 self.checkAudioPermission()
             }
         case .authorized:
-            print("📷 비디오 권한이 이미 허용됨")
+
             checkAudioPermission()
         @unknown default:
             checkAudioPermission()
@@ -168,22 +159,20 @@ class CameraManager: NSObject, ObservableObject {
         // 오디오 권한 확인
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .notDetermined:
-            print("🎤 오디오 권한 요청 시작")
+
             AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
-                print("🎤 오디오 권한 결과: \(granted)")
+ 
                 DispatchQueue.main.async {
                     self?.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
                     self?.finishPermissionRequest()
                 }
             }
         case .restricted, .denied:
-            print("🎤 오디오 권한이 이미 거부됨")
             DispatchQueue.main.async {
                 self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
                 self.finishPermissionRequest()
             }
         case .authorized:
-            print("🎤 오디오 권한이 이미 허용됨")
             DispatchQueue.main.async {
                 self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
                 self.finishPermissionRequest()
@@ -197,7 +186,6 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     private func finishPermissionRequest() {
-        print("🏁 권한 요청 완료 처리 시작")
         
         // 카메라 설정
         if permissionState == .allGranted {
@@ -205,7 +193,6 @@ class CameraManager: NSObject, ObservableObject {
         }
         
         isRequestingPermissions = false
-        print("🔄 권한 요청 플래그 해제: \(isRequestingPermissions)")
         
         // 권한 상태 업데이트
         updatePermissionState()
@@ -221,20 +208,12 @@ class CameraManager: NSObject, ObservableObject {
         let audioGranted = audioAuthorizationStatus == .authorized
         let hasPermissionIssue = !videoGranted || !audioGranted
         
-        print("🔄 시트 표시 강제 확인:")
-        print("비디오 허용: \(videoGranted), 오디오 허용: \(audioGranted)")
-        print("권한 문제 있음: \(hasPermissionIssue)")
-        print("권한 요청 중: \(isRequestingPermissions)")
-        print("현재 시트 상태: \(showPermissionSheet)")
-        
         if hasPermissionIssue && !isRequestingPermissions {
-            print("🚨 시트를 강제로 표시합니다")
             showPermissionSheet = true
         }
     }
     
     func refreshPermissions() {
-        print("🔄 권한 상태 새로고침")
         checkPermissions()
     }
 
@@ -305,13 +284,8 @@ class CameraManager: NSObject, ObservableObject {
             let audioGranted = self?.audioAuthorizationStatus == .authorized
             let hasPermissionIssue = !videoGranted || !audioGranted
             
-            print("🔄 시트 표시 강제 확인:")
-            print("비디오 허용: \(videoGranted), 오디오 허용: \(audioGranted)")
-            print("권한 문제 있음: \(hasPermissionIssue)")
-            print("현재 시트 상태: \(self?.showPermissionSheet ?? false)")
-            
             if hasPermissionIssue && !(self?.showPermissionSheet ?? false) {
-                print("🚨 시트를 강제로 표시합니다")
+
                 self?.showPermissionSheet = true
             }
         }
