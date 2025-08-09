@@ -93,10 +93,10 @@ struct CameraPermissionSheet: View {
             Image("cameraAuthorized")
 
         case .cameraOnly:
-            Image("cameraAuthorized")
+            Image("cameraDenied")
             
         case .audioOnly:
-            Image("cameraDenied")
+            Image("cameraAuthorized")
             
         case .both:
             Image("cameraDenied")
@@ -111,10 +111,10 @@ struct CameraPermissionSheet: View {
             Image("micAuthorized")
             
         case .cameraOnly:
-            Image("micDenied")
+            Image("micAuthorized")
             
         case .audioOnly:
-            Image("micAuthorized")
+            Image("micDenied")
             
         case .both:
             Image("micDenied")

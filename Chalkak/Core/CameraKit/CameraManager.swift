@@ -12,6 +12,12 @@ import Photos
 import SwiftUI
 
 class CameraManager: NSObject, ObservableObject {
+    // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
+    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
+    @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
+    @Published var showPermissionSheet = false
+    @Published var permissionState: PermissionState = .both
+    
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
@@ -59,21 +65,22 @@ class CameraManager: NSObject, ObservableObject {
     deinit {
         session.stopRunning()
     }
-
+    
+    private var isRequestingPermissions = false
+        
     override init() {
         super.init()
         checkPermissions()
     }
-    
-    // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
-    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published var showPermissionSheet = false
-    @Published var permissionState: PermissionState = .both
+        
     
     func checkPermissions() {
         videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+        
+        print("📱 앱 실행 시 권한 상태:")
+        print("비디오: \(videoAuthorizationStatus)")
+        print("오디오: \(audioAuthorizationStatus)")
         
         updatePermissionState()
     }
@@ -81,26 +88,232 @@ class CameraManager: NSObject, ObservableObject {
     private func updatePermissionState() {
         let videoGranted = videoAuthorizationStatus == .authorized
         let audioGranted = audioAuthorizationStatus == .authorized
+        let videoNotDetermined = videoAuthorizationStatus == .notDetermined  // ✅ 추가
+        let audioNotDetermined = audioAuthorizationStatus == .notDetermined   // ✅ 추가
+        
+        print("🔍 권한 상태 체크:")
+        print("비디오 권한: \(videoAuthorizationStatus) (허용됨: \(videoGranted)) (미결정: \(videoNotDetermined))")
+        print("오디오 권한: \(audioAuthorizationStatus) (허용됨: \(audioGranted)) (미결정: \(audioNotDetermined))")
+        print("권한 요청 중: \(isRequestingPermissions)")
         
         switch (videoGranted, audioGranted) {
         case (true, true):
             permissionState = .allGranted
             showPermissionSheet = false
-        case (true, false):
-            permissionState = .cameraOnly
-            showPermissionSheet = true
+            print("✅ 모든 권한 허용")
+            
         case (false, true):
+            permissionState = .cameraOnly
+            // 카메라 권한이 명시적으로 거부된 경우에만 시트 표시
+            let shouldShow = !isRequestingPermissions &&
+            (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
+            showPermissionSheet = shouldShow
+            print("📷 카메라 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 거부됨=\(videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted))")
+            
+        case (true, false):
             permissionState = .audioOnly
-            showPermissionSheet = true
+            // 오디오 권한이 명시적으로 거부된 경우에만 시트 표시
+            let shouldShow = !isRequestingPermissions &&
+            (audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted)
+            showPermissionSheet = shouldShow
+            print("🎤 오디오 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 거부됨=\(audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted))")
+            
         case (false, false):
             permissionState = .both
+            // 둘 중 하나라도 명시적으로 거부된 경우에 시트 표시
+            let videoDenied = videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted
+            let audioDenied = audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted
+            let shouldShow = !isRequestingPermissions && (videoDenied || audioDenied)
+            showPermissionSheet = shouldShow
+            print("❌ 모든 권한 상태 - 시트 표시: \(showPermissionSheet) (조건: 요청중아님=\(!isRequestingPermissions), 비디오거부=\(videoDenied), 오디오거부=\(audioDenied))")
+        }
+    }
+
+    
+    
+    func requestAndCheckPermissions() {
+        // 이미 요청 중이면 중복 실행 방지
+          guard !isRequestingPermissions else { return }
+          
+          isRequestingPermissions = true
+        
+        // 비디오 권한 확인
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .notDetermined:
+            print("📷 비디오 권한 요청 시작")
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                print("📷 비디오 권한 결과: \(granted)")
+                DispatchQueue.main.async {
+                    self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+                    // 오디오 권한도 확인
+                    self?.checkAudioPermission()
+                }
+            }
+        case .restricted, .denied:
+            print("📷 비디오 권한이 이미 거부됨")
+            DispatchQueue.main.async {
+                self.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+                // 비디오가 거부되어도 오디오 권한 확인
+                self.checkAudioPermission()
+            }
+        case .authorized:
+            print("📷 비디오 권한이 이미 허용됨")
+            checkAudioPermission()
+        @unknown default:
+            checkAudioPermission()
+        }
+    }
+    
+    private func checkAudioPermission() {
+        // 오디오 권한 확인
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .notDetermined:
+            print("🎤 오디오 권한 요청 시작")
+            AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
+                print("🎤 오디오 권한 결과: \(granted)")
+                DispatchQueue.main.async {
+                    self?.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                    self?.finishPermissionRequest()
+                }
+            }
+        case .restricted, .denied:
+            print("🎤 오디오 권한이 이미 거부됨")
+            DispatchQueue.main.async {
+                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                self.finishPermissionRequest()
+            }
+        case .authorized:
+            print("🎤 오디오 권한이 이미 허용됨")
+            DispatchQueue.main.async {
+                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                self.finishPermissionRequest()
+            }
+        @unknown default:
+            DispatchQueue.main.async {
+                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+                self.finishPermissionRequest()
+            }
+        }
+    }
+    
+    private func finishPermissionRequest() {
+        print("🏁 권한 요청 완료 처리 시작")
+        
+        // 카메라 설정
+        if permissionState == .allGranted {
+            setUpCamera()
+        }
+        
+        isRequestingPermissions = false
+        print("🔄 권한 요청 플래그 해제: \(isRequestingPermissions)")
+        
+        // 권한 상태 업데이트
+        updatePermissionState()
+        
+        // 시트 표시 재확인 (약간의 지연 후)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            self?.forceCheckPermissionSheet()
+        }
+    }
+    
+    private func forceCheckPermissionSheet() {
+        let videoGranted = videoAuthorizationStatus == .authorized
+        let audioGranted = audioAuthorizationStatus == .authorized
+        let hasPermissionIssue = !videoGranted || !audioGranted
+        
+        print("🔄 시트 표시 강제 확인:")
+        print("비디오 허용: \(videoGranted), 오디오 허용: \(audioGranted)")
+        print("권한 문제 있음: \(hasPermissionIssue)")
+        print("권한 요청 중: \(isRequestingPermissions)")
+        print("현재 시트 상태: \(showPermissionSheet)")
+        
+        if hasPermissionIssue && !isRequestingPermissions {
+            print("🚨 시트를 강제로 표시합니다")
             showPermissionSheet = true
+        }
+    }
+    
+    func refreshPermissions() {
+        print("🔄 권한 상태 새로고침")
+        checkPermissions()
+    }
+
+    
+    /// 카메라 세팅
+    /// 비디오,오디오 연결
+    func setUpCamera() {
+        let position = initialCameraPosition
+        let device = (position == .back) ? findBestBackCamera() : AVCaptureDevice.default(
+            .builtInWideAngleCamera,
+            for: .video,
+            position: .front
+        )
+
+        guard let device = device else { return }
+
+        do {
+            videoDeviceInput = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
+            }
+
+            configureFrameRate(for: device)
+
+            // 부드러운 초점 전환 설정
+            configureSmoothFocus(for: device)
+
+            // 오디오 입력 추가
+            if let audioDevice = AVCaptureDevice.default(for: .audio) {
+                let audioInput = try AVCaptureDeviceInput(device: audioDevice)
+                if session.canAddInput(audioInput) {
+                    session.addInput(audioInput)
+                }
+            }
+
+            // 동영상 출력 추가
+            if session.canAddOutput(movieOutput) {
+                session.addOutput(movieOutput)
+            }
+
+            // 비디오 데이터 출력 추가 및 델리게이트 설정
+            if session.canAddOutput(videoOutput) {
+                session.addOutput(videoOutput)
+                videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
+                videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
+            }
+
+            // 세션 시작은 startSession() 메서드를 통해 명시적으로 호출하도록 변경
+            // 최초 카메라 설정 시 1.0 줌배율적용
+            DispatchQueue.main.async {
+                self.setZoomScale(self.backCameraZoomScale)
+            }
+        } catch {
+            print("카메라 설정 오류: \(error)")
         }
     }
     
     func openSettings() {
         if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(settingsUrl)
+        }
+    }
+    
+    private func checkAndShowPermissionSheet() {
+        // 약간의 지연을 두고 UI 업데이트 확인
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            let videoGranted = self?.videoAuthorizationStatus == .authorized
+            let audioGranted = self?.audioAuthorizationStatus == .authorized
+            let hasPermissionIssue = !videoGranted || !audioGranted
+            
+            print("🔄 시트 표시 강제 확인:")
+            print("비디오 허용: \(videoGranted), 오디오 허용: \(audioGranted)")
+            print("권한 문제 있음: \(hasPermissionIssue)")
+            print("현재 시트 상태: \(self?.showPermissionSheet ?? false)")
+            
+            if hasPermissionIssue && !(self?.showPermissionSheet ?? false) {
+                print("🚨 시트를 강제로 표시합니다")
+                self?.showPermissionSheet = true
+            }
         }
     }
     
@@ -203,59 +416,6 @@ class CameraManager: NSObject, ObservableObject {
             position: .back
         )
         return discoverySession.devices.first
-    }
-
-    /// 카메라 세팅
-    /// 비디오,오디오 연결
-    func setUpCamera() {
-        let position = initialCameraPosition
-        let device = (position == .back) ? findBestBackCamera() : AVCaptureDevice.default(
-            .builtInWideAngleCamera,
-            for: .video,
-            position: .front
-        )
-
-        guard let device = device else { return }
-
-        do {
-            videoDeviceInput = try AVCaptureDeviceInput(device: device)
-            if session.canAddInput(videoDeviceInput) {
-                session.addInput(videoDeviceInput)
-            }
-
-            configureFrameRate(for: device)
-
-            // 부드러운 초점 전환 설정
-            configureSmoothFocus(for: device)
-
-            // 오디오 입력 추가
-            if let audioDevice = AVCaptureDevice.default(for: .audio) {
-                let audioInput = try AVCaptureDeviceInput(device: audioDevice)
-                if session.canAddInput(audioInput) {
-                    session.addInput(audioInput)
-                }
-            }
-
-            // 동영상 출력 추가
-            if session.canAddOutput(movieOutput) {
-                session.addOutput(movieOutput)
-            }
-
-            // 비디오 데이터 출력 추가 및 델리게이트 설정
-            if session.canAddOutput(videoOutput) {
-                session.addOutput(videoOutput)
-                videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
-                videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
-            }
-
-            // 세션 시작은 startSession() 메서드를 통해 명시적으로 호출하도록 변경
-            // 최초 카메라 설정 시 1.0 줌배율적용
-            DispatchQueue.main.async {
-                self.setZoomScale(self.backCameraZoomScale)
-            }
-        } catch {
-            print("카메라 설정 오류: \(error)")
-        }
     }
 
     /// 토치 모드 설정
@@ -422,30 +582,7 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    func requestAndCheckPermissions() {
-        // 비디오 권한 확인
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-                    self?.updatePermissionState()
-                }
-                if granted {
-                    self?.checkAudioPermission()
-                }
-            }
-        case .restricted, .denied:
-            print("비디오 권한이 거부되었습니다.")
-            DispatchQueue.main.async {
-                self.updatePermissionState()
-            }
-        case .authorized:
-            checkAudioPermission()
-        @unknown default:
-            break
-        }
-    }
+
 
     /// 카메라 세션 시작
     func startSession() {
@@ -467,43 +604,7 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    private func checkAudioPermission() {
-        // 오디오 권한 확인
-        switch AVCaptureDevice.authorizationStatus(for: .audio) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
-                DispatchQueue.main.async {
-                    self?.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
-                    self?.updatePermissionState()
-                    
-                    if self?.permissionState == .allGranted {
-                        self?.setUpCamera()
-                    }
-                }
-            }
-        case .restricted, .denied:
-            print("오디오 권한이 거부되었습니다.")
-            DispatchQueue.main.async {
-                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
-                self.updatePermissionState()
-                self.setUpCamera() // 오디오 권한 없이 계속 진행
-            }
-        case .authorized:
-            DispatchQueue.main.async {
-                self.audioAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .audio)
-                self.updatePermissionState()
-                self.setUpCamera()
-            }
-        @unknown default:
-            break
-        }
-    }
-    
-    
-    
-    
-    
-    
+
 
     func startRecording() {
         guard !isRecording else { return }
