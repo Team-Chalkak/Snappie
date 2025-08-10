@@ -20,10 +20,7 @@ class Guide: Identifiable {
     
     /// 카메라 기울기.
     var cameraTilt: Tilt
-    
-    /// 카메라 높이.
-    var cameraHeight: Float
-    
+        
     /// 가이드가 생성된 시점.
     var createdAt: Date
     
@@ -42,7 +39,6 @@ class Guide: Identifiable {
     ///   - bBoxScale: 바운딩 박스의 크기.
     ///   - outlineImage: 윤곽선 이미지.
     ///   - cameraTilt: 촬영 당시의 카메라 기울기.
-    ///   - cameraHeight: 촬영 당시의 카메라 높이.
     ///   - createdAt: 생성 시각 (기본값은 현재 시간).
     init(
         clipID: String,
@@ -55,7 +51,6 @@ class Guide: Identifiable {
         self.clipID = clipID
         self.boundingBoxes = boundingBoxes
         self.cameraTilt = cameraTilt
-        self.cameraHeight = cameraHeight
         self.createdAt = createdAt
         self.outlineImageData = outlineImage.pngData() ?? Data()
     }

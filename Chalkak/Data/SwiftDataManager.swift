@@ -182,8 +182,7 @@ class SwiftDataManager {
         originalDuration: Double,
         startPoint: Double = 0,
         endPoint: Double,
-        tiltList: [TimeStampedTilt] = [],
-        heightList: [TimeStampedHeight] = []
+        tiltList: [TimeStampedTilt] = []
     ) -> Clip? {
         // URL 유효성 검증
         guard FileManager.isValidVideoFile(at: videoURL) else {
@@ -197,8 +196,7 @@ class SwiftDataManager {
             originalDuration: originalDuration,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: tiltList,
-            heightList: heightList
+            tiltList: tiltList
         )
         context.insert(clip)
         return clip
