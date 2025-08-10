@@ -316,8 +316,7 @@ final class ClipEditViewModel: ObservableObject {
             originalDuration: duration,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: timeStampedTiltList,
-            heightList: []
+            tiltList: timeStampedTiltList
         )
     }
     

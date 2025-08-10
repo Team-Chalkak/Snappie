@@ -32,12 +32,3 @@ struct TimeStampedTilt: Codable, Hashable {
     /// 해당 시점의 카메라 기울기 값.
     let tilt: Tilt
 }
-
-/// 특정 시점의 카메라 높이 정보를 담고 있는 구조체입니다.
-struct TimeStampedHeight: Codable {
-    /// 시간 정보 (밀리초 단위).
-    let time: Int64
-    
-    /// 해당 시점의 카메라 높이 값.
-    let height: Float
-}
