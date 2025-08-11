@@ -43,6 +43,7 @@ struct ProjectEditView: View {
                     isDragging: viewModel.isDragging
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
                 
                 // 선택된 클립이 있을 때만 Delete 버튼 표시
                 if let trimmingClip = viewModel.editableClips.first(where: { $0.isTrimming }) {
@@ -95,6 +96,11 @@ struct ProjectEditView: View {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
         )
+        .onAppear {
+            Task {
+                await viewModel.loadProjectAsync()
+            }
+        }
         
         // 뒤로가기 확인 다이얼로그
         .confirmationDialog(
@@ -103,8 +109,10 @@ struct ProjectEditView: View {
             titleVisibility: .visible
         ) {
             Button("저장하기") {
-                viewModel.saveProjectChanges()
-                coordinator.popLast()
+                Task {
+                    await viewModel.saveProjectChanges()
+                    coordinator.popLast()
+                }
             }
             Button("저장하지 않고 나가기") {
                 coordinator.popLast()
