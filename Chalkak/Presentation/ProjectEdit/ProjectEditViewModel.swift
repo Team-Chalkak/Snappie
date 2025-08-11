@@ -25,7 +25,7 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var isDragging = false
     @Published var guide: Guide? = nil
     /// 프로젝트 로딩중
-    @Published var isLoading = false // 로딩 상태 추가
+    @Published var isLoading = false
 
     // MARK: – 저장/내보내기용 프로퍼티
     @Published var isExporting = false
