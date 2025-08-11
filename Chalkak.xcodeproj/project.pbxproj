@@ -32,9 +32,6 @@
 		993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */; };
 		993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F0F2E267E0C0059B70A /* CameraManager.swift */; };
 		993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F112E267E0C0059B70A /* BoundingBoxManager.swift */; };
-		993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F132E267E0C0059B70A /* CameraHeightManager.swift */; };
-		993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */; };
-		993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */; };
 		993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F172E267E0C0059B70A /* OverlayManager.swift */; };
 		993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F192E267E0C0059B70A /* CameraTiltManager.swift */; };
 		993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A1F1A2E267E0C0059B70A /* TiltDataCollector.swift */; };
@@ -173,9 +170,6 @@
 		993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChalkakApp.swift; sourceTree = "<group>"; };
 		993A1F0F2E267E0C0059B70A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		993A1F112E267E0C0059B70A /* BoundingBoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxManager.swift; sourceTree = "<group>"; };
-		993A1F132E267E0C0059B70A /* CameraHeightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraHeightManager.swift; sourceTree = "<group>"; };
-		993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightFeedbackView.swift; sourceTree = "<group>"; };
-		993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightMeasurementARView.swift; sourceTree = "<group>"; };
 		993A1F172E267E0C0059B70A /* OverlayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayManager.swift; sourceTree = "<group>"; };
 		993A1F192E267E0C0059B70A /* CameraTiltManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTiltManager.swift; sourceTree = "<group>"; };
 		993A1F1A2E267E0C0059B70A /* TiltDataCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiltDataCollector.swift; sourceTree = "<group>"; };
@@ -377,16 +371,6 @@
 			path = Distance;
 			sourceTree = "<group>";
 		};
-		993A1F162E267E0C0059B70A /* Height */ = {
-			isa = PBXGroup;
-			children = (
-				993A1F132E267E0C0059B70A /* CameraHeightManager.swift */,
-				993A1F142E267E0C0059B70A /* HeightFeedbackView.swift */,
-				993A1F152E267E0C0059B70A /* HeightMeasurementARView.swift */,
-			);
-			path = Height;
-			sourceTree = "<group>";
-		};
 		993A1F182E267E0C0059B70A /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
@@ -409,7 +393,6 @@
 			isa = PBXGroup;
 			children = (
 				993A1F122E267E0C0059B70A /* Distance */,
-				993A1F162E267E0C0059B70A /* Height */,
 				993A1F182E267E0C0059B70A /* Overlay */,
 				993A1F1C2E267E0C0059B70A /* Tilt */,
 			);
@@ -968,11 +951,8 @@
 				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
 				B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */,
-				993A1F562E267E0C0059B70A /* CameraHeightManager.swift in Sources */,
-				993A1F572E267E0C0059B70A /* HeightFeedbackView.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
 				B68A46CF2E38A25D0062F04E /* SnappieProgress.swift in Sources */,
-				993A1F582E267E0C0059B70A /* HeightMeasurementARView.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,

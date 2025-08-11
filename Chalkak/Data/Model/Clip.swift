@@ -31,10 +31,7 @@ class Clip {
     
     /// 시간별로 기록된 카메라 기울기 정보.
     var tiltList: [TimeStampedTilt]
-    
-    /// 시간별로 기록된 카메라 높이 정보.
-    var heightList: [TimeStampedHeight]
-    
+        
     /// 트리밍된 시간을 계산한 정보.
     var currentTrimmedDuration: Double {
         max(0, endPoint - startPoint)
@@ -57,8 +54,7 @@ class Clip {
         startPoint: Double = 0,
         endPoint: Double,
         createdAt: Date = .now,
-        tiltList: [TimeStampedTilt] = [],
-        heightList: [TimeStampedHeight] = []
+        tiltList: [TimeStampedTilt] = []
     ) {
         self.id = id
         self.videoURL = videoURL
@@ -67,6 +63,5 @@ class Clip {
         self.endPoint = endPoint
         self.createdAt = createdAt
         self.tiltList = tiltList
-        self.heightList = heightList
     }
 }

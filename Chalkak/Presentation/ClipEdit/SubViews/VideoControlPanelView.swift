@@ -47,6 +47,7 @@ struct VideoControlPanelView: View {
 
             Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
                 .font(SnappieFont.style(.proLabel3))
+                .foregroundStyle(SnappieColor.labelDarkNormal)
                 .padding(.horizontal, 9.5)
                 .padding(.vertical, 6)
                 .background(
