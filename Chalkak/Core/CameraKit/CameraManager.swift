@@ -16,7 +16,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var showPermissionSheet = false
-    @Published var permissionState: PermissionState = .both
+    @Published var permissionState: PermissionState = .none
     
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
@@ -89,28 +89,28 @@ class CameraManager: NSObject, ObservableObject {
         
         switch (videoGranted, audioGranted) {
         case (true, true):
-            permissionState = .allGranted
+            permissionState = .both
             showPermissionSheet = false
 
             
-        case (false, true):
+        case (true, false):
             permissionState = .cameraOnly
+            // 마이크 권한이 명시적으로 거부된 경우에만 시트 표시
+            let shouldShow = !isRequestingPermissions &&
+            (audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted)
+            showPermissionSheet = shouldShow
+   
+            
+        case (false, true):
+            permissionState = .audioOnly
             // 카메라 권한이 명시적으로 거부된 경우에만 시트 표시
             let shouldShow = !isRequestingPermissions &&
             (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
             showPermissionSheet = shouldShow
-   
-            
-        case (true, false):
-            permissionState = .audioOnly
-            // 오디오 권한이 명시적으로 거부된 경우에만 시트 표시
-            let shouldShow = !isRequestingPermissions &&
-            (audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted)
-            showPermissionSheet = shouldShow
 
             
         case (false, false):
-            permissionState = .both
+            permissionState = .none
             // 둘 중 하나라도 명시적으로 거부된 경우에 시트 표시
             let videoDenied = videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted
             let audioDenied = audioAuthorizationStatus == .denied || audioAuthorizationStatus == .restricted
@@ -188,7 +188,7 @@ class CameraManager: NSObject, ObservableObject {
     private func finishPermissionRequest() {
         
         // 카메라 설정
-        if permissionState == .allGranted {
+        if permissionState == .both {
             setUpCamera()
         }
         

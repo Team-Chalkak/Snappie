@@ -89,16 +89,16 @@ struct CameraPermissionSheet: View {
     @ViewBuilder
     private var permissionIconCamera: some View {
         switch cameraManager.permissionState {
-        case .allGranted:
+        case .both:
             Image("cameraAuthorized")
 
         case .cameraOnly:
-            Image("cameraDenied")
-            
-        case .audioOnly:
             Image("cameraAuthorized")
             
-        case .both:
+        case .audioOnly:
+            Image("cameraDenied")
+            
+        case .none:
             Image("cameraDenied")
         }
     }
@@ -107,16 +107,16 @@ struct CameraPermissionSheet: View {
     @ViewBuilder
     private var permissionIconAudio: some View {
         switch cameraManager.permissionState {
-        case .allGranted:
+        case .both:
             Image("micAuthorized")
             
         case .cameraOnly:
-            Image("micAuthorized")
-            
-        case .audioOnly:
             Image("micDenied")
             
-        case .both:
+        case .audioOnly:
+            Image("micAuthorized")
+            
+        case .none:
             Image("micDenied")
         }
     }
