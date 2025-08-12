@@ -30,6 +30,7 @@ import SwiftUI
 struct OverlayView: View {
     // 1. Input properties
     let clip: Clip
+    let cameraSetting: CameraSetting
 
     // 2. State & ObservedObject
     @StateObject var overlayViewModel: OverlayViewModel
@@ -39,9 +40,10 @@ struct OverlayView: View {
     @State private var guide: Guide?
 
     // 3. init
-    init(clip: Clip) {
+    init(clip: Clip, cameraSetting: CameraSetting) {
         self.clip = clip
-        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
+        self.cameraSetting = cameraSetting
+        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting))
     }
 
     var body: some View {
@@ -99,11 +101,8 @@ struct OverlayView: View {
 
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
-                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
-                        guide = newGuide
-                        overlayViewModel.saveCoverImageToProject()
-                        coordinator.push(.boundingBox(guide: newGuide))
-                    }
+                    overlayViewModel.saveProjectData()
+                    coordinator.push(.boundingBox(guide: guide))
                 }) {
                     Text(Context.buttonTitle)
                         .snappieStyle(.proLabel1)

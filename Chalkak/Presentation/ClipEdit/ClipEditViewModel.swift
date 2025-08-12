@@ -258,47 +258,6 @@ final class ClipEditViewModel: ObservableObject {
         self.endPoint = min(refDuration, self.duration)
     }
     
-    /// `Project` 저장
-    /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
-    /// ProjectID는 UserDefault에도 저장되어 있습니다.
-    @MainActor
-    func saveProjectData() {
-        guard let clip = saveClipData() else {
-            print("클립 저장에 실패했습니다.")
-            return
-        }
-        
-        let cameraSetting = saveCameraSetting()
-        let projectID = UUID().uuidString
-        // 프로젝트 생성 시간
-        let createdAt = Date()
-        
-        // 프로젝트 이름 자동 생성
-        let generatedTitle = generateTimeBasedTitle(from: createdAt)
-        
-        _ = SwiftDataManager.shared.createProject(
-            id: projectID,
-            guide: nil,
-            clips: [clip],
-            cameraSetting: cameraSetting,
-            title: generatedTitle,
-            referenceDuration: clip.endPoint - clip.startPoint,
-            coverImage: nil,
-            createdAt: createdAt
-        )
-    
-        SwiftDataManager.shared.saveContext()
-        UserDefaults.standard.set(projectID, forKey: "currentProjectID")
-    }
-    
-    /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
-    private func generateTimeBasedTitle(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HHmm"
-        let timeString = formatter.string(from: date)
-        return "프로젝트 \(timeString)"
-    }
-    
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip? {
@@ -317,16 +276,6 @@ final class ClipEditViewModel: ObservableObject {
             startPoint: startPoint,
             endPoint: endPoint,
             tiltList: timeStampedTiltList
-        )
-    }
-    
-    @MainActor
-    func saveCameraSetting() -> CameraSetting {
-        return SwiftDataManager.shared.createCameraSetting(
-            zoomScale: cameraSetting.zoomScale,
-            isGridEnabled: cameraSetting.isGridEnabled,
-            isFrontPosition: cameraSetting.isFrontPosition,
-            timerSecond: cameraSetting.timerSecond
         )
     }
     

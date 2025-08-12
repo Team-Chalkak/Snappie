@@ -290,6 +290,12 @@ class SwiftDataManager {
         return setting
     }
 
+    /// `CameraSetting` 생성
+    func createCameraSetting(cameraSetting: CameraSetting) -> CameraSetting {
+        context.insert(cameraSetting)
+        return cameraSetting
+    }
+    
     // MARK: - Save & Rollback
 
     /// Context 저장하기 - 변경사항 반영

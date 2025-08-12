@@ -92,9 +92,9 @@ struct ClipEditView: View {
                         .oneButton(
                             // 첫번째 촬영
                             .init(label: "다음") {
-                                editViewModel.saveProjectData()
+                                // TODO: - project 저장 로직 변경
                                 coordinator.push(
-                                    .overlay(clip: editViewModel.createClipData())
+                                    .overlay(clip: editViewModel.createClipData(), cameraSetting: editViewModel.cameraSetting)
                                 )
                             }
                         )
