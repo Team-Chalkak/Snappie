@@ -15,21 +15,33 @@ struct ProjectThumbnailsView: View {
     private var countWanted: Int {
         let duration = clip.isTrimming ? clip.originalDuration : clip.trimmedDuration
         let rate: Double = 3 // 초당 썸네일 개수
-        return max(1, Int(floor(duration * rate)))
+        return duration > 0 ? max(1, Int(ceil(duration * rate))) : 0
     }
 
-    /// 실제 표시할 썸네일 배열
+    /// 실제 표시할 썸네일 배열 (안전 버전)
     private var thumbsToShow: [UIImage] {
         let available = clip.thumbnails.count
-        let n = min(countWanted, available)
-        guard available > n else { return clip.thumbnails }
+        let wanted = countWanted
+
+        // 썸네일 자체가 없으면 빈 배열 반환 (상위에서 안전 처리 필요)
+        guard available > 0 else { return [] }
+
+        if wanted <= 1 {
+            return [clip.thumbnails[0]]
+        }
+
+        let n = min(wanted, available)
+        if n == available {
+            return clip.thumbnails
+        }
+        
         let step = Double(available - 1) / Double(n - 1)
         return (0..<n).map { idx in
             let i = Int(round(step * Double(idx)))
             return clip.thumbnails[i]
         }
     }
-
+    
     /// 썸네일 하나당 너비
     private var thumbnailWidth: CGFloat {
         fullWidth / CGFloat(max(thumbsToShow.count, 1))

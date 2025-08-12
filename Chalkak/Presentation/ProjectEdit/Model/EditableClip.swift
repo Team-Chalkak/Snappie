@@ -21,7 +21,7 @@ struct EditableClip: Identifiable {
     var isTrimming: Bool = false
 
     // 미리 생성된 썸네일 배열
-    let thumbnails: [UIImage]
+    var thumbnails: [UIImage]
 
     // 실제 재생되는 길이
     var trimmedDuration: Double {

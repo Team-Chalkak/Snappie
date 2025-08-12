@@ -24,6 +24,8 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var previewImage: UIImage? = nil
     @Published var isDragging = false
     @Published var guide: Guide? = nil
+    /// 프로젝트 로딩중
+    @Published var isLoading = false
 
     // MARK: – 저장/내보내기용 프로퍼티
     @Published var isExporting = false
@@ -37,13 +39,25 @@ final class ProjectEditViewModel: ObservableObject {
     // init
     init(projectID: String) {
         self.projectID = projectID
-        loadProject(of: projectID)
     }
-
-    func loadProject(of projectID: String) {
-        guard
-            let project = SwiftDataManager.shared.fetchProject(byID: projectID)
-        else {
+    
+    // MARK: - 비동기 로딩 메서드
+    func loadProjectAsync() async {
+        isLoading = true
+        
+        // 백그라운드에서 프로젝트 로드
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.loadProjectData()
+            }
+        }
+        
+        isLoading = false
+    }
+    
+    @MainActor
+    private func loadProjectData() async {
+        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("프로젝트를 찾을 수 없습니다.")
             return
         }
@@ -56,11 +70,14 @@ final class ProjectEditViewModel: ObservableObject {
 
         let sorted = project.clipList.sorted { $0.createdAt < $1.createdAt }
 
-        editableClips = sorted.compactMap { clip in
+        // 클립들을 먼저 기본 정보로 생성 (썸네일 없이)
+        var tempClips: [EditableClip] = []
+        
+        for clip in sorted {
             // 비디오 파일 URL 검증 및 복구
             guard let validURL = FileManager.validVideoURL(from: clip.videoURL) else {
                 print("클립 \(clip.id)의 비디오 파일을 찾을 수 없습니다: \(clip.videoURL)")
-                return nil
+                continue
             }
 
             // URL이 변경되었다면 업데이트
@@ -70,57 +87,95 @@ final class ProjectEditViewModel: ObservableObject {
                 SwiftDataManager.shared.saveContext()
             }
 
-            let thumbs = generateThumbnails(
-                url: validURL,
-                duration: clip.originalDuration,
-                count: 10
-            )
-            return EditableClip(
+            // 빈 썸네일 배열로 초기화
+            let editableClip = EditableClip(
                 id: clip.id,
                 url: validURL,
                 originalDuration: clip.originalDuration,
                 startPoint: clip.startPoint,
                 endPoint: clip.endPoint,
-                thumbnails: thumbs
+                thumbnails: [] // 나중에 비동기로 생성
             )
+            
+            tempClips.append(editableClip)
         }
-
-        setupPlayer()
+        
+        // UI 업데이트 (썸네일 없이 먼저 표시)
+        editableClips = tempClips
+        
+        // 플레이어 설정 (썸네일 없이도 가능)
+        await setupPlayerAsync()
+        
+        // 썸네일을 백그라운드에서 비동기로 생성
+        await generateThumbnailsAsync()
     }
 
-    private func generateThumbnails(
+    /// 비동기 썸네일 생성
+    private func generateThumbnailsAsync() async {
+        await withTaskGroup(of: (String, [UIImage]).self) { group in
+            for clip in editableClips {
+                group.addTask {
+                    let thumbnails = await self.generateThumbnailsBackground(
+                        url: clip.url,
+                        duration: clip.originalDuration,
+                        count: 10
+                    )
+                    return (clip.id, thumbnails)
+                }
+            }
+            
+            // 썸네일이 생성되는 대로 업데이트
+            for await (clipID, thumbnails) in group {
+                if let index = editableClips.firstIndex(where: { $0.id == clipID }) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        editableClips[index].thumbnails = thumbnails
+                    }
+                }
+            }
+        }
+    }
+    
+    private func generateThumbnailsBackground(
         url: URL,
         duration: Double,
         count: Int
-    ) -> [UIImage] {
-        // URL 유효성 검증
-        guard FileManager.isValidVideoFile(at: url) else {
-            print("유효하지 않은 비디오 파일: \(url)")
-            return []
-        }
+    ) async -> [UIImage] {
+        return await withCheckedContinuation { continuation in
+            Task.detached {
+                // URL 유효성 검증
+                guard FileManager.isValidVideoFile(at: url) else {
+                    print("유효하지 않은 비디오 파일: \(url)")
+                    continuation.resume(returning: [])
+                    return
+                }
 
-        let asset = AVAsset(url: url)
-        let generator = AVAssetImageGenerator(asset: asset)
-        generator.appliesPreferredTrackTransform = true
-        generator.requestedTimeToleranceBefore = .zero
-        generator.requestedTimeToleranceAfter = .zero
+                let asset = AVAsset(url: url)
+                let generator = AVAssetImageGenerator(asset: asset)
+                generator.appliesPreferredTrackTransform = true
+                generator.requestedTimeToleranceBefore = .zero
+                generator.requestedTimeToleranceAfter = .zero
 
-        var imgs: [UIImage] = []
-        let interval = duration / Double(count)
-        for i in 0 ..< count {
-            let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
-            do {
-                let cg = try generator.copyCGImage(at: time, actualTime: nil)
-                imgs.append(UIImage(cgImage: cg))
-            } catch {
-                print("썸네일 생성 실패 at \(time.seconds)s: \(error)")
-                // 실패한 경우 빈 이미지나 기본 이미지를 추가하지 않고 건너뜀
+                var imgs: [UIImage] = []
+                let interval = duration / Double(count)
+                
+                for i in 0..<count {
+                    let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
+                    do {
+                        let cg = try generator.copyCGImage(at: time, actualTime: nil)
+                        imgs.append(UIImage(cgImage: cg))
+                    } catch {
+                        print("썸네일 생성 실패 at \(time.seconds)s: \(error)")
+                    }
+                }
+                
+                continuation.resume(returning: imgs)
             }
         }
-        return imgs
     }
 
-    func setupPlayer() {
+    /// 비동기 플레이어 설정
+    @MainActor
+    private func setupPlayerAsync() async {
         let composition = AVMutableComposition()
         guard
             let vidTrack = composition.addMutableTrack(
@@ -149,12 +204,19 @@ final class ProjectEditViewModel: ObservableObject {
             let range = CMTimeRange(start: start, duration: dur)
 
             do {
-                if let track = asset.tracks(withMediaType: .video).first {
+                let vidTracks = try await asset.loadTracks(withMediaType: .video)
+                guard !vidTracks.isEmpty else { continue }
+                
+                let audTracks = try await asset.loadTracks(withMediaType: .audio)
+                guard !audTracks.isEmpty else { continue }
+                
+                if let track = vidTracks.first {
                     try vidTrack.insertTimeRange(range, of: track, at: cursor)
                 }
-                if let track = asset.tracks(withMediaType: .audio).first {
+                if let track = audTracks.first {
                     try audTrack.insertTimeRange(range, of: track, at: cursor)
                 }
+                
                 cursor = cursor + dur
             } catch {
                 print("트랙 삽입 실패 for clip \(clip.id): \(error)")
@@ -172,13 +234,20 @@ final class ProjectEditViewModel: ObservableObject {
         imageGenerator?.appliesPreferredTrackTransform = true
         imageGenerator?.videoComposition = previewComposition
 
-        Task { await updatePreviewImage(at: playHead) }
+        await updatePreviewImage(at: playHead)
 
         if let token = timeObserverToken {
             player.removeTimeObserver(token)
         }
         addTimeObserver()
         addEndObserver()
+    }
+
+    // MARK: - 동기 메서드들
+    func setupPlayer() {
+        Task {
+            await setupPlayerAsync()
+        }
     }
 
     private func addTimeObserver() {
@@ -306,7 +375,7 @@ final class ProjectEditViewModel: ObservableObject {
     }
     
     // MARK: – 프로젝트 변경사항 저장
-    func saveProjectChanges() {
+    func saveProjectChanges() async {
         // 프로젝트 엔티티 가져오기
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("프로젝트(\(projectID))를 찾을 수 없습니다.")
@@ -328,12 +397,7 @@ final class ProjectEditViewModel: ObservableObject {
         removed.forEach { SwiftDataManager.shared.deleteClip($0) }
 
         // 저장
-        do {
-            try SwiftDataManager.shared.saveContext()
-            print("편집 내용 저장 완료")
-        } catch {
-            print("저장 실패:", error)
-        }
+        SwiftDataManager.shared.saveContext()
     }
     
     // MARK: – 편집된 영상 갤러리에 내보내기

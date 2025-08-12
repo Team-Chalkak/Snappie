@@ -132,9 +132,9 @@ struct VideoMerger {
                 let videoTracks = try await asset.loadTracks(withMediaType: .video)
                 guard !videoTracks.isEmpty else { continue }
                 
-            // 오디오 트랙이 있으면 추가
-            let audioTracks = try await asset.loadTracks(withMediaType: .audio)
-            guard !audioTracks.isEmpty else { continue }
+                // 오디오 트랙이 있으면 추가
+                let audioTracks = try await asset.loadTracks(withMediaType: .audio)
+                guard !audioTracks.isEmpty else { continue }
                 
                 // 비디오
                 try videoTrack.insertTimeRange(timeRangeToInsert, of: videoTracks[0], at: lastTime)

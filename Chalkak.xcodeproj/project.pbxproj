@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */; };
+		0D5512EE2E432EDA001FA7F9 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */; };
 		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
 		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
@@ -145,6 +147,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCheckView.swift; sourceTree = "<group>"; };
+		0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
 		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
 		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
@@ -290,6 +294,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D5512EA2E432146001FA7F9 /* Permission */ = {
+			isa = PBXGroup;
+			children = (
+				0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */,
+			);
+			path = Permission;
+			sourceTree = "<group>";
+		};
 		992EE7C02E32AC820079AFBF /* ProjectEdit */ = {
 			isa = PBXGroup;
 			children = (
@@ -448,6 +460,7 @@
 			children = (
 				B64788652E3324020091A067 /* TorchMode.swift */,
 				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
+				0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -545,6 +558,7 @@
 				993A1F482E267E0C0059B70A /* ProjectPreview */,
 				992EE7C02E32AC820079AFBF /* ProjectEdit */,
 				C5886D322E375A5B000566C5 /* ProjectList */,
+				0D5512EA2E432146001FA7F9 /* Permission */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -998,6 +1012,7 @@
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
+				0D5512EE2E432EDA001FA7F9 /* PermissionState.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,
@@ -1046,6 +1061,7 @@
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,
 				C5C12EA62E32214000C4DC6D /* ButtonIcon.swift in Sources */,
 				B68307542E327F9400517979 /* (null) in Sources */,
+				0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */,
 				C5F7B6A32E2F6AD20066B59C /* ButtonStyleType.swift in Sources */,
 				C5886D422E37778B000566C5 /* ProjectInfoTextView.swift in Sources */,
 			);
@@ -1211,7 +1227,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = 9A96KXU385;
+				DEVELOPMENT_TEAM = 9BGYB563W6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
@@ -1246,7 +1262,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
-				DEVELOPMENT_TEAM = 9A96KXU385;
+				DEVELOPMENT_TEAM = 9BGYB563W6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chalkak/Info.plist;
