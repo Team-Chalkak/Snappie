@@ -15,14 +15,15 @@ class BoundingBoxViewModel: ObservableObject {
     @Published var tiltManager: CameraTiltManager?
     @Published var guide: Guide?
     @Published var showResumeAlert = false
-    
+
     // MARK: - init
+
     init(properTilt: Tilt? = nil, tiltDataCollector: TiltDataCollector? = nil) {
         if let properTilt, let tiltDataCollector {
             self.tiltManager = CameraTiltManager(properTilt: properTilt, dataCollector: tiltDataCollector)
         }
     }
-    
+
     /// 진행중이던 프로젝트 있는지 확인
     func checkResumeProject() {
         if UserDefaults.standard.string(forKey: "currentProjectID") != nil {
@@ -32,22 +33,23 @@ class BoundingBoxViewModel: ObservableObject {
 
     /// 진행중이던 프로젝트의 가이드 가져오기
     @MainActor
-    func loadGuideForCurrentProject() {
+    func loadGuideForCurrentProject() -> Guide? {
         guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID),
-              let guide = project.guide else {
+              let guide = project.guide
+        else {
             self.guide = nil
-            return
+            return nil
         }
-        self.guide = guide
+        return guide
     }
 
     /// 진행중이던 프로젝트 없애기
     func cancelResume() {
         UserDefaults.standard.removeObject(forKey: "currentProjectID")
-        self.guide = nil
+        guide = nil
     }
-    
+
     /// 기준 설정
     func setReference(from guide: Guide) {
         let referenceBoxes: [CGRect] = guide.boundingBoxes.map { boxInfo in
@@ -61,12 +63,12 @@ class BoundingBoxViewModel: ObservableObject {
 
         referenceBoundingBoxes = referenceBoxes
         isSettingReference = true
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.isSettingReference = false
         }
     }
-    
+
     func deleteUserDefault() {
         UserDefaults.standard.removeObject(forKey: UserDefaultKey.isGridOn)
         UserDefaults.standard.removeObject(forKey: UserDefaultKey.zoomScale)
@@ -74,21 +76,22 @@ class BoundingBoxViewModel: ObservableObject {
         UserDefaults.standard.removeObject(forKey: UserDefaultKey.isFrontPosition)
         UserDefaults.standard.removeObject(forKey: UserDefaultKey.cameraPosition)
     }
-    
+
     /// 값 비교
     func compare() {
         guard !referenceBoundingBoxes.isEmpty else { return }
 
         guard let ref = referenceBoundingBoxes.average(),
               let live = liveBoundingBoxes.average(),
-              live.width > 0.01, live.height > 0.01 else {
+              live.width > 0.01, live.height > 0.01
+        else {
             isAligned = false
             return
         }
 
         isAligned = isLiveBoxAligned(with: ref, live: live)
     }
-    
+
     private func isLiveBoxAligned(with ref: CGRect, live: CGRect) -> Bool {
         let refArea = ref.width * ref.height
         let liveArea = live.width * live.height
@@ -97,9 +100,9 @@ class BoundingBoxViewModel: ObservableObject {
         let xDiff = abs(live.minX - ref.minX)
         let yDiff = abs(live.minY - ref.minY)
 
-        let areaOk = (0.7...1.3).contains(ratio)
+        let areaOk = (0.7 ... 1.3).contains(ratio)
         let positionOk = (xDiff < 0.05 && yDiff < 0.05)
-        
+
         return areaOk && positionOk
     }
 }
