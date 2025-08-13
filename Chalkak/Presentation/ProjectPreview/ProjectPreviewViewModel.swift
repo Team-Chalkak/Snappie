@@ -49,6 +49,6 @@ final class ProjectPreviewViewModel: ObservableObject {
     
     /// UserDefaults에서 currentProjectID 제거
     func clearCurrentProjectID() {
-        UserDefaults.standard.set(nil, forKey: "currentProjectID")
+        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
     }
 }

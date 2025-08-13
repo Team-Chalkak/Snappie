@@ -12,4 +12,7 @@ enum UserDefaultKey {
     static let timerSecond = "timerSecond"
     static let isFrontPosition = "isFrontPosition"
     static let cameraPosition = "cameraPosition"
+    
+    // Current Project ID
+    static let currentProjectID = "currentProjectID"
 }

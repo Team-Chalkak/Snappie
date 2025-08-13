@@ -147,7 +147,7 @@ class SwiftDataManager {
         let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
         
         // 현재 촬영 중인 프로젝트 제외
-        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
+        guard let currentProjectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) else {
             return uncheckedProjects
         }
         return uncheckedProjects.filter { $0.id != currentProjectID }
