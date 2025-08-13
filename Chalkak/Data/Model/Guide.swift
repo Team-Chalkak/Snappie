@@ -55,3 +55,13 @@ class Guide: Identifiable {
         self.outlineImageData = outlineImage.pngData() ?? Data()
     }
 }
+
+extension Guide: Hashable {
+    static func == (lhs: Guide, rhs: Guide) -> Bool {
+        lhs.clipID == rhs.clipID
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(clipID)
+    }
+}

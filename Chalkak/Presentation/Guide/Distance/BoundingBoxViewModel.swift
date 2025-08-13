@@ -35,12 +35,11 @@ class BoundingBoxViewModel: ObservableObject {
     @MainActor
     func loadGuideForCurrentProject() -> Guide? {
         guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
-              let project = SwiftDataManager.shared.fetchProject(byID: projectID),
-              let guide = project.guide
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID)
         else {
-            self.guide = nil
             return nil
         }
+        let guide = project.guide
         return guide
     }
 
