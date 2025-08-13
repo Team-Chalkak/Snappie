@@ -11,6 +11,7 @@ import AVFoundation
 struct ClipTrimmingView: View {
     let clip: EditableClip
     @Binding var isDragging: Bool
+    let isLastClip: Bool = false
     let onToggleTrimming: () -> Void
     let onTrimChanged: (Double, Double) -> Void
 
@@ -19,11 +20,13 @@ struct ClipTrimmingView: View {
     private let thumbnailHeight: CGFloat = 60
 
     private var fullWidth: CGFloat {
-        if clip.isTrimming {
+        let baseWidth = if clip.isTrimming {
             CGFloat(clip.originalDuration) * pxPerSecond
         } else {
             CGFloat(clip.trimmedDuration) * pxPerSecond
         }
+        
+        return isLastClip ? baseWidth : baseWidth - 2
     }
 
     var body: some View {
