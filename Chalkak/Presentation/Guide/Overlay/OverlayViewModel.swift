@@ -103,7 +103,13 @@ final class OverlayViewModel: ObservableObject {
     func saveProjectData() {
         saveClipData()
         saveCameraSetting()
-        guide = makeGuide(clipID: clip.id)
+        
+        guard let newGuide = makeGuide(clipID: clip.id) else {
+            print("❌ 가이드 생성에 실패하여 프로젝트를 저장할 수 없습니다.")
+            return
+        }
+        self.guide = newGuide
+        
         if let originalImage = extractedImage,
            let croppedImage = croppedToSquare(image: originalImage) {
             coverImage = croppedImage.jpegData(compressionQuality: 0.8)
@@ -117,7 +123,7 @@ final class OverlayViewModel: ObservableObject {
         
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
-            guide: guide,
+            guide: newGuide,
             clips: [clip],
             cameraSetting: cameraSetting,
             title: generatedTitle,

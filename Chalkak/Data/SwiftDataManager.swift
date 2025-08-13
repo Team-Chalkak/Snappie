@@ -71,7 +71,7 @@ class SwiftDataManager {
     /// `Project` 생성
     func createProject(
         id: String,
-        guide: Guide? = nil,
+        guide: Guide,
         clips: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
         title: String? = nil,
@@ -141,7 +141,7 @@ class SwiftDataManager {
     /// 뱃지 표시용 확인하지 않은 프로젝트 조회 (guide가 있고, 현재 촬영 중이 아닌 것)
     func getUncheckedProjectsForBadge() -> [Project] {
         let predicate = #Predicate<Project> { project in
-            project.isChecked == false && project.guide != nil
+            project.isChecked == false
         }
         let descriptor = FetchDescriptor<Project>(predicate: predicate)
         let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
@@ -242,18 +242,6 @@ class SwiftDataManager {
         return guide
     }
 
-    /// `Guide` 저장하고 Project에 연결
-    func saveGuideToProject(projectID: String, guide: Guide) {
-        guard let project = fetchProject(byID: projectID) else {
-            print("해당 ID(\(projectID))의 Project를 찾을 수 없습니다.")
-            return
-        }
-        
-        project.guide = guide
-        context.insert(guide) // guide도 context에 삽입
-        saveContext()
-    }
-    
     /// `Guide` 가져오기
     func fetchGuide(forClipID clipID: String) -> Guide? {
         let predicate = #Predicate<Guide> { $0.clipID == clipID }

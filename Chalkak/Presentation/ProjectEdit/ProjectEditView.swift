@@ -88,7 +88,11 @@ struct ProjectEditView: View {
                 onTrimChanged: viewModel.updateTrimRange,
                 onAddClipTapped: {
                     viewModel.setCurrentProjectID()
-                    coordinator.push(.boundingBox(guide: viewModel.guide ?? nil))
+                    guard let guide = viewModel.guide else {
+                        print("Error: Guide not loaded yet")
+                        return
+                    }
+                    coordinator.push(.boundingBox(guide: guide))
                 }
             )
         }
