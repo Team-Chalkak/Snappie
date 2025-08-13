@@ -20,7 +20,7 @@ struct BoundingBoxView: View {
                 FirstShootCameraView()
             case .followUpShoot(let guide),
                  .appendShoot(let guide):
-                GuideCameraView(guide: guide)
+                GuideCameraView(guide: guide, shootState: shootState)
             }
         }
         .onAppear {

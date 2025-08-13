@@ -29,10 +29,10 @@ struct ChalkakApp: App {
                 BoundingBoxView(shootState: .firstShoot)
                     .navigationDestination(for: Path.self) { path in
                         switch path {
-                        case .clipEdit(let url, let guide, let cameraSetting, let timeStampedTiltList):
+                        case .clipEdit(let url, let state, let cameraSetting, let timeStampedTiltList):
                             ClipEditView(
                                 clipURL: url,
-                                guide: guide,
+                                shootState: state,
                                 cameraSetting: cameraSetting,
                                 timeStampedTiltList: timeStampedTiltList
                             )

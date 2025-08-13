@@ -115,11 +115,11 @@ struct ProjectEditView: View {
             Button("저장하기") {
                 Task {
                     await viewModel.saveProjectChanges()
-                    coordinator.popLast()
+                    coordinator.popToScreen(.projectList)
                 }
             }
             Button("저장하지 않고 나가기") {
-                coordinator.popLast()
+                coordinator.popToScreen(.projectList)
             }
             Button("취소", role: .cancel) {}
         } message: {
