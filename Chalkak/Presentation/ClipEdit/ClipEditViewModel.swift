@@ -262,7 +262,13 @@ final class ClipEditViewModel: ObservableObject {
     @MainActor
     func saveClipData() -> Clip? {
         let clip = createClipData()
-        return SwiftDataManager.shared.createClip(clip: clip)
+        do {
+            try SwiftDataManager.shared.createClip(clip: clip)
+            return clip
+        } catch {
+            print("clip 새성 실패: \(error)")
+            return nil
+        }
     }
     
     /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
@@ -283,8 +289,7 @@ final class ClipEditViewModel: ObservableObject {
     /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
-        guard let clip = saveClipData() else {
-            print("클립 저장에 실패했습니다.")
+        guard let newClip = saveClipData() else {
             return
         }
 
@@ -294,7 +299,7 @@ final class ClipEditViewModel: ObservableObject {
             return
         }
 
-        project.clipList.append(clip)
+        project.clipList.append(newClip)
         SwiftDataManager.shared.saveContext()
     }
 }

@@ -101,24 +101,15 @@ final class OverlayViewModel: ObservableObject {
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
     func saveProjectData() {
-        guard let clip = saveClipData() else {
-            print("클립 저장에 실패했습니다.")
-            return
-        }
-        print("클립 저장")
-        
-        let cameraSetting = saveCameraSetting()
-        print("cameraSetting 저장")
-        let guide = makeGuide(clipID: clip.id)
-        print("guide 저장")
+        saveClipData()
+        saveCameraSetting()
+        guide = makeGuide(clipID: clip.id)
         if let originalImage = extractedImage,
            let croppedImage = croppedToSquare(image: originalImage) {
             coverImage = croppedImage.jpegData(compressionQuality: 0.8)
         }
-        print("coverImage 저장")
 
         let projectID = UUID().uuidString
-        // 프로젝트 생성 시간
         let createdAt = Date()
         
         // 프로젝트 이름 자동 생성
@@ -141,13 +132,23 @@ final class OverlayViewModel: ObservableObject {
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
-    func saveClipData() -> Clip? {
-        return SwiftDataManager.shared.createClip(clip: clip)
+    func saveClipData() {
+        do {
+            try SwiftDataManager.shared.createClip(clip: clip)
+        } catch ClipError.invalidURL {
+            print("유효하지 않은 비디오 URL입니다.")
+        } catch {
+            print("클립 저장에 실패했습니다: \(error)")
+        }
     }
     
     @MainActor
-    func saveCameraSetting() -> CameraSetting {
-        return SwiftDataManager.shared.createCameraSetting(cameraSetting: cameraSetting)
+    func saveCameraSetting() {
+        do {
+            try SwiftDataManager.shared.createCameraSetting(cameraSetting: cameraSetting)
+        } catch  {
+            print("cameraSetting 저장에 실패했습니다: \(error)")
+        }
     }
 
     /// Guide 객체 생성
@@ -184,10 +185,6 @@ final class OverlayViewModel: ObservableObject {
             cameraTilt: cameraTilt,
             cameraHeight: 1.0
         )
-        
-        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID") {
-            SwiftDataManager.shared.saveGuideToProject(projectID: projectID, guide: guide)
-        }
         return guide
     }
     

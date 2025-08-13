@@ -94,10 +94,6 @@ class SwiftDataManager {
         context.insert(project)
         return project
     }
-
-    // TODO: - 프로젝트 단의 관리 시작 시점에 구현 (Berry)
-    //    func fetchAllProjects() -> [Project] {
-    //    }
     
     /// `Project` id 이용해 조회
     func fetchProject(byID id: String) -> Project? {
@@ -203,15 +199,14 @@ class SwiftDataManager {
     }
     
     /// `Clip` 생성: Clip 객체로
-    func createClip(clip: Clip) -> Clip? {
+    func createClip(clip: Clip) throws {
         // URL 유효성 검증
         guard FileManager.isValidVideoFile(at: clip.videoURL) else {
             print("createClip: 유효하지 않은 비디오 파일 URL: \(clip.videoURL)")
-            return nil
+            throw ClipError.invalidURL
         }
-        
         context.insert(clip)
-        return clip
+        saveContext()
     }
 
     /// `Clip` 가져오기
@@ -291,9 +286,9 @@ class SwiftDataManager {
     }
 
     /// `CameraSetting` 생성
-    func createCameraSetting(cameraSetting: CameraSetting) -> CameraSetting {
+    func createCameraSetting(cameraSetting: CameraSetting) throws {
         context.insert(cameraSetting)
-        return cameraSetting
+        saveContext()
     }
     
     // MARK: - Save & Rollback
