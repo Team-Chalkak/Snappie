@@ -16,7 +16,7 @@ class Project: Identifiable {
     
     /// 프로젝트에 연결된 가이드.
     /// 프로젝트가 삭제되면 함께 삭제됩니다.
-    @Relationship(deleteRule: .cascade) var guide: Guide?
+    @Relationship(deleteRule: .cascade) var guide: Guide
     
     /// 프로젝트를 구성하는 클립 목록.
     /// 프로젝트가 삭제되면 함께 삭제됩니다.
@@ -50,11 +50,11 @@ class Project: Identifiable {
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 고유 식별자 (기본값은 자동 생성된 UUID).
-    ///   - guide: 연결할 가이드 (선택사항).
+    ///   - guide: 연결할 가이드.
     ///   - clipList: 포함할 클립 목록.
     init(
         id: String = UUID().uuidString,
-        guide: Guide? = nil,
+        guide: Guide,
         clipList: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
         title: String = "",

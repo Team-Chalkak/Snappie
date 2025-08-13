@@ -5,7 +5,8 @@
 //  Created by 배현진 on 7/12/25.
 //
 
-enum ShootState {
+enum ShootState: Hashable {
     case firstShoot
-    case guidedShoot(Guide)
+    case followUpShoot(guide: Guide)
+    case appendShoot(guide: Guide)
 }

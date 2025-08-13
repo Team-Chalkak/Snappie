@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct CameraView: View {
-    let guide: Guide?
+    let shootState: ShootState
     let isAligned: Bool
+    
+    private var guide: Guide? {
+        switch shootState {
+        case .firstShoot:
+            return nil
+        case .followUpShoot(let guide), .appendShoot(let guide):
+            return guide
+        }
+    }
     
     @StateObject private var cameraManager = CameraManager()
     @ObservedObject var viewModel: CameraViewModel

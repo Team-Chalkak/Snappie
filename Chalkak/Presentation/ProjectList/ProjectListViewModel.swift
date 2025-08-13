@@ -24,7 +24,6 @@ final class ProjectListViewModel: ObservableObject {
         let allProjects = SwiftDataManager.shared.fetchAllProjects()
         self.projects = allProjects.filter { project in
             // guide가 있고, 최소 하나의 유효한 클립이 있는 프로젝트만 표시
-            guard project.guide != nil else { return false }
             return project.clipList.contains { clip in
                 FileManager.validVideoURL(from: clip.videoURL) != nil
             }

@@ -8,21 +8,23 @@
 import SwiftUI
 
 struct BoundingBoxView: View {
-    let guide: Guide?
+    let shootState: ShootState
 
     @StateObject private var viewModel = BoundingBoxViewModel()
     @EnvironmentObject private var coordinator: Coordinator
 
     var body: some View {
         Group {
-            if let guide = guide {
-                GuideCameraView(guide: guide)
-            } else {
+            switch shootState {
+            case .firstShoot:
                 FirstShootCameraView()
+            case .followUpShoot(let guide),
+                 .appendShoot(let guide):
+                GuideCameraView(guide: guide)
             }
         }
         .onAppear {
-            if guide == nil {
+            if case .firstShoot = shootState {
                 viewModel.checkResumeProject()
             }
         }
@@ -34,7 +36,7 @@ struct BoundingBoxView: View {
             },
             confirmAction: {
                 if let resumeProjectGuide = viewModel.loadGuideForCurrentProject() {
-                    coordinator.push(.boundingBox(guide: resumeProjectGuide))
+                    coordinator.push(.camera(state: .followUpShoot(guide: resumeProjectGuide)))
                 }
             }
         )

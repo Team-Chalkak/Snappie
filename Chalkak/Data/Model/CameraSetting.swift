@@ -11,7 +11,6 @@ import SwiftData
 /// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
 @Model
 class CameraSetting {
-    
     /// 프로젝트 카메라 설정의 고유 식별자.
     @Attribute(.unique) var id: String
     
@@ -46,5 +45,15 @@ class CameraSetting {
         self.isGridEnabled = isGridEnabled
         self.isFrontPosition = isFrontPosition
         self.timerSecond = timerSecond
+    }
+}
+
+extension CameraSetting: Hashable {
+    static func == (lhs: CameraSetting, rhs: CameraSetting) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
