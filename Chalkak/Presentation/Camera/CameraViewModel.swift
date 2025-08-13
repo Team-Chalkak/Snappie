@@ -116,7 +116,7 @@ class CameraViewModel: ObservableObject {
     }
 
     func configure() {
-        model.requestAndCheckPermissions()
+        model.requestPermissionsIfNeededAtFirstLaunch()
     }
 
     /// 카메라 세션 시작
