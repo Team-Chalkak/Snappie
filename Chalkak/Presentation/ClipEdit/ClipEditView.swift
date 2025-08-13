@@ -121,7 +121,7 @@ struct ClipEditView: View {
 
                 // 가이드 카메라로 이동
                 if let guide = guide {
-                    coordinator.push(.boundingBox(guide: guide))
+                    coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                 }
             }
 

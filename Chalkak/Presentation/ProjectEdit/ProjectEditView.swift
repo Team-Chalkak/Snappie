@@ -92,7 +92,7 @@ struct ProjectEditView: View {
                         print("Error: Guide not loaded yet")
                         return
                     }
-                    coordinator.push(.boundingBox(guide: guide))
+                    coordinator.push(.camera(state: .appendShoot(guide: guide)))
                 }
             )
         }

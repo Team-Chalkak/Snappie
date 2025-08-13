@@ -26,7 +26,7 @@ struct ChalkakApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $coordinator.path) {
-                BoundingBoxView(guide: nil)
+                BoundingBoxView(shootState: .firstShoot)
                     .navigationDestination(for: Path.self) { path in
                         switch path {
                         case .clipEdit(let url, let guide, let cameraSetting, let timeStampedTiltList):
@@ -41,8 +41,8 @@ struct ChalkakApp: App {
                             OverlayView(clip: clip, cameraSetting: cameraSetting)
                                 .toolbar(.hidden, for: .navigationBar)
 
-                        case .boundingBox(let guide):
-                            BoundingBoxView(guide: guide)
+                        case .camera(let state):
+                            BoundingBoxView(shootState: state)
                                 .toolbar(.hidden, for: .navigationBar)
                             
                             

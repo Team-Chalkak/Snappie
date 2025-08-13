@@ -104,7 +104,9 @@ struct OverlayView: View {
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
                     overlayViewModel.saveProjectData()
-                    coordinator.push(.boundingBox(guide: overlayViewModel.guide))
+                    if let guide = overlayViewModel.guide {
+                        coordinator.push(.camera(state: .followUpShoot(guide: guide)))
+                    }
                 }) {
                     Text(Context.buttonTitle)
                         .snappieStyle(.proLabel1)

@@ -37,7 +37,6 @@ class BoundingBoxViewModel: ObservableObject {
         guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID)
         else {
-            self.guide = nil
             return nil
         }
         let guide = project.guide
