@@ -348,10 +348,29 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func toggleTrimmingMode(for clipID: String) {
+        // 트리밍 모드 토글
         editableClips = editableClips.map { clip in
             var c = clip
             c.isTrimming = (c.id == clipID) ? !c.isTrimming : false
             return c
+        }
+        
+        // 트리밍 모드가 활성화된 클립을 찾고, 해당 클립의 시작 위치로 플레이헤드 이동
+        if let trimmingClip = editableClips.first(where: { $0.isTrimming }) {
+            // 해당 클립의 타임라인상 시작 위치
+            let clipStartTime = allClipStart(of: trimmingClip)
+            
+            // 범위 체크
+            let safeTime = min(max(0, clipStartTime), totalDuration)
+            
+            // 트리밍된 부분의 시작점으로 플레이헤드 이동
+            seekTo(time: safeTime)
+            
+            // 재생 중이었다면 일시정지
+            if isPlaying {
+                isPlaying = false
+                player.pause()
+            }
         }
     }
 
