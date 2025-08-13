@@ -21,18 +21,10 @@ struct ProjectTimelineView: View {
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
     let onAddClipTapped: () -> Void
+    
+    private let unionButtonWidth: CGFloat = 48
 
     var body: some View {
-        
-        ForEach(Array(clips.enumerated()), id: \.offset) { index, item in
-            HStack {
-                Circle()
-                if index != clips.count - 1 {
-                    Rectangle()
-                }
-            }
-        }
-        
         GeometryReader { geo in
             let halfWidth = geo.size.width / 2
             HStack(alignment: .center, spacing: 0) {
@@ -52,10 +44,10 @@ struct ProjectTimelineView: View {
                             .foregroundStyle(SnappieColor.primaryLight)
                     }
                 }
+                
                 Button(action: onAddClipTapped) {
                     Image("union")
-                        .padding(.horizontal, 16)
-                        .frame(height: timelineHeight)
+                        .frame(width: unionButtonWidth, height: timelineHeight, alignment: .center)
                         .background(
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(SnappieColor.primaryLight)
@@ -63,15 +55,25 @@ struct ProjectTimelineView: View {
                 }
                 .padding(.leading, 2)
             }
+            .border(.deepGreen50, width: 3)
             .padding(.horizontal, halfWidth)
             .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
             .frame(
-                width: geo.size.width + CGFloat(totalDuration) * pxPerSecond,
+                width: getTimelineFullWidth(geoWidth: geo.size.width),
                 height: timelineHeight,
                 alignment: .leading
             )
             .clipped()
         }
         .frame(height: timelineHeight)
+    }
+}
+
+extension ProjectTimelineView {
+    func getTimelineFullWidth(geoWidth: CGFloat) -> CGFloat {
+        let videoRangeWidth = CGFloat(totalDuration) * pxPerSecond
+        let bridgesWidth: CGFloat = CGFloat(2 * clips.count)
+        
+        return geoWidth + videoRangeWidth + bridgesWidth + unionButtonWidth
     }
 }
