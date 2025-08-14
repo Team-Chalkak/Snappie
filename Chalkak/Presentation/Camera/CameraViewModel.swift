@@ -23,6 +23,9 @@ class CameraViewModel: ObservableObject {
     // 비디오 저장 완료 이벤트를 View로 전달
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
 
+    @Published var showPermissionSheet = false
+    @Published var permissionState: PermissionState = .none
+
     @Published var isTimerRunning = false
     @Published var selectedTimerDuration: TimerOptions = .off
     @Published var showTimerFeedback: TimerOptions? = nil // 타이머 설정 피드백 표시
@@ -96,6 +99,14 @@ class CameraViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // 권한 시트 표시 상태
+        model.$showPermissionSheet
+            .assign(to: &$showPermissionSheet)
+
+        // 권한 상태 동기화
+        model.$permissionState
+            .assign(to: &$permissionState)
+
         loadSavedSettings()
 
         configure()
@@ -116,7 +127,7 @@ class CameraViewModel: ObservableObject {
     }
 
     func configure() {
-        model.requestAndCheckPermissions()
+        model.checkInitialPermissions()
     }
 
     /// 카메라 세션 시작
@@ -263,12 +274,20 @@ class CameraViewModel: ObservableObject {
     }
 
     func startVideoRecording() {
-        showingCameraControl = false
-        // 타이머설정여부 -> 타이머 시작
-        if selectedTimerDuration != .off {
-            startTimerCountdown()
+        model.checkPermissions()
+
+        // 권한이 both인 경우만 촬영가능
+        if permissionState == .both {
+            showingCameraControl = false
+            // 타이머설정여부 -> 타이머 시작
+            if selectedTimerDuration != .off {
+                startTimerCountdown()
+            } else {
+                executeVideoRecording()
+            }
         } else {
-            executeVideoRecording()
+            // 권한이 없을때는 권한시트 띄워주는 버튼으로 바뀜
+            showPermissionSheet = true
         }
     }
 
@@ -410,6 +429,31 @@ class CameraViewModel: ObservableObject {
     @MainActor
     func showProjectSavedNotification() {
         showProjectSavedAlert = true
+    }
+
+    /// 권한 설정
+    func openSettings() {
+        model.openSettings()
+    }
+
+    /// 카메라권한 상태기반 이미지
+    var cameraPermissionIconName: String {
+        switch permissionState {
+        case .both, .cameraOnly:
+            return "cameraAuthorized"
+        case .audioOnly, .none:
+            return "cameraDenied"
+        }
+    }
+
+    /// 오디오권한 상태기반 이미지
+    var audioPermissionIconName: String {
+        switch permissionState {
+        case .both, .audioOnly:
+            return "micAuthorized"
+        case .cameraOnly, .none:
+            return "micDenied"
+        }
     }
 
     private func startZoomSliderAutoHideTimer() {

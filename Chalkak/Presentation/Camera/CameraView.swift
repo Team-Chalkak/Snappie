@@ -20,7 +20,6 @@ struct CameraView: View {
         }
     }
     
-    @StateObject private var cameraManager = CameraManager()
     @ObservedObject var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
@@ -143,7 +142,7 @@ struct CameraView: View {
         }
         .onAppear {
             viewModel.startCamera()
-            cameraManager.checkPermissions()
+            
         }
         .onDisappear {
             viewModel.stopCamera()
@@ -158,8 +157,8 @@ struct CameraView: View {
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
         
-        .sheet(isPresented: $cameraManager.showPermissionSheet) {
-            CameraPermissionSheet(cameraManager: cameraManager)
+        .sheet(isPresented: $viewModel.showPermissionSheet) {
+            CameraPermissionSheet(viewModel: viewModel)
         }
     }
     

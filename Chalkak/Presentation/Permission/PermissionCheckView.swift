@@ -4,21 +4,20 @@
 //
 //  Created by Murphy on 8/6/25.
 //
-import SwiftUI
 import AVFoundation
+import SwiftUI
 
 struct CameraPermissionSheet: View {
-    @ObservedObject var cameraManager: CameraManager
+    @ObservedObject var viewModel: CameraViewModel
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationView {
-            ZStack{
+            ZStack {
                 SnappieColor.darkHeavy.ignoresSafeArea()
                 
-                VStack(alignment: .leading, spacing: 40){
-                    
-                    VStack(alignment: .center, spacing: 24){
+                VStack(alignment: .leading, spacing: 40) {
+                    VStack(alignment: .center, spacing: 24) {
                         Text("카메라와 마이크 접근 권한 필요")
                             .font(.title)
                             .fontWeight(.bold)
@@ -30,11 +29,10 @@ struct CameraPermissionSheet: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 24) {
-                        HStack(spacing: 8){
-                            
+                        HStack(spacing: 8) {
                             permissionIconCamera
                             
-                            VStack (alignment: .leading, spacing: 6){
+                            VStack(alignment: .leading, spacing: 6) {
                                 Text("카메라 접근 권한")
                                     .font(.headline)
                                     .fontWeight(.bold)
@@ -45,11 +43,10 @@ struct CameraPermissionSheet: View {
                             }
                         }
                         
-                        HStack(spacing: 8){
-                            
+                        HStack(spacing: 8) {
                             permissionIconAudio
                             
-                            VStack (alignment: .leading, spacing: 6){
+                            VStack(alignment: .leading, spacing: 6) {
                                 Text("마이크 접근 권한")
                                     .font(.headline)
                                     .fontWeight(.bold)
@@ -63,12 +60,12 @@ struct CameraPermissionSheet: View {
                     
                     Spacer()
                     
-                    VStack (alignment: .center){
+                    VStack(alignment: .center) {
                         SnappieButton(.solidPrimary(
                             title: "설정 열기",
                             size: .large
                         )) {
-                            cameraManager.openSettings()
+                            viewModel.openSettings()
                             dismiss()
                         }
                         .disabled(false)
@@ -78,53 +75,22 @@ struct CameraPermissionSheet: View {
                 .padding(.horizontal, 24)
                 .padding(.vertical, 48)
             }
-            
-        }
+         }
         .presentationBackground(.regularMaterial)
         .presentationCornerRadius(20)
-        
-    }
+     }
     
-    //권한에 따른 카메라 아이콘
     @ViewBuilder
     private var permissionIconCamera: some View {
-        switch cameraManager.permissionState {
-        case .both:
-            Image("cameraAuthorized")
-
-        case .cameraOnly:
-            Image("cameraAuthorized")
-            
-        case .audioOnly:
-            Image("cameraDenied")
-            
-        case .none:
-            Image("cameraDenied")
-        }
+        Image(viewModel.cameraPermissionIconName)
     }
     
-    //권한에 따른 마이크 아이콘
     @ViewBuilder
     private var permissionIconAudio: some View {
-        switch cameraManager.permissionState {
-        case .both:
-            Image("micAuthorized")
-            
-        case .cameraOnly:
-            Image("micDenied")
-            
-        case .audioOnly:
-            Image("micAuthorized")
-            
-        case .none:
-            Image("micDenied")
-        }
+        Image(viewModel.audioPermissionIconName)
     }
 }
 
-                    
-
-
 #Preview {
-    CameraPermissionSheet(cameraManager: CameraManager())
+    CameraPermissionSheet(viewModel: CameraViewModel())
 }
