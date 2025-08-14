@@ -106,33 +106,13 @@ class CameraManager: NSObject, ObservableObject {
 
     
     
-//    private func checkPermissionsWithoutSheet() {
-//        videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-//        audioRecordPermission = currentMicPermission()
-//        audioAuthorizationStatus = mapToAVAuthorization(audioRecordPermission)
-//        updatePermissionStateOnly() // 시트 표시 없이 상태만 업데이트
-//    }
-    
-    
     func checkPermissions() {
         videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         audioRecordPermission = currentMicPermission()
         audioAuthorizationStatus = mapToAVAuthorization(audioRecordPermission)
         updatePermissionState()
     }
-    
-//    private func updatePermissionStateOnly() {
-//        let videoGranted = (videoAuthorizationStatus == .authorized)
-//        let audioGranted = (audioAuthorizationStatus == .authorized)
-//
-//        switch (videoGranted, audioGranted) {
-//        case (true, true):   permissionState = .both
-//        case (true, false):  permissionState = .cameraOnly
-//        case (false, true):  permissionState = .audioOnly
-//        case (false, false): permissionState = .none
-//        }
-//  
-//    }
+
     
     private func updatePermissionState() {
         let videoGranted = (videoAuthorizationStatus == .authorized)
@@ -145,45 +125,31 @@ class CameraManager: NSObject, ObservableObject {
 
         case (true, false):
             permissionState = .cameraOnly
-            // 🔥 .denied 상태일 때만 시트 표시 (.notDetermined는 제외)
+   
             let shouldShow = !isRequestingPermissions && (audioAuthorizationStatus == .denied)
             showPermissionSheet = shouldShow
 
         case (false, true):
             permissionState = .audioOnly
-            // 🔥 .denied 또는 .restricted 상태일 때만 시트 표시
+  
             let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
             let shouldShow = !isRequestingPermissions && videoDenied
             showPermissionSheet = shouldShow
 
         case (false, false):
             permissionState = .none
-            // 🔥 실제로 거부된 권한이 있을 때만 시트 표시
+ 
             let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
             let audioDenied = (audioAuthorizationStatus == .denied)
             
-            // 🔥 핵심: 둘 다 .notDetermined이면 시트 표시 안함
+       
             let hasActualDenial = videoDenied || audioDenied
             let shouldShow = !isRequestingPermissions && hasActualDenial
             showPermissionSheet = shouldShow
         }
     }
     
-//    
-//    func requestAndCheckPermissions() {
-//        guard !isRequestingPermissions else { return }
-//        isRequestingPermissions = true
-//
-//        // 최신 상태 캐싱
-//        checkPermissions()
-//
-//        requestCameraIfNeeded { [weak self] in
-//            self?.requestMicIfNeeded { [weak self] in
-//                self?.finishPermissionRequest()  // 두 알럿 콜백 종료 시점 단 한 번
-//            }
-//        }
-//    }
-//    
+  
     /// 앱 첫 실행에서만 호출
     func requestPermissionsIfNeededAtFirstLaunch() {
         guard !isRequestingPermissions else { return }
@@ -233,9 +199,9 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     private func finishPermissionRequest() {
-        // 🔥 알럿이 완전히 사라질 때까지 대기 (1초로 증가)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            // 요청 완료 플래그
+      
+        DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+  
             self?.isRequestingPermissions = false
             
             // 최신 상태 갱신
@@ -250,7 +216,7 @@ class CameraManager: NSObject, ObservableObject {
 
     func reevaluateAndPresentIfNeeded() {
         checkPermissions()
-        // 🔥 권한 요청 중일 때는 시트 상태 변경하지 않음
+  
         if !isRequestingPermissions {
             showPermissionSheet = (permissionState != .both)
         }
