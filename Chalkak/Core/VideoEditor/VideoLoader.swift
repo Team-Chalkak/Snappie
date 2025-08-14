@@ -32,7 +32,7 @@ struct VideoLoader {
     ///
     /// - Returns: 현재 프로젝트의 클립 배열. 프로젝트가 없으면 빈 배열
     func loadProjectClipList() async -> [Clip] {
-        guard let projectID = UserDefaults().string(forKey: "currentProjectID"),
+        guard let projectID = UserDefaults().string(forKey: UserDefaultKey.currentProjectID),
            let project = await SwiftDataManager.shared.fetchProject(byID: projectID) else {
             return []
         }

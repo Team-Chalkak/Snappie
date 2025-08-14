@@ -133,7 +133,7 @@ final class OverlayViewModel: ObservableObject {
         )
     
         SwiftDataManager.shared.saveContext()
-        UserDefaults.standard.set(projectID, forKey: "currentProjectID")
+        UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
     }
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장

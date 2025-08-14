@@ -70,7 +70,7 @@ struct OverlayView: View {
             SnappieNavigationBar(
                 leftButtonType: .backward {
                     // 가이드 확정 없이 뒤로가기 시 프로젝트 제거
-                    UserDefaults.standard.removeObject(forKey: "currentProjectID")
+                    UserDefaults.standard.removeObject(forKey: UserDefaultKey.currentProjectID)
                     dismiss()
                 },
                 rightButtonType: .none

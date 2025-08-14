@@ -32,7 +32,7 @@ final class ProjectListViewModel: ObservableObject {
     
     /// 현재 유저디폴트의 currentProject인가 확인
     func isCurrentProject(_ project: Project) -> Bool {
-        if let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") {
+        if let currentProjectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
             return project.id == currentProjectID
         } else {
             return false
