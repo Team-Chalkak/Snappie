@@ -98,7 +98,7 @@ class CameraViewModel: ObservableObject {
 
         loadSavedSettings()
 
-        configure()
+//        configure()
 
         // 뱃지 상태 초기화
         Task { @MainActor in
@@ -109,6 +109,10 @@ class CameraViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.model.setZoomScale(self.zoomScale)
         }
+    }
+    
+    func startCameraConfiguration() {
+        model.requestAndCheckPermissions()
     }
 
     func switchCameraControls() {
