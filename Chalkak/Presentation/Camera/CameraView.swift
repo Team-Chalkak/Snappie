@@ -153,7 +153,9 @@ struct CameraView: View {
         }
         .onChange(of: cameraManager.showOnboarding) { oldValue, newValue in
             if oldValue == true && newValue == false {
-                viewModel.startCameraConfiguration()  // ← 권한 요청
+//                viewModel.startCameraConfiguration()  // ← 권한 요청
+                cameraManager.showPermissionSheet = true
+                cameraManager.requestAndCheckPermissions()
                 viewModel.startCamera()              // ← 카메라 시작
             }
         }
