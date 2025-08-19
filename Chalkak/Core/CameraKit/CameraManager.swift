@@ -200,7 +200,7 @@ class CameraManager: NSObject, ObservableObject {
 
     private func finishPermissionRequest() {
       
-        DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+        DispatchQueue.main.async { [weak self] in
   
             self?.isRequestingPermissions = false
             
