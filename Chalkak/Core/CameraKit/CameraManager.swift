@@ -12,7 +12,7 @@ import Photos
 import SwiftUI
 
 class CameraManager: NSObject, ObservableObject {
-    @Published var showOnboarding = !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    @Published var showOnboarding = !UserDefaults.standard.bool(forKey: UserDefaultKey.hasCompletedOnboarding)
     // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
     @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
@@ -78,7 +78,7 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func completeOnboarding() {
-        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        UserDefaults.standard.set(true, forKey: UserDefaultKey.hasCompletedOnboarding)
         showOnboarding = false
         
         checkPermissions()

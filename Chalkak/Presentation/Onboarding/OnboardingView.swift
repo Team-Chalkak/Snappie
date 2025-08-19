@@ -1,5 +1,5 @@
 //
-//  OnboardingView.swift
+//  OnboardingVied.swift
 //  Chalkak
 //
 //  Created by Murphy on 8/12/25.
@@ -10,7 +10,7 @@ import SwiftUI
 struct OnboardingView: View {
     @ObservedObject var cameraManager: CameraManager
     @State private var currentIndex = 0
-//    @Binding var isPresented: Bool
+
     
     var body: some View {
         ZStack {
@@ -62,32 +62,6 @@ struct OnboardingView: View {
     }
 }
 
-struct Onboard: View {
-    let ImageName: String
-    let title: String
-    let description: String
-    
-    var body: some View {
-        VStack(spacing: 40) {
-            Image(ImageName)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 346)
-            VStack (spacing: 12){
-                Text(title)
-                    .foregroundStyle(Color.matcha200)
-                    .font(.title)
-                    .fontWeight(.bold)
-                Text(description)
-                    .foregroundStyle(Color.matcha50)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-            }
-        }
-    }
-}
 
 
-//#Preview {
-//    OnboardingView()
-//}
+

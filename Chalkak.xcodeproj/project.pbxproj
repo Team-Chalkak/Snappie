@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */; };
 		0D5512EE2E432EDA001FA7F9 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */; };
-		0D5512F22E4B3084001FA7F9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512F12E4B3069001FA7F9 /* OnboardingView.swift */; };
+		0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512F82E541718001FA7F9 /* OnboardingView.swift */; };
+		0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */; };
 		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
 		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
@@ -150,7 +151,8 @@
 /* Begin PBXFileReference section */
 		0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCheckView.swift; sourceTree = "<group>"; };
 		0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
-		0D5512F12E4B3069001FA7F9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		0D5512F82E541718001FA7F9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSubView.swift; sourceTree = "<group>"; };
 		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
 		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
@@ -307,9 +309,18 @@
 		0D5512F02E4B2D36001FA7F9 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				0D5512F12E4B3069001FA7F9 /* OnboardingView.swift */,
+				0D5512F82E541718001FA7F9 /* OnboardingView.swift */,
+				0D5512F52E5415C9001FA7F9 /* SubViews */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		0D5512F52E5415C9001FA7F9 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		992EE7C02E32AC820079AFBF /* ProjectEdit */ = {
@@ -977,7 +988,6 @@
 				993A1F552E267E0C0059B70A /* BoundingBoxManager.swift in Sources */,
 				B64788682E3324410091A067 /* HorizontalLevelIndicator.swift in Sources */,
 				99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */,
-				0D5512F22E4B3084001FA7F9 /* OnboardingView.swift in Sources */,
 				B68A46CF2E38A25D0062F04E /* SnappieProgress.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
@@ -1000,6 +1010,7 @@
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
+				0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */,
 				C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */,
@@ -1068,6 +1079,7 @@
 				B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */,
+				0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,
 				99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */,

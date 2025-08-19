@@ -47,7 +47,6 @@ struct CameraView: View {
                         .aspectRatio(9 / 16, contentMode: .fit)
                 }
                 
-                
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
                     Text("\(viewModel.showTimerFeedback!.rawValue)")
