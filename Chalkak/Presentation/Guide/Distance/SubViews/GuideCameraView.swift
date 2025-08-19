@@ -27,8 +27,16 @@ struct GuideCameraView: View {
     }
 
     var body: some View {
+        let shootState: ShootState = {
+            if let guide = guide {
+                return .followUpShoot(guide: guide)
+            } else {
+                return .firstShoot
+            }
+        }()
+        
         ZStack {
-            CameraView(guide: guide, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
+            CameraView(shootState: shootState, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
                 .onAppear {
                     cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
                         viewModel.liveBoundingBoxes = bboxes

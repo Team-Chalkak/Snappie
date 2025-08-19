@@ -92,9 +92,8 @@ struct ClipEditView: View {
                         .oneButton(
                             // 첫번째 촬영
                             .init(label: "다음") {
-                                editViewModel.saveProjectData()
                                 coordinator.push(
-                                    .overlay(clip: editViewModel.createClipData())
+                                    .overlay(clip: editViewModel.createClipData(), cameraSetting: editViewModel.cameraSetting)
                                 )
                             }
                         )
@@ -122,7 +121,7 @@ struct ClipEditView: View {
 
                 // 가이드 카메라로 이동
                 if let guide = guide {
-                    coordinator.push(.boundingBox(guide: guide))
+                    coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                 }
             }
 

@@ -26,7 +26,7 @@ class BoundingBoxViewModel: ObservableObject {
 
     /// 진행중이던 프로젝트 있는지 확인
     func checkResumeProject() {
-        if UserDefaults.standard.string(forKey: "currentProjectID") != nil {
+        if UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) != nil {
             showResumeAlert = true
         }
     }
@@ -34,19 +34,18 @@ class BoundingBoxViewModel: ObservableObject {
     /// 진행중이던 프로젝트의 가이드 가져오기
     @MainActor
     func loadGuideForCurrentProject() -> Guide? {
-        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
-              let project = SwiftDataManager.shared.fetchProject(byID: projectID),
-              let guide = project.guide
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID)
         else {
-            self.guide = nil
             return nil
         }
+        let guide = project.guide
         return guide
     }
 
     /// 진행중이던 프로젝트 없애기
     func cancelResume() {
-        UserDefaults.standard.removeObject(forKey: "currentProjectID")
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.currentProjectID)
         guide = nil
     }
 

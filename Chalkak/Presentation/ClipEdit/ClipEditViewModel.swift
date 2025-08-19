@@ -246,7 +246,7 @@ final class ClipEditViewModel: ObservableObject {
     /// 두 번째 촬영 이후부터 호출됩니다.
     @MainActor
     func applyReferenceDuration() {
-        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID),
               let refDuration = project.referenceDuration
         else {
@@ -258,52 +258,17 @@ final class ClipEditViewModel: ObservableObject {
         self.endPoint = min(refDuration, self.duration)
     }
     
-    /// `Project` 저장
-    /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
-    /// ProjectID는 UserDefault에도 저장되어 있습니다.
-    @MainActor
-    func saveProjectData() {
-        guard let clip = saveClipData() else {
-            print("클립 저장에 실패했습니다.")
-            return
-        }
-        
-        let cameraSetting = saveCameraSetting()
-        let projectID = UUID().uuidString
-        // 프로젝트 생성 시간
-        let createdAt = Date()
-        
-        // 프로젝트 이름 자동 생성
-        let generatedTitle = generateTimeBasedTitle(from: createdAt)
-        
-        _ = SwiftDataManager.shared.createProject(
-            id: projectID,
-            guide: nil,
-            clips: [clip],
-            cameraSetting: cameraSetting,
-            title: generatedTitle,
-            referenceDuration: clip.endPoint - clip.startPoint,
-            coverImage: nil,
-            createdAt: createdAt
-        )
-    
-        SwiftDataManager.shared.saveContext()
-        UserDefaults.standard.set(projectID, forKey: "currentProjectID")
-    }
-    
-    /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
-    private func generateTimeBasedTitle(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HHmm"
-        let timeString = formatter.string(from: date)
-        return "프로젝트 \(timeString)"
-    }
-    
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip? {
         let clip = createClipData()
-        return SwiftDataManager.shared.createClip(clip: clip)
+        do {
+            try SwiftDataManager.shared.createClip(clip: clip)
+            return clip
+        } catch {
+            print("clip 새성 실패: \(error)")
+            return nil
+        }
     }
     
     /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
@@ -320,32 +285,21 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
     
-    @MainActor
-    func saveCameraSetting() -> CameraSetting {
-        return SwiftDataManager.shared.createCameraSetting(
-            zoomScale: cameraSetting.zoomScale,
-            isGridEnabled: cameraSetting.isGridEnabled,
-            isFrontPosition: cameraSetting.isFrontPosition,
-            timerSecond: cameraSetting.timerSecond
-        )
-    }
-    
     /// 기존 Project에 새로운 Clip을 추가
     /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
     func appendClipToCurrentProject() {
-        guard let clip = saveClipData() else {
-            print("클립 저장에 실패했습니다.")
+        guard let newClip = saveClipData() else {
             return
         }
 
-        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("기존 Project를 찾을 수 없습니다.")
             return
         }
 
-        project.clipList.append(clip)
+        project.clipList.append(newClip)
         SwiftDataManager.shared.saveContext()
     }
 }

@@ -71,7 +71,7 @@ class SwiftDataManager {
     /// `Project` 생성
     func createProject(
         id: String,
-        guide: Guide? = nil,
+        guide: Guide,
         clips: [Clip] = [],
         cameraSetting: CameraSetting? = nil,
         title: String? = nil,
@@ -94,10 +94,6 @@ class SwiftDataManager {
         context.insert(project)
         return project
     }
-
-    // TODO: - 프로젝트 단의 관리 시작 시점에 구현 (Berry)
-    //    func fetchAllProjects() -> [Project] {
-    //    }
     
     /// `Project` id 이용해 조회
     func fetchProject(byID id: String) -> Project? {
@@ -145,13 +141,13 @@ class SwiftDataManager {
     /// 뱃지 표시용 확인하지 않은 프로젝트 조회 (guide가 있고, 현재 촬영 중이 아닌 것)
     func getUncheckedProjectsForBadge() -> [Project] {
         let predicate = #Predicate<Project> { project in
-            project.isChecked == false && project.guide != nil
+            project.isChecked == false
         }
         let descriptor = FetchDescriptor<Project>(predicate: predicate)
         let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
         
         // 현재 촬영 중인 프로젝트 제외
-        guard let currentProjectID = UserDefaults.standard.string(forKey: "currentProjectID") else {
+        guard let currentProjectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) else {
             return uncheckedProjects
         }
         return uncheckedProjects.filter { $0.id != currentProjectID }
@@ -203,15 +199,14 @@ class SwiftDataManager {
     }
     
     /// `Clip` 생성: Clip 객체로
-    func createClip(clip: Clip) -> Clip? {
+    func createClip(clip: Clip) throws {
         // URL 유효성 검증
         guard FileManager.isValidVideoFile(at: clip.videoURL) else {
             print("createClip: 유효하지 않은 비디오 파일 URL: \(clip.videoURL)")
-            return nil
+            throw ClipError.invalidURL
         }
-        
         context.insert(clip)
-        return clip
+        saveContext()
     }
 
     /// `Clip` 가져오기
@@ -247,18 +242,6 @@ class SwiftDataManager {
         return guide
     }
 
-    /// `Guide` 저장하고 Project에 연결
-    func saveGuideToProject(projectID: String, guide: Guide) {
-        guard let project = fetchProject(byID: projectID) else {
-            print("해당 ID(\(projectID))의 Project를 찾을 수 없습니다.")
-            return
-        }
-        
-        project.guide = guide
-        context.insert(guide) // guide도 context에 삽입
-        saveContext()
-    }
-    
     /// `Guide` 가져오기
     func fetchGuide(forClipID clipID: String) -> Guide? {
         let predicate = #Predicate<Guide> { $0.clipID == clipID }
@@ -290,6 +273,12 @@ class SwiftDataManager {
         return setting
     }
 
+    /// `CameraSetting` 생성
+    func createCameraSetting(cameraSetting: CameraSetting) throws {
+        context.insert(cameraSetting)
+        saveContext()
+    }
+    
     // MARK: - Save & Rollback
 
     /// Context 저장하기 - 변경사항 반영

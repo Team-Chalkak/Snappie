@@ -26,6 +26,7 @@ import UIKit
 final class OverlayViewModel: ObservableObject {
     // 0. Input properties
     let clip: Clip
+    let cameraSetting: CameraSetting
     
     // 1. Published properties
     @Published var isLoading = false
@@ -39,10 +40,12 @@ final class OverlayViewModel: ObservableObject {
     // 3. Computed properties
     var outlineImage: UIImage? { overlayManager.outlineImage }
     var extractedImage: UIImage? { extractor.extractedImage }
+    private var coverImage: Data?
 
     // 4. Init
-    init(clip: Clip) {
+    init(clip: Clip, cameraSetting: CameraSetting) {
         self.clip = clip
+        self.cameraSetting = cameraSetting
         extractor.overlayManager = overlayManager
         prepareOverlay()
     }
@@ -84,6 +87,75 @@ final class OverlayViewModel: ObservableObject {
         extractor.extractedImage = nil
         extractor.extractedCIImage = nil
     }
+    
+    /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
+    private func generateTimeBasedTitle(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        let timeString = formatter.string(from: date)
+        return "프로젝트 \(timeString)"
+    }
+    
+    /// `Project` 저장
+    /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
+    /// ProjectID는 UserDefault에도 저장되어 있습니다.
+    @MainActor
+    func saveProjectData() {
+        saveClipData()
+        saveCameraSetting()
+        
+        guard let newGuide = makeGuide(clipID: clip.id) else {
+            print("❌ 가이드 생성에 실패하여 프로젝트를 저장할 수 없습니다.")
+            return
+        }
+        self.guide = newGuide
+        
+        if let originalImage = extractedImage,
+           let croppedImage = croppedToSquare(image: originalImage) {
+            coverImage = croppedImage.jpegData(compressionQuality: 0.8)
+        }
+
+        let projectID = UUID().uuidString
+        let createdAt = Date()
+        
+        // 프로젝트 이름 자동 생성
+        let generatedTitle = generateTimeBasedTitle(from: createdAt)
+        
+        _ = SwiftDataManager.shared.createProject(
+            id: projectID,
+            guide: newGuide,
+            clips: [clip],
+            cameraSetting: cameraSetting,
+            title: generatedTitle,
+            referenceDuration: clip.endPoint - clip.startPoint,
+            coverImage: coverImage,
+            createdAt: createdAt
+        )
+    
+        SwiftDataManager.shared.saveContext()
+        UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+    }
+    
+    /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
+    @MainActor
+    func saveClipData() {
+        do {
+            try SwiftDataManager.shared.createClip(clip: clip)
+        } catch ClipError.invalidURL {
+            print("유효하지 않은 비디오 URL입니다.")
+        } catch {
+            print("클립 저장에 실패했습니다: \(error)")
+        }
+    }
+    
+    @MainActor
+    func saveCameraSetting() {
+        do {
+            try SwiftDataManager.shared.createCameraSetting(cameraSetting: cameraSetting)
+        } catch  {
+            print("cameraSetting 저장에 실패했습니다: \(error)")
+        }
+    }
 
     /// Guide 객체 생성
     @MainActor
@@ -119,24 +191,7 @@ final class OverlayViewModel: ObservableObject {
             cameraTilt: cameraTilt,
             cameraHeight: 1.0
         )
-        
-        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID") {
-            SwiftDataManager.shared.saveGuideToProject(projectID: projectID, guide: guide)
-        }
         return guide
-    }
-    
-    /// 커버이미지(첫 클립 첫 프레임 이미지(extractedImage)) Project에 저장
-    @MainActor
-    func saveCoverImageToProject() {
-        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
-           let originalImage = extractedImage,
-           let croppedImage = croppedToSquare(image: originalImage) {
-            SwiftDataManager.shared.updateProjectCoverImage(
-                projectID: projectID,
-                coverImage: croppedImage
-            )
-        }
     }
     
     /// 정사각형 중앙 크롭 이미지 반환 함수
