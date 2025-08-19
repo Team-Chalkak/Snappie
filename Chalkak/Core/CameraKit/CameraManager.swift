@@ -73,8 +73,30 @@ class CameraManager: NSObject, ObservableObject {
         super.init()
         
         if !showOnboarding {
-                checkPermissions()
-            }
+            checkPermissions()
+        }
+    }
+    
+    deinit {
+        session.stopRunning()
+        if let token = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(token)
+        }
+    }
+    
+    @inline(__always)
+    private func currentMicPermission() -> AVAudioSession.RecordPermission {
+        return AVAudioSession.sharedInstance().recordPermission
+    }
+    
+    @inline(__always)
+    private func mapToAVAuthorization(_ record: AVAudioSession.RecordPermission) -> AVAuthorizationStatus {
+        switch record {
+        case .granted:      return .authorized
+        case .denied:       return .denied
+        case .undetermined: return .notDetermined
+        @unknown default:   return .denied
+        }
     }
     
     func completeOnboarding() {
@@ -124,6 +146,20 @@ class CameraManager: NSObject, ObservableObject {
             let hasActualDenial = videoDenied || audioDenied
             let shouldShow = !isRequestingPermissions && hasActualDenial
             showPermissionSheet = shouldShow
+        }
+    }
+
+    func requestAndCheckPermissions() {
+        guard !isRequestingPermissions else { return }
+        isRequestingPermissions = true
+
+        // 최신 상태 캐싱
+        checkPermissions()
+
+        requestCameraIfNeeded { [weak self] in
+            self?.requestMicIfNeeded { [weak self] in
+                self?.finishPermissionRequest()  // 두 알럿 콜백 종료 시점 단 한 번
+            }
         }
     }
     
