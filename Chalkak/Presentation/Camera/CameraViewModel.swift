@@ -98,8 +98,6 @@ class CameraViewModel: ObservableObject {
 
         loadSavedSettings()
 
-        configure()
-
         // 뱃지 상태 초기화
         Task { @MainActor in
             updateBadgeState()
@@ -110,13 +108,13 @@ class CameraViewModel: ObservableObject {
             self.model.setZoomScale(self.zoomScale)
         }
     }
+    
+    func startCameraConfiguration() {
+        model.requestAndCheckPermissions()
+    }
 
     func switchCameraControls() {
         showingCameraControl.toggle()
-    }
-
-    func configure() {
-        model.requestPermissionsIfNeededAtFirstLaunch()
     }
 
     /// 카메라 세션 시작

@@ -12,6 +12,7 @@ import Photos
 import SwiftUI
 
 class CameraManager: NSObject, ObservableObject {
+    @Published var showOnboarding = !UserDefaults.standard.bool(forKey: UserDefaultKey.hasCompletedOnboarding)
     // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
     @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published private(set) var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
@@ -70,41 +71,18 @@ class CameraManager: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        checkPermissions()
         
-        didBecomeActiveObserver = NotificationCenter.default.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.reevaluateAndPresentIfNeeded()
-        }
+        if !showOnboarding {
+                checkPermissions()
+            }
     }
     
-    deinit {
-        session.stopRunning()
-        if let token = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(token)
-        }
+    func completeOnboarding() {
+        UserDefaults.standard.set(true, forKey: UserDefaultKey.hasCompletedOnboarding)
+        showOnboarding = false
+        
+        checkPermissions()
     }
-
-    
-    @inline(__always)
-    private func currentMicPermission() -> AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
-    }
-
-    @inline(__always)
-    private func mapToAVAuthorization(_ record: AVAudioSession.RecordPermission) -> AVAuthorizationStatus {
-        switch record {
-        case .granted:      return .authorized
-        case .denied:       return .denied
-        case .undetermined: return .notDetermined
-        @unknown default:   return .denied
-        }
-    }
-
-    
     
     func checkPermissions() {
         videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
