@@ -108,10 +108,6 @@ class CameraViewModel: ObservableObject {
             self.model.setZoomScale(self.zoomScale)
         }
     }
-    
-    func startCameraConfiguration() {
-        model.requestAndCheckPermissions()
-    }
 
     func switchCameraControls() {
         showingCameraControl.toggle()
