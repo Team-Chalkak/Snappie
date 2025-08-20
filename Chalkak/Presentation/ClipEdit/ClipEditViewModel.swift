@@ -306,7 +306,7 @@ final class ClipEditViewModel: ObservableObject {
     //MARK: - 유저 디폴트
     // 1. 현재 currentProjectID 가져오기
     func fetchCurrentProjectID() -> String? {
-        if let projectID = UserDefaults.standard.string(forKey: "currentProjectID") {
+        if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
             return projectID
         } else {
             print("⚠️ currentProjectID가 없습니다.")
@@ -316,6 +316,6 @@ final class ClipEditViewModel: ObservableObject {
     
     // 2. currentProjectID nil로 초기화
     func clearCurrentProjectID() {
-        UserDefaults.standard.set(nil, forKey: "currentProjectID")
+        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
     }
 }
