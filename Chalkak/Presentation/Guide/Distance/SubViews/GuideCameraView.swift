@@ -9,12 +9,14 @@ import SwiftUI
 
 struct GuideCameraView: View {
     let guide: Guide?
+    let shootState: ShootState 
 
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
-    init(guide: Guide?) {
+    init(guide: Guide?, shootState: ShootState) {
         self.guide = guide
+        self.shootState = shootState
 
         let cameraVM = CameraViewModel()
         self._cameraViewModel = StateObject(wrappedValue: cameraVM)
@@ -26,15 +28,7 @@ struct GuideCameraView: View {
         )
     }
 
-    var body: some View {
-        let shootState: ShootState = {
-            if let guide = guide {
-                return .followUpShoot(guide: guide)
-            } else {
-                return .firstShoot
-            }
-        }()
-        
+    var body: some View {        
         ZStack {
             CameraView(shootState: shootState, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
                 .onAppear {

@@ -41,7 +41,7 @@ import SwiftUI
  */
 struct ClipEditView: View {
     // 1. Input properties
-    let guide: Guide?
+    let shootState: ShootState
     let cameraSetting: CameraSetting
 
     // 2. State & ObservedObject
@@ -52,51 +52,72 @@ struct ClipEditView: View {
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
     @State private var showRetakeAlert = false
+    
+    // 3. 계산 프로퍼티
+    private var guide: Guide? {
+        switch shootState {
+        case .firstShoot:
+            return nil
+        case .followUpShoot(let guide), .appendShoot(let guide):
+            return guide
+        }
+    }
 
-    // 3. init
+    // 4. init
     init(
         clipURL: URL,
-        guide: Guide?,
+        shootState: ShootState,
         cameraSetting: CameraSetting,
         timeStampedTiltList: [TimeStampedTilt]
     ) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
-            clipURL: clipURL,
-            cameraSetting: cameraSetting,
-            timeStampedTiltList: timeStampedTiltList
+                clipURL: clipURL,
+                cameraSetting: cameraSetting,
+                timeStampedTiltList: timeStampedTiltList
+            )
         )
-        )
-        self.guide = guide
+        self.shootState = shootState
         self.cameraSetting = cameraSetting
     }
 
-    // 4. body
+    // 5. body
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
 
-            VStack(alignment: .center, spacing: 16, content: {
+            VStack(alignment: .center, spacing: 16) {
                 SnappieNavigationBar(
                     navigationTitle: "장면 다듬기",
                     leftButtonType: .backward {
                         showRetakeAlert = true
                     },
-                    rightButtonType: guide != nil ?
-                        .oneButton(
-                            // 두번째 촬영 이후
-                            .init(label: "완료") {
-                                showActionSheet = true
-                            }
-                        ) :
-                        .oneButton(
-                            // 첫번째 촬영
-                            .init(label: "다음") {
+                    rightButtonType: .oneButton(
+                        .init(label: shootState == .firstShoot ? "다음" : "완료") {
+                            print("▶️ Right button tapped. shootState:", shootState)
+                            switch shootState {
+                            case .firstShoot:
                                 coordinator.push(
-                                    .overlay(clip: editViewModel.createClipData(), cameraSetting: editViewModel.cameraSetting)
+                                    .overlay(
+                                        clip: editViewModel.createClipData(),
+                                        cameraSetting: editViewModel.cameraSetting
+                                    )
                                 )
+                            case .followUpShoot:
+                                showActionSheet = true
+                            case .appendShoot:
+                                print("appendShoot 분기 진입")
+                                editViewModel.appendClipToCurrentProject()
+                                if let projectID = editViewModel.fetchCurrentProjectID() {
+                                    editViewModel.clearCurrentProjectID()
+                                    print("ProjectID 확인 후 push:", projectID)
+                                    coordinator.push(.projectEdit(projectID: projectID))
+                                } else {
+                                    print("⚠️ 프로젝트 ID가 없습니다.")
+                                }
                             }
-                        )
+                        }
+                    )
                 )
 
                 VideoControlView(
@@ -106,8 +127,11 @@ struct ClipEditView: View {
                 )
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
-            })
+            }
             .padding(.bottom, 14)
+        }
+        .onAppear {
+            print("🔹 ClipEditView appeared. shootState:", shootState)
         }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(
@@ -139,7 +163,7 @@ struct ClipEditView: View {
             coordinator.popLast()
         }
         .task {
-            if guide != nil {
+            if shootState != .firstShoot {
                 editViewModel.applyReferenceDuration()
             }
         }

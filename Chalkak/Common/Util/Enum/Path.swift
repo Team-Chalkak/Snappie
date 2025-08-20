@@ -8,7 +8,7 @@
 import Foundation
 
 enum Path: Hashable {
-    case clipEdit(clipURL: URL, guide: Guide?, cameraSetting: CameraSetting, TimeStampedTiltList: [TimeStampedTilt])
+    case clipEdit(clipURL: URL, state: ShootState,  cameraSetting: CameraSetting, TimeStampedTiltList: [TimeStampedTilt])
     case overlay(clip: Clip, cameraSetting: CameraSetting)
     case camera(state: ShootState)
 
