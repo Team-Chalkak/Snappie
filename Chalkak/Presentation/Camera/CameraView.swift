@@ -39,16 +39,22 @@ struct CameraView: View {
             }
             
             ZStack {
-                CameraPreviewView(
-                    session: viewModel.session,
-                    tabToFocus: viewModel.focusAtPoint,
-                    onPinchZoom: viewModel.selectZoomScale,
-                    currentZoomScale: viewModel.zoomScale,
-                    isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                    showGrid: $viewModel.isGrid
-                )
-                .aspectRatio(9 / 16, contentMode: .fit)
-                .clipped()
+                if !cameraManager.showOnboarding {
+                    CameraPreviewView(
+                        session: viewModel.session,
+                        tabToFocus: viewModel.focusAtPoint,
+                        onPinchZoom: viewModel.selectZoomScale,
+                        currentZoomScale: viewModel.zoomScale,
+                        isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                        showGrid: $viewModel.isGrid
+                    )
+                    .aspectRatio(9 / 16, contentMode: .fit)
+                    .clipped()
+                } else {
+                    // 온보딩 중일 때는 빈 뷰 또는 플레이스홀더
+                    Color.black
+                        .aspectRatio(9 / 16, contentMode: .fit)
+                }
                 
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
@@ -70,6 +76,12 @@ struct CameraView: View {
             .padding(.top, Layout.preViewTopPadding)
             .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
+            
+            if cameraManager.showOnboarding {
+                OnboardingView(cameraManager: cameraManager)
+                    .transition(.move(edge: .bottom))
+                    .zIndex(1)
+            }
             
             // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
@@ -104,6 +116,7 @@ struct CameraView: View {
                 
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
+            
         }
         .onChange(of: viewModel.showTimerFeedback) { _, newValue in
             fadeOutTask?.cancel()
@@ -142,9 +155,18 @@ struct CameraView: View {
             )
         }
         .onAppear {
-            viewModel.startCamera()
-            cameraManager.checkPermissions()
+            if !cameraManager.showOnboarding {
+                viewModel.startCamera()
+            }
         }
+        .onChange(of: cameraManager.showOnboarding) { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                cameraManager.showPermissionSheet = true
+                cameraManager.requestAndCheckPermissions() // 권한 요청
+                viewModel.startCamera()              // ← 카메라 시작
+            }
+        }
+
         .onDisappear {
             viewModel.stopCamera()
         }
@@ -161,11 +183,12 @@ struct CameraView: View {
         .sheet(isPresented: $cameraManager.showPermissionSheet) {
             CameraPermissionSheet(cameraManager: cameraManager)
         }
+        .animation(.easeInOut(duration: 0.5), value: cameraManager.showOnboarding)
     }
     
 
     private func handleExitCamera() {
-        UserDefaults.standard.set(nil, forKey: "currentProjectID")
+        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
 
         viewModel.stopCamera()
         coordinator.removeAll()

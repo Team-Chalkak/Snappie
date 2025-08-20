@@ -246,7 +246,7 @@ final class ClipEditViewModel: ObservableObject {
     /// 두 번째 촬영 이후부터 호출됩니다.
     @MainActor
     func applyReferenceDuration() {
-        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID),
               let refDuration = project.referenceDuration
         else {
@@ -292,8 +292,8 @@ final class ClipEditViewModel: ObservableObject {
         guard let newClip = saveClipData() else {
             return
         }
-        
-        guard let projectID = UserDefaults.standard.string(forKey: "currentProjectID"),
+
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
               let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("기존 Project를 찾을 수 없습니다.")
             return
