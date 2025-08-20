@@ -5,8 +5,8 @@
 //  Created by 배현진 on 7/24/25.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
@@ -25,7 +25,12 @@ struct ProjectEditView: View {
             SnappieNavigationBar(
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
-                    showExitConfirmation = true
+                    // 변경사항이 없으면 액션시트스킵
+                    if viewModel.hasChanges {
+                        showExitConfirmation = true
+                    } else {
+                        coordinator.popToScreen(.projectList)
+                    }
                 },
                 rightButtonType: .oneButton(.init(label: "내보내기") {
                     Task {

@@ -28,33 +28,58 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var isLoading = false
 
     // MARK: – 저장/내보내기용 프로퍼티
+
     @Published var isExporting = false
     private let videoManager = VideoManager()
     private let photoLibrarySaver = PhotoLibrarySaver()
 
+    // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
+    private var originalClips: [EditableClip] = []
+
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
+    }
+
+    // 변경사항 감지
+    var hasChanges: Bool {
+        // 클립 개수에서 차이가날때
+        if editableClips.count != originalClips.count {
+            return true
+        }
+
+        // 각 클립의 trim 포인트가 다르면 변경된것으로판단
+        for (edited, original) in zip(editableClips, originalClips) {
+            if edited.id != original.id ||
+                edited.startPoint != original.startPoint ||
+                edited.endPoint != original.endPoint
+            {
+                return true
+            }
+        }
+
+        return false
     }
 
     // init
     init(projectID: String) {
         self.projectID = projectID
     }
-    
+
     // MARK: - 비동기 로딩 메서드
+
     func loadProjectAsync() async {
         isLoading = true
-        
+
         // 백그라운드에서 프로젝트 로드
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 await self.loadProjectData()
             }
         }
-        
+
         isLoading = false
     }
-    
+
     @MainActor
     private func loadProjectData() async {
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
@@ -72,7 +97,7 @@ final class ProjectEditViewModel: ObservableObject {
 
         // 클립들을 먼저 기본 정보로 생성 (썸네일 없이)
         var tempClips: [EditableClip] = []
-        
+
         for clip in sorted {
             // 비디오 파일 URL 검증 및 복구
             guard let validURL = FileManager.validVideoURL(from: clip.videoURL) else {
@@ -96,16 +121,19 @@ final class ProjectEditViewModel: ObservableObject {
                 endPoint: clip.endPoint,
                 thumbnails: [] // 나중에 비동기로 생성
             )
-            
+
             tempClips.append(editableClip)
         }
-        
+
         // UI 업데이트 (썸네일 없이 먼저 표시)
         editableClips = tempClips
-        
+
+        // 원본 상태 저장 (변경사항 추적용)
+        originalClips = tempClips
+
         // 플레이어 설정 (썸네일 없이도 가능)
         await setupPlayerAsync()
-        
+
         // 썸네일을 백그라운드에서 비동기로 생성
         await generateThumbnailsAsync()
     }
@@ -123,7 +151,7 @@ final class ProjectEditViewModel: ObservableObject {
                     return (clip.id, thumbnails)
                 }
             }
-            
+
             // 썸네일이 생성되는 대로 업데이트
             for await (clipID, thumbnails) in group {
                 if let index = editableClips.firstIndex(where: { $0.id == clipID }) {
@@ -134,7 +162,7 @@ final class ProjectEditViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func generateThumbnailsBackground(
         url: URL,
         duration: Double,
@@ -157,8 +185,8 @@ final class ProjectEditViewModel: ObservableObject {
 
                 var imgs: [UIImage] = []
                 let interval = duration / Double(count)
-                
-                for i in 0..<count {
+
+                for i in 0 ..< count {
                     let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
                     do {
                         let cg = try generator.copyCGImage(at: time, actualTime: nil)
@@ -167,7 +195,7 @@ final class ProjectEditViewModel: ObservableObject {
                         print("썸네일 생성 실패 at \(time.seconds)s: \(error)")
                     }
                 }
-                
+
                 continuation.resume(returning: imgs)
             }
         }
@@ -206,17 +234,17 @@ final class ProjectEditViewModel: ObservableObject {
             do {
                 let vidTracks = try await asset.loadTracks(withMediaType: .video)
                 guard !vidTracks.isEmpty else { continue }
-                
+
                 let audTracks = try await asset.loadTracks(withMediaType: .audio)
                 guard !audTracks.isEmpty else { continue }
-                
+
                 if let track = vidTracks.first {
                     try vidTrack.insertTimeRange(range, of: track, at: cursor)
                 }
                 if let track = audTracks.first {
                     try audTrack.insertTimeRange(range, of: track, at: cursor)
                 }
-                
+
                 cursor = cursor + dur
             } catch {
                 print("트랙 삽입 실패 for clip \(clip.id): \(error)")
@@ -244,6 +272,7 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     // MARK: - 동기 메서드들
+
     func setupPlayer() {
         Task {
             await setupPlayerAsync()
@@ -373,8 +402,9 @@ final class ProjectEditViewModel: ObservableObject {
         let idx = editableClips.firstIndex { $0.id == clip.id }!
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
     }
-    
+
     // MARK: – 프로젝트 변경사항 저장
+
     func saveProjectChanges() async {
         // 프로젝트 엔티티 가져오기
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
@@ -386,7 +416,7 @@ final class ProjectEditViewModel: ObservableObject {
         for entity in project.clipList {
             if let edited = editableClips.first(where: { $0.id == entity.id }) {
                 entity.startPoint = edited.startPoint
-                entity.endPoint   = edited.endPoint
+                entity.endPoint = edited.endPoint
             }
         }
 
@@ -399,8 +429,9 @@ final class ProjectEditViewModel: ObservableObject {
         // 저장
         SwiftDataManager.shared.saveContext()
     }
-    
+
     // MARK: – 편집된 영상 갤러리에 내보내기
+
     func exportEditedVideoToPhotos() async {
         isExporting = true
         defer { isExporting = false }
@@ -415,7 +446,7 @@ final class ProjectEditViewModel: ObservableObject {
             print("내보내기 실패:", error)
         }
     }
-    
+
     func setCurrentProjectID() {
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
     }
