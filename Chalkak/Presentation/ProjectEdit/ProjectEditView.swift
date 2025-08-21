@@ -29,6 +29,8 @@ struct ProjectEditView: View {
                     if viewModel.hasChanges {
                         showExitConfirmation = true
                     } else {
+                        // 프로젝트 리스트로 이동
+                        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                         coordinator.popToScreen(.projectList)
                     }
                 },
@@ -120,10 +122,12 @@ struct ProjectEditView: View {
             Button("저장하기") {
                 Task {
                     await viewModel.saveProjectChanges()
+                    UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                     coordinator.popToScreen(.projectList)
                 }
             }
             Button("저장하지 않고 나가기") {
+                UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                 coordinator.popToScreen(.projectList)
             }
             Button("취소", role: .cancel) {}
