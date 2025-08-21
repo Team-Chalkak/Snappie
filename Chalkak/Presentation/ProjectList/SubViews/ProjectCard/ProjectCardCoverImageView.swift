@@ -37,7 +37,7 @@ struct ProjectCardCoverImageView: View {
                     image
                         .resizable()
                         .scaledToFill()
-                        .frame(width: geometry.size.width, alignment: .center)
+                        .frame(width: geometry.size.width, height: geometry.size.width, alignment: .center)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     
                     Text(formattedTime)
@@ -56,14 +56,14 @@ struct ProjectCardCoverImageView: View {
                     .font(SnappieFont.style(.proBody1))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Color.deepGreen200)
-                    .frame(width: geometry.size.width, height: 173, alignment: .center)
+                    .frame(width: geometry.size.width, height: geometry.size.width, alignment: .center)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(SnappieColor.darkStrong)
                     )
             }
         }
-        .frame(height: 173)
+        .aspectRatio(1, contentMode: .fit) // 정사각형 비율 유지
     }
 }
 
