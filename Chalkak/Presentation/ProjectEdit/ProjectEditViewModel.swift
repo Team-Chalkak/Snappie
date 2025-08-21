@@ -12,7 +12,7 @@ import SwiftUI
 @MainActor
 final class ProjectEditViewModel: ObservableObject {
     private var project: Project?
-    private let projectID: String
+    private var projectID: String
     private var currentComposition: AVMutableComposition?
     private var timeObserverToken: Any?
     private var imageGenerator: AVAssetImageGenerator?
@@ -23,17 +23,31 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var player = AVPlayer()
     @Published var previewImage: UIImage? = nil
     @Published var isDragging = false
-    @Published var guide: Guide? = nil
-    /// 프로젝트 로딩중
+    @Published var guide: Guide? = nil /// 프로젝트 로딩중
     @Published var isLoading = false
 
     // MARK: – 저장/내보내기용 프로퍼티
     @Published var isExporting = false
     private let videoManager = VideoManager()
     private let photoLibrarySaver = PhotoLibrarySaver()
-
+    
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
+    }
+    
+    //MARK: - Temp 관련 프로퍼티
+    var hasChanges: Bool {
+        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else { return false }
+        return project.isTemp
+    }
+    
+    var originalProjectID: String {
+        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+              project.isTemp,
+              let originalID = project.originalID else {
+            return projectID // temp가 아니면 현재 ID가 원본 ID
+        }
+        return originalID
     }
 
     // init
@@ -66,7 +80,9 @@ final class ProjectEditViewModel: ObservableObject {
         guide = project.guide
 
         // 확인했으니 isChecked처리
-        SwiftDataManager.shared.markProjectAsChecked(projectID: projectID)
+        if !project.isTemp {
+            SwiftDataManager.shared.markProjectAsChecked(projectID: projectID)
+        }
 
         let sorted = project.clipList.sorted { $0.createdAt < $1.createdAt }
 
@@ -355,49 +371,9 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
 
-    func updateTrimRange(for clipID: String, start: Double, end: Double) {
-        guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
-        editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
-        editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        setupPlayer()
-    }
-
-    func deleteClip(id: String) {
-        if let idx = editableClips.firstIndex(where: { $0.id == id }) {
-            editableClips.remove(at: idx)
-            setupPlayer()
-        }
-    }
-
     func allClipStart(of clip: EditableClip) -> Double {
         let idx = editableClips.firstIndex { $0.id == clip.id }!
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
-    }
-    
-    // MARK: – 프로젝트 변경사항 저장
-    func saveProjectChanges() async {
-        // 프로젝트 엔티티 가져오기
-        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
-            print("프로젝트(\(projectID))를 찾을 수 없습니다.")
-            return
-        }
-
-        // 편집된 trim 값 반영
-        for entity in project.clipList {
-            if let edited = editableClips.first(where: { $0.id == entity.id }) {
-                entity.startPoint = edited.startPoint
-                entity.endPoint   = edited.endPoint
-            }
-        }
-
-        // 삭제된 클립 제거
-        let removed = project.clipList.filter { entity in
-            !editableClips.contains(where: { $0.id == entity.id })
-        }
-        removed.forEach { SwiftDataManager.shared.deleteClip($0) }
-
-        // 저장
-        SwiftDataManager.shared.saveContext()
     }
     
     // MARK: – 편집된 영상 갤러리에 내보내기
@@ -418,5 +394,225 @@ final class ProjectEditViewModel: ObservableObject {
     
     func setCurrentProjectID() {
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+    }
+    
+    //MARK: - Temp System 메서드들
+    /// temp 프로젝트 초기화 (ProjectEditView 진입 시 호출)
+     func initializeTempProject() async {
+         guard let originalProject = SwiftDataManager.shared.fetchProject(byID: projectID) else {
+             print("원본 프로젝트를 찾을 수 없습니다.")
+             return
+         }
+         
+         // 이미 temp면 그대로 로드
+         if originalProject.isTemp {
+             await loadProjectAsync()
+             return
+         }
+         
+         let tempID = "temp_\(UUID().uuidString)"
+         
+         // temp 프로젝트 생성 (Guide는 공유)
+         let tempProject = Project(
+             id: tempID,
+             guide: originalProject.guide,
+             clipList: [],
+             cameraSetting: originalProject.cameraSetting,
+             title: originalProject.title,
+             referenceDuration: originalProject.referenceDuration,
+             isChecked: originalProject.isChecked,
+             coverImage: originalProject.coverImage,
+             createdAt: originalProject.createdAt,
+             isTemp: true,
+             originalID: projectID
+         )
+         
+         // 클립들을 깊은 복사
+         for originalClip in originalProject.clipList {
+             let tempClip = Clip(
+                 id: "temp_\(UUID().uuidString)",
+                 videoURL: originalClip.videoURL,
+                 originalDuration: originalClip.originalDuration,
+                 startPoint: originalClip.startPoint,
+                 endPoint: originalClip.endPoint,
+                 createdAt: originalClip.createdAt,
+                 tiltList: originalClip.tiltList,
+                 isTemp: true,
+                 originalClipID: originalClip.id
+             )
+             tempProject.clipList.append(tempClip)
+         }
+         
+         SwiftDataManager.shared.context.insert(tempProject)
+         SwiftDataManager.shared.saveContext()
+         
+         // ViewModel을 temp로 전환
+         self.projectID = tempID
+         self.project = tempProject
+         
+         await loadProjectAsync()
+     }
+     
+     /// appendShoot에서 촬영한 클립을 temp에 추가
+     func addClipToTemp(
+         clipURL: URL,
+         originalDuration: Double,
+         startPoint: Double,
+         endPoint: Double,
+         tiltList: [TimeStampedTilt]
+     ) {
+         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+               tempProject.isTemp else {
+             print("현재 temp 프로젝트가 아닙니다.")
+             return
+         }
+         
+         let tempClip = Clip(
+             id: "temp_\(UUID().uuidString)",
+             videoURL: clipURL,
+             originalDuration: originalDuration,
+             startPoint: startPoint,
+             endPoint: endPoint,
+             tiltList: tiltList,
+             isTemp: true,
+             originalClipID: nil // 새로 추가된 클립
+         )
+         
+         tempProject.clipList.append(tempClip)
+         SwiftDataManager.shared.saveContext()
+         
+         // UI 갱신을 위해 다시 로드
+         Task {
+             await loadProjectAsync()
+         }
+     }
+     
+     /// 변경사항 저장 (temp → 원본으로 머지)
+     func commitChanges() async -> Bool {
+         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+               tempProject.isTemp,
+               let originalID = tempProject.originalID,
+               let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID) else {
+             // temp가 아니면 이미 저장된 상태
+             return true
+         }
+         
+         // 1. 클립 변경사항 머지
+         mergeClipChanges(from: tempProject, to: originalProject)
+         
+         // 2. 프로젝트 메타데이터 반영
+         originalProject.title = tempProject.title
+         originalProject.referenceDuration = tempProject.referenceDuration
+         originalProject.coverImage = tempProject.coverImage
+         
+         // 3. temp 프로젝트 삭제
+         SwiftDataManager.shared.context.delete(tempProject)
+         SwiftDataManager.shared.saveContext()
+         
+         // 4. ViewModel을 원본으로 복원
+         self.projectID = originalID
+         self.project = originalProject
+         
+         return true
+     }
+     
+     /// 변경사항 취소 (temp 삭제로 롤백)
+     func discardChanges() async -> Bool {
+         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+               tempProject.isTemp,
+               let originalID = tempProject.originalID else {
+             // temp가 아니면 취소할 것 없음
+             return true
+         }
+         
+         // temp 프로젝트만 삭제 (원본은 자동 복구)
+         SwiftDataManager.shared.context.delete(tempProject)
+         SwiftDataManager.shared.saveContext()
+         
+         // ViewModel을 원본으로 복원
+         self.projectID = originalID
+         self.project = SwiftDataManager.shared.fetchProject(byID: originalID)
+         
+         return true
+     }
+     
+     /// temp → 원본으로 클립 변경사항 머지
+     private func mergeClipChanges(from tempProject: Project, to originalProject: Project) {
+         let tempClips = tempProject.clipList
+         let originalClips = originalProject.clipList
+         
+         // 1. 삭제된 클립들 처리
+         let deletedClips = originalClips.filter { originalClip in
+             !tempClips.contains { $0.originalClipID == originalClip.id }
+         }
+         for clipToDelete in deletedClips {
+             originalProject.clipList.removeAll { $0.id == clipToDelete.id }
+             SwiftDataManager.shared.deleteClip(clipToDelete)
+         }
+         
+         // 2. 수정 및 추가된 클립들 처리
+         var newClipOrder: [Clip] = []
+         
+         for tempClip in tempClips {
+             if let originalClipID = tempClip.originalClipID,
+                let originalClip = originalClips.first(where: { $0.id == originalClipID }) {
+                 // 기존 클립 업데이트 (트리밍 정보 등)
+                 originalClip.startPoint = tempClip.startPoint
+                 originalClip.endPoint = tempClip.endPoint
+                 originalClip.tiltList = tempClip.tiltList
+                 originalClip.videoURL = tempClip.videoURL
+                 originalClip.originalDuration = tempClip.originalDuration
+                 newClipOrder.append(originalClip)
+             } else {
+                 // 새로 추가된 클립 생성
+                 let newClip = Clip(
+                     id: UUID().uuidString,
+                     videoURL: tempClip.videoURL,
+                     originalDuration: tempClip.originalDuration,
+                     startPoint: tempClip.startPoint,
+                     endPoint: tempClip.endPoint,
+                     tiltList: tempClip.tiltList
+                 )
+                 SwiftDataManager.shared.context.insert(newClip)
+                 newClipOrder.append(newClip)
+             }
+         }
+         
+         // 3. 클립 순서 반영
+         originalProject.clipList = newClipOrder
+     }
+     
+     /// 클립 삭제 (temp에서만 삭제, 원본은 건드리지 않음)
+     func deleteClip(id: String) {
+         // UI에서 삭제
+         if let idx = editableClips.firstIndex(where: { $0.id == id }) {
+             editableClips.remove(at: idx)
+             setupPlayer()
+         }
+         
+         // temp 프로젝트에서도 제거
+         if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+            tempProject.isTemp {
+             tempProject.clipList.removeAll { $0.id == id }
+             SwiftDataManager.shared.saveContext()
+         }
+     }
+     
+     /// 트리밍 범위 업데이트 (temp에만 반영)
+     func updateTrimRange(for clipID: String, start: Double, end: Double) {
+         // UI 업데이트
+         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
+         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
+         editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
+         setupPlayer()
+         
+         // temp 프로젝트의 clip도 업데이트
+         if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+            tempProject.isTemp,
+            let tempClip = tempProject.clipList.first(where: { $0.id == clipID }) {
+             tempClip.startPoint = editableClips[idx].startPoint
+             tempClip.endPoint = editableClips[idx].endPoint
+             SwiftDataManager.shared.saveContext()
+         }
     }
 }

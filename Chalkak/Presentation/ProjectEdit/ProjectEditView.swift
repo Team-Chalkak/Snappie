@@ -16,8 +16,12 @@ struct ProjectEditView: View {
     @State private var showExportSuccessAlert = false
     @State private var isExporting = false
     
-    init(projectID: String) {
+    // appendShoot에서 전달된 클립 데이터
+    @State private var tempClipData: TempClipData? = nil
+    
+    init(projectID: String, tempClipData: TempClipData? = nil) {
         self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
+        self._tempClipData = State(initialValue: tempClipData)
     }
 
     var body: some View {
@@ -25,7 +29,12 @@ struct ProjectEditView: View {
             SnappieNavigationBar(
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
-                    showExitConfirmation = true
+                    // 수정된 사항이 있으면 액션시트, 아니면 바로 나가기
+                    if viewModel.hasChanges {
+                        showExitConfirmation = true
+                    } else {
+                        coordinator.popToScreen(.projectList)
+                    }
                 },
                 rightButtonType: .oneButton(.init(label: "내보내기") {
                     Task {
@@ -102,7 +111,20 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
-                await viewModel.loadProjectAsync()
+                // temp 프로젝트 초기화
+                await viewModel.initializeTempProject()
+                
+                // appendShoot에서 전달된 클립 데이터가 있으면 temp에 추가
+                if let clipData = tempClipData {
+                    viewModel.addClipToTemp(
+                        clipURL: clipData.url,
+                        originalDuration: clipData.originalDuration,
+                        startPoint: clipData.startPoint,
+                        endPoint: clipData.endPoint,
+                        tiltList: clipData.tiltList
+                    )
+                    tempClipData = nil
+                }
             }
         }
         
@@ -114,12 +136,19 @@ struct ProjectEditView: View {
         ) {
             Button("저장하기") {
                 Task {
-                    await viewModel.saveProjectChanges()
-                    coordinator.popToScreen(.projectList)
+                    let success = await viewModel.commitChanges()
+                    if success {
+                        coordinator.popToScreen(.projectList)
+                    }
                 }
             }
             Button("저장하지 않고 나가기") {
-                coordinator.popToScreen(.projectList)
+                Task {
+                    let success = await viewModel.discardChanges()
+                    if success {
+                        coordinator.popToScreen(.projectList)
+                    }
+                }
             }
             Button("취소", role: .cancel) {}
         } message: {

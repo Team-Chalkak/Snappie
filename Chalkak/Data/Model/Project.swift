@@ -47,6 +47,14 @@ class Project: Identifiable {
         clipList.reduce(0) { $0 + $1.currentTrimmedDuration }
     }
     
+    /// 임시 프로젝트 여부 (편집 중인 프로젝트 = true)
+    var isTemp: Bool = false
+    
+    /// temp 프로젝트가 참조하는 원본 프로젝트의 ID
+    /// temp가 아닌 경우 nil
+    var originalID: String? = nil
+    
+    
     /// 새로운 `Project` 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 고유 식별자 (기본값은 자동 생성된 UUID).
@@ -61,7 +69,9 @@ class Project: Identifiable {
         referenceDuration: Double? = nil,
         isChecked: Bool = false,
         coverImage: Data? = nil,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        isTemp: Bool = false,
+        originalID: String? = nil
     ) {
         self.id = id
         self.guide = guide
@@ -72,5 +82,7 @@ class Project: Identifiable {
         self.isChecked = isChecked
         self.coverImage = coverImage
         self.createdAt = createdAt
+        self.isTemp = isTemp
+        self.originalID = originalID
     }
 }
