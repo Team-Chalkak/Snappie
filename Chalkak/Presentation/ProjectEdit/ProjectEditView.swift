@@ -99,6 +99,8 @@ struct ProjectEditView: View {
                         print("Error: Guide not loaded yet")
                         return
                     }
+                    // 추가 촬영 여부
+                    UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingFromEdit)
                     coordinator.push(.camera(state: .appendShoot(guide: guide)))
                 }
             )
