@@ -100,7 +100,7 @@ struct ProjectEditView: View {
                         return
                     }
                     // 추가 촬영 여부
-                    UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingFromEdit)
+                    UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
                     coordinator.push(.camera(state: .appendShoot(guide: guide)))
                 }
             )

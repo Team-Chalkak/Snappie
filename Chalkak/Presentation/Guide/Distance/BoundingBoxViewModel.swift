@@ -27,10 +27,10 @@ class BoundingBoxViewModel: ObservableObject {
     /// 진행중이던 프로젝트 있는지 확인
     func checkResumeProject() {
         // 추가 촬영인 경우
-        let isAppendingShoot = UserDefaults.standard.bool(forKey: UserDefaultKey.isAppendingFromEdit)
+        let isAppendingShoot = UserDefaults.standard.bool(forKey: UserDefaultKey.isAppendingShoot)
 
         guard !isAppendingShoot else {
-            UserDefaults.standard.removeObject(forKey: UserDefaultKey.isAppendingFromEdit)
+            UserDefaults.standard.removeObject(forKey: UserDefaultKey.isAppendingShoot)
             UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
             return
         }
