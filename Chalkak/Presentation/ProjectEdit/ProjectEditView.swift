@@ -29,7 +29,6 @@ struct ProjectEditView: View {
             SnappieNavigationBar(
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
-                    // 수정된 사항이 있으면 액션시트, 아니면 바로 나가기
                     if viewModel.hasChanges {
                         showExitConfirmation = true
                     } else {

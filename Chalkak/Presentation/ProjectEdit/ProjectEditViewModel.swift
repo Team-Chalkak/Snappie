@@ -512,6 +512,55 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
     
+    /// 클립 삭제 (temp에서만 안전하게 삭제)
+    func deleteClip(id: String) {
+        print("클립 삭제 시작: \(id)")
+        
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+              tempProject.isTemp else {
+            print("경고: temp 프로젝트가 아닌 상태에서 deleteClip 호출됨")
+            return
+        }
+        
+        // 1. 플레이어 정리 (삭제될 클립 참조 방지)
+        player.pause()
+        isPlaying = false
+        player.replaceCurrentItem(with: nil)
+        
+        // 2. UI에서 제거
+        editableClips.removeAll { $0.id == id }
+        
+        // 3. temp 프로젝트에서 클립 제거 (cascade가 자동으로 SwiftData 삭제 처리)
+        if let clipToDelete = tempProject.clipList.first(where: { $0.id == id }) {
+            tempProject.clipList.removeAll { $0.id == id }
+            // cascade로 인해 clipToDelete는 자동으로 삭제됨
+            SwiftDataManager.shared.saveContext()
+            print("클립 삭제 완료")
+        }
+        
+        // 4. 플레이어 재설정
+        setupPlayer()
+    }
+    
+    
+    /// 트리밍 범위 업데이트 (temp에만 반영)
+    func updateTrimRange(for clipID: String, start: Double, end: Double) {
+        // UI 업데이트
+        guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
+        editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
+        editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
+        setupPlayer()
+        
+        // temp 프로젝트의 clip도 업데이트
+        if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+           tempProject.isTemp,
+           let tempClip = tempProject.clipList.first(where: { $0.id == clipID }) {
+            tempClip.startPoint = editableClips[idx].startPoint
+            tempClip.endPoint = editableClips[idx].endPoint
+            SwiftDataManager.shared.saveContext()
+        }
+    }
+    
     /// 변경사항 저장 (temp → 원본으로 머지)
     func commitChanges() async -> Bool {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
@@ -603,55 +652,6 @@ final class ProjectEditViewModel: ObservableObject {
         
         // 3. 클립 순서 반영
         originalProject.clipList = newClipOrder
-    }
-    
-    /// 클립 삭제 (temp에서만 안전하게 삭제)
-    func deleteClip(id: String) {
-        print("클립 삭제 시작: \(id)")
-        
-        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-              tempProject.isTemp else {
-            print("경고: temp 프로젝트가 아닌 상태에서 deleteClip 호출됨")
-            return
-        }
-        
-        // 1. 플레이어 정리 (삭제될 클립 참조 방지)
-        player.pause()
-        isPlaying = false
-        player.replaceCurrentItem(with: nil)
-        
-        // 2. UI에서 제거
-        editableClips.removeAll { $0.id == id }
-        
-        // 3. temp 프로젝트에서 클립 제거 (cascade가 자동으로 SwiftData 삭제 처리)
-        if let clipToDelete = tempProject.clipList.first(where: { $0.id == id }) {
-            tempProject.clipList.removeAll { $0.id == id }
-            // cascade로 인해 clipToDelete는 자동으로 삭제됨
-            SwiftDataManager.shared.saveContext()
-            print("클립 삭제 완료")
-        }
-        
-        // 4. 플레이어 재설정
-        setupPlayer()
-    }
-    
-    
-    /// 트리밍 범위 업데이트 (temp에만 반영)
-    func updateTrimRange(for clipID: String, start: Double, end: Double) {
-        // UI 업데이트
-        guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
-        editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
-        editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        setupPlayer()
-        
-        // temp 프로젝트의 clip도 업데이트
-        if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-           tempProject.isTemp,
-           let tempClip = tempProject.clipList.first(where: { $0.id == clipID }) {
-            tempClip.startPoint = editableClips[idx].startPoint
-            tempClip.endPoint = editableClips[idx].endPoint
-            SwiftDataManager.shared.saveContext()
-        }
     }
 }
 
