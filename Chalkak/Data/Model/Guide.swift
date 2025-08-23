@@ -45,7 +45,6 @@ class Guide: Identifiable {
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
-        cameraHeight: Float,
         createdAt: Date = .now
     ) {
         self.clipID = clipID

@@ -188,8 +188,7 @@ final class OverlayViewModel: ObservableObject {
             clipID: clipID,
             boundingBoxes: boundingBoxInfos,
             outlineImage: outlineImage,
-            cameraTilt: cameraTilt,
-            cameraHeight: 1.0
+            cameraTilt: cameraTilt
         )
         return guide
     }
