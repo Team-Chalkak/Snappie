@@ -49,5 +49,6 @@ struct ClipTrimmingView: View {
             width: clip.isTrimming ? fullWidth + 40 : fullWidth,
             height: thumbnailHeight
         )
+        .zIndex(clip.isTrimming ? 1 : 0)
     }
 }
