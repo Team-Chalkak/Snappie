@@ -56,7 +56,6 @@ struct ProjectTimelineView: View {
                 height: timelineHeight,
                 alignment: .leading
             )
-            .clipped()
         }
         .frame(height: timelineHeight)
     }
