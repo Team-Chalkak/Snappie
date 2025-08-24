@@ -59,6 +59,6 @@ struct ProjectThumbnailsView: View {
         }
         .frame(width: fullWidth, height: 60)
         .contentShape(Rectangle())
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: clip.isTrimming ? 0 : 6))
     }
 }
