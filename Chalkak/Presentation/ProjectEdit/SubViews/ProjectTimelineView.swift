@@ -27,6 +27,7 @@ struct ProjectTimelineView: View {
     var body: some View {
         GeometryReader { geo in
             let halfWidth = geo.size.width / 2
+            
             HStack(alignment: .center, spacing: 0) {
                 ForEach(Array(clips.enumerated()), id: \.offset) { index, clip in
                     
@@ -36,13 +37,6 @@ struct ProjectTimelineView: View {
                         onToggleTrimming: { onToggleTrimming(clip.id) },
                         onTrimChanged:   { s,e in onTrimChanged(clip.id, s, e) }
                     )
-                    
-                    // 이어져있는것처럼 만들어주는 작은 선 컴포넌트
-                    if index != clips.count - 1 {
-                        Rectangle()
-                            .frame(width: 2, height: 8)
-                            .foregroundStyle(SnappieColor.primaryLight)
-                    }
                 }
                 
                 Button(action: onAddClipTapped) {
@@ -55,7 +49,6 @@ struct ProjectTimelineView: View {
                 }
                 .padding(.leading, 2)
             }
-            .border(.deepGreen50, width: 3)
             .padding(.horizontal, halfWidth)
             .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
             .frame(
@@ -72,8 +65,7 @@ struct ProjectTimelineView: View {
 extension ProjectTimelineView {
     func getTimelineFullWidth(geoWidth: CGFloat) -> CGFloat {
         let videoRangeWidth = CGFloat(totalDuration) * pxPerSecond
-        let bridgesWidth: CGFloat = CGFloat(2 * clips.count)
         
-        return geoWidth + videoRangeWidth + bridgesWidth + unionButtonWidth
+        return geoWidth + videoRangeWidth + unionButtonWidth
     }
 }
