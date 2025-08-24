@@ -9,8 +9,6 @@ import SwiftUI
 
 struct ProjectTrimmingHandle: View {
     let isStart: Bool
-    let leftW: CGFloat
-    let midW: CGFloat
     let fullHeight: CGFloat
     let fullWidth: CGFloat
     @Binding var isDragging: Bool
@@ -19,7 +17,7 @@ struct ProjectTrimmingHandle: View {
 
     var body: some View {
         let size: CGFloat = 20
-        let xOffset = isStart ? leftW : (leftW + midW)
+        let xOffset = isStart ? 0 : fullWidth
 
         UnevenRoundedRectangle(
             cornerRadii: .init(

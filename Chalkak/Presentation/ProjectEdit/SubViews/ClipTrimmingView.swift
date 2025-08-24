@@ -16,29 +16,26 @@ struct ClipTrimmingView: View {
     let onTrimChanged: (Double, Double) -> Void
 
     private let pxPerSecond: CGFloat = 50
-    private let clipSpacing: CGFloat = 8
     private let thumbnailHeight: CGFloat = 60
-
-    private var fullWidth: CGFloat {
-        let baseWidth = if clip.isTrimming {
-            CGFloat(clip.originalDuration) * pxPerSecond
-        } else {
-            CGFloat(clip.trimmedDuration) * pxPerSecond
-        }
-        
-        return isLastClip ? baseWidth : baseWidth - 2
+    
+    // 실제 비디오 시간에 해당하는 너비(계산용)
+    private var timeBasedWidth: CGFloat {
+        CGFloat(clip.trimmedDuration) * pxPerSecond
     }
 
     var body: some View {
-        ZStack(alignment: .center) {
-            ProjectThumbnailsView(clip: clip, fullWidth: fullWidth)
-                .onTapGesture { onToggleTrimming() }
-                .padding(.horizontal, clipSpacing/2)
-
+        // 썸네일뷰
+        ProjectThumbnailsView(
+            clip: clip,
+            fullWidth: timeBasedWidth
+        )
+        .onTapGesture { onToggleTrimming() }
+        .overlay {
+            // 트리밍 라인 뷰
             if clip.isTrimming {
                 ProjectTrimmingLineView(
                     clip: clip,
-                    fullWidth: fullWidth,
+                    fullWidth: timeBasedWidth,
                     thumbnailHeight: thumbnailHeight,
                     isDragging: $isDragging,
                     onTrimChanged: onTrimChanged
@@ -46,7 +43,7 @@ struct ClipTrimmingView: View {
             }
         }
         .frame(
-            width: clip.isTrimming ? fullWidth + 40 : fullWidth,
+            width: timeBasedWidth,
             height: thumbnailHeight
         )
         .zIndex(clip.isTrimming ? 1 : 0)
