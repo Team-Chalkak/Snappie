@@ -165,6 +165,11 @@ struct CameraView: View {
                 viewModel.startCamera()
             }
         }
+        .onChange(of: cameraManager.permissionState) { _, newValue in
+            if newValue == .both {
+                viewModel.startCamera()
+            }
+        }
 
         .onDisappear {
             viewModel.stopCamera()
