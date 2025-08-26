@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct CameraView: View {
-    let guide: Guide?
+    let shootState: ShootState
     let isAligned: Bool
+    
+    private var guide: Guide? {
+        switch shootState {
+        case .firstShoot:
+            return nil
+        case .followUpShoot(let guide), .appendShoot(let guide):
+            return guide
+        }
+    }
     
     @StateObject private var cameraManager = CameraManager()
     @ObservedObject var viewModel: CameraViewModel
@@ -30,16 +39,22 @@ struct CameraView: View {
             }
             
             ZStack {
-                CameraPreviewView(
-                    session: viewModel.session,
-                    tabToFocus: viewModel.focusAtPoint,
-                    onPinchZoom: viewModel.selectZoomScale,
-                    currentZoomScale: viewModel.zoomScale,
-                    isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                    showGrid: $viewModel.isGrid
-                )
-                .aspectRatio(9 / 16, contentMode: .fit)
-                .clipped()
+                if !cameraManager.showOnboarding {
+                    CameraPreviewView(
+                        session: viewModel.session,
+                        tabToFocus: viewModel.focusAtPoint,
+                        onPinchZoom: viewModel.selectZoomScale,
+                        currentZoomScale: viewModel.zoomScale,
+                        isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                        showGrid: $viewModel.isGrid
+                    )
+                    .aspectRatio(9 / 16, contentMode: .fit)
+                    .clipped()
+                } else {
+                    // 온보딩 중일 때는 빈 뷰 또는 플레이스홀더
+                    Color.black
+                        .aspectRatio(9 / 16, contentMode: .fit)
+                }
                 
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
@@ -61,6 +76,12 @@ struct CameraView: View {
             .padding(.top, Layout.preViewTopPadding)
             .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
+            
+            if cameraManager.showOnboarding {
+                OnboardingView(cameraManager: cameraManager)
+                    .transition(.move(edge: .bottom))
+                    .zIndex(1)
+            }
             
             // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
@@ -126,16 +147,36 @@ struct CameraView: View {
             
             coordinator.push(.clipEdit(
                 clipURL: url,
-                guide: guide,
+                state: shootState,
                 cameraSetting: cameraSetting,
                 TimeStampedTiltList: viewModel.timeStampedTiltList
             )
             )
         }
         .onAppear {
-            viewModel.startCamera()
-            cameraManager.checkPermissions()
+            if !cameraManager.showOnboarding {
+                viewModel.startCamera()
+            }
         }
+        .onChange(of: cameraManager.showOnboarding) { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                cameraManager.showPermissionSheet = true
+                cameraManager.requestAndCheckPermissions() // 권한 요청
+                viewModel.startCamera()
+            }
+        }
+        .onChange(of: cameraManager.permissionState) { _, newValue in
+            if newValue == .both {
+                viewModel.startCamera()
+            }
+        }
+        .onChange(of: viewModel.needsPermissionRequest) { _, needsRequest in
+            if needsRequest {
+                cameraManager.reevaluateAndPresentIfNeeded()
+                viewModel.needsPermissionRequest = false
+            }
+        }
+
         .onDisappear {
             viewModel.stopCamera()
         }
@@ -148,18 +189,28 @@ struct CameraView: View {
             Text("지금까지 찍은 장면은 저장돼요.")
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
-        
         .sheet(isPresented: $cameraManager.showPermissionSheet) {
             CameraPermissionSheet(cameraManager: cameraManager)
         }
+        .animation(.easeInOut(duration: 0.5), value: cameraManager.showOnboarding)
     }
     
-
     private func handleExitCamera() {
-        UserDefaults.standard.set(nil, forKey: "currentProjectID")
-
         viewModel.stopCamera()
-        coordinator.removeAll()
+        
+        switch shootState {
+        case .appendShoot:
+            // 해당 프로젝트 편집화면으로 이동
+            if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
+                coordinator.popToScreen(.projectEdit(projectID: projectID))
+            } else {
+                coordinator.removeAll()
+            }
+        case .firstShoot, .followUpShoot:
+            // 리스트를 통해서 접근한 상황이 아닐때 -> 첫화면으로 이동
+            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+            coordinator.removeAll()
+        }
     }
 }
 

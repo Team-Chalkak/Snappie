@@ -30,6 +30,7 @@ import SwiftUI
 struct OverlayView: View {
     // 1. Input properties
     let clip: Clip
+    let cameraSetting: CameraSetting
 
     // 2. State & ObservedObject
     @StateObject var overlayViewModel: OverlayViewModel
@@ -39,9 +40,10 @@ struct OverlayView: View {
     @State private var guide: Guide?
 
     // 3. init
-    init(clip: Clip) {
+    init(clip: Clip, cameraSetting: CameraSetting) {
         self.clip = clip
-        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip))
+        self.cameraSetting = cameraSetting
+        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting))
     }
 
     var body: some View {
@@ -68,7 +70,7 @@ struct OverlayView: View {
             SnappieNavigationBar(
                 leftButtonType: .backward {
                     // 가이드 확정 없이 뒤로가기 시 프로젝트 제거
-                    UserDefaults.standard.removeObject(forKey: "currentProjectID")
+                    UserDefaults.standard.removeObject(forKey: UserDefaultKey.currentProjectID)
                     dismiss()
                 },
                 rightButtonType: .none
@@ -101,10 +103,9 @@ struct OverlayView: View {
 
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
-                    if let newGuide = overlayViewModel.makeGuide(clipID: clip.id) {
-                        guide = newGuide
-                        overlayViewModel.saveCoverImageToProject()
-                        coordinator.push(.boundingBox(guide: newGuide))
+                    overlayViewModel.saveProjectData()
+                    if let guide = overlayViewModel.guide {
+                        coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                     }
                 }) {
                     Text(Context.buttonTitle)
