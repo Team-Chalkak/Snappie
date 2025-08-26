@@ -558,6 +558,12 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 카메라 세션 시작
     func startSession() {
+        // 권한 체크 후 카메라세션 시작
+        checkPermissions()
+        if permissionState == .both, session.inputs.isEmpty {
+            setUpCamera()
+        }
+
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             if !self.session.isRunning {
