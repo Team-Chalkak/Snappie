@@ -419,41 +419,6 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 터치한 위치값에 대한 초점을 조정하는 메소드
-//    func focusAtPoint(_ point: CGPoint) {
-//        guard let device = videoDeviceInput?.device else { return }
-//
-//        do {
-//            try device.lockForConfiguration()
-//
-//            // 부드러운 초점 전환을 위한 설정
-//            if device.isSmoothAutoFocusSupported {
-//                device.isSmoothAutoFocusEnabled = true
-//            }
-//
-//            // 초점,노출 지점접근
-//            device.focusPointOfInterest = point
-//            device.exposurePointOfInterest = point
-//
-//            // 초점
-//            if device.isFocusModeSupported(.continuousAutoFocus) {
-//                device.focusMode = .continuousAutoFocus
-//            } else if device.isFocusModeSupported(.autoFocus) {
-//                device.focusMode = .autoFocus
-//            }
-//
-//            // 노출
-//            if device.isExposureModeSupported(.continuousAutoExposure) {
-//                device.exposureMode = .continuousAutoExposure
-//            } else if device.isExposureModeSupported(.autoExpose) {
-//                device.exposureMode = .autoExpose
-//            }
-//
-//            device.unlockForConfiguration()
-//        } catch {
-//            print("디바이스 설정 변경오류\(error)")
-//        }
-//    }
     func focusAtPoint(_ point: CGPoint) {
         guard let device = videoDeviceInput?.device else { return }
 
