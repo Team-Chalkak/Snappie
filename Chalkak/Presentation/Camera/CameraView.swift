@@ -170,6 +170,12 @@ struct CameraView: View {
                 viewModel.startCamera()
             }
         }
+        .onChange(of: viewModel.needsPermissionRequest) { _, needsRequest in
+            if needsRequest {
+                cameraManager.reevaluateAndPresentIfNeeded()
+                viewModel.needsPermissionRequest = false
+            }
+        }
 
         .onDisappear {
             viewModel.stopCamera()

@@ -23,6 +23,23 @@ class CameraViewModel: ObservableObject {
     // 비디오 저장 완료 이벤트를 View로 전달
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
 
+    private var hasRequiredPermissions: Bool {
+        model.permissionState == .both
+    }
+
+    // 권한 요청 시트 띄워주는 변수
+    @Published var needsPermissionRequest = false
+
+    /// 권한 체크 후 필요시 권한 요청 시트 표시로직
+    /// - Returns: 권한이 여부에 따라 - 권한 요청시트 트리거
+    private func checkPermissionOrRequestSheet() -> Bool {
+        guard hasRequiredPermissions else {
+            needsPermissionRequest = true
+            return false
+        }
+        return true
+    }
+
     @Published var isTimerRunning = false
     @Published var selectedTimerDuration: TimerOptions = .off
     @Published var showTimerFeedback: TimerOptions? = nil // 타이머 설정 피드백 표시
@@ -257,6 +274,9 @@ class CameraViewModel: ObservableObject {
     }
 
     func startVideoRecording() {
+        // 녹화버튼이 권한이 없으면 권한 요청트리거하는 버튼으로 바뀜
+        guard checkPermissionOrRequestSheet() else { return }
+
         showingCameraControl = false
         // 타이머설정여부 -> 타이머 시작
         if selectedTimerDuration != .off {
@@ -267,6 +287,8 @@ class CameraViewModel: ObservableObject {
     }
 
     private func executeVideoRecording() {
+        guard checkPermissionOrRequestSheet() else { return }
+
         model.startRecording()
         isRecording = true
 
