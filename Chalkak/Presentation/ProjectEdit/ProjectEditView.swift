@@ -5,8 +5,8 @@
 //  Created by 배현진 on 7/24/25.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
@@ -33,7 +33,14 @@ struct ProjectEditView: View {
                 SnappieNavigationBar(
                     navigationTitle: "프로젝트 편집",
                     leftButtonType: .backward {
-                        showExitConfirmation = true
+                        // 변경사항이 없으면 액션시트스킵
+                        if viewModel.hasChanges {
+                            showExitConfirmation = true
+                        } else {
+                            // 프로젝트 리스트로 이동
+                            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                            coordinator.popToScreen(.projectList)
+                        }
                     },
                     rightButtonType: .oneButton(.init(label: "내보내기") {
                         Task {
@@ -73,6 +80,8 @@ struct ProjectEditView: View {
                             print("Error: Guide not loaded yet")
                             return
                         }
+                        // 추가 촬영 여부
+                        UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
                         coordinator.push(.camera(state: .appendShoot(guide: guide)))
                     }
                 )
@@ -97,10 +106,12 @@ struct ProjectEditView: View {
             Button("저장하기") {
                 Task {
                     await viewModel.saveProjectChanges()
+                    UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                     coordinator.popToScreen(.projectList)
                 }
             }
             Button("저장하지 않고 나가기") {
+                UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                 coordinator.popToScreen(.projectList)
             }
             Button("취소", role: .cancel) {}
