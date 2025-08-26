@@ -384,6 +384,12 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
 
+    func deactivateAllTrimming() {
+        for i in 0..<editableClips.count {
+            editableClips[i].isTrimming = false
+        }
+    }
+
     func updateTrimRange(for clipID: String, start: Double, end: Double) {
         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
