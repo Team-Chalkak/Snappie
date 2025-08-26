@@ -74,7 +74,9 @@ class CameraManager: NSObject, ObservableObject {
         if !showOnboarding {
             checkPermissions()
             if permissionState == .both {
-                setUpCamera()
+                Task {
+                    await setUpCamera()
+                }
             }
         }
     }
@@ -220,7 +222,9 @@ class CameraManager: NSObject, ObservableObject {
 
             // 권한 모두 허용 시 카메라 설정
             if self?.permissionState == .both {
-                self?.setUpCamera()
+                Task { @MainActor in
+                    await self?.setUpCamera()
+                }
             }
         }
     }
@@ -242,26 +246,31 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 카메라 세팅
     /// 비디오,오디오 연결
-    func setUpCamera() {
+    @MainActor
+    func setUpCamera() async {
         let position = initialCameraPosition
-        let device = (position == .back) ? findBestBackCamera() : AVCaptureDevice.default(
-            .builtInWideAngleCamera,
-            for: .video,
-            position: .front
-        )
 
-        guard let device = device else { return }
+        let device = await Task.detached {
+            (position == .back) ?
+                self.findBestBackCamera() :
+                AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        }.value
+
+        guard let device = device else {
+            print("카메라 디바이스를 찾을 수 없습니다")
+            return
+        }
 
         do {
+            // 비디오 입력 설정
             videoDeviceInput = try AVCaptureDeviceInput(device: device)
             if session.canAddInput(videoDeviceInput) {
                 session.addInput(videoDeviceInput)
             }
 
-            configureFrameRate(for: device)
-
-            // 부드러운 초점 전환 설정
-            configureSmoothFocus(for: device)
+            // 디바이스 설정 (프레임, 초점방식)
+            await configureFrameRate(for: device)
+            await configureSmoothFocus(for: device)
 
             // 오디오 입력 추가
             if let audioDevice = AVCaptureDevice.default(for: .audio) {
@@ -271,53 +280,53 @@ class CameraManager: NSObject, ObservableObject {
                 }
             }
 
-            // 동영상 출력 추가
+            // 카메라 출력 설정
             if session.canAddOutput(movieOutput) {
                 session.addOutput(movieOutput)
             }
 
-            // 비디오 데이터 출력 추가 및 델리게이트 설정
             if session.canAddOutput(videoOutput) {
                 session.addOutput(videoOutput)
                 videoOutput.setSampleBufferDelegate(boundingBoxManager, queue: videoDataOutputQueue)
                 videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             }
 
-            // 세션 시작은 startSession() 메서드를 통해 명시적으로 호출하도록 변경
-            // 최초 카메라 설정 시 1.0 줌배율적용
-            DispatchQueue.main.async {
-                self.setZoomScale(self.backCameraZoomScale)
-            }
+            // 최초 카메라 줌 배율 1.0 적용
+            setZoomScale(backCameraZoomScale)
+
         } catch {
             print("카메라 설정 오류: \(error)")
         }
     }
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
-    private func configureFrameRate(for device: AVCaptureDevice) {
-        var targetFormat: AVCaptureDevice.Format?
-        var maxResolution: Int32 = 0
+    private func configureFrameRate(for device: AVCaptureDevice) async {
+        let targetFormat = await Task.detached {
+            var bestFormat: AVCaptureDevice.Format?
+            var maxResolution: Int32 = 0
 
-        // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
-        for format in device.formats {
-            /// 현재 촬영하고자하는 해상도 정보 추출
-            /// struct CMVideoDimensions { var width: Int32 / var height: Int32 }
-            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-            let currentResolution = dimensions.width * dimensions.height
+            // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
+            for format in device.formats {
+                /// 현재 촬영하고자하는 해상도 정보 추출
+                /// struct CMVideoDimensions { var width: Int32 / var height: Int32 }
+                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+                let currentResolution = dimensions.width * dimensions.height
 
-            // 4K까지는 의미X 1080p(1920x1080의값2,073,600)이하로 제한
-            if currentResolution <= 2073600 {
-                // 이 포맷이 지원하는 프레임레이트 범위들을 확인
-                for range in format.videoSupportedFrameRateRanges {
-                    // 지금까지 찾은 것보다 더 높은 해상도인지 확인
-                    if range.maxFrameRate >= 60, currentResolution > maxResolution {
-                        targetFormat = format
-                        maxResolution = currentResolution
-                        break // 60fps 찾으면 break
+                // 4K 이하 && 1080p(1920x1080 = 2,073,600)이하로 제한
+                if currentResolution <= 2073600 {
+                    // 이 포맷이 지원하는 프레임레이트 범위들을 확인
+                    for range in format.videoSupportedFrameRateRanges {
+                        // 지금까지 찾은 것보다 더 높은 해상도인지 확인
+                        if range.maxFrameRate >= 60, currentResolution > maxResolution {
+                            bestFormat = format
+                            maxResolution = currentResolution
+                            break // 60fps 찾으면 break
+                        }
                     }
                 }
             }
-        }
+            return bestFormat
+        }.value
 
         // 조건에 맞는 포맷을 찾지 못한 경우 에러 처리
         guard let format = targetFormat else {
@@ -336,16 +345,16 @@ class CameraManager: NSObject, ObservableObject {
             device.activeVideoMinFrameDuration = frameDuration
             device.activeVideoMaxFrameDuration = frameDuration
             device.unlockForConfiguration()
-
         } catch {
             print("프레임 설정 오류 \(error)")
         }
     }
 
     /// 부드러운 초점 전환 촬영 세팅
-    private func configureSmoothFocus(for device: AVCaptureDevice) {
+    private func configureSmoothFocus(for device: AVCaptureDevice) async {
         do {
             try device.lockForConfiguration()
+            defer { device.unlockForConfiguration() }
 
             // smooth 초점전환방식 활성화
             if device.isSmoothAutoFocusSupported {
@@ -369,8 +378,6 @@ class CameraManager: NSObject, ObservableObject {
             if device.isAutoFocusRangeRestrictionSupported {
                 device.autoFocusRangeRestriction = .none
             }
-
-            device.unlockForConfiguration()
         } catch {
             print("부드러운 초점 설정 오류: \(error)")
         }
@@ -474,8 +481,11 @@ class CameraManager: NSObject, ObservableObject {
             if session.canAddInput(newInput) {
                 session.addInput(newInput)
                 videoDeviceInput = newInput
-                configureFrameRate(for: newDevice)
-                configureSmoothFocus(for: newDevice)
+
+                Task {
+                    await configureFrameRate(for: newDevice)
+                    await configureSmoothFocus(for: newDevice)
+                }
                 initialCameraPosition = newPosition
             }
 
@@ -526,9 +536,16 @@ class CameraManager: NSObject, ObservableObject {
         // 권한 체크 후 카메라세션 시작
         checkPermissions()
         if permissionState == .both, session.inputs.isEmpty {
-            setUpCamera()
+            Task {
+                await setUpCamera()
+                startSessionInternal()
+            }
+        } else {
+            startSessionInternal()
         }
+    }
 
+    private func startSessionInternal() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             if !self.session.isRunning {
