@@ -18,34 +18,45 @@ struct ClipTrimmingView: View {
     private let pxPerSecond: CGFloat = 50
     private let thumbnailHeight: CGFloat = 60
     
-    // 실제 비디오 시간에 해당하는 너비(계산용)
-    private var timeBasedWidth: CGFloat {
+    /// 기준이 되는 원본 길이
+    private var originalTimeBasedWidth: CGFloat {
+        CGFloat(clip.originalDuration) * pxPerSecond
+    }
+    
+    /// 트리밍된 실제 표시 너비
+    private var trimmedDisplayWidth: CGFloat {
         CGFloat(clip.trimmedDuration) * pxPerSecond
     }
 
     var body: some View {
-        // 썸네일뷰
+        // 원본 크기로 썸네일 그리기
         ProjectThumbnailsView(
             clip: clip,
-            fullWidth: timeBasedWidth
+            fullWidth: originalTimeBasedWidth
         )
+        // 트리밍된 부분만 보이도록 마스킹
+        .mask {
+            Rectangle()
+                .frame(width: trimmedDisplayWidth, height: thumbnailHeight)
+        }
         .onTapGesture { onToggleTrimming() }
+        .frame(
+            width: trimmedDisplayWidth,
+            height: thumbnailHeight
+        )
+        .clipShape(RoundedRectangle(cornerRadius: clip.isTrimming ? 0 : 6))
         .overlay {
             // 트리밍 라인 뷰
             if clip.isTrimming {
                 ProjectTrimmingLineView(
                     clip: clip,
-                    fullWidth: timeBasedWidth,
+                    fullWidth: trimmedDisplayWidth,
                     thumbnailHeight: thumbnailHeight,
                     isDragging: $isDragging,
                     onTrimChanged: onTrimChanged
                 )
             }
         }
-        .frame(
-            width: timeBasedWidth,
-            height: thumbnailHeight
-        )
         .zIndex(clip.isTrimming ? 1 : 0)
     }
 }

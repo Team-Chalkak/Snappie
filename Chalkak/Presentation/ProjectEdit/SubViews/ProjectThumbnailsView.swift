@@ -13,7 +13,7 @@ struct ProjectThumbnailsView: View {
 
     /// 원하는 썸네일 개수 (초당 3개)
     private var countWanted: Int {
-        let duration = clip.isTrimming ? clip.originalDuration : clip.trimmedDuration
+        let duration = clip.originalDuration
         let rate: Double = 3 // 초당 썸네일 개수
         return duration > 0 ? max(1, Int(ceil(duration * rate))) : 0
     }
@@ -59,6 +59,5 @@ struct ProjectThumbnailsView: View {
         }
         .frame(width: fullWidth, height: 60)
         .contentShape(Rectangle())
-        .clipShape(RoundedRectangle(cornerRadius: clip.isTrimming ? 0 : 6))
     }
 }
