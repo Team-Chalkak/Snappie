@@ -301,36 +301,35 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
     private func configureFrameRate(for device: AVCaptureDevice) async {
-        let targetFormat = await Task.detached {
-            var bestFormat: AVCaptureDevice.Format?
-            var maxResolution: Int32 = 0
+        var bestFormat: AVCaptureDevice.Format?
+        var maxResolution: Int32 = 0
 
-            // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
-            for format in device.formats {
-                /// 현재 촬영하고자하는 해상도 정보 추출
-                /// struct CMVideoDimensions {
-                ///      var width: Int32 / var height: Int32
-                /// }
-                let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-                let currentResolution = dimensions.width * dimensions.height
+        // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
+        for format in device.formats {
+            /// 현재 촬영하고자하는 해상도 정보 추출
+            /// struct CMVideoDimensions {
+            ///      var width: Int32 / var height: Int32
+            /// }
+            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            let currentResolution = dimensions.width * dimensions.height
 
-                // 4K까지는 의미X 1080p(1920x1080 = 2,073,600)이하로 제한
-                if currentResolution <= 2073600 {
-                    // 이 포맷이 지원하는 프레임레이트 범위들을 확인
-                    for range in format.videoSupportedFrameRateRanges {
-                        // 지금까지 찾은 것보다 더 높은 해상도인지 확인
-                        if range.maxFrameRate >= 60, currentResolution > maxResolution {
-                            bestFormat = format
-                            maxResolution = currentResolution
-                            break // 60fps 찾으면 break
-                        }
+            // 4K까지는 의미X 1080p(1920x1080 = 2,073,600)이하로 제한
+            if currentResolution <= 2_073_600 {
+                // 이 포맷이 지원하는 프레임레이트 범위들을 확인
+                for range in format.videoSupportedFrameRateRanges {
+                    // 지금까지 찾은 것보다 더 높은 해상도인지 확인
+                    if range.maxFrameRate >= 60, currentResolution > maxResolution {
+                        bestFormat = format
+                        maxResolution = currentResolution
+                        break // 60fps 찾으면 break
                     }
                 }
             }
-            return bestFormat
-        }.value
+        }
 
-        // 조건에 맞는 포맷을 찾지 못한 경우 에러 처리
+        let targetFormat = bestFormat
+
+        // 조건에 맞는 포맷이 없을 경우
         guard let format = targetFormat else {
             print("현재 해상도에서 60fps를 지원하지 않습니다.")
             return
@@ -343,9 +342,17 @@ class CameraManager: NSObject, ObservableObject {
             device.unlockForConfiguration()
 
             try device.lockForConfiguration()
-            let frameDuration = CMTime(value: 1, timescale: 60)
+
+            // 현재 활성화된 포맷에서 지원하는 fps범위 확인
+            let supportedRanges = device.activeFormat.videoSupportedFrameRateRanges
+            let supports60fps = supportedRanges.contains { $0.maxFrameRate >= 60 }
+
+            let fps = supports60fps ? 60 : 30
+
+            let frameDuration = CMTime(value: 1, timescale: CMTimeScale(fps))
             device.activeVideoMinFrameDuration = frameDuration
             device.activeVideoMaxFrameDuration = frameDuration
+
             device.unlockForConfiguration()
         } catch {
             print("프레임 설정 오류 \(error)")
