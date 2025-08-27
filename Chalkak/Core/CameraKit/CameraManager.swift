@@ -250,11 +250,12 @@ class CameraManager: NSObject, ObservableObject {
     func setUpCamera() async {
         let position = initialCameraPosition
 
-        let device = await Task.detached {
-            (position == .back) ?
-                self.findBestBackCamera() :
-                AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        }.value
+        let device: AVCaptureDevice?
+        if position == .back {
+            device = findBestBackCamera()
+        } else {
+            device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        }
 
         guard let device = device else {
             print("카메라 디바이스를 찾을 수 없습니다")
@@ -262,15 +263,15 @@ class CameraManager: NSObject, ObservableObject {
         }
 
         do {
+            // 세션 설정
+            session.beginConfiguration()
+            defer { session.commitConfiguration() }
+
             // 비디오 입력 설정
             videoDeviceInput = try AVCaptureDeviceInput(device: device)
             if session.canAddInput(videoDeviceInput) {
                 session.addInput(videoDeviceInput)
             }
-
-            // 디바이스 설정 (프레임, 초점방식)
-            await configureFrameRate(for: device)
-            await configureSmoothFocus(for: device)
 
             // 오디오 입력 추가
             if let audioDevice = AVCaptureDevice.default(for: .audio) {
@@ -291,7 +292,10 @@ class CameraManager: NSObject, ObservableObject {
                 videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             }
 
-            // 최초 카메라 줌 배율 1.0 적용
+            // 세션 설정 이후 프레임,초점
+            try configureCameraSettings(for: device)
+
+            // 시작카메라 줌 배율 설정
             setZoomScale(backCameraZoomScale)
 
         } catch {
@@ -299,97 +303,99 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 지원하는 최대 1080p , 60fps포맷을 찾아서 설정
-    private func configureFrameRate(for device: AVCaptureDevice) async {
-        var bestFormat: AVCaptureDevice.Format?
-        var maxResolution: Int32 = 0
+    /// 모든 카메라 설정을 한 번의 lockForConfiguration으로 처리
+    private func configureCameraSettings(for device: AVCaptureDevice) throws {
+        // 최적 포맷찾기 lock이전에 미리 계산)
+        let bestFormat = findBestFormat(for: device)
 
-        // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
-        for format in device.formats {
-            /// 현재 촬영하고자하는 해상도 정보 추출
-            /// struct CMVideoDimensions {
-            ///      var width: Int32 / var height: Int32
-            /// }
-            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-            let currentResolution = dimensions.width * dimensions.height
+        try device.lockForConfiguration()
+        defer { device.unlockForConfiguration() }
 
-            // 4K까지는 의미X 1080p(1920x1080 = 2,073,600)이하로 제한
-            if currentResolution <= 2_073_600 {
-                // 이 포맷이 지원하는 프레임레이트 범위들을 확인
-                for range in format.videoSupportedFrameRateRanges {
-                    // 지금까지 찾은 것보다 더 높은 해상도인지 확인
-                    if range.maxFrameRate >= 60, currentResolution > maxResolution {
-                        bestFormat = format
-                        maxResolution = currentResolution
-                        break // 60fps 찾으면 break
-                    }
-                }
-            }
-        }
-
-        let targetFormat = bestFormat
-
-        // 조건에 맞는 포맷이 없을 경우
-        guard let format = targetFormat else {
-            print("현재 해상도에서 60fps를 지원하지 않습니다.")
-            return
-        }
-
-        /// 디바이스 준비 이후 포맷과 fps가 적용될 수 있게 조정
-        do {
-            try device.lockForConfiguration()
+        // 포맷 설정
+        if let format = bestFormat {
             device.activeFormat = format
-            device.unlockForConfiguration()
+        }
 
-            try device.lockForConfiguration()
+        // fps설정
+        let supportedRanges = device.activeFormat.videoSupportedFrameRateRanges
+        let supports60fps = supportedRanges.contains { $0.maxFrameRate >= 60 }
+        let fps = supports60fps ? 60 : 30
+        let frameDuration = CMTime(value: 1, timescale: CMTimeScale(fps))
+        device.activeVideoMinFrameDuration = frameDuration
+        device.activeVideoMaxFrameDuration = frameDuration
 
-            // 현재 활성화된 포맷에서 지원하는 fps범위 확인
-            let supportedRanges = device.activeFormat.videoSupportedFrameRateRanges
-            let supports60fps = supportedRanges.contains { $0.maxFrameRate >= 60 }
+        // 초점 설정
+        if device.isSmoothAutoFocusSupported {
+            device.isSmoothAutoFocusEnabled = true
+        }
+        if device.isFocusModeSupported(.continuousAutoFocus) {
+            device.focusMode = .continuousAutoFocus
+        }
+        /// 자동 조정 모드 설정
+        ///  - .none = 제한 없음 (가까운 곳~먼 곳 다 초점 가능)
+        ///  - .near = 가까운 곳만 초점
+        ///  - .far = 먼 곳만 초점
+        if device.isAutoFocusRangeRestrictionSupported {
+            device.autoFocusRangeRestriction = .none
+        }
 
-            let fps = supports60fps ? 60 : 30
+        // 노출 설정
+        if device.isExposureModeSupported(.continuousAutoExposure) {
+            device.exposureMode = .continuousAutoExposure
+        }
 
-            let frameDuration = CMTime(value: 1, timescale: CMTimeScale(fps))
-            device.activeVideoMinFrameDuration = frameDuration
-            device.activeVideoMaxFrameDuration = frameDuration
+        // 줌 설정
+        let minZoom = device.minAvailableVideoZoomFactor
+        let maxZoom = device.maxAvailableVideoZoomFactor
+        let zoomFactorToSet = backCameraZoomScale * 2.0
+        let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
+        device.videoZoomFactor = clampedZoomFactor
 
-            device.unlockForConfiguration()
-        } catch {
-            print("프레임 설정 오류 \(error)")
+        // 카메라 줌 UI반영
+        DispatchQueue.main.async { [weak self] in
+            self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
         }
     }
 
-    /// 부드러운 초점 전환 촬영 세팅
-    private func configureSmoothFocus(for device: AVCaptureDevice) async {
-        do {
-            try device.lockForConfiguration()
-            defer { device.unlockForConfiguration() }
+    /// 60fps 지원 최적 포맷 찾기 (lockForConfiguration전에 미리 계산 - 충돌방지)
+    private func findBestFormat(for device: AVCaptureDevice) -> AVCaptureDevice.Format? {
+        var bestFormat: AVCaptureDevice.Format?
+        var maxResolution: Int32 = 0
 
-            // smooth 초점전환방식 활성화
-            if device.isSmoothAutoFocusSupported {
-                device.isSmoothAutoFocusEnabled = true
-            }
-
-            // 자동 초점
-            if device.isFocusModeSupported(.continuousAutoFocus) {
-                device.focusMode = .continuousAutoFocus
-            }
-
-            // 자동 노출
-            if device.isExposureModeSupported(.continuousAutoExposure) {
-                device.exposureMode = .continuousAutoExposure
-            }
-
-            /// 자동 조정 모드 설정
-            ///  - .none = 제한 없음 (가까운 곳~먼 곳 다 초점 가능)
-            ///  - .near = 가까운 곳만 초점
-            ///  - .far = 먼 곳만 초점
-            if device.isAutoFocusRangeRestrictionSupported {
-                device.autoFocusRangeRestriction = .none
-            }
-        } catch {
-            print("부드러운 초점 설정 오류: \(error)")
+        // 1080p제한 (1920x1080 = 2073600)
+        let maxAllowedResolution: Int32 = 2_073_600
+        // 높은 해상도기준 정렬
+        let sortedFormats = device.formats.sorted { format1, format2 in
+            let dim1 = CMVideoFormatDescriptionGetDimensions(format1.formatDescription)
+            let dim2 = CMVideoFormatDescriptionGetDimensions(format2.formatDescription)
+            let res1 = dim1.width * dim1.height
+            let res2 = dim2.width * dim2.height
+            return res1 > res2
         }
+
+        // 최적 포맷(1080p,60fps)에 근접할 수 있게 탐색
+        for format in sortedFormats {
+            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            let currentResolution = dimensions.width * dimensions.height
+
+            // 1080p 이하인지 확인
+            guard currentResolution <= maxAllowedResolution else { continue }
+
+            if currentResolution <= maxResolution { continue }
+
+            let supports60fps = format.videoSupportedFrameRateRanges.contains { range in
+                range.maxFrameRate >= 60
+            }
+
+            if supports60fps {
+                bestFormat = format
+                maxResolution = currentResolution
+                // 최고 해상도 -> 조기 종료
+                break
+            }
+        }
+
+        return bestFormat
     }
 
     /// 후면 카메라 중 가장 좋은 성능의 카메라(가상 카메라 우선)를 찾아서 반환
@@ -491,10 +497,7 @@ class CameraManager: NSObject, ObservableObject {
                 session.addInput(newInput)
                 videoDeviceInput = newInput
 
-                Task {
-                    await configureFrameRate(for: newDevice)
-                    await configureSmoothFocus(for: newDevice)
-                }
+                try? configureCameraSettings(for: newDevice)
                 initialCameraPosition = newPosition
             }
 
