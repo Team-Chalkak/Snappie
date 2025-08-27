@@ -76,6 +76,7 @@ struct ProjectEditView: View {
                     onSeek: viewModel.seekTo,
                     onToggleTrimming: viewModel.toggleTrimmingMode,
                     onTrimChanged: viewModel.updateTrimRange,
+                    onMove: viewModel.moveClip,
                     onAddClipTapped: {
                         viewModel.setCurrentProjectID()
                         guard let guide = viewModel.guide else {

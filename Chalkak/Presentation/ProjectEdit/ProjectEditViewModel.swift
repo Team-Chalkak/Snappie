@@ -411,6 +411,33 @@ final class ProjectEditViewModel: ObservableObject {
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
     }
 
+    func moveClip(from source: IndexSet, to destination: Int) {
+        // 1. Reorder the UI-facing array
+        editableClips.move(fromOffsets: source, toOffset: destination)
+
+        // 2. Persist the new order in the temporary SwiftData project
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+              tempProject.isTemp else {
+            print("Cannot move clip: Not a temporary project.")
+            return
+        }
+
+        let orderedClipIDs = editableClips.map { $0.id }
+
+        tempProject.clipList.sort { clip1, clip2 in
+            guard let firstIndex = orderedClipIDs.firstIndex(of: clip1.id),
+                  let secondIndex = orderedClipIDs.firstIndex(of: clip2.id) else {
+                return false
+            }
+            return firstIndex < secondIndex
+        }
+
+        SwiftDataManager.shared.saveContext()
+
+        // 3. After reordering, the player composition is invalid. Rebuild it.
+        setupPlayer()
+    }
+
     // MARK: – 프로젝트 변경사항 저장
 
 //    func saveProjectChanges() async {
