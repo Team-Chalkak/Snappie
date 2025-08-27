@@ -83,6 +83,9 @@ struct ProjectEditView: View {
                         // 추가 촬영 여부
                         UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
                         coordinator.push(.camera(state: .appendShoot(guide: guide)))
+                    },
+                    onDragStateChanged: { isDragging in
+                        viewModel.setDraggingState(isDragging)
                     }
                 )
             }

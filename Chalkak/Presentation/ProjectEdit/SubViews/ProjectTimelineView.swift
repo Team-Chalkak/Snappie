@@ -21,6 +21,7 @@ struct ProjectTimelineView: View {
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
     let onAddClipTapped: () -> Void
+    let onDragStateChanged: (Bool) -> Void
     
     private let unionButtonWidth: CGFloat = 48
 
@@ -35,7 +36,8 @@ struct ProjectTimelineView: View {
                         clip: clip,
                         isDragging: $isDragging,
                         onToggleTrimming: { onToggleTrimming(clip.id) },
-                        onTrimChanged:   { s,e in onTrimChanged(clip.id, s, e) }
+                        onTrimChanged:   { s,e in onTrimChanged(clip.id, s, e) },
+                        onDragStateChanged: onDragStateChanged
                     )
                 }
                 

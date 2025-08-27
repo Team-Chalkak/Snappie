@@ -14,6 +14,7 @@ struct ClipTrimmingView: View {
     let isLastClip: Bool = false
     let onToggleTrimming: () -> Void
     let onTrimChanged: (Double, Double) -> Void
+    let onDragStateChanged: (Bool) -> Void
 
     private let pxPerSecond: CGFloat = 50
     private let thumbnailHeight: CGFloat = 60
@@ -50,10 +51,12 @@ struct ClipTrimmingView: View {
             if clip.isTrimming {
                 ProjectTrimmingLineView(
                     clip: clip,
-                    fullWidth: trimmedDisplayWidth,
+                    fullWidth: originalTimeBasedWidth,
+                    trimmedWidth: trimmedDisplayWidth,
                     thumbnailHeight: thumbnailHeight,
                     isDragging: $isDragging,
-                    onTrimChanged: onTrimChanged
+                    onTrimChanged: onTrimChanged,
+                    onDragStateChanged: onDragStateChanged
                 )
             }
         }

@@ -18,6 +18,7 @@ struct TrimminglineSliderView: View {
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
     let onAddClipTapped: () -> Void
+    let onDragStateChanged: (Bool) -> Void
 
     private let pxPerSecond: CGFloat = 50
     private let clipSpacing: CGFloat = 8
@@ -52,7 +53,8 @@ struct TrimminglineSliderView: View {
                     timelineHeight: timelineHeight,
                     onToggleTrimming: onToggleTrimming,
                     onTrimChanged: onTrimChanged,
-                    onAddClipTapped: onAddClipTapped
+                    onAddClipTapped: onAddClipTapped,
+                    onDragStateChanged: onDragStateChanged
                 )
                 .gesture(
                     DragGesture()
