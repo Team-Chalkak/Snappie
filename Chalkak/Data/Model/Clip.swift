@@ -37,6 +37,14 @@ class Clip {
         max(0, endPoint - startPoint)
     }
     
+    /// 임시 클립 여부 (temp 프로젝트 내의 클립은 true)
+    var isTemp: Bool = false
+    
+    /// temp 클립이 참조하는 원본 클립의 ID
+    /// 새로 추가된 클립의 경우 nil
+    var originalClipID: String? = nil
+    
+    
     /// 새로운 Clip 인스턴스를 초기화합니다.
     /// - Parameters:
     ///   - id: 클립의 고유 ID (기본값은 UUID).
@@ -54,7 +62,9 @@ class Clip {
         startPoint: Double = 0,
         endPoint: Double,
         createdAt: Date = .now,
-        tiltList: [TimeStampedTilt] = []
+        tiltList: [TimeStampedTilt] = [],
+        isTemp: Bool = false,
+        originalClipID: String? = nil
     ) {
         self.id = id
         self.videoURL = videoURL
@@ -63,6 +73,8 @@ class Clip {
         self.endPoint = endPoint
         self.createdAt = createdAt
         self.tiltList = tiltList
+        self.isTemp = isTemp
+        self.originalClipID = originalClipID
     }
 }
 
