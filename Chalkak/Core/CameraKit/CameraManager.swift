@@ -308,11 +308,13 @@ class CameraManager: NSObject, ObservableObject {
             // 카메라 기기가 지원하는 모든 포맷들을 하나씩 검사
             for format in device.formats {
                 /// 현재 촬영하고자하는 해상도 정보 추출
-                /// struct CMVideoDimensions { var width: Int32 / var height: Int32 }
+                /// struct CMVideoDimensions {
+                ///      var width: Int32 / var height: Int32
+                /// }
                 let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
                 let currentResolution = dimensions.width * dimensions.height
 
-                // 4K 이하 && 1080p(1920x1080 = 2,073,600)이하로 제한
+                // 4K까지는 의미X 1080p(1920x1080 = 2,073,600)이하로 제한
                 if currentResolution <= 2073600 {
                     // 이 포맷이 지원하는 프레임레이트 범위들을 확인
                     for range in format.videoSupportedFrameRateRanges {
@@ -334,14 +336,14 @@ class CameraManager: NSObject, ObservableObject {
             return
         }
 
-        // 찾은 최적 포맷을 실제 카메라에 적용
+        /// 디바이스 준비 이후 포맷과 fps가 적용될 수 있게 조정
         do {
             try device.lockForConfiguration()
-            device.activeFormat = format // 선택된 포맷 적용
+            device.activeFormat = format
+            device.unlockForConfiguration()
 
-            // 프레임 60fps로 고정 설정
+            try device.lockForConfiguration()
             let frameDuration = CMTime(value: 1, timescale: 60)
-            // 최대 - 최소 프레임 60fps
             device.activeVideoMinFrameDuration = frameDuration
             device.activeVideoMaxFrameDuration = frameDuration
             device.unlockForConfiguration()
