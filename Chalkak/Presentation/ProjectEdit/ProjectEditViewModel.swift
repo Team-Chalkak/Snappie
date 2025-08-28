@@ -39,7 +39,8 @@ final class ProjectEditViewModel: ObservableObject {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
     
-    //MARK: - Temp 관련 프로퍼티
+    // MARK: - Temp 관련 프로퍼티
+
     var hasChanges: Bool {
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else { return false }
         return project.isTemp
@@ -48,7 +49,8 @@ final class ProjectEditViewModel: ObservableObject {
     var originalProjectID: String {
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID),
               project.isTemp,
-              let originalID = project.originalID else {
+              let originalID = project.originalID
+        else {
             return projectID
         }
         return originalID
@@ -381,7 +383,7 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func deactivateAllTrimming() {
-        for i in 0..<editableClips.count {
+        for i in 0 ..< editableClips.count {
             editableClips[i].isTrimming = false
         }
     }
@@ -447,10 +449,13 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func setCurrentProjectID() {
-        UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+        // temp 프로젝트인 경우 원본 ID를 설정
+        let idToSet = originalProjectID
+        UserDefaults.standard.set(idToSet, forKey: UserDefaultKey.currentProjectID)
     }
     
-    //MARK: - Temp System 메서드들
+    // MARK: - Temp System 메서드들
+
     /// temp 프로젝트 초기화 (ProjectEditView 진입 시 호출)
     func initializeTempProject(loadAfter: Bool = true) async {
         guard let originalProject = SwiftDataManager.shared.fetchProject(byID: projectID) else {
@@ -519,7 +524,7 @@ final class ProjectEditViewModel: ObservableObject {
                 isTemp: true,
                 originalClipID: originalClip.id
             )
-            tempClip.order = idx   // ✅ 유지
+            tempClip.order = idx // ✅ 유지
             tempProject.clipList.append(tempClip)
         }
         
@@ -532,19 +537,19 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.saveContext()
         
         // ViewModel을 temp로 전환
-        self.projectID = tempID
-        self.project = tempProject
+        projectID = tempID
+        project = tempProject
         
         if loadAfter {
             await loadProjectAsync()
         }
     }
 
-    
     /// appendShoot에서 촬영한 클립을 temp에 추가
     func addClipToTemp(clip: Clip) {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-              tempProject.isTemp else {
+              tempProject.isTemp
+        else {
             print("현재 temp 프로젝트가 아닙니다.")
             return
         }
@@ -555,7 +560,7 @@ final class ProjectEditViewModel: ObservableObject {
         clip.isTemp = true
         clip.originalClipID = nil // 새로 추가된 클립
         
-        clip.order = nextOrder   // 새 클립에 꼬리 order 부여
+        clip.order = nextOrder // 새 클립에 꼬리 order 부여
         tempProject.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
         
@@ -570,7 +575,8 @@ final class ProjectEditViewModel: ObservableObject {
         print("클립 삭제 시작: \(id)")
         
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-              tempProject.isTemp else {
+              tempProject.isTemp
+        else {
             print("경고: temp 프로젝트가 아닌 상태에서 deleteClip 호출됨")
             return
         }
@@ -587,7 +593,9 @@ final class ProjectEditViewModel: ObservableObject {
         if let _ = tempProject.clipList.first(where: { $0.id == id }) {
             tempProject.clipList.removeAll { $0.id == id }
             // cascade로 인해 clipToDelete는 자동으로 삭제됨
-            for (idx, c) in tempProject.clipList.enumerated() { c.order = idx }
+            for (idx, c) in tempProject.clipList.enumerated() {
+                c.order = idx
+            }
             SwiftDataManager.shared.saveContext()
             print("클립 삭제 완료")
         }
@@ -595,7 +603,6 @@ final class ProjectEditViewModel: ObservableObject {
         // 4. 플레이어 재설정
         setupPlayer()
     }
-    
     
     /// 트리밍 범위 업데이트 (temp에만 반영)
     func updateTrimRange(for clipID: String, start: Double, end: Double) {
@@ -608,7 +615,8 @@ final class ProjectEditViewModel: ObservableObject {
         // temp 프로젝트의 clip도 업데이트
         if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
            tempProject.isTemp,
-           let tempClip = tempProject.clipList.first(where: { $0.id == clipID }) {
+           let tempClip = tempProject.clipList.first(where: { $0.id == clipID })
+        {
             tempClip.startPoint = editableClips[idx].startPoint
             tempClip.endPoint = editableClips[idx].endPoint
             SwiftDataManager.shared.saveContext()
@@ -620,7 +628,8 @@ final class ProjectEditViewModel: ObservableObject {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp,
               let originalID = tempProject.originalID,
-              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID) else {
+              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID)
+        else {
             // temp가 아니면 이미 저장된 상태
             return true
         }
@@ -637,8 +646,8 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.deleteTempProject(tempProject)
         
         // 4. ViewModel을 원본으로 복원
-        self.projectID = originalID
-        self.project = originalProject
+        projectID = originalID
+        project = originalProject
         
         return true
     }
@@ -647,7 +656,8 @@ final class ProjectEditViewModel: ObservableObject {
     func discardChanges() async -> Bool {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp,
-              let originalID = tempProject.originalID else {
+              let originalID = tempProject.originalID
+        else {
             // temp가 아니면 취소할 것 없음
             return true
         }
@@ -656,8 +666,8 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.deleteTempProject(tempProject)
         
         // ViewModel을 원본으로 복원
-        self.projectID = originalID
-        self.project = SwiftDataManager.shared.fetchProject(byID: originalID)
+        projectID = originalID
+        project = SwiftDataManager.shared.fetchProject(byID: originalID)
         
         return true
     }
@@ -674,13 +684,16 @@ final class ProjectEditViewModel: ObservableObject {
         let deleted = originalClips.filter { orig in
             !tempOrdered.contains { $0.originalClipID == orig.id }
         }
-        for d in deleted { originalProject.clipList.removeAll { $0.id == d.id } }
+        for d in deleted {
+            originalProject.clipList.removeAll { $0.id == d.id }
+        }
 
         // 새 순서로 재구성 + order 부여
         var newClipOrder: [Clip] = []
         for (idx, t) in tempOrdered.enumerated() {
             if let oid = t.originalClipID,
-               let orig = originalClips.first(where: { $0.id == oid }) {
+               let orig = originalClips.first(where: { $0.id == oid })
+            {
                 orig.startPoint = t.startPoint
                 orig.endPoint = t.endPoint
                 orig.tiltList = t.tiltList
@@ -734,7 +747,9 @@ final class ProjectEditViewModel: ObservableObject {
         }
 
         // 3) 0...N-1로 재부여(정규화) – 중복/빈틈 제거
-        for (idx, c) in tempProject.clipList.enumerated() { c.order = idx }
+        for (idx, c) in tempProject.clipList.enumerated() {
+            c.order = idx
+        }
 
         SwiftDataManager.shared.saveContext()
     }
@@ -747,14 +762,14 @@ final class ProjectEditViewModel: ObservableObject {
         }
         // order가 비었거나 중복/불연속이면 0...N-1로 보정
         let shouldFix = Set(arr.map(\.order)).count != arr.count
-                      || (arr.first?.order ?? 0) != 0
-                      || (arr.last?.order ?? -1) != arr.count - 1
+            || (arr.first?.order ?? 0) != 0
+            || (arr.last?.order ?? -1) != arr.count - 1
         if shouldFix {
-            for (i, c) in arr.enumerated() { c.order = i }
+            for (i, c) in arr.enumerated() {
+                c.order = i
+            }
             SwiftDataManager.shared.saveContext()
         }
         return arr
     }
-
 }
-
