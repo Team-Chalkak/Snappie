@@ -486,33 +486,6 @@ final class ProjectEditViewModel: ObservableObject {
         // 3. After reordering, the player composition is invalid. Rebuild it.
         setupPlayer()
     }
-
-    // MARK: – 프로젝트 변경사항 저장
-
-//    func saveProjectChanges() async {
-//        // 프로젝트 엔티티 가져오기
-//        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
-//            print("프로젝트(\(projectID))를 찾을 수 없습니다.")
-//            return
-//        }
-//
-//        // 편집된 trim 값 반영
-//        for entity in project.clipList {
-//            if let edited = editableClips.first(where: { $0.id == entity.id }) {
-//                entity.startPoint = edited.startPoint
-//                entity.endPoint = edited.endPoint
-//            }
-//        }
-//
-//        // 삭제된 클립 제거
-//        let removed = project.clipList.filter { entity in
-//            !editableClips.contains(where: { $0.id == entity.id })
-//        }
-//        removed.forEach { SwiftDataManager.shared.deleteClip($0) }
-//
-//        // 저장
-//        SwiftDataManager.shared.saveContext()
-//    }
     
     // MARK: – 편집된 영상 갤러리에 내보내기
 
