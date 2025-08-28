@@ -31,6 +31,9 @@ class Clip {
     
     /// 시간별로 기록된 카메라 기울기 정보.
     var tiltList: [TimeStampedTilt]
+    
+    /// 순서 보장을 위한 정보.
+    var order: Int = 0
         
     /// 트리밍된 시간을 계산한 정보.
     var currentTrimmedDuration: Double {

@@ -76,6 +76,7 @@
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 		9985192F2E4B3CE500A9F695 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9985192E2E4B3CE100A9F695 /* Error.swift */; };
+		9985194F2E5696EF00A9F695 /* ProjectPreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9985194E2E56942000A9F695 /* ProjectPreviewSectionView.swift */; };
 		999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */; };
 		9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */; };
 		99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */; };
@@ -223,6 +224,7 @@
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		9985194E2E56942000A9F695 /* ProjectPreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewSectionView.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
 		9999924A2E2D8ED100D56BD1 /* UserDefaultKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultKey.swift; sourceTree = "<group>"; };
 		99C726692E2F068200E9D0CD /* FirstShootCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstShootCameraView.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 		992EE7C92E32AEBE0079AFBF /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				9985194E2E56942000A9F695 /* ProjectPreviewSectionView.swift */,
 				992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */,
 				992EE8142E36CF600079AFBF /* ProjectTimeBoardView.swift */,
 				992EE8122E36CF020079AFBF /* ProjectTrimmingHandle.swift */,
@@ -1064,6 +1067,7 @@
 				992EE8152E36CF660079AFBF /* ProjectTimeBoardView.swift in Sources */,
 				993A1F702E267E0C0059B70A /* ShootState.swift in Sources */,
 				993A1F722E267E0C0059B70A /* OverlayView.swift in Sources */,
+				9985194F2E5696EF00A9F695 /* ProjectPreviewSectionView.swift in Sources */,
 				9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */,
 				992EE8132E36CF070079AFBF /* ProjectTrimmingHandle.swift in Sources */,
 				B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */,

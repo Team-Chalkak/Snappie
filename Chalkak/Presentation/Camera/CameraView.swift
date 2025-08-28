@@ -116,7 +116,6 @@ struct CameraView: View {
                 
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
-            
         }
         .onChange(of: viewModel.showTimerFeedback) { _, newValue in
             fadeOutTask?.cancel()
@@ -163,7 +162,18 @@ struct CameraView: View {
             if oldValue == true && newValue == false {
                 cameraManager.showPermissionSheet = true
                 cameraManager.requestAndCheckPermissions() // 권한 요청
-                viewModel.startCamera()              // ← 카메라 시작
+                viewModel.startCamera()
+            }
+        }
+        .onChange(of: cameraManager.permissionState) { _, newValue in
+            if newValue == .both {
+                viewModel.startCamera()
+            }
+        }
+        .onChange(of: viewModel.needsPermissionRequest) { _, needsRequest in
+            if needsRequest {
+                cameraManager.reevaluateAndPresentIfNeeded()
+                viewModel.needsPermissionRequest = false
             }
         }
 
@@ -179,19 +189,28 @@ struct CameraView: View {
             Text("지금까지 찍은 장면은 저장돼요.")
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
-        
         .sheet(isPresented: $cameraManager.showPermissionSheet) {
             CameraPermissionSheet(cameraManager: cameraManager)
         }
         .animation(.easeInOut(duration: 0.5), value: cameraManager.showOnboarding)
     }
     
-
     private func handleExitCamera() {
-        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-
         viewModel.stopCamera()
-        coordinator.removeAll()
+        
+        switch shootState {
+        case .appendShoot:
+            // 해당 프로젝트 편집화면으로 이동
+            if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
+                coordinator.popToScreen(.projectEdit(projectID: projectID))
+            } else {
+                coordinator.removeAll()
+            }
+        case .firstShoot, .followUpShoot:
+            // 리스트를 통해서 접근한 상황이 아닐때 -> 첫화면으로 이동
+            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+            coordinator.removeAll()
+        }
     }
 }
 
