@@ -81,6 +81,7 @@ struct TrimminglineSliderView: View {
                 .fill(Color.matcha50)
                 .frame(width: 2, height: rulerHeight + timelineHeight + timeBoardPadding)
                 .frame(maxWidth: .infinity, alignment: .center)
+                .offset(y: 20)
                 .allowsHitTesting(false)
         }
         .frame(height: rulerHeight + timeBoardPadding + timelineHeight)
