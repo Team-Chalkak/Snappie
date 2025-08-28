@@ -92,7 +92,6 @@ struct ProjectTimelineView: View {
                     height: timelineHeight,
                     alignment: .leading
                 )
-                .clipped()
 
                 // Layer 2: overlay (앵커 기반 왼쪽 정렬)
                 if let draggingClip = draggingClip, isDragActive, let dragValue = self.dragValue {
