@@ -27,7 +27,7 @@ struct ProjectTimeBoardView: View {
                             Circle().frame(width: 5, height: 5)
                         }
                     }
-                    .frame(width: pxPerSecond, height: rulerHeight)
+                    .frame(width: pxPerSecond, height: rulerHeight, alignment: .leading)
                     .foregroundStyle(SnappieColor.darkLight)
                 }
             }
