@@ -363,9 +363,14 @@ final class ProjectEditViewModel: ObservableObject {
         }
         // 드래그 완료시: timeObserver 재시작하고 플레이어 업데이트
         else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            Task {
+                let currentTime = self.playHead
+
                 self.resumeTimeObserver()
-                self.setupPlayer()
+                await self.setupPlayerAsync()
+
+                // 저장해둔 위치로 플레이헤드를 이동
+                self.seekTo(time: currentTime)
             }
         }
     }
