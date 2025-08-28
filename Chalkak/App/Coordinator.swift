@@ -21,7 +21,7 @@ final class Coordinator: ObservableObject {
     func removeAll() {
         self.path.removeAll()
     }
-    
+
     /// 스택에서 특정 Path까지 pop하고 그 이후 화면은 제거
     func popToScreen(_ target: Path) {
         // 마지막 화면부터 탐색
@@ -29,7 +29,7 @@ final class Coordinator: ObservableObject {
             if last == target {
                 break
             }
-            _ = path.popLast()
+            _ = self.path.popLast()
         }
     }
 }
