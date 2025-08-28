@@ -201,6 +201,8 @@ final class ProjectEditViewModel: ObservableObject {
     /// 비동기 플레이어 설정
     @MainActor
     private func setupPlayerAsync() async {
+        let savedPlayHead = playHead
+        
         let composition = AVMutableComposition()
         guard
             let vidTrack = composition.addMutableTrack(
@@ -259,7 +261,12 @@ final class ProjectEditViewModel: ObservableObject {
         imageGenerator?.appliesPreferredTrackTransform = true
         imageGenerator?.videoComposition = previewComposition
         
-        await updatePreviewImage(at: playHead)
+        // 저장된 플레이헤드 위치로 복원
+        if savedPlayHead > 0 && savedPlayHead <= totalDuration {
+            await updatePreviewImage(at: savedPlayHead)
+        } else {
+            await updatePreviewImage(at: playHead)
+        }
         
         if let token = timeObserverToken {
             player.removeTimeObserver(token)
@@ -360,16 +367,20 @@ final class ProjectEditViewModel: ObservableObject {
         // 드래그 완료시: timeObserver 재시작하고 플레이어 업데이트
         else {
             Task {
+                // 현재 플레이헤드 위치를 저장
                 let currentTime = self.playHead
-
+                
                 self.resumeTimeObserver()
                 await self.setupPlayerAsync()
-
-                // 저장해둔 위치로 플레이헤드를 이동
-                self.seekTo(time: currentTime)
+                
+                // 저장된 위치로 복원 (0초가 아님)
+                if currentTime > 0 && currentTime <= self.totalDuration {
+                    self.seekTo(time: currentTime)
+                }
             }
         }
     }
+
 
 
     func updatePreviewImage(at time: Double) async {
@@ -400,12 +411,17 @@ final class ProjectEditViewModel: ObservableObject {
             return
         }
         
+        // 끝에 도달했을 때 0초로 리셋하지 않고 그 자리에서 정지
         if playHead >= totalDuration {
-            seekTo(time: 0)
+            isPlaying = false
+            player.pause()
+            return
         }
         
         isPlaying.toggle()
-        if isPlaying { player.play() } else {
+        if isPlaying {
+            player.play()
+        } else {
             player.pause()
         }
     }
@@ -458,6 +474,8 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func moveClip(from source: IndexSet, to destination: Int) {
+        let currentTime = playHead
+        
         // 1. Reorder the UI-facing array
         editableClips.move(fromOffsets: source, toOffset: destination)
 
@@ -465,7 +483,14 @@ final class ProjectEditViewModel: ObservableObject {
         writeOrdersToTempProjectAndNormalize()
 
         // 3. After reordering, the player composition is invalid. Rebuild it.
-        setupPlayer()
+        Task {
+            await setupPlayerAsync()
+            
+            // 이동 후에도 원래 위치 유지
+            if currentTime > 0 && currentTime <= self.totalDuration {
+                self.seekTo(time: currentTime)
+            }
+        }
     }
     
     // MARK: – 편집된 영상 갤러리에 내보내기
@@ -614,6 +639,8 @@ final class ProjectEditViewModel: ObservableObject {
             return
         }
         
+        let currentTime = playHead
+        
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
         isPlaying = false
@@ -632,7 +659,18 @@ final class ProjectEditViewModel: ObservableObject {
         }
         
         // 4. 플레이어 재설정
-        setupPlayer()
+        Task {
+            await setupPlayerAsync()
+            
+            // 삭제 후에도 적절한 위치로 복원
+            let newTotalDuration = self.totalDuration
+            if currentTime > 0 && currentTime <= newTotalDuration {
+                self.seekTo(time: min(currentTime, newTotalDuration))
+            } else if newTotalDuration > 0 {
+                // 현재 위치가 새로운 총 길이를 초과하면 끝으로 이동 (0이 아님)
+                self.seekTo(time: newTotalDuration)
+            }
+        }
     }
     
     
