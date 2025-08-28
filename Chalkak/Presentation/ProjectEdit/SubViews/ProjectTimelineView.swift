@@ -99,10 +99,22 @@ struct ProjectTimelineView: View {
                 // Layer 2: overlay (앵커 기반 왼쪽 정렬)
                 if let draggingClip = draggingClip, isDragActive, let dragValue = self.dragValue {
                     let clipWidth = draggingClip.trimmedDuration * pxPerSecond
-                    let geoMinX = geo.frame(in: .global).minX
-                    let anchor: CGFloat = dragAnchorInClip ?? (clipWidth / 2)
-                    let leftGlobal = dragValue.location.x - anchor
-                    let offsetX = leftGlobal - geoMinX
+                    let viewMinX = geo.frame(in: .global).minX
+
+                    // 손가락이 누른 위치(클립 내부 상대 X). 없으면 가운데로.
+                    let anchorX: CGFloat = dragAnchorInClip ?? (clipWidth / 2)
+
+                    // 스케일을 적용할 크기
+                    let scaleDuringDrag: CGFloat = 1.2
+
+                    // 스케일 없음 기준의 "왼쪽" 오프셋(로컬)
+                    let baseOffsetX = (dragValue.location.x - viewMinX) - anchorX
+
+                    // 스케일 보정: (1 - s) * (anchor - center)
+                    let centerX = clipWidth / 2
+                    let scaleCompensation = (1 - scaleDuringDrag) * (anchorX - centerX)
+
+                    let adjustedOffsetX = baseOffsetX + scaleCompensation
 
                     ClipTrimmingView(
                         clip: draggingClip,
@@ -111,8 +123,8 @@ struct ProjectTimelineView: View {
                         onTrimChanged: { _, _ in }
                     )
                     .frame(width: clipWidth)
-                    .offset(x: offsetX)
-                    .scaleEffect(1.2)
+                    .scaleEffect(scaleDuringDrag, anchor: .center)
+                    .offset(x: adjustedOffsetX)
                     .shadow(radius: 10)
                 }
             }
@@ -140,12 +152,22 @@ struct ProjectTimelineView: View {
 
                 // 드래그 시작 시 1회 앵커 계산: (손가락 전역X) - (클립 전역 왼쪽X)
                 if dragAnchorInClip == nil {
-                    let contentStart = contentStartGlobalX(geo)
-                    let clipLeftInContent = leftXOfClipInContent(draggingClip.id)
-                    let clipLeftGlobal = contentStart + clipLeftInContent
-                    let width = draggingClip.trimmedDuration * pxPerSecond
-                    var anchor = drag.location.x - clipLeftGlobal
-                    anchor = max(0, min(anchor, width))
+                    let timelineFrame = geo.frame(in: .global)
+                    let timelineOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+                    let contentStartGlobalX = timelineFrame.minX + (timelineFrame.width / 2) + timelineOffset
+
+                    // HStack 내에서 해당 클립의 왼쪽X(콘텐츠 좌표) 합산
+                    var leadingXInContent: CGFloat = 0
+                    for (index, clip) in clips.enumerated() {
+                        if clip.id == draggingClip.id { break }
+                        leadingXInContent += clip.trimmedDuration * pxPerSecond
+                        if index < clips.count - 1 { leadingXInContent += clipSpacing }
+                    }
+                    let clipLeftGlobalX = contentStartGlobalX + leadingXInContent
+
+                    let clipWidth = draggingClip.trimmedDuration * pxPerSecond
+                    var anchor = drag.location.x - clipLeftGlobalX
+                    anchor = max(0, min(anchor, clipWidth))      // 0...clipWidth 로 클램프
                     dragAnchorInClip = anchor
                 }
 
