@@ -318,4 +318,18 @@ final class ClipEditViewModel: ObservableObject {
     func clearCurrentProjectID() {
         UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
     }
+    
+    // MARK: - Temp 관련 메소드
+    func createTempClip() -> Clip {
+        return Clip(
+            id: UUID().uuidString,
+            videoURL: clipURL,
+            originalDuration: duration,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            tiltList: timeStampedTiltList,
+            isTemp: true,
+            originalClipID: nil
+        )
+    }
 }

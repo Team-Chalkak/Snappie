@@ -17,6 +17,7 @@ struct TrimminglineSliderView: View {
     let onSeek: (Double) -> Void
     let onToggleTrimming: (String) -> Void
     let onTrimChanged: (String, Double, Double) -> Void
+    let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
 
@@ -53,6 +54,7 @@ struct TrimminglineSliderView: View {
                     timelineHeight: timelineHeight,
                     onToggleTrimming: onToggleTrimming,
                     onTrimChanged: onTrimChanged,
+                    onMove: onMove,
                     onAddClipTapped: onAddClipTapped,
                     onDragStateChanged: onDragStateChanged
                 )

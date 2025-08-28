@@ -104,13 +104,40 @@ class SwiftDataManager {
 
     /// `Project` 삭제
     func deleteProject(_ project: Project) {
+        // temp 프로젝트든 원본이든 관계없이 완전 삭제
+        // 클립들 개별 삭제
+        for clip in project.clipList {
+            context.delete(clip)
+        }
+        
+        // Guide 삭제
+        context.delete(project.guide)
+        
+        // CameraSetting 삭제 (있는 경우)
+        if let cameraSetting = project.cameraSetting {
+            context.delete(cameraSetting)
+        }
+        
+        // 프로젝트 삭제
         context.delete(project)
+        saveContext()
+    }
+    
+    /// `Temp Project` 안전 삭제 (temp 전용)
+    func deleteTempProject(_ tempProject: Project) {
+        guard tempProject.isTemp else {
+            print("경고: temp가 아닌 프로젝트를 temp 삭제 메서드로 삭제하려고 합니다.")
+            return
+        }
+        
+        context.delete(tempProject)
         saveContext()
     }
     
     /// 모든 프로젝트 조회
     func fetchAllProjects() -> [Project] {
-        let descriptor = FetchDescriptor<Project>()
+        let predicate = #Predicate<Project> { $0.isTemp == false }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
         return (try? context.fetch(descriptor)) ?? []
     }
     
@@ -133,7 +160,7 @@ class SwiftDataManager {
     
     /// 확인하지 않은 프로젝트 조회
     func getUncheckedProjects() -> [Project] {
-        let predicate = #Predicate<Project> { $0.isChecked == false }
+        let predicate = #Predicate<Project> { $0.isChecked == false && $0.isTemp == false }
         let descriptor = FetchDescriptor<Project>(predicate: predicate)
         return (try? context.fetch(descriptor)) ?? []
     }
@@ -141,7 +168,7 @@ class SwiftDataManager {
     /// 뱃지 표시용 확인하지 않은 프로젝트 조회 (guide가 있고, 현재 촬영 중이 아닌 것)
     func getUncheckedProjectsForBadge() -> [Project] {
         let predicate = #Predicate<Project> { project in
-            project.isChecked == false
+            project.isChecked == false && project.isTemp == false
         }
         let descriptor = FetchDescriptor<Project>(predicate: predicate)
         let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
@@ -228,15 +255,13 @@ class SwiftDataManager {
         clipID: String,
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
-        cameraTilt: Tilt,
-        cameraHeight: Float
+        cameraTilt: Tilt
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
             boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
-            cameraTilt: cameraTilt,
-            cameraHeight: cameraHeight
+            cameraTilt: cameraTilt
         )
         context.insert(guide)
         return guide
@@ -280,13 +305,27 @@ class SwiftDataManager {
     }
     
     // MARK: - Save & Rollback
-
     /// Context 저장하기 - 변경사항 반영
     func saveContext() {
         do {
             try context.save()
         } catch {
             print("저장 실패: \(error)")
+            // 저장 실패 시 context rollback으로 일관성 유지
+            context.rollback()
         }
+    }
+    
+    /// ProjectEditView에서 앱 비정상 종료 시, 길 잃은 temp들 없애기
+    func cleanupAllTempProjects() {
+        let predicate = #Predicate<Project> { $0.isTemp == true }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        
+        guard let tempProjects = try? context.fetch(descriptor) else { return }
+        
+        for tempProject in tempProjects {
+            context.delete(tempProject)
+        }
+        saveContext()
     }
 }

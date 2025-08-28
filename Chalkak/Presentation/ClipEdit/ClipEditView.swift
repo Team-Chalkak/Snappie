@@ -106,14 +106,11 @@ struct ClipEditView: View {
                             case .followUpShoot:
                                 showActionSheet = true
                             case .appendShoot:
-                                print("appendShoot 분기 진입")
-                                editViewModel.appendClipToCurrentProject()
+                                let newClip = editViewModel.createClipData()
+                                
                                 if let projectID = editViewModel.fetchCurrentProjectID() {
                                     editViewModel.clearCurrentProjectID()
-                                    print("ProjectID 확인 후 push:", projectID)
-                                    coordinator.push(.projectEdit(projectID: projectID))
-                                } else {
-                                    print("⚠️ 프로젝트 ID가 없습니다.")
+                                    coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
                                 }
                             }
                         }
