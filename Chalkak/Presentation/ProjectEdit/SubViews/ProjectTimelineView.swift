@@ -39,8 +39,6 @@ struct ProjectTimelineView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let halfWidth = geo.size.width / 2
-            
             ZStack(alignment: .leading) {
                 // Layer 1: timeline content
                 HStack(alignment: .center, spacing: 0) {
@@ -129,8 +127,6 @@ struct ProjectTimelineView: View {
                     .shadow(radius: 10)
                 }
             }
-            .padding(.horizontal, halfWidth)
-            .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
             .frame(
                 width: getTimelineFullWidth(geoWidth: geo.size.width),
                 height: timelineHeight,
