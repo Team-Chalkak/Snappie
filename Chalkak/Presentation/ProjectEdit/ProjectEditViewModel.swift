@@ -479,34 +479,20 @@ final class ProjectEditViewModel: ObservableObject {
 
     
     /// appendShoot에서 촬영한 클립을 temp에 추가
-    func addClipToTemp(
-        clipURL: URL,
-        originalDuration: Double,
-        startPoint: Double,
-        endPoint: Double,
-        tiltList: [TimeStampedTilt]
-    ) {
+    func addClipToTemp(clip: Clip) {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp else {
             print("현재 temp 프로젝트가 아닙니다.")
             return
         }
         
-        let tempClip = Clip(
-            id: "temp_\(UUID().uuidString)",
-            videoURL: clipURL,
-            originalDuration: originalDuration,
-            startPoint: startPoint,
-            endPoint: endPoint,
-            tiltList: tiltList,
-            isTemp: true,
-            originalClipID: nil // 새로 추가된 클립
-        )
+        // 클립을 temp로 설정
+        clip.isTemp = true
+        clip.originalClipID = nil // 새로 추가된 클립
         
-        tempProject.clipList.append(tempClip)
+        tempProject.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
         
-        // UI 갱신을 위해 다시 로드
         Task {
             await loadProjectAsync()
         }

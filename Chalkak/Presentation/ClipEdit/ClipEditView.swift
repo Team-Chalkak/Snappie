@@ -106,11 +106,11 @@ struct ClipEditView: View {
                             case .followUpShoot:
                                 showActionSheet = true
                             case .appendShoot:
-                                let clipData = editViewModel.createTempClipData()
+                                let newClip = editViewModel.createClipData()
                                 
                                 if let projectID = editViewModel.fetchCurrentProjectID() {
                                     editViewModel.clearCurrentProjectID()
-                                    coordinator.push(.projectEdit(projectID: projectID, tempClipData: clipData))
+                                    coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
                                 }
                             }
                         }
