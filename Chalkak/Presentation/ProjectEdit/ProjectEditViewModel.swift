@@ -35,26 +35,6 @@ final class ProjectEditViewModel: ObservableObject {
     // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
     private var originalClips: [EditableClip] = []
 
-//    // 변경사항 감지
-//    var hasChanges: Bool {
-//        // 클립 개수에서 차이가날때
-//        if editableClips.count != originalClips.count {
-//            return true
-//        }
-//
-//        // 각 클립의 trim 포인트가 다르면 변경된것으로판단
-//        for (edited, original) in zip(editableClips, originalClips) {
-//            if edited.id != original.id ||
-//                edited.startPoint != original.startPoint ||
-//                edited.endPoint != original.endPoint
-//            {
-//                return true
-//            }
-//        }
-//
-//        return false
-//    }
-
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
@@ -562,13 +542,7 @@ final class ProjectEditViewModel: ObservableObject {
 
     
     /// appendShoot에서 촬영한 클립을 temp에 추가
-    func addClipToTemp(
-        clipURL: URL,
-        originalDuration: Double,
-        startPoint: Double,
-        endPoint: Double,
-        tiltList: [TimeStampedTilt]
-    ) {
+    func addClipToTemp(clip: Clip) {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp else {
             print("현재 temp 프로젝트가 아닙니다.")
@@ -576,35 +550,19 @@ final class ProjectEditViewModel: ObservableObject {
         }
         
         let nextOrder = (tempProject.clipList.map(\.order).max() ?? -1) + 1
-
-        let tempClip = Clip(
-            id: "temp_\(UUID().uuidString)",
-            videoURL: clipURL,
-            originalDuration: originalDuration,
-            startPoint: startPoint,
-            endPoint: endPoint,
-            tiltList: tiltList,
-            isTemp: true,
-            originalClipID: nil // 새로 추가된 클립
-        )
         
-        tempClip.order = nextOrder   // 새 클립에 꼬리 order 부여
-        tempProject.clipList.append(tempClip)
+        // 클립을 temp로 설정
+        clip.isTemp = true
+        clip.originalClipID = nil // 새로 추가된 클립
+        
+        clip.order = nextOrder   // 새 클립에 꼬리 order 부여
+        tempProject.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
         
 //        // UI 갱신을 위해 다시 로드
         Task {
             await loadProjectAsync()
         }
-//        editableClips.append(EditableClip(
-//            id: tempClip.id,
-//            url: clipURL,
-//            originalDuration: originalDuration,
-//            startPoint: startPoint,
-//            endPoint: endPoint,
-//            thumbnails: []
-//        ))
-//        setupPlayer()
     }
     
     /// 클립 삭제 (temp에서만 안전하게 삭제)

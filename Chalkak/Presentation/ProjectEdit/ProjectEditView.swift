@@ -96,28 +96,14 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
-                // appendShoot에서 전달된 클립 데이터가 있으면 temp에 추가
-                if let clipData = tempClipData {
-                    // temp 프로젝트 초기화
-                    await viewModel.initializeTempProject(loadAfter: false)
-                    
-                    viewModel.addClipToTemp(
-                        clipURL: clipData.url,
-                        originalDuration: clipData.originalDuration,
-                        startPoint: clipData.startPoint,
-                        endPoint: clipData.endPoint,
-                        tiltList: clipData.tiltList
-                    )
-                    tempClipData = nil
-                } else {
-                    // temp 프로젝트 초기화
-                    await viewModel.initializeTempProject(loadAfter: true)
-                }
-                await viewModel.initializeTempProject()
+                await viewModel.initializeTempProject(loadAfter: false)
                 
                 if let clip = newClip {
                     viewModel.addClipToTemp(clip: clip)
                     newClip = nil
+                } else {
+                    // temp 프로젝트 초기화
+                    await viewModel.initializeTempProject(loadAfter: true)
                 }
             }
         }
