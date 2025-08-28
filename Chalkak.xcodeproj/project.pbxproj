@@ -18,6 +18,7 @@
 		9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */; };
 		934007912E3652C5006BE89C /* TrimmingHandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934007902E3652BD006BE89C /* TrimmingHandleView.swift */; };
 		93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A137662E32756A00777CF8 /* VideoControlView.swift */; };
+		93FE19812E56D83300E65416 /* TempClipData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FE19802E56D82E00E65416 /* TempClipData.swift */; };
 		992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */; };
 		992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */; };
 		992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */; };
@@ -162,6 +163,7 @@
 		9340078E2E340467006BE89C /* VideoPreviewWithOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewWithOverlay.swift; sourceTree = "<group>"; };
 		934007902E3652BD006BE89C /* TrimmingHandleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingHandleView.swift; sourceTree = "<group>"; };
 		93A137662E32756A00777CF8 /* VideoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoControlView.swift; sourceTree = "<group>"; };
+		93FE19802E56D82E00E65416 /* TempClipData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClipData.swift; sourceTree = "<group>"; };
 		992EE7C12E32ACB50079AFBF /* ProjectEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditView.swift; sourceTree = "<group>"; };
 		992EE7C32E32ACF80079AFBF /* ProjectEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditViewModel.swift; sourceTree = "<group>"; };
 		992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingLineSliderView.swift; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 		992EE7CA2E32AECF0079AFBF /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				93FE19802E56D82E00E65416 /* TempClipData.swift */,
 				992EE7CB2E32AED70079AFBF /* EditableClip.swift */,
 			);
 			path = Model;
@@ -1087,6 +1090,7 @@
 				B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */,
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */,
+				93FE19812E56D83300E65416 /* TempClipData.swift in Sources */,
 				0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,

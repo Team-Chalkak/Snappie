@@ -209,6 +209,9 @@ struct ProjectTimelineView: View {
     }
 
     // MARK: - Helpers (좌표/인덱스 계산)
+    /// 타임라인뷰의 글로벌 좌표 기준 시작지점 X를 계산합니다.
+    /// - Parameter geo: `GeometryReader`가 넘겨주는 현재 뷰의 지오메트리.
+    /// - Returns: 글로벌 좌표계에서 타임라인 콘텐츠의 선두(leading) X 값.
     private func contentStartGlobalX(_ geo: GeometryProxy) -> CGFloat {
         let frame = geo.frame(in: .global)
         let halfWidth = frame.size.width / 2
@@ -216,6 +219,9 @@ struct ProjectTimelineView: View {
         return frame.minX + halfWidth + timelineOffset
     }
 
+    /// 타임라인 내부에서 특정 클립의 왼쪽 모서리 X를 계산합니다.
+    /// - Parameter clipID: 위치를 구할 클립의 식별자.
+    /// - Returns: 콘텐츠 좌표계에서 해당 클립 leading X.
     private func leftXOfClipInContent(_ clipID: String) -> CGFloat {
         var accumulatedX: CGFloat = 0
         for (index, clip) in clips.enumerated() {
@@ -225,7 +231,14 @@ struct ProjectTimelineView: View {
         }
         return accumulatedX
     }
-
+    
+    /// 드래그 중인 클립의 왼쪽 모서리 X(콘텐츠 좌표계 기준) 를 바탕으로,
+    /// 현재 배열에서 어느 인덱스 앞에 삽입할지(갭 인덱스)를 계산합니다.
+    /// - Parameters:
+    ///   - leftX: 드래그 중인 클립의 leading X (콘텐츠 좌표계).
+    ///            일반적으로 `fingerGlobalX - contentStartGlobalX - dragAnchorWithinClip`.
+    ///   - sourceIndex: 드래그 중인 클립의 원본 배열 인덱스(자기 폭 제외 용도).
+    /// - Returns: 삽입할 갭 인덱스(0...`clips.count`). `clips.count`면 맨 뒤.
     private func computeInsertionIndex(leftX: CGFloat, sourceIndex: Int) -> Int {
         var accumulatedX: CGFloat = 0
         var reducedIdx = 0
