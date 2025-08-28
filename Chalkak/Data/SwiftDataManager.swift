@@ -305,7 +305,6 @@ class SwiftDataManager {
     }
     
     // MARK: - Save & Rollback
-
     /// Context 저장하기 - 변경사항 반영
     func saveContext() {
         do {
@@ -315,5 +314,18 @@ class SwiftDataManager {
             // 저장 실패 시 context rollback으로 일관성 유지
             context.rollback()
         }
+    }
+    
+    /// ProjectEditView에서 앱 비정상 종료 시, 길 잃은 temp들 없애기
+    func cleanupAllTempProjects() {
+        let predicate = #Predicate<Project> { $0.isTemp == true }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        
+        guard let tempProjects = try? context.fetch(descriptor) else { return }
+        
+        for tempProject in tempProjects {
+            context.delete(tempProject)
+        }
+        saveContext()
     }
 }

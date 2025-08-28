@@ -320,13 +320,16 @@ final class ClipEditViewModel: ObservableObject {
     }
     
     // MARK: - Temp 관련 메소드
-    func createTempClipData() -> TempClipData {
-        return TempClipData(
-            url: clipURL,
+    func createTempClip() -> Clip {
+        return Clip(
+            id: UUID().uuidString,
+            videoURL: clipURL,
             originalDuration: duration,
             startPoint: startPoint,
             endPoint: endPoint,
-            tiltList: timeStampedTiltList
+            tiltList: timeStampedTiltList,
+            isTemp: true,
+            originalClipID: nil
         )
     }
 }

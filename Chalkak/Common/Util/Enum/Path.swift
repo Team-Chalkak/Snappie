@@ -13,6 +13,6 @@ enum Path: Hashable {
     case camera(state: ShootState)
 
     case projectPreview
-    case projectEdit(projectID: String, tempClipData: TempClipData? = nil)
+    case projectEdit(projectID: String, newClip: Clip? = nil)
     case projectList
 }

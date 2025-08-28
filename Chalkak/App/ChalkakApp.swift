@@ -21,6 +21,10 @@ struct ChalkakApp: App {
             configurations: config
         )
         SwiftDataManager.shared.configure(container: sharedContainer)
+        
+        Task { @MainActor in
+            SwiftDataManager.shared.cleanupAllTempProjects()
+        }
     }
     
     var body: some Scene {
@@ -49,8 +53,8 @@ struct ChalkakApp: App {
                         case .projectPreview:
                             ProjectPreviewView()
                         
-                        case .projectEdit(let projectID, let tempClipData):
-                            ProjectEditView(projectID: projectID, tempClipData: tempClipData)
+                        case .projectEdit(let projectID, let newClip):
+                            ProjectEditView(projectID: projectID, newClip: newClip)
                                 .toolbar(.hidden, for: .navigationBar)
                             
                         case .projectList:

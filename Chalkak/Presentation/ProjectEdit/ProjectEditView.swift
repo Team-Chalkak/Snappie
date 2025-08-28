@@ -17,11 +17,11 @@ struct ProjectEditView: View {
     @State private var isExporting = false
     
     // appendShoot에서 전달된 클립 데이터
-    @State private var tempClipData: TempClipData? = nil
+    @State private var newClip: Clip? = nil
     
-    init(projectID: String, tempClipData: TempClipData? = nil) {
+    init(projectID: String, newClip: Clip? = nil) {
         self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
-        self._tempClipData = State(initialValue: tempClipData)
+        self._newClip = State(initialValue: newClip)
     }
 
     var body: some View {
@@ -96,19 +96,11 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
-                // appendShoot에서 전달된 클립 데이터가 있으면 temp에 추가
-                if let clipData = tempClipData {
-                    // temp 프로젝트 초기화
-                    await viewModel.initializeTempProject(loadAfter: false)
-                    
-                    viewModel.addClipToTemp(
-                        clipURL: clipData.url,
-                        originalDuration: clipData.originalDuration,
-                        startPoint: clipData.startPoint,
-                        endPoint: clipData.endPoint,
-                        tiltList: clipData.tiltList
-                    )
-                    tempClipData = nil
+                await viewModel.initializeTempProject(loadAfter: false)
+                
+                if let clip = newClip {
+                    viewModel.addClipToTemp(clip: clip)
+                    newClip = nil
                 } else {
                     // temp 프로젝트 초기화
                     await viewModel.initializeTempProject(loadAfter: true)
