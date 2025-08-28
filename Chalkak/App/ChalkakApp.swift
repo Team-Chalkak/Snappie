@@ -49,8 +49,8 @@ struct ChalkakApp: App {
                         case .projectPreview:
                             ProjectPreviewView()
                         
-                        case .projectEdit(let projectID):
-                            ProjectEditView(projectID: projectID)
+                        case .projectEdit(let projectID, let tempClipData):
+                            ProjectEditView(projectID: projectID, tempClipData: tempClipData)
                                 .toolbar(.hidden, for: .navigationBar)
                             
                         case .projectList:
