@@ -66,12 +66,6 @@ struct ProjectTimelineView: View {
                         .opacity(isBeingDragged ? 0.0 : 1.0)
                         .animation(.interactiveSpring(response: 0.22, dampingFraction: 0.88), value: insertionIndex)
                         .gesture(longPressDragGesture(clip: clip, geo: geo))
-
-                        if clips.last?.id != clip.id {
-                            Rectangle()
-                                .frame(width: 2, height: 8)
-                                .foregroundStyle(SnappieColor.primaryLight)
-                        }
                     }
 
                     // 맨 뒤 삽입
@@ -126,7 +120,8 @@ struct ProjectTimelineView: View {
                         clip: draggingClip,
                         isDragging: .constant(true),
                         onToggleTrimming: { },
-                        onTrimChanged: { _, _ in }
+                        onTrimChanged: { _, _ in },
+                        onDragStateChanged: onDragStateChanged
                     )
                     .frame(width: clipWidth)
                     .scaleEffect(scaleDuringDrag, anchor: .center)

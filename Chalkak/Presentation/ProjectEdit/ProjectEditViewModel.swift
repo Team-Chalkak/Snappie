@@ -452,25 +452,6 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
 
-    func updateTrimRange(for clipID: String, start: Double, end: Double) {
-        // UI 상태 업데이트
-        guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
-        editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
-        editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        
-        // 드래그 중이 아닐 때 플레이어 업데이트 수행
-        if !isDragging {
-            setupPlayer()
-        }
-    }
-
-    func deleteClip(id: String) {
-        if let idx = editableClips.firstIndex(where: { $0.id == id }) {
-            editableClips.remove(at: idx)
-            setupPlayer()
-        }
-    }
-
     func allClipStart(of clip: EditableClip) -> Double {
         let idx = editableClips.firstIndex { $0.id == clip.id }!
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
@@ -661,7 +642,11 @@ final class ProjectEditViewModel: ObservableObject {
         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
         editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        setupPlayer()
+        
+        // 드래그 중이 아닐 때 플레이어 업데이트 수행
+        if !isDragging {
+            setupPlayer()
+        }
         
         // temp 프로젝트의 clip도 업데이트
         if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
