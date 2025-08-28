@@ -472,7 +472,7 @@ final class ProjectEditViewModel: ObservableObject {
     
     //MARK: - Temp System 메서드들
     /// temp 프로젝트 초기화 (ProjectEditView 진입 시 호출)
-    func initializeTempProject() async {
+    func initializeTempProject(loadAfter: Bool = true) async {
         guard let originalProject = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("원본 프로젝트를 찾을 수 없습니다.")
             return
@@ -480,7 +480,9 @@ final class ProjectEditViewModel: ObservableObject {
         
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
-            await loadProjectAsync()
+            if loadAfter {
+                await loadProjectAsync()
+            }
             return
         }
         
@@ -553,7 +555,9 @@ final class ProjectEditViewModel: ObservableObject {
         self.projectID = tempID
         self.project = tempProject
         
-        await loadProjectAsync()
+        if loadAfter {
+            await loadProjectAsync()
+        }
     }
 
     
@@ -589,18 +593,18 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.saveContext()
         
 //        // UI 갱신을 위해 다시 로드
-//        Task {
-//            await loadProjectAsync()
-//        }
-        editableClips.append(EditableClip(
-            id: tempClip.id,
-            url: clipURL,
-            originalDuration: originalDuration,
-            startPoint: startPoint,
-            endPoint: endPoint,
-            thumbnails: []
-        ))
-        setupPlayer()
+        Task {
+            await loadProjectAsync()
+        }
+//        editableClips.append(EditableClip(
+//            id: tempClip.id,
+//            url: clipURL,
+//            originalDuration: originalDuration,
+//            startPoint: startPoint,
+//            endPoint: endPoint,
+//            thumbnails: []
+//        ))
+//        setupPlayer()
     }
     
     /// 클립 삭제 (temp에서만 안전하게 삭제)
