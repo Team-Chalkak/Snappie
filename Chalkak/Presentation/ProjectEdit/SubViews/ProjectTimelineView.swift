@@ -28,21 +28,33 @@ struct ProjectTimelineView: View {
     @State private var dragValue: DragGesture.Value?
     @State private var isDragActive = false
 
+    // 실시간 삽입 후보 위치(갭 인덱스)
+    @State private var insertionIndex: Int?
+    
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 // Layer 1: The scrollable timeline
                 HStack(alignment: .center, spacing: 0) {
-                    ForEach(clips) { clip in
+                    ForEach(Array(clips.enumerated()), id: \.1.id) { index, clip in
                         let isBeingDragged = (draggingClip?.id == clip.id && isDragActive)
+                        let clipWidth = clip.trimmedDuration * pxPerSecond
+                        let draggingWidth = (draggingClip?.trimmedDuration ?? 0) * pxPerSecond
 
+                        // 후보 삽입 지점이면 갭(placeholder) 먼저 삽입
+                        if let insertionIndex, insertionIndex == index, isDragActive, draggingWidth > 0 {
+                            insertionGap(width: draggingWidth)
+                        }
+                        
                         ClipTrimmingView(
                             clip: clip,
                             isDragging: $isDragging,
                             onToggleTrimming: { onToggleTrimming(clip.id) },
                             onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) }
                         )
-                        .opacity(isBeingDragged ? 0.4 : 1.0)
+                        .frame(width: isBeingDragged ? 0.0 : clipWidth, height: timelineHeight)
+                        .opacity(isBeingDragged ? 0.0 : 1.0)
+                        .animation(.interactiveSpring(response: 0.22, dampingFraction: 0.88), value: insertionIndex)
                         .gesture(longPressDragGesture(clip: clip, geo: geo))
                         
                         if clips.last?.id != clip.id {
@@ -50,6 +62,15 @@ struct ProjectTimelineView: View {
                                 .frame(width: 2, height: 8)
                                 .foregroundStyle(SnappieColor.primaryLight)
                         }
+                    }
+                    
+                    // 리스트 끝에 삽입하는 경우(맨 뒤)
+                    if let insertionIndex,
+                       insertionIndex == clips.count,
+                       isDragActive,
+                       let draggingClip
+                    {
+                        insertionGap(width: draggingClip.trimmedDuration * pxPerSecond)
                     }
                     
                     Button(action: onAddClipTapped) {
@@ -86,7 +107,7 @@ struct ProjectTimelineView: View {
                     )
                     .frame(width: clipWidth)
                     .offset(x: offsetX)
-                    .scaleEffect(1.1)
+                    .scaleEffect(1.2)
                     .shadow(radius: 10)
                 }
             }
@@ -105,45 +126,78 @@ struct ProjectTimelineView: View {
             }
             .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
             .onChanged { value in
-                guard case .second(true, let drag) = value else { return }
+                guard case .second(true, let drag) = value,
+                          let drag = drag else { return }
                 self.dragValue = drag
-            }
-            .onEnded { value in
-                if case .second(true, let drag) = value, let drag = drag, let sourceIndex = clips.firstIndex(where: { $0.id == draggingClip?.id }) {
+                
+                // 실시간 삽입 후보 계산
+                if let sourceIndex = clips.firstIndex(where: { $0.id == draggingClip?.id }) {
                     let timelineFrame = geo.frame(in: .global)
                     let timelineContentOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
                     let contentStartGlobalX = timelineFrame.minX + (timelineFrame.width / 2) + timelineContentOffset
                     let relativeDropX = drag.location.x - contentStartGlobalX
-                    
-                    let destinationIndex = getDestinationIndex(relativeDropX: relativeDropX, sourceIndex: sourceIndex)
-                    
-                    onMove(IndexSet(integer: sourceIndex), destinationIndex)
+
+                    let candidate = getDestinationIndex(relativeDropX: relativeDropX, sourceIndex: sourceIndex)
+                    if insertionIndex != candidate {
+                        withAnimation(.interactiveSpring(response: 0.22, dampingFraction: 0.88)) {
+                            insertionIndex = candidate
+                        }
+                    }
                 }
-                
-                withAnimation(.spring()) {
-                    draggingClip = nil
-                    dragValue = nil
-                    isDragActive = false
+            }
+            .onEnded { value in
+                defer {
+                    withAnimation(.spring()) {
+                        draggingClip = nil
+                        dragValue = nil
+                        isDragActive = false
+                        insertionIndex = nil
+                    }
                 }
+
+                guard case .second(true, let drag) = value,
+                      let drag = drag,
+                      let sourceIndex = clips.firstIndex(where: { $0.id == draggingClip?.id })
+                else { return }
+
+                let timelineFrame = geo.frame(in: .global)
+                let timelineContentOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+                let contentStartGlobalX = timelineFrame.minX + (timelineFrame.width / 2) + timelineContentOffset
+                let relativeDropX = drag.location.x - contentStartGlobalX
+
+                let destinationIndex = getDestinationIndex(relativeDropX: relativeDropX, sourceIndex: sourceIndex)
+                onMove(IndexSet(integer: sourceIndex), destinationIndex)
             }
     }
     
     private func getDestinationIndex(relativeDropX: CGFloat, sourceIndex: Int) -> Int {
         var accumulatedWidth: CGFloat = 0
-        var targetIndex = 0
+        var candidate = clips.count - 1
 
         for (index, clip) in clips.enumerated() {
-            if index == sourceIndex { continue } // Skip the original item
+            if index == sourceIndex { continue }
             
             let clipWidth = clip.trimmedDuration * pxPerSecond
             let clipSpacing: CGFloat = (index < clips.count - 1) ? 2 : 0
             
             if relativeDropX < accumulatedWidth + (clipWidth + clipSpacing) / 2 {
-                return index > sourceIndex ? index - 1 : index
+                candidate = index
+                break
             }
             accumulatedWidth += clipWidth + clipSpacing
         }
-        
-        return clips.count - 1
+        // SwiftUI onMove 규칙: 뒤에서 앞으로/앞에서 뒤로 이동할 때 인덱스 보정
+        return candidate > sourceIndex ? candidate - 1 : candidate
     }
+    
+    // MARK: - 갭(placeholder) 뷰
+   @ViewBuilder
+   private func insertionGap(width: CGFloat) -> some View {
+       RoundedRectangle(cornerRadius: 6)
+           .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 6]))
+           .foregroundStyle(SnappieColor.primaryLight)
+           .frame(width: max(4, width), height: timelineHeight)
+           .transition(.opacity.combined(with: .move(edge: .leading)))
+           .animation(.easeInOut(duration: 0.18), value: insertionIndex)
+   }
 }
