@@ -467,50 +467,81 @@ class CameraManager: NSObject, ObservableObject {
         savedVideoInfo.send(url)
     }
 
-    /// 전면/후면 카메라 전환
-    func switchCamera(to newPosition: AVCaptureDevice.Position) {
-        if let currentDevice = videoDeviceInput?.device {
-            if currentDevice.position == .back {
-                backCameraZoomScale = currentZoomScale
+    /// 카메라 복구 공통 함수
+    private func recoverCameraInput(with device: AVCaptureDevice) {
+        do {
+            let fallbackInput = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(fallbackInput) {
+                session.addInput(fallbackInput)
+                videoDeviceInput = fallbackInput
             }
+        } catch {
+            print("카메라 복구 실패: \(error)")
         }
+    }
 
-        session.beginConfiguration()
-        session.removeInput(videoDeviceInput)
-
-        let device = (newPosition == .back) ? findBestBackCamera() : AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-
-        guard let newDevice = device else {
-            session.commitConfiguration()
+    /// 전-후면 카메라 전환
+    func switchCamera(to newPosition: AVCaptureDevice.Position) {
+        guard let currentDevice = videoDeviceInput?.device else {
             return
         }
-        if let connection = movieOutput.connection(with: .video) {
-            // 전면카메라 좌우반전 제거
-            if connection.isVideoMirroringSupported {
-                connection.isVideoMirrored = newPosition == .front
+
+        // 후면카메라일때 줌 스케일 저장
+        if currentDevice.position == .back {
+            backCameraZoomScale = currentZoomScale
+        }
+
+        // 전환을 위한 카메라 탐색
+        let newDevice: AVCaptureDevice?
+        if newPosition == .back {
+            newDevice = findBestBackCamera()
+        } else {
+            newDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        }
+
+        guard let device = newDevice else {
+            return
+        }
+        session.beginConfiguration()
+        defer {
+            session.commitConfiguration()
+        }
+
+        // 모든 비디오input 제거
+        let allInputs = session.inputs
+        for input in allInputs {
+            if let deviceInput = input as? AVCaptureDeviceInput,
+               deviceInput.device.hasMediaType(.video)
+            {
+                session.removeInput(deviceInput)
             }
         }
 
         do {
-            let newInput = try AVCaptureDeviceInput(device: newDevice)
-            if session.canAddInput(newInput) {
-                session.addInput(newInput)
-                videoDeviceInput = newInput
+            // 새로운 비디오 입력 생성
+            let newInput = try AVCaptureDeviceInput(device: device)
 
-                try? configureCameraSettings(for: newDevice)
-                initialCameraPosition = newPosition
+            guard session.canAddInput(newInput) else {
+                return
+            }
+            // 카메라 설정 적용
+            try configureCameraSettings(for: device)
+
+            session.addInput(newInput)
+            videoDeviceInput = newInput
+
+            // 카메라 위치 저장
+            initialCameraPosition = newPosition
+
+            if let connection = movieOutput.connection(with: .video) {
+                if connection.isVideoMirroringSupported {
+                    connection.isVideoMirrored = newPosition == .front
+                }
             }
 
         } catch {
-            print("카메라 전환 중 오류: \(error)")
-        }
-
-        session.commitConfiguration()
-
-        // 전환된 카메라의 저장된 줌 스케일 복원
-        if newPosition == .back {
-            let savedZoomScale = backCameraZoomScale
-            setZoomScale(savedZoomScale)
+            // 실패시 기존카메라 복구
+            recoverCameraInput(with: currentDevice)
         }
     }
 
