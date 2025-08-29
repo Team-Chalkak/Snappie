@@ -40,13 +40,21 @@ struct CameraRecordView: View {
             ) {
                 viewModel.changeCamera()
             }
+            .hidden()
+            .overlay(
+                viewModel.isRecording ? nil :
+                    SnappieButton(.solidSecondary(contentType: .icon(.conversion), size: .medium, isOutlined: false)
+                    ) {
+                        viewModel.changeCamera()
+                    }
+            )
         }
         .padding(.bottom, Layout.recordButtonBottomPadding)
         .padding(.horizontal, Layout.recordButtonHorizontalPadding)
         .onAppear {
             Task { @MainActor in
                 viewModel.updateBadgeState()
-                
+
                 // 프로젝트 완료 후 홈으로 돌아왔을 때 알림 표시
                 if UserDefaults.standard.bool(forKey: "showProjectSavedAlert") {
                     UserDefaults.standard.set(false, forKey: "showProjectSavedAlert")
