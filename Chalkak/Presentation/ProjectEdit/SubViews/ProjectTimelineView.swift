@@ -22,6 +22,9 @@ struct ProjectTimelineView: View {
     let onTrimChanged: (String, Double, Double) -> Void
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
+    let onDragStateChanged: (Bool) -> Void
+    
+    private let unionButtonWidth: CGFloat = 48
 
     // 드래그 상태
     @State private var draggingClip: EditableClip?
@@ -54,18 +57,13 @@ struct ProjectTimelineView: View {
                             clip: clip,
                             isDragging: $isDragging,
                             onToggleTrimming: { onToggleTrimming(clip.id) },
-                            onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) }
+                            onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) },
+                            onDragStateChanged: onDragStateChanged
                         )
                         .frame(width: isBeingDragged ? 0.0 : clipWidth, height: timelineHeight)
                         .opacity(isBeingDragged ? 0.0 : 1.0)
                         .animation(.interactiveSpring(response: 0.22, dampingFraction: 0.88), value: insertionIndex)
                         .gesture(longPressDragGesture(clip: clip, geo: geo))
-
-                        if clips.last?.id != clip.id {
-                            Rectangle()
-                                .frame(width: 2, height: 8)
-                                .foregroundStyle(SnappieColor.primaryLight)
-                        }
                     }
 
                     // 맨 뒤 삽입
@@ -94,7 +92,6 @@ struct ProjectTimelineView: View {
                     height: timelineHeight,
                     alignment: .leading
                 )
-                .clipped()
 
                 // Layer 2: overlay (앵커 기반 왼쪽 정렬)
                 if let draggingClip = draggingClip, isDragActive, let dragValue = self.dragValue {
@@ -120,7 +117,8 @@ struct ProjectTimelineView: View {
                         clip: draggingClip,
                         isDragging: .constant(true),
                         onToggleTrimming: { },
-                        onTrimChanged: { _, _ in }
+                        onTrimChanged: { _, _ in },
+                        onDragStateChanged: onDragStateChanged
                     )
                     .frame(width: clipWidth)
                     .scaleEffect(scaleDuringDrag, anchor: .center)
@@ -128,6 +126,11 @@ struct ProjectTimelineView: View {
                     .shadow(radius: 10)
                 }
             }
+            .frame(
+                width: getTimelineFullWidth(geoWidth: geo.size.width),
+                height: timelineHeight,
+                alignment: .leading
+            )
         }
         .frame(height: timelineHeight)
     }
@@ -265,5 +268,13 @@ struct ProjectTimelineView: View {
             .frame(width: max(4, width), height: timelineHeight)
             .transition(.opacity.combined(with: .move(edge: .leading)))
             .animation(.easeInOut(duration: 0.18), value: insertionIndex)
+    }
+}
+
+extension ProjectTimelineView {
+    func getTimelineFullWidth(geoWidth: CGFloat) -> CGFloat {
+        let videoRangeWidth = CGFloat(totalDuration) * pxPerSecond
+        
+        return geoWidth + videoRangeWidth + unionButtonWidth
     }
 }

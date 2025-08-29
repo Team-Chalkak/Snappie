@@ -9,17 +9,17 @@ import SwiftUI
 
 struct ProjectTrimmingHandle: View {
     let isStart: Bool
-    let leftW: CGFloat
-    let midW: CGFloat
     let fullHeight: CGFloat
     let fullWidth: CGFloat
+    let trimmedWidth: CGFloat
     @Binding var isDragging: Bool
     let onTrimChanged: (Double, Double) -> Void
+    let onDragStateChanged: (Bool) -> Void
     let clip: EditableClip
 
     var body: some View {
         let size: CGFloat = 20
-        let xOffset = isStart ? leftW : (leftW + midW)
+        let xOffset = isStart ? 0 : trimmedWidth
 
         UnevenRoundedRectangle(
             cornerRadii: .init(
@@ -40,7 +40,11 @@ struct ProjectTrimmingHandle: View {
             .gesture(
                 DragGesture()
                     .onChanged { gesture in
-                        isDragging = true
+                        if !isDragging {
+                            isDragging = true
+                            onDragStateChanged(true)
+                        }
+                        
                         let ratio = min(max(gesture.location.x / fullWidth, 0), 1)
                         let time = Double(ratio) * clip.originalDuration
                         if isStart {
@@ -53,6 +57,7 @@ struct ProjectTrimmingHandle: View {
                     }
                     .onEnded { _ in
                         isDragging = false
+                        onDragStateChanged(false)
                     }
             )
     }

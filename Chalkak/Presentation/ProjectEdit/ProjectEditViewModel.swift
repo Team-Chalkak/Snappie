@@ -15,6 +15,7 @@ final class ProjectEditViewModel: ObservableObject {
     private var projectID: String
     private var currentComposition: AVMutableComposition?
     private var timeObserverToken: Any?
+    private var isTimeObserverActive = true
     private var imageGenerator: AVAssetImageGenerator?
     
     @Published var editableClips: [EditableClip] = []
@@ -40,7 +41,8 @@ final class ProjectEditViewModel: ObservableObject {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
     
-    //MARK: - Temp 관련 프로퍼티
+    // MARK: - Temp 관련 프로퍼티
+
     var hasChanges: Bool {
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else { return false }
         return project.isTemp
@@ -49,7 +51,8 @@ final class ProjectEditViewModel: ObservableObject {
     var originalProjectID: String {
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID),
               project.isTemp,
-              let originalID = project.originalID else {
+              let originalID = project.originalID
+        else {
             return projectID
         }
         return originalID
@@ -201,6 +204,8 @@ final class ProjectEditViewModel: ObservableObject {
     /// 비동기 플레이어 설정
     @MainActor
     private func setupPlayerAsync() async {
+        let savedPlayHead = playHead
+        
         let composition = AVMutableComposition()
         guard
             let vidTrack = composition.addMutableTrack(
@@ -259,12 +264,21 @@ final class ProjectEditViewModel: ObservableObject {
         imageGenerator?.appliesPreferredTrackTransform = true
         imageGenerator?.videoComposition = previewComposition
         
-        await updatePreviewImage(at: playHead)
+        // 저장된 플레이헤드 위치로 복원
+        if savedPlayHead > 0 && savedPlayHead <= totalDuration {
+            await updatePreviewImage(at: savedPlayHead)
+        } else {
+            await updatePreviewImage(at: playHead)
+        }
         
         if let token = timeObserverToken {
             player.removeTimeObserver(token)
+            timeObserverToken = nil
         }
-        addTimeObserver()
+        // 상태가 활성화되어 있을 때만 새로운 옵저버 생성
+        if isTimeObserverActive {
+            addTimeObserver()
+        }
         addEndObserver()
     }
     
@@ -283,13 +297,16 @@ final class ProjectEditViewModel: ObservableObject {
             queue: .main
         ) { [weak self] time in
             guard let self = self else { return }
-            let secs = CMTimeGetSeconds(time)
             
+            // 드래그 중이면 아무것도 안 함
+            guard !self.isDragging else { return }
+            
+            let secs = CMTimeGetSeconds(time)
             DispatchQueue.main.async {
                 self.playHead = secs
-                
                 Task { await self.updatePreviewImage(at: secs) }
                 
+                // 기존 트리밍 로직도 그대로 유지
                 if let clip = self.editableClips.first(where: { $0.isTrimming }) {
                     let allStart = self.allClipStart(of: clip)
                     let allEnd = allStart + clip.trimmedDuration
@@ -298,7 +315,6 @@ final class ProjectEditViewModel: ObservableObject {
                             to: CMTime(seconds: allStart, preferredTimescale: 600),
                             toleranceBefore: .zero, toleranceAfter: .zero
                         )
-                        // 계속 재생 중이라면, play() 호출 유지
                         if self.isPlaying {
                             self.player.play()
                         }
@@ -326,6 +342,50 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
     
+    private func pauseTimeObserver() {
+        isTimeObserverActive = false
+        if let token = timeObserverToken {
+            player.removeTimeObserver(token)
+            timeObserverToken = nil
+        }
+    }
+
+    private func resumeTimeObserver() {
+        guard !isTimeObserverActive else { return }  // 이미 활성화된 경우 중복 방지
+        isTimeObserverActive = true
+        addTimeObserver()  // 새로운 옵저버 추가
+    }
+    
+    func setDraggingState(_ dragging: Bool) {
+        isDragging = dragging
+        
+        // 드래그 시작시: 재생 중이면 일시정지하고 timeObserver 정지
+        if dragging {
+            if isPlaying {
+                player.pause()
+                isPlaying = false
+            }
+            pauseTimeObserver()
+        }
+        // 드래그 완료시: timeObserver 재시작하고 플레이어 업데이트
+        else {
+            Task {
+                // 현재 플레이헤드 위치를 저장
+                let currentTime = self.playHead
+                
+                self.resumeTimeObserver()
+                await self.setupPlayerAsync()
+                
+                // 저장된 위치로 복원 (0초가 아님)
+                if currentTime > 0 && currentTime <= self.totalDuration {
+                    self.seekTo(time: currentTime)
+                }
+            }
+        }
+    }
+
+
+
     func updatePreviewImage(at time: Double) async {
         guard let gen = imageGenerator else { return }
         let cm = CMTime(seconds: time, preferredTimescale: 600)
@@ -354,12 +414,17 @@ final class ProjectEditViewModel: ObservableObject {
             return
         }
         
+        // 끝에 도달했을 때 0초로 리셋하지 않고 그 자리에서 정지
         if playHead >= totalDuration {
-            seekTo(time: 0)
+            isPlaying = false
+            player.pause()
+            return
         }
         
         isPlaying.toggle()
-        if isPlaying { player.play() } else {
+        if isPlaying {
+            player.play()
+        } else {
             player.pause()
         }
     }
@@ -374,15 +439,34 @@ final class ProjectEditViewModel: ObservableObject {
     }
     
     func toggleTrimmingMode(for clipID: String) {
+        // 트리밍 모드 토글
         editableClips = editableClips.map { clip in
             var c = clip
             c.isTrimming = (c.id == clipID) ? !c.isTrimming : false
             return c
         }
+        
+        // 트리밍 모드가 활성화된 클립을 찾고, 해당 클립의 시작 위치로 플레이헤드 이동
+        if let trimmingClip = editableClips.first(where: { $0.isTrimming }) {
+            // 해당 클립의 타임라인상 시작 위치
+            let clipStartTime = allClipStart(of: trimmingClip)
+            
+            // 범위 체크
+            let safeTime = min(max(0, clipStartTime), totalDuration)
+            
+            // 트리밍된 부분의 시작점으로 플레이헤드 이동
+            seekTo(time: safeTime)
+            
+            // 재생 중이었다면 일시정지
+            if isPlaying {
+                isPlaying = false
+                player.pause()
+            }
+        }
     }
 
     func deactivateAllTrimming() {
-        for i in 0..<editableClips.count {
+        for i in 0 ..< editableClips.count {
             editableClips[i].isTrimming = false
         }
     }
@@ -395,6 +479,8 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func moveClip(from source: IndexSet, to destination: Int) {
+        let currentTime = playHead
+        
         // 1. Reorder the UI-facing array
         editableClips.move(fromOffsets: source, toOffset: destination)
 
@@ -402,35 +488,15 @@ final class ProjectEditViewModel: ObservableObject {
         writeOrdersToTempProjectAndNormalize()
 
         // 3. After reordering, the player composition is invalid. Rebuild it.
-        setupPlayer()
+        Task {
+            await setupPlayerAsync()
+            
+            // 이동 후에도 원래 위치 유지
+            if currentTime > 0 && currentTime <= self.totalDuration {
+                self.seekTo(time: currentTime)
+            }
+        }
     }
-
-    // MARK: – 프로젝트 변경사항 저장
-
-//    func saveProjectChanges() async {
-//        // 프로젝트 엔티티 가져오기
-//        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
-//            print("프로젝트(\(projectID))를 찾을 수 없습니다.")
-//            return
-//        }
-//
-//        // 편집된 trim 값 반영
-//        for entity in project.clipList {
-//            if let edited = editableClips.first(where: { $0.id == entity.id }) {
-//                entity.startPoint = edited.startPoint
-//                entity.endPoint = edited.endPoint
-//            }
-//        }
-//
-//        // 삭제된 클립 제거
-//        let removed = project.clipList.filter { entity in
-//            !editableClips.contains(where: { $0.id == entity.id })
-//        }
-//        removed.forEach { SwiftDataManager.shared.deleteClip($0) }
-//
-//        // 저장
-//        SwiftDataManager.shared.saveContext()
-//    }
     
     // MARK: – 편집된 영상 갤러리에 내보내기
 
@@ -450,7 +516,9 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func setCurrentProjectID() {
-        UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+        // temp 프로젝트인 경우 원본 ID를 설정
+        let idToSet = originalProjectID
+        UserDefaults.standard.set(idToSet, forKey: UserDefaultKey.currentProjectID)
     }
     
     //MARK: - 빈 프로젝트(클립이 모두 삭제된 프로젝트) 삭제
@@ -540,7 +608,7 @@ final class ProjectEditViewModel: ObservableObject {
                 isTemp: true,
                 originalClipID: originalClip.id
             )
-            tempClip.order = idx   // ✅ 유지
+            tempClip.order = idx // ✅ 유지
             tempProject.clipList.append(tempClip)
         }
         
@@ -553,19 +621,19 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.saveContext()
         
         // ViewModel을 temp로 전환
-        self.projectID = tempID
-        self.project = tempProject
+        projectID = tempID
+        project = tempProject
         
         if loadAfter {
             await loadProjectAsync()
         }
     }
 
-    
     /// appendShoot에서 촬영한 클립을 temp에 추가
     func addClipToTemp(clip: Clip) {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-              tempProject.isTemp else {
+              tempProject.isTemp
+        else {
             print("현재 temp 프로젝트가 아닙니다.")
             return
         }
@@ -576,7 +644,7 @@ final class ProjectEditViewModel: ObservableObject {
         clip.isTemp = true
         clip.originalClipID = nil // 새로 추가된 클립
         
-        clip.order = nextOrder   // 새 클립에 꼬리 order 부여
+        clip.order = nextOrder // 새 클립에 꼬리 order 부여
         tempProject.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
         
@@ -591,7 +659,8 @@ final class ProjectEditViewModel: ObservableObject {
         print("클립 삭제 시작: \(id)")
         
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-              tempProject.isTemp else {
+              tempProject.isTemp
+        else {
             print("경고: temp 프로젝트가 아닌 상태에서 deleteClip 호출됨")
             return
         }
@@ -604,6 +673,8 @@ final class ProjectEditViewModel: ObservableObject {
                 return // 여기서 완전히 종료, 아무것도 삭제하지 않음
             }
         }
+        let currentTime = playHead
+
         
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
@@ -619,15 +690,27 @@ final class ProjectEditViewModel: ObservableObject {
             // cascade로 인해 clipToDelete는 자동으로 삭제됨
             
             // order 재정렬
-            for (idx, c) in tempProject.clipList.enumerated() { c.order = idx }
+            for (idx, c) in tempProject.clipList.enumerated() {
+                c.order = idx
+            }
             SwiftDataManager.shared.saveContext()
             print("클립 삭제 완료")
         }
         
         // 4. 플레이어 재설정
-        setupPlayer()
+        Task {
+            await setupPlayerAsync()
+            
+            // 삭제 후에도 적절한 위치로 복원
+            let newTotalDuration = self.totalDuration
+            if currentTime > 0 && currentTime <= newTotalDuration {
+                self.seekTo(time: min(currentTime, newTotalDuration))
+            } else if newTotalDuration > 0 {
+                // 현재 위치가 새로운 총 길이를 초과하면 끝으로 이동 (0이 아님)
+                self.seekTo(time: newTotalDuration)
+            }
+        }
     }
-    
     
     /// 트리밍 범위 업데이트 (temp에만 반영)
     func updateTrimRange(for clipID: String, start: Double, end: Double) {
@@ -635,12 +718,17 @@ final class ProjectEditViewModel: ObservableObject {
         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
         editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        setupPlayer()
+        
+        // 드래그 중이 아닐 때 플레이어 업데이트 수행
+        if !isDragging {
+            setupPlayer()
+        }
         
         // temp 프로젝트의 clip도 업데이트
         if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
            tempProject.isTemp,
-           let tempClip = tempProject.clipList.first(where: { $0.id == clipID }) {
+           let tempClip = tempProject.clipList.first(where: { $0.id == clipID })
+        {
             tempClip.startPoint = editableClips[idx].startPoint
             tempClip.endPoint = editableClips[idx].endPoint
             SwiftDataManager.shared.saveContext()
@@ -652,7 +740,8 @@ final class ProjectEditViewModel: ObservableObject {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp,
               let originalID = tempProject.originalID,
-              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID) else {
+              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID)
+        else {
             // temp가 아니면 이미 저장된 상태
             return true
         }
@@ -669,8 +758,8 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.deleteTempProject(tempProject)
         
         // 4. ViewModel을 원본으로 복원
-        self.projectID = originalID
-        self.project = originalProject
+        projectID = originalID
+        project = originalProject
         
         return true
     }
@@ -679,7 +768,8 @@ final class ProjectEditViewModel: ObservableObject {
     func discardChanges() async -> Bool {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp,
-              let originalID = tempProject.originalID else {
+              let originalID = tempProject.originalID
+        else {
             // temp가 아니면 취소할 것 없음
             return true
         }
@@ -688,8 +778,8 @@ final class ProjectEditViewModel: ObservableObject {
         SwiftDataManager.shared.deleteTempProject(tempProject)
         
         // ViewModel을 원본으로 복원
-        self.projectID = originalID
-        self.project = SwiftDataManager.shared.fetchProject(byID: originalID)
+        projectID = originalID
+        project = SwiftDataManager.shared.fetchProject(byID: originalID)
         
         return true
     }
@@ -706,13 +796,16 @@ final class ProjectEditViewModel: ObservableObject {
         let deleted = originalClips.filter { orig in
             !tempOrdered.contains { $0.originalClipID == orig.id }
         }
-        for d in deleted { originalProject.clipList.removeAll { $0.id == d.id } }
+        for d in deleted {
+            originalProject.clipList.removeAll { $0.id == d.id }
+        }
 
         // 새 순서로 재구성 + order 부여
         var newClipOrder: [Clip] = []
         for (idx, t) in tempOrdered.enumerated() {
             if let oid = t.originalClipID,
-               let orig = originalClips.first(where: { $0.id == oid }) {
+               let orig = originalClips.first(where: { $0.id == oid })
+            {
                 orig.startPoint = t.startPoint
                 orig.endPoint = t.endPoint
                 orig.tiltList = t.tiltList
@@ -766,7 +859,9 @@ final class ProjectEditViewModel: ObservableObject {
         }
 
         // 3) 0...N-1로 재부여(정규화) – 중복/빈틈 제거
-        for (idx, c) in tempProject.clipList.enumerated() { c.order = idx }
+        for (idx, c) in tempProject.clipList.enumerated() {
+            c.order = idx
+        }
 
         SwiftDataManager.shared.saveContext()
     }
@@ -779,14 +874,14 @@ final class ProjectEditViewModel: ObservableObject {
         }
         // order가 비었거나 중복/불연속이면 0...N-1로 보정
         let shouldFix = Set(arr.map(\.order)).count != arr.count
-                      || (arr.first?.order ?? 0) != 0
-                      || (arr.last?.order ?? -1) != arr.count - 1
+            || (arr.first?.order ?? 0) != 0
+            || (arr.last?.order ?? -1) != arr.count - 1
         if shouldFix {
-            for (i, c) in arr.enumerated() { c.order = i }
+            for (i, c) in arr.enumerated() {
+                c.order = i
+            }
             SwiftDataManager.shared.saveContext()
         }
         return arr
     }
-
 }
-
