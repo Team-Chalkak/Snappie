@@ -32,7 +32,7 @@ struct ProjectEditView: View {
                 .onTapGesture {
                     viewModel.deactivateAllTrimming()
                 }
-                    
+            
             VStack(spacing: 0) {
                 SnappieNavigationBar(
                     navigationTitle: "프로젝트 편집",
@@ -66,7 +66,7 @@ struct ProjectEditView: View {
                 .padding(.vertical, 16)
                 
                 Divider().padding(.vertical, 8)
-
+                
                 TrimminglineSliderView(
                     clips: $viewModel.editableClips,
                     playHeadPosition: $viewModel.playHead,
@@ -149,6 +149,20 @@ struct ProjectEditView: View {
             isLoading: $isExporting,
             loadingMessage: "영상 내보내는 중...",
             completionMessage: ""
+        )
+        
+        // 모든 클립 삭제 시, 프로젝트 삭제 알림
+        .alert(
+            .emptyProjectDelete,
+            isPresented: $viewModel.showEmptyProjectAlert,
+            confirmAction: {
+                Task {
+                    let success = await viewModel.deleteEmptyProject()
+                    if success {
+                        coordinator.popToScreen(.projectList)
+                    }
+                }
+            }
         )
     }
 }

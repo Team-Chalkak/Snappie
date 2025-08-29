@@ -25,6 +25,7 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var isDragging = false
     @Published var guide: Guide? = nil /// 프로젝트 로딩중
     @Published var isLoading = false
+    @Published var showEmptyProjectAlert = false
     
     // MARK: – 저장/내보내기용 프로퍼티
 
@@ -387,7 +388,9 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func allClipStart(of clip: EditableClip) -> Double {
-        let idx = editableClips.firstIndex { $0.id == clip.id }!
+        guard let idx = editableClips.firstIndex(where: { $0.id == clip.id }) else {
+            return 0
+        }
         return editableClips[..<idx].reduce(0) { $0 + $1.trimmedDuration }
     }
 
@@ -448,6 +451,24 @@ final class ProjectEditViewModel: ObservableObject {
 
     func setCurrentProjectID() {
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+    }
+    
+    //MARK: - 빈 프로젝트(클립이 모두 삭제된 프로젝트) 삭제
+    func deleteEmptyProject() async -> Bool {
+        // 1. temp 정리 (discardChanges와 동일)
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+              tempProject.isTemp,
+              let originalID = tempProject.originalID else {
+            return false
+        }
+        
+        // 2. temp 프로젝트만 삭제 (원본은 그대로)
+        SwiftDataManager.shared.deleteTempProject(tempProject)
+        
+        // 3. 원본 프로젝트 ID 저장 (삭제 대상으로)
+        UserDefaults.standard.set(originalID, forKey: "ProjectToDelete")
+        
+        return true
     }
     
     //MARK: - Temp System 메서드들
@@ -575,6 +596,15 @@ final class ProjectEditViewModel: ObservableObject {
             return
         }
         
+        // 마지막 클립인지 확인 - 삭제 전에 미리 체크
+        if tempProject.clipList.count == 1 {
+            // 해당 클립이 삭제하려는 클립인지 확인
+            if tempProject.clipList.first?.id == id {
+                showEmptyProjectAlert = true
+                return // 여기서 완전히 종료, 아무것도 삭제하지 않음
+            }
+        }
+        
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
         isPlaying = false
@@ -587,6 +617,8 @@ final class ProjectEditViewModel: ObservableObject {
         if let _ = tempProject.clipList.first(where: { $0.id == id }) {
             tempProject.clipList.removeAll { $0.id == id }
             // cascade로 인해 clipToDelete는 자동으로 삭제됨
+            
+            // order 재정렬
             for (idx, c) in tempProject.clipList.enumerated() { c.order = idx }
             SwiftDataManager.shared.saveContext()
             print("클립 삭제 완료")
