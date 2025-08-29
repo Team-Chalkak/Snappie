@@ -49,6 +49,17 @@ struct ProjectListView: View {
         }
         .navigationBarBackButtonHidden()
         .snappieAlert(isPresented: $viewModel.showProjectDeletedAlert, message: "프로젝트 삭제됨", showImage: false)
+        .onAppear {
+            viewModel.fetchProjects()
+            
+            // 삭제할 프로젝트가 있는지 확인
+            if let projectIDToDelete = UserDefaults.standard.string(forKey: "ProjectToDelete"),
+               let projectToDelete = viewModel.projects.first(where: { $0.id == projectIDToDelete }) {
+                
+                UserDefaults.standard.removeObject(forKey: "ProjectToDelete")
+                viewModel.deleteProject(projectToDelete)
+            }
+        }
     }
 }
 
