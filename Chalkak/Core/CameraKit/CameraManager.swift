@@ -467,19 +467,6 @@ class CameraManager: NSObject, ObservableObject {
         savedVideoInfo.send(url)
     }
 
-    /// 카메라 복구 공통 함수
-    private func recoverCameraInput(with device: AVCaptureDevice) {
-        do {
-            let fallbackInput = try AVCaptureDeviceInput(device: device)
-            if session.canAddInput(fallbackInput) {
-                session.addInput(fallbackInput)
-                videoDeviceInput = fallbackInput
-            }
-        } catch {
-            print("카메라 복구 실패: \(error)")
-        }
-    }
-
     /// 전-후면 카메라 전환
     func switchCamera(to newPosition: AVCaptureDevice.Position) {
         guard let currentDevice = videoDeviceInput?.device else {
@@ -540,8 +527,15 @@ class CameraManager: NSObject, ObservableObject {
             }
 
         } catch {
-            // 실패시 기존카메라 복구
-            recoverCameraInput(with: currentDevice)
+            // 실패시 기존 카메라 복구
+            if let fallbackInput = try? AVCaptureDeviceInput(device: device),
+               session.canAddInput(fallbackInput)
+            {
+                session.addInput(fallbackInput)
+                videoDeviceInput = fallbackInput
+            } else {
+                print("카메라 복구 실패")
+            }
         }
     }
 
