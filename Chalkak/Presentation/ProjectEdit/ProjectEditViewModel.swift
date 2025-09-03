@@ -265,7 +265,7 @@ final class ProjectEditViewModel: ObservableObject {
         imageGenerator?.videoComposition = previewComposition
         
         // 저장된 플레이헤드 위치로 복원
-        if savedPlayHead > 0 && savedPlayHead <= totalDuration {
+        if savedPlayHead > 0, savedPlayHead <= totalDuration {
             await updatePreviewImage(at: savedPlayHead)
         } else {
             await updatePreviewImage(at: playHead)
@@ -351,9 +351,9 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     private func resumeTimeObserver() {
-        guard !isTimeObserverActive else { return }  // 이미 활성화된 경우 중복 방지
+        guard !isTimeObserverActive else { return } // 이미 활성화된 경우 중복 방지
         isTimeObserverActive = true
-        addTimeObserver()  // 새로운 옵저버 추가
+        addTimeObserver() // 새로운 옵저버 추가
     }
     
     func setDraggingState(_ dragging: Bool) {
@@ -383,8 +383,6 @@ final class ProjectEditViewModel: ObservableObject {
             }
         }
     }
-
-
 
     func updatePreviewImage(at time: Double) async {
         guard let gen = imageGenerator else { return }
@@ -516,17 +514,18 @@ final class ProjectEditViewModel: ObservableObject {
     }
 
     func setCurrentProjectID() {
-        // temp 프로젝트인 경우 원본 ID를 설정
         let idToSet = originalProjectID
-        UserDefaults.standard.set(idToSet, forKey: UserDefaultKey.currentProjectID)
+        UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
     }
     
-    //MARK: - 빈 프로젝트(클립이 모두 삭제된 프로젝트) 삭제
+    // MARK: - 빈 프로젝트(클립이 모두 삭제된 프로젝트) 삭제
+
     func deleteEmptyProject() async -> Bool {
         // 1. temp 정리 (discardChanges와 동일)
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp,
-              let originalID = tempProject.originalID else {
+              let originalID = tempProject.originalID
+        else {
             return false
         }
         
@@ -539,7 +538,8 @@ final class ProjectEditViewModel: ObservableObject {
         return true
     }
     
-    //MARK: - Temp System 메서드들
+    // MARK: - Temp System 메서드들
+
     /// temp 프로젝트 초기화 (ProjectEditView 진입 시 호출)
     func initializeTempProject(loadAfter: Bool = true) async {
         guard let originalProject = SwiftDataManager.shared.fetchProject(byID: projectID) else {
@@ -675,7 +675,6 @@ final class ProjectEditViewModel: ObservableObject {
         }
         let currentTime = playHead
 
-        
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
         isPlaying = false
