@@ -120,7 +120,7 @@ final class ClipEditViewModel: ObservableObject {
         let interval = duration / Double(thumbnailCount)
         var images: [UIImage] = []
         
-        for i in 0..<thumbnailCount {
+        for i in 0 ..< thumbnailCount {
             let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
             do {
                 if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
@@ -130,7 +130,7 @@ final class ClipEditViewModel: ObservableObject {
                 print("⚠️ Thumbnail \(i) error: \(error)")
             }
         }
-        self.thumbnails = images
+        thumbnails = images
     }
     
     /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
@@ -146,7 +146,6 @@ final class ClipEditViewModel: ObservableObject {
         }
     }
     
-    
     /// 트리밍 시작 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateStart(_ value: Double) {
         startPoint = value
@@ -158,7 +157,6 @@ final class ClipEditViewModel: ObservableObject {
         endPoint = value
         Task { await updatePreviewImage(at: value) }
     }
-    
     
     /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
@@ -221,7 +219,7 @@ final class ClipEditViewModel: ObservableObject {
         }
         
         /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
-        if currentTimeSeconds >= startPoint && currentTimeSeconds < endPoint {
+        if currentTimeSeconds >= startPoint, currentTimeSeconds < endPoint {
             startPlaybackAndObserve()
         } else {
             /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
@@ -254,8 +252,8 @@ final class ClipEditViewModel: ObservableObject {
             return
         }
         
-        self.startPoint = 0
-        self.endPoint = min(refDuration, self.duration)
+        startPoint = 0
+        endPoint = min(refDuration, duration)
     }
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
@@ -294,7 +292,8 @@ final class ClipEditViewModel: ObservableObject {
         }
 
         guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
-              let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
+              let project = SwiftDataManager.shared.fetchProject(byID: projectID)
+        else {
             print("기존 Project를 찾을 수 없습니다.")
             return
         }
@@ -303,7 +302,8 @@ final class ClipEditViewModel: ObservableObject {
         SwiftDataManager.shared.saveContext()
     }
     
-    //MARK: - 유저 디폴트
+    // MARK: - 유저 디폴트
+
     // 1. 현재 currentProjectID 가져오기
     func fetchCurrentProjectID() -> String? {
         if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
@@ -320,6 +320,7 @@ final class ClipEditViewModel: ObservableObject {
     }
     
     // MARK: - Temp 관련 메소드
+
     func createTempClip() -> Clip {
         return Clip(
             id: UUID().uuidString,
