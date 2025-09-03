@@ -200,14 +200,34 @@ struct CameraView: View {
         
         switch shootState {
         case .appendShoot:
-            // 해당 프로젝트 편집화면으로 이동
-            if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
-                coordinator.popToScreen(.projectEdit(projectID: projectID))
+            // 프로젝트 편집을 통한 클립추가로 온 경우
+            let isAppendingShoot = UserDefaults.standard.bool(forKey: UserDefaultKey.isAppendingShoot)
+            
+            if isAppendingShoot {
+                if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
+                    UserDefaults.standard.set(false, forKey: UserDefaultKey.isAppendingShoot)
+                    
+                    // temp프로젝트에서 originalId추출해서 연결
+                    if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+                       let originalID = tempProject.originalID
+                    {
+                        coordinator.popToScreen(.projectEdit(projectID: originalID))
+                    } else {
+                        coordinator.removeAll()
+                    }
+                } else {
+                    coordinator.removeAll()
+                }
             } else {
-                coordinator.removeAll()
+                // 일반촬영에서의 X버튼
+                if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
+                    coordinator.popToScreen(.projectEdit(projectID: projectID))
+                } else {
+                    coordinator.removeAll()
+                }
             }
         case .firstShoot, .followUpShoot:
-            // 리스트를 통해서 접근한 상황이 아닐때 -> 첫화면으로 이동
+            // 프로젝트 편집을 통해서 온 것이 아닐때는 루트뷰로 이동
             UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
             coordinator.removeAll()
         }

@@ -317,6 +317,7 @@ final class ClipEditViewModel: ObservableObject {
     // 2. currentProjectID nil로 초기화
     func clearCurrentProjectID() {
         UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+        UserDefaults.standard.set(false, forKey: UserDefaultKey.isAppendingShoot)
     }
     
     // MARK: - Temp 관련 메소드
