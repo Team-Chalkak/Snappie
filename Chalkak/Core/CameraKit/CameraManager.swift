@@ -14,12 +14,14 @@ import SwiftUI
 class CameraManager: NSObject, ObservableObject {
     @Published var showOnboarding = !UserDefaults.standard.bool(forKey: UserDefaultKey.hasCompletedOnboarding)
     // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
-    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
+    @Published private var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published private(set) var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
     @Published var permissionState: PermissionState = .none
     @Published var showPermissionSheet: Bool = false
-
-    private var audioRecordPermission: AVAudioSession.RecordPermission = .undetermined
+    @Published var isRecording = false
+    @Published var currentZoomScale: CGFloat = 1.0
+    @Published var torchMode: TorchMode = .off
+    private var audioRecordPermission: AVAudioApplication.recordPermission = AVAudioApplication.recordPermission.undetermined
 
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
@@ -32,8 +34,6 @@ class CameraManager: NSObject, ObservableObject {
 
     private let boundingBoxManager = BoundingBoxManager()
 
-    @Published var torchMode: TorchMode = .off
-
     /// 비디오 저장 이벤트발생시 clipEditView로 URL전달
     /// 상태를 별도로 저장할 필요가 없어서 @Published 대신 PassthroughSubject 활용
     let savedVideoInfo = PassthroughSubject<URL, Never>()
@@ -43,9 +43,6 @@ class CameraManager: NSObject, ObservableObject {
             boundingBoxManager.onMultiBoundingBoxUpdate = onMultiBoundingBoxUpdate
         }
     }
-
-    @Published var isRecording = false
-    @Published var currentZoomScale: CGFloat = 1.0
 
     // 카메라 줌스케일
     private var backCameraZoomScale: CGFloat = 1.0
@@ -66,7 +63,6 @@ class CameraManager: NSObject, ObservableObject {
     }
 
     private var isRequestingPermissions = false
-    private var didBecomeActiveObserver: NSObjectProtocol?
 
     override init() {
         super.init()
@@ -83,18 +79,19 @@ class CameraManager: NSObject, ObservableObject {
 
     deinit {
         session.stopRunning()
-        if let token = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(token)
-        }
     }
 
-    @inline(__always)
-    private func currentMicPermission() -> AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
-    }
+    // MARK: permission
 
     @inline(__always)
-    private func mapToAVAuthorization(_ record: AVAudioSession.RecordPermission) -> AVAuthorizationStatus {
+    private func currentMicPermission() -> AVAudioApplication.recordPermission {
+        return AVAudioApplication.shared.recordPermission
+    }
+
+    // MARK: permission
+
+    @inline(__always)
+    private func mapToAVAuthorization(_ record: AVAudioApplication.recordPermission) -> AVAuthorizationStatus {
         switch record {
         case .granted: return .authorized
         case .denied: return .denied
@@ -110,12 +107,16 @@ class CameraManager: NSObject, ObservableObject {
         checkPermissions()
     }
 
-    func checkPermissions() {
+    // MARK: permission
+
+    private func checkPermissions() {
         videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         audioRecordPermission = currentMicPermission()
         audioAuthorizationStatus = mapToAVAuthorization(audioRecordPermission)
         updatePermissionState()
     }
+
+    // MARK: permission
 
     private func updatePermissionState() {
         let videoGranted = (videoAuthorizationStatus == .authorized)
@@ -151,6 +152,9 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: permission
+
+    @MainActor
     func requestAndCheckPermissions() {
         guard !isRequestingPermissions else { return }
         isRequestingPermissions = true
@@ -165,7 +169,11 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: permission
+
     /// 앱 첫 실행에서만 호출
+
+    @MainActor
     func requestPermissionsIfNeededAtFirstLaunch() {
         guard !isRequestingPermissions else { return }
         isRequestingPermissions = true
@@ -180,11 +188,13 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: permission
+
     private func requestCameraIfNeeded(completion: @escaping () -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] _ in
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
                     completion()
                 }
@@ -195,14 +205,17 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: permission
+
+    @MainActor
     private func requestMicIfNeeded(completion: @escaping () -> Void) {
         let currentPermission = currentMicPermission()
 
-        if currentPermission == .undetermined {
-            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.audioRecordPermission = self?.currentMicPermission() ?? .undetermined
-                    self?.audioAuthorizationStatus = self?.mapToAVAuthorization(self?.audioRecordPermission ?? .undetermined) ?? .notDetermined
+        if currentPermission == AVAudioApplication.recordPermission.undetermined {
+            AVAudioApplication.requestRecordPermission { [weak self] _ in
+                Task { @MainActor in
+                    self?.audioRecordPermission = self?.currentMicPermission() ?? AVAudioApplication.recordPermission.undetermined
+                    self?.audioAuthorizationStatus = self?.mapToAVAuthorization(self?.audioRecordPermission ?? AVAudioApplication.recordPermission.undetermined) ?? .notDetermined
                     completion()
                 }
             }
@@ -212,6 +225,8 @@ class CameraManager: NSObject, ObservableObject {
             completion()
         }
     }
+
+    // MARK: permission
 
     private func finishPermissionRequest() {
         DispatchQueue.main.async { [weak self] in
@@ -229,6 +244,8 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: permission
+
     func reevaluateAndPresentIfNeeded() {
         checkPermissions()
 
@@ -236,6 +253,8 @@ class CameraManager: NSObject, ObservableObject {
             showPermissionSheet = (permissionState != .both)
         }
     }
+
+    // MARK: permission
 
     func openSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -305,7 +324,7 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 모든 카메라 설정을 한 번의 lockForConfiguration으로 처리
     private func configureCameraSettings(for device: AVCaptureDevice) throws {
-        // 최적 포맷찾기 lock이전에 미리 계산)
+        // 최적 포맷찾기 lock이전에 미리 계산
         let bestFormat = findBestFormat(for: device)
 
         try device.lockForConfiguration()
@@ -621,7 +640,6 @@ class CameraManager: NSObject, ObservableObject {
 }
 
 extension CameraManager: AVCaptureFileOutputRecordingDelegate {
-    /// 녹화가 끝나면 촬영한 파일 URL을 NotificationCenter를 통해 알림
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
             print("녹화에러 \(error)")
