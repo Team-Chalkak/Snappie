@@ -1,0 +1,63 @@
+//
+//  ProjectThumbnailsView.swift
+//  Chalkak
+//
+//  Created by 배현진 on 7/28/25.
+//
+
+import SwiftUI
+
+struct ProjectThumbnailsView: View {
+    let clip: EditableClip
+    let fullWidth: CGFloat
+
+    /// 원하는 썸네일 개수 (초당 3개)
+    private var countWanted: Int {
+        let duration = clip.originalDuration
+        let rate: Double = 3 // 초당 썸네일 개수
+        return duration > 0 ? max(1, Int(ceil(duration * rate))) : 0
+    }
+
+    /// 실제 표시할 썸네일 배열 (안전 버전)
+    private var thumbsToShow: [UIImage] {
+        let available = clip.thumbnails.count
+        let wanted = countWanted
+
+        // 썸네일 자체가 없으면 빈 배열 반환 (상위에서 안전 처리 필요)
+        guard available > 0 else { return [] }
+
+        if wanted <= 1 {
+            return [clip.thumbnails[0]]
+        }
+
+        let n = min(wanted, available)
+        if n == available {
+            return clip.thumbnails
+        }
+        
+        let step = Double(available - 1) / Double(n - 1)
+        return (0..<n).map { idx in
+            let i = Int(round(step * Double(idx)))
+            return clip.thumbnails[i]
+        }
+    }
+    
+    /// 썸네일 하나당 너비
+    private var thumbnailWidth: CGFloat {
+        fullWidth / CGFloat(max(thumbsToShow.count, 1))
+    }
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(thumbsToShow.enumerated()), id: \.0) { _, img in
+                Image(uiImage: img)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: thumbnailWidth, height: 60)
+                    .clipped()
+            }
+        }
+        .frame(width: fullWidth, height: 60)
+        .contentShape(Rectangle())
+    }
+}

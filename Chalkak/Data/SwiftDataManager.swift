@@ -1,0 +1,331 @@
+//
+//  SwiftDataManager.swift
+//  Chalkak
+//
+//  Created by 배현진 on 7/15/25.
+//
+
+import Foundation
+import SwiftData
+import SwiftUI
+
+/**
+ SwiftData 사용을 편리하게 하기 위한 클래스
+ 
+ `SwiftDataManager`는 SwiftData 사용을 편리하게 하기 위해 쿼리 메서드를 모아 관리합니다.
+ 
+ ## 사용 예시
+ ```
+ @Published var clips: [Clip] = []
+ 
+ func loadClips() {
+     clips = SwiftDataManager.shared.fetchAllClips()
+ }
+ 
+ func createClip(
+     videoURL: URL,
+     startPoint: Double,
+     endPoint: Double,
+     tiltList: [TimeStampedTilt] = [],
+     heightList: [TimeStampedHeight] = []
+ ) {
+     let _ = SwiftDataManager.shared.createClip(
+         videoURL: videoURL,
+         startPoint: startPoint,
+         endPoint: endPoint,
+         tiltList: tiltList,
+         heightList: heightList
+     )
+     SwiftDataManager.shared.saveContext()
+     loadClips()
+ }
+ 
+ func deleteClip(_ clip: Clip) {
+     SwiftDataManager.shared.deleteClip(clip)
+     SwiftDataManager.shared.saveContext()
+     loadClips()
+ }
+ ```
+ */
+
+@MainActor
+class SwiftDataManager {
+    static let shared = SwiftDataManager()
+    
+    private var container: ModelContainer?
+    var context: ModelContext {
+        guard let container = container else {
+            fatalError("ModelContainer가 아직 설정되지 않았습니다. configure(container:)를 먼저 호출하세요.")
+        }
+        return container.mainContext
+    }
+
+    private init() {}
+    
+    func configure(container: ModelContainer) {
+        self.container = container
+    }
+
+    // MARK: - Project
+    
+    /// `Project` 생성
+    func createProject(
+        id: String,
+        guide: Guide,
+        clips: [Clip] = [],
+        cameraSetting: CameraSetting? = nil,
+        title: String? = nil,
+        referenceDuration: Double? = nil,
+        isChecked: Bool = false,
+        coverImage: Data? = nil,
+        createdAt: Date = Date()
+    ) -> Project {
+        let project = Project(
+            id: id,
+            guide: guide,
+            clipList: clips,
+            cameraSetting: cameraSetting,
+            title: title ?? "",
+            referenceDuration: referenceDuration,
+            isChecked: isChecked,
+            coverImage: coverImage,
+            createdAt: createdAt
+        )
+        context.insert(project)
+        return project
+    }
+    
+    /// `Project` id 이용해 조회
+    func fetchProject(byID id: String) -> Project? {
+        let predicate = #Predicate<Project> { $0.id == id }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return try? context.fetch(descriptor).first
+    }
+
+    /// `Project` 삭제
+    func deleteProject(_ project: Project) {
+        // temp 프로젝트든 원본이든 관계없이 완전 삭제
+        // 클립들 개별 삭제
+        for clip in project.clipList {
+            context.delete(clip)
+        }
+        
+        // Guide 삭제
+        context.delete(project.guide)
+        
+        // CameraSetting 삭제 (있는 경우)
+        if let cameraSetting = project.cameraSetting {
+            context.delete(cameraSetting)
+        }
+        
+        // 프로젝트 삭제
+        context.delete(project)
+        saveContext()
+    }
+    
+    /// `Temp Project` 안전 삭제 (temp 전용)
+    func deleteTempProject(_ tempProject: Project) {
+        guard tempProject.isTemp else {
+            print("경고: temp가 아닌 프로젝트를 temp 삭제 메서드로 삭제하려고 합니다.")
+            return
+        }
+        
+        context.delete(tempProject)
+        saveContext()
+    }
+    
+    /// 모든 프로젝트 조회
+    func fetchAllProjects() -> [Project] {
+        let predicate = #Predicate<Project> { $0.isTemp == false }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return (try? context.fetch(descriptor)) ?? []
+    }
+    
+    /// 프로젝트에 'coverImage' 업데이트
+    func updateProjectCoverImage(projectID: String, coverImage: UIImage) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("해당 Project(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+
+        project.coverImage = coverImage.jpegData(compressionQuality: 0.8)
+        saveContext()
+    }
+    
+    /// 프로젝트 '타이틀' 변경(업데이트)
+    func updateProjectTitle(project: Project, newTitle: String) {
+        project.title = newTitle
+        saveContext()
+    }
+    
+    /// 확인하지 않은 프로젝트 조회
+    func getUncheckedProjects() -> [Project] {
+        let predicate = #Predicate<Project> { $0.isChecked == false && $0.isTemp == false }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        return (try? context.fetch(descriptor)) ?? []
+    }
+    
+    /// 뱃지 표시용 확인하지 않은 프로젝트 조회 (guide가 있고, 현재 촬영 중이 아닌 것)
+    func getUncheckedProjectsForBadge() -> [Project] {
+        let predicate = #Predicate<Project> { project in
+            project.isChecked == false && project.isTemp == false
+        }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        let uncheckedProjects = (try? context.fetch(descriptor)) ?? []
+        
+        // 현재 촬영 중인 프로젝트 제외
+        guard let currentProjectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) else {
+            return uncheckedProjects
+        }
+        return uncheckedProjects.filter { $0.id != currentProjectID }
+    }
+    
+    /// 프로젝트 확인 상태 업데이트
+    func markProjectAsChecked(projectID: String) {
+        guard let project = fetchProject(byID: projectID) else {
+            print("해당 Project(\(projectID))를 찾을 수 없습니다.")
+            return
+        }
+        
+        project.isChecked = true
+        saveContext()
+        
+        // 뱃지 상태 최신화
+        DispatchQueue.main.async {
+            try? self.context.save()
+        }
+    }
+    
+    // MARK: - Clip
+
+    /// `Clip` 생성: Clip 객체 데이터로
+    func createClip(
+        id: String,
+        videoURL: URL,
+        originalDuration: Double,
+        startPoint: Double = 0,
+        endPoint: Double,
+        tiltList: [TimeStampedTilt] = []
+    ) -> Clip? {
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: videoURL) else {
+            print("createClip: 유효하지 않은 비디오 파일 URL: \(videoURL)")
+            return nil
+        }
+        
+        let clip = Clip(
+            id: id,
+            videoURL: videoURL,
+            originalDuration: originalDuration,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            tiltList: tiltList
+        )
+        context.insert(clip)
+        return clip
+    }
+    
+    /// `Clip` 생성: Clip 객체로
+    func createClip(clip: Clip) throws {
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: clip.videoURL) else {
+            print("createClip: 유효하지 않은 비디오 파일 URL: \(clip.videoURL)")
+            throw ClipError.invalidURL
+        }
+        context.insert(clip)
+        saveContext()
+    }
+
+    /// `Clip` 가져오기
+    func fetchClip(byID id: String) -> Clip? {
+        let predicate = #Predicate<Clip> { $0.id == id }
+        let descriptor = FetchDescriptor<Clip>(predicate: predicate)
+        return try? context.fetch(descriptor).first
+    }
+
+    /// `Clip` 삭제하기
+    func deleteClip(_ clip: Clip) {
+        context.delete(clip)
+    }
+
+    // MARK: - Guide
+
+    /// `Guide` 생성
+    func createGuide(
+        clipID: String,
+        boundingBoxes: [BoundingBoxInfo],
+        outlineImage: UIImage,
+        cameraTilt: Tilt
+    ) -> Guide {
+        let guide = Guide(
+            clipID: clipID,
+            boundingBoxes: boundingBoxes,
+            outlineImage: outlineImage,
+            cameraTilt: cameraTilt
+        )
+        context.insert(guide)
+        return guide
+    }
+
+    /// `Guide` 가져오기
+    func fetchGuide(forClipID clipID: String) -> Guide? {
+        let predicate = #Predicate<Guide> { $0.clipID == clipID }
+        let descriptor = FetchDescriptor<Guide>(predicate: predicate)
+        return try? context.fetch(descriptor).first
+    }
+
+    /// `Guide` 삭제하기
+    func deleteGuide(_ guide: Guide) {
+        context.delete(guide)
+    }
+    
+    // MARK: - CameraSetting
+    
+    /// `CameraSetting` 생성
+    func createCameraSetting(
+        zoomScale: CGFloat,
+        isGridEnabled: Bool,
+        isFrontPosition: Bool,
+        timerSecond: Int
+    ) -> CameraSetting {
+        let setting = CameraSetting(
+            zoomScale: zoomScale,
+            isGridEnabled: isGridEnabled,
+            isFrontPosition: isFrontPosition,
+            timerSecond: timerSecond
+        )
+        context.insert(setting)
+        return setting
+    }
+
+    /// `CameraSetting` 생성
+    func createCameraSetting(cameraSetting: CameraSetting) throws {
+        context.insert(cameraSetting)
+        saveContext()
+    }
+    
+    // MARK: - Save & Rollback
+    /// Context 저장하기 - 변경사항 반영
+    func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            print("저장 실패: \(error)")
+            // 저장 실패 시 context rollback으로 일관성 유지
+            context.rollback()
+        }
+    }
+    
+    /// ProjectEditView에서 앱 비정상 종료 시, 길 잃은 temp들 없애기
+    func cleanupAllTempProjects() {
+        let predicate = #Predicate<Project> { $0.isTemp == true }
+        let descriptor = FetchDescriptor<Project>(predicate: predicate)
+        
+        guard let tempProjects = try? context.fetch(descriptor) else { return }
+        
+        for tempProject in tempProjects {
+            context.delete(tempProject)
+        }
+        saveContext()
+    }
+}

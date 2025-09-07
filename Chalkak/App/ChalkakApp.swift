@@ -10,10 +10,61 @@ import SwiftUI
 
 @main
 struct ChalkakApp: App {
+    let sharedContainer: ModelContainer
+
+    @StateObject private var coordinator = Coordinator()
+    
+    init() {
+        let config = ModelConfiguration()
+        self.sharedContainer = try! ModelContainer(
+            for: Clip.self, Guide.self, Project.self,
+            configurations: config
+        )
+        SwiftDataManager.shared.configure(container: sharedContainer)
+        
+        Task { @MainActor in
+            SwiftDataManager.shared.cleanupAllTempProjects()
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            CameraView()
+            NavigationStack(path: $coordinator.path) {
+                BoundingBoxView(shootState: .firstShoot)
+                    .navigationDestination(for: Path.self) { path in
+                        switch path {
+                        case .clipEdit(let url, let state, let cameraSetting, let timeStampedTiltList):
+                            ClipEditView(
+                                clipURL: url,
+                                shootState: state,
+                                cameraSetting: cameraSetting,
+                                timeStampedTiltList: timeStampedTiltList
+                            )
+                            
+                        case .overlay(let clip, let cameraSetting):
+                            OverlayView(clip: clip, cameraSetting: cameraSetting)
+                                .toolbar(.hidden, for: .navigationBar)
+
+                        case .camera(let state):
+                            BoundingBoxView(shootState: state)
+                                .toolbar(.hidden, for: .navigationBar)
+                            
+                            
+                        case .projectPreview:
+                            ProjectPreviewView()
+                        
+                        case .projectEdit(let projectID, let newClip):
+                            ProjectEditView(projectID: projectID, newClip: newClip)
+                                .toolbar(.hidden, for: .navigationBar)
+                            
+                        case .projectList:
+                            ProjectListView()
+                        }
+                        
+                    }
+            }
+            .environmentObject(coordinator)
         }
-        .modelContainer(for: [Project.self, Clip.self, Guide.self])
+        .modelContainer(sharedContainer)
     }
 }
