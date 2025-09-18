@@ -65,101 +65,118 @@ final class ProjectEditViewModel: ObservableObject {
 
     // MARK: - 비동기 로딩 메서드
 
-    func loadProjectAsync() async {
+    /// 메인 프로젝트 로딩 메서드
+    func loadProject() async {
         isLoading = true
-
-        // 백그라운드에서 프로젝트 로드
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask {
-                await self.loadProjectData()
-            }
-        }
-
-        isLoading = false
-    }
-
-    @MainActor
-    private func loadProjectData() async {
+        defer { isLoading = false }
+        
         guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else {
             print("프로젝트를 찾을 수 없습니다.")
             return
         }
         
-        self.project = project
-        guide = project.guide
+        // 기본 프로젝트 정보 설정
+        await setupBasicProjectInfo(project)
         
-        // 확인했으니 isChecked처리
+        // 클립 로딩과 UI 설정
+        await loadClipsAndSetupUI(from: project)
+    }
+    
+    /// 기본 프로젝트 정보 설정
+    private func setupBasicProjectInfo(_ project: Project) async {
+        await MainActor.run {
+            self.project = project
+            self.guide = project.guide
+        }
+        
+        // 확인 처리 (temp가 아닌 경우만)
         if !project.isTemp {
             SwiftDataManager.shared.markProjectAsChecked(projectID: projectID)
         }
+    }
+    
+    /// 클립 로딩과 UI 설정
+    private func loadClipsAndSetupUI(from project: Project) async {
+        let orderedClips = orderedClips(from: project)
         
-        let orderedClip = orderedClips(from: project)
+        // 1단계: 기본 클립 정보로 UI 먼저 업데이트
+        let basicClips = await createValidatedEditableClips(from: orderedClips)
         
-        // 클립들을 먼저 기본 정보로 생성 (썸네일 없이)
-        var tempClips: [EditableClip] = []
-
-        for clip in orderedClip {
-            // 비디오 파일 URL 검증 및 복구
-            guard let validURL = FileManager.validVideoURL(from: clip.videoURL) else {
-                print("클립 \(clip.id)의 비디오 파일을 찾을 수 없습니다: \(clip.videoURL)")
-                continue
+        await MainActor.run {
+            self.editableClips = basicClips
+            self.originalClips = basicClips
+        }
+        
+        // 2단계: 플레이어 설정
+        await setupPlayerAsync()
+        
+        // 3단계: 썸네일을 순차적으로 생성
+        await generateThumbnailsSequentially()
+    }
+    
+    /// URL 검증과 EditableClip 생성
+    private func createValidatedEditableClips(from clips: [Clip]) async -> [EditableClip] {
+        var validClips: [EditableClip] = []
+        
+        for clip in clips {
+            if let validatedClip = await validateAndCreateEditableClip(from: clip) {
+                validClips.append(validatedClip)
             }
-            
-            // URL이 변경되었다면 업데이트
-            if validURL != clip.videoURL {
-                print("클립 \(clip.id)의 URL을 업데이트합니다: \(clip.videoURL) -> \(validURL)")
+        }
+        
+        return validClips
+    }
+    
+    /// 개별 클립 검증 및 생성
+    private func validateAndCreateEditableClip(from clip: Clip) async -> EditableClip? {
+        guard let validURL = FileManager.validVideoURL(from: clip.videoURL) else {
+            print("클립 \(clip.id)의 비디오 파일을 찾을 수 없습니다: \(clip.videoURL)")
+            return nil
+        }
+        
+        // URL 업데이트가 필요한 경우
+        if validURL != clip.videoURL {
+            print("클립 \(clip.id)의 URL을 업데이트합니다")
+            await MainActor.run {
                 clip.videoURL = validURL
                 SwiftDataManager.shared.saveContext()
             }
-            
-            // 빈 썸네일 배열로 초기화
-            let editableClip = EditableClip(
-                id: clip.id,
-                url: validURL,
-                originalDuration: clip.originalDuration,
-                startPoint: clip.startPoint,
-                endPoint: clip.endPoint,
-                thumbnails: [] // 나중에 비동기로 생성
-            )
-
-            tempClips.append(editableClip)
         }
-
-        // UI 업데이트 (썸네일 없이 먼저 표시)
-        editableClips = tempClips
-
-        // 원본 상태 저장 (변경사항 추적용)
-        originalClips = tempClips
-
-        // 플레이어 설정 (썸네일 없이도 가능)
-        await setupPlayerAsync()
-
-        // 썸네일을 백그라운드에서 비동기로 생성
-        await generateThumbnailsAsync()
+        
+        return EditableClip(
+            id: clip.id,
+            url: validURL,
+            originalDuration: clip.originalDuration,
+            startPoint: clip.startPoint,
+            endPoint: clip.endPoint,
+            thumbnails: []
+        )
     }
     
-    /// 비동기 썸네일 생성
-    private func generateThumbnailsAsync() async {
-        await withTaskGroup(of: (String, [UIImage]).self) { group in
-            for clip in editableClips {
-                group.addTask {
-                    let thumbnails = await self.generateThumbnailsBackground(
-                        url: clip.url,
-                        duration: clip.originalDuration,
-                        count: 10
-                    )
-                    return (clip.id, thumbnails)
+    /// 메모리 효율적인 순차 썸네일 생성
+    private func generateThumbnailsSequentially() async {
+        for (index, clip) in editableClips.enumerated() {
+            let thumbnails = await generateThumbnailsBackground(
+                url: clip.url,
+                duration: clip.originalDuration,
+                count: 10
+            )
+            
+            // 안전한 UI 업데이트
+            await MainActor.run {
+                guard index < self.editableClips.count,
+                      self.editableClips[index].id == clip.id else {
+                    print("클립 배열이 변경되어 썸네일 업데이트를 건너뜁니다.")
+                    return
+                }
+                
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self.editableClips[index].thumbnails = thumbnails
                 }
             }
-
-            // 썸네일이 생성되는 대로 업데이트
-            for await (clipID, thumbnails) in group {
-                if let index = editableClips.firstIndex(where: { $0.id == clipID }) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        editableClips[index].thumbnails = thumbnails
-                    }
-                }
-            }
+            
+            // UI 응답성을 위한 짧은 대기
+            try? await Task.sleep(nanoseconds: 50_000_000)
         }
     }
 
@@ -170,7 +187,6 @@ final class ProjectEditViewModel: ObservableObject {
     ) async -> [UIImage] {
         return await withCheckedContinuation { continuation in
             Task.detached {
-                // URL 유효성 검증
                 guard FileManager.isValidVideoFile(at: url) else {
                     print("유효하지 않은 비디오 파일: \(url)")
                     continuation.resume(returning: [])
@@ -200,6 +216,7 @@ final class ProjectEditViewModel: ObservableObject {
             }
         }
     }
+
     
     /// 비동기 플레이어 설정
     @MainActor
@@ -549,53 +566,86 @@ final class ProjectEditViewModel: ObservableObject {
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
             if loadAfter {
-                await loadProjectAsync()
+                await loadProject()
             }
             return
         }
         
-        let tempID = "temp_\(UUID().uuidString)"
+        // temp 프로젝트 생성
+        let tempID = await createTempProject(from: originalProject)
         
-        // Guide 복사본 생성 (원본과 완전히 분리)
-        let tempGuide = Guide(
-            clipID: "temp_\(originalProject.guide.clipID)",
-            boundingBoxes: originalProject.guide.boundingBoxes,
-            outlineImage: originalProject.guide.outlineImage ?? UIImage(),
-            cameraTilt: originalProject.guide.cameraTilt
-        )
+        // ViewModel을 temp로 전환
+        projectID = tempID
+        project = SwiftDataManager.shared.fetchProject(byID: tempID)
         
-        // CameraSetting 복사본 생성 (있는 경우)
-        var tempCameraSetting: CameraSetting? = nil
-        if let originalSetting = originalProject.cameraSetting {
-            tempCameraSetting = CameraSetting(
-                zoomScale: originalSetting.zoomScale,
-                isGridEnabled: originalSetting.isGridEnabled,
-                isFrontPosition: originalSetting.isFrontPosition,
-                timerSecond: originalSetting.timerSecond
-            )
+        if loadAfter {
+            await loadProject()
         }
-        
-        // temp 프로젝트 생성 (복사본들 사용)
-        let tempProject = Project(
-            id: tempID,
-            guide: tempGuide, // 복사본 사용
-            clipList: [],
-            cameraSetting: tempCameraSetting, // 복사본 사용
-            title: originalProject.title,
-            referenceDuration: originalProject.referenceDuration,
-            isChecked: originalProject.isChecked,
-            coverImage: originalProject.coverImage,
-            createdAt: originalProject.createdAt,
-            isTemp: true,
-            originalID: projectID
+    }
+    
+    /// temp 프로젝트 생성 메서드
+     private func createTempProject(from originalProject: Project) async -> String {
+         let tempID = "temp_\(UUID().uuidString)"
+         
+         // 기본 객체들 생성
+         let tempGuide = createTempGuide(from: originalProject.guide)
+         let tempCameraSetting = createTempCameraSetting(from: originalProject.cameraSetting)
+         
+         // temp 프로젝트 생성
+         let tempProject = Project(
+             id: tempID,
+             guide: tempGuide,
+             clipList: [],
+             cameraSetting: tempCameraSetting,
+             title: originalProject.title,
+             referenceDuration: originalProject.referenceDuration,
+             isChecked: originalProject.isChecked,
+             coverImage: originalProject.coverImage,
+             createdAt: originalProject.createdAt,
+             isTemp: true,
+             originalID: projectID
+         )
+         
+         // 클립들을 temp로 복사
+         let tempClips = createTempClips(from: originalProject.clipList)
+         tempProject.clipList = tempClips
+         
+         // Context에 추가
+         addToContext(tempGuide, tempCameraSetting, tempProject)
+         
+         return tempID
+     }
+    
+    /// Guide 복사
+    private func createTempGuide(from originalGuide: Guide) -> Guide {
+        return Guide(
+            clipID: "temp_\(originalGuide.clipID)",
+            boundingBoxes: originalGuide.boundingBoxes,
+            outlineImage: originalGuide.outlineImage ?? UIImage(),
+            cameraTilt: originalGuide.cameraTilt
         )
+    }
+
+    /// CameraSetting 복사
+    private func createTempCameraSetting(from originalSetting: CameraSetting?) -> CameraSetting? {
+        guard let originalSetting = originalSetting else { return nil }
         
-        // 클립들을 깊은 복사
-        let originalOrdered = originalProject.clipList.sorted {
+        return CameraSetting(
+            zoomScale: originalSetting.zoomScale,
+            isGridEnabled: originalSetting.isGridEnabled,
+            isFrontPosition: originalSetting.isFrontPosition,
+            timerSecond: originalSetting.timerSecond
+        )
+    }
+    
+    /// 클립 복사
+    private func createTempClips(from originalClips: [Clip]) -> [Clip] {
+        let orderedOriginalClips = originalClips.sorted {
             if $0.order != $1.order { return $0.order < $1.order }
             return $0.createdAt < $1.createdAt
         }
-        for (idx, originalClip) in originalOrdered.enumerated() {
+        
+        return orderedOriginalClips.enumerated().map { (index, originalClip) in
             let tempClip = Clip(
                 id: "temp_\(UUID().uuidString)",
                 videoURL: originalClip.videoURL,
@@ -607,28 +657,24 @@ final class ProjectEditViewModel: ObservableObject {
                 isTemp: true,
                 originalClipID: originalClip.id
             )
-            tempClip.order = idx // ✅ 유지
-            tempProject.clipList.append(tempClip)
-        }
-        
-        // Context에 추가 (Guide와 CameraSetting 먼저)
-        SwiftDataManager.shared.context.insert(tempGuide)
-        if let tempCameraSetting = tempCameraSetting {
-            SwiftDataManager.shared.context.insert(tempCameraSetting)
-        }
-        SwiftDataManager.shared.context.insert(tempProject)
-        SwiftDataManager.shared.saveContext()
-        
-        // ViewModel을 temp로 전환
-        projectID = tempID
-        project = tempProject
-        
-        if loadAfter {
-            await loadProjectAsync()
+            tempClip.order = index
+            return tempClip
         }
     }
-
-    /// appendShoot에서 촬영한 클립을 temp에 추가
+    
+    /// Context 추가
+    private func addToContext(_ guide: Guide, _ cameraSetting: CameraSetting?, _ project: Project) {
+        SwiftDataManager.shared.context.insert(guide)
+        
+        if let cameraSetting = cameraSetting {
+            SwiftDataManager.shared.context.insert(cameraSetting)
+        }
+        
+        SwiftDataManager.shared.context.insert(project)
+        SwiftDataManager.shared.saveContext()
+    }
+    
+    /// temp에 클립 추가
     func addClipToTemp(clip: Clip) {
         guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
               tempProject.isTemp
@@ -637,22 +683,25 @@ final class ProjectEditViewModel: ObservableObject {
             return
         }
         
-        let nextOrder = (tempProject.clipList.map(\.order).max() ?? -1) + 1
+        configureClipAsTemp(clip, for: tempProject)
         
-        // 클립을 temp로 설정
-        clip.isTemp = true
-        clip.originalClipID = nil // 새로 추가된 클립
-        
-        clip.order = nextOrder // 새 클립에 꼬리 order 부여
-        tempProject.clipList.append(clip)
-        SwiftDataManager.shared.saveContext()
-        
-//        // UI 갱신을 위해 다시 로드
         Task {
-            await loadProjectAsync()
+            await loadProject()
         }
     }
-    
+
+    /// 클립을 temp로 설정
+    private func configureClipAsTemp(_ clip: Clip, for tempProject: Project) {
+        let nextOrder = (tempProject.clipList.map(\.order).max() ?? -1) + 1
+        
+        clip.isTemp = true
+        clip.originalClipID = nil
+        clip.order = nextOrder
+        
+        tempProject.clipList.append(clip)
+        SwiftDataManager.shared.saveContext()
+    }
+
     /// 클립 삭제 (temp에서만 안전하게 삭제)
     func deleteClip(id: String) {
         print("클립 삭제 시작: \(id)")
