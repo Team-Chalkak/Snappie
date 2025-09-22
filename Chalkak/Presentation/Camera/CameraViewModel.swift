@@ -353,13 +353,7 @@ class CameraViewModel: ObservableObject {
 
     private func stopDataCollectionTimer() {
         dataCollectionTimer?.invalidate()
-        timer = nil
-    }
-
-    private func resetRecordingTimer() {
-        timer?.invalidate()
-        timer = nil
-        recordingTime = 0
+        dataCollectionTimer = nil
     }
 
     func changeCamera() {
