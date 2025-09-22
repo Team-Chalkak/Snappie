@@ -362,7 +362,7 @@ class CameraViewModel: ObservableObject {
         // 후면->전면 전환시: 현재 줌 저장 후 전면카메라로 전환
         if cameraPostion == .back {
             // 후면카메라 줌상태 저장 (UserDefaults)
-            UserDefaults.standard.set(zoomScale, forKey: "backCameraZoomScale")
+            UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.backCameraZoomScale)
             showingZoomControl = false
             zoomScale = 1.0
         }
@@ -374,7 +374,7 @@ class CameraViewModel: ObservableObject {
         // 전면->후면 전환시: 이전에 저장된 후면카메라 줌 복원
         if cameraPostion == .back {
             // 카메라 전환이 완료된 후 줌 스케일 복원
-            let savedZoom = UserDefaults.standard.object(forKey: "backCameraZoomScale") as? CGFloat ?? 1.0
+            let savedZoom = UserDefaults.standard.object(forKey: UserDefaultKey.backCameraZoomScale) as? CGFloat ?? 1.0
             zoomScale = savedZoom
             model.setZoomScale(savedZoom)
         }
