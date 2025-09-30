@@ -99,13 +99,13 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
-                await viewModel.initializeTempProject(loadAfter: false)
-                
                 if let clip = newClip {
+                    // 새 클립이 있는 경우: temp 초기화 후 클립 추가
+                    await viewModel.initializeTempProject(loadAfter: false)
                     viewModel.addClipToTemp(clip: clip)
                     newClip = nil
                 } else {
-                    // temp 프로젝트 초기화
+                    // 일반적인 경우: temp 초기화와 동시에 로드
                     await viewModel.initializeTempProject(loadAfter: true)
                 }
             }
