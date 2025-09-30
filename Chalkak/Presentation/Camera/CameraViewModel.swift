@@ -78,12 +78,17 @@ class CameraViewModel: ObservableObject {
             .assign(to: &$isRecording)
 
         model.savedVideoInfo
-            .sink { [weak self] url in self?.videoSavedPublisher.send(url) }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] url in
+                self?.videoSavedPublisher.send(url)
+            }
             .store(in: &cancellables)
 
         loadSavedSettings()
 
-        Task { @MainActor in updateBadgeState() }
+        Task { @MainActor in
+            updateBadgeState()
+        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.cameraSetupDelay) {
             self.model.setZoomScale(self.zoomScale)
