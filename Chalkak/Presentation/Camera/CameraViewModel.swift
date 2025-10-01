@@ -262,8 +262,6 @@ class CameraViewModel: ObservableObject {
         let newPosition: AVCaptureDevice.Position = cameraPostion == .back ? .front : .back
 
         if cameraPostion == .back { // to Front
-            // 개선: 하드코딩된 문자열 키 대신 정의된 키를 사용합니다.
-            // UserDefaultKey.swift 파일에 `static let backCameraZoomScale = "backCameraZoomScale"` 추가 필요
             UserDefaults.standard.set(zoomScale, forKey: UserDefaultKey.backCameraZoomScale)
             showingZoomControl = false
             zoomScale = 1.0
