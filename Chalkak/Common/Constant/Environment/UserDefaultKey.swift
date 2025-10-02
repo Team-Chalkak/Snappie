@@ -21,4 +21,7 @@ enum UserDefaultKey {
     
     // 프로젝트 편집뷰에서 별도의 추가 촬영인경우
     static let isAppendingShoot = "isAppendingShoot"
+    
+    // Camera 설정
+    static let backCameraZoomScale = "backCameraZoomScale"
 }
