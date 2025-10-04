@@ -74,7 +74,7 @@ struct CameraPreviewView: UIViewRepresentable {
             guard let touch = touches.first else { return }
             let location = touch.location(in: self)
 
-            // ✅ 미러/회전/크롭이 반영된 프리뷰 좌표계에서 디바이스 좌표로 변환
+            // 미러/회전/크롭이 반영된 프리뷰 좌표계에서 디바이스 좌표로 변환
             let devicePoint = videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: location)
             showFocusBox(at: location)
             handleFocus?(devicePoint)
@@ -168,7 +168,7 @@ struct CameraPreviewView: UIViewRepresentable {
 
         func redrawGrid() {
             guard let gridLayer else { return }
-            // ✅ 프리뷰 레이어의 실제 비디오 영역(크롭 반영)
+            // 프리뷰 레이어의 실제 비디오 영역(크롭 반영)
             let videoRect = videoPreviewLayer.layerRectConverted(fromMetadataOutputRect: CGRect(x: 0, y: 0, width: 1, height: 1))
             let path = UIBezierPath()
 
@@ -203,15 +203,13 @@ struct CameraPreviewView: UIViewRepresentable {
         layer.videoGravity = .resizeAspectFill
         layer.session = session
 
-        // ✅ 여기서 단 한 번, 실제 사용 중인 CameraManager에 프리뷰 레이어 바인딩
+        // 실제 사용 중인 CameraManager에 프리뷰 레이어 바인딩
         cameraManager.bindPreviewLayer(layer)
 
-        // ❌ 수동 회전값 강제는 제거 (시스템/세션이 결정하도록 맡김)
-        // layer.connection?.videoRotationAngle = 90
+        layer.connection?.videoRotationAngle = 90
 
-        // 둥근 모서리를 쓰려면 마스킹까지 해야 정확 (선택)
-        // view.layer.cornerRadius = 24
-        // view.layer.masksToBounds = true
+        view.layer.cornerRadius = 24
+        view.layer.masksToBounds = true
 
         view.handleFocus = tabToFocus
         view.handlePinchZoom = onPinchZoom

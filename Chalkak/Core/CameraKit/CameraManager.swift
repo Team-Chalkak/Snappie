@@ -69,13 +69,12 @@ class CameraManager: NSObject, ObservableObject {
     var onPreviewMirroringChanged: ((Bool) -> Void)?
     private weak var previewLayer: AVCaptureVideoPreviewLayer?
 
-    // ✅ 정책(원하면 설정 화면에서 바꿀 수 있게)
+    // 정책(원하면 설정 화면에서 바꿀 수 있게)
     var recordingMirrorPolicy: RecordingMirrorPolicy = .followPreview
     // 현재 파일이 미러로 저장되고 있는지(Clip에 넘겨 기록용)
     @Published private(set) var isRecordingMirrored: Bool = false
     
     private var isRequestingPermissions = false
-    private var didBecomeActiveObserver: NSObjectProtocol?
 
     override init() {
         super.init()
@@ -92,9 +91,6 @@ class CameraManager: NSObject, ObservableObject {
 
     deinit {
         session.stopRunning()
-        if let token = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(token)
-        }
     }
 
     @inline(__always)
@@ -170,21 +166,6 @@ class CameraManager: NSObject, ObservableObject {
         requestCameraIfNeeded { [weak self] in
             self?.requestMicIfNeeded { [weak self] in
                 self?.finishPermissionRequest() // 두 알럿 콜백 종료 시점 단 한 번
-            }
-        }
-    }
-
-    /// 앱 첫 실행에서만 호출
-    func requestPermissionsIfNeededAtFirstLaunch() {
-        guard !isRequestingPermissions else { return }
-        isRequestingPermissions = true
-        showPermissionSheet = false
-
-        checkPermissions()
-
-        requestCameraIfNeeded { [weak self] in
-            self?.requestMicIfNeeded { [weak self] in
-                self?.finishPermissionRequest()
             }
         }
     }
@@ -661,7 +642,7 @@ extension CameraManager {
         previewLayer = layer
         layer.videoGravity = .resizeAspectFill
 
-        // ✅ 시스템이 전/후면 전환/방향 등에 따라 적절히 판단하도록
+        // 시스템이 전/후면 전환/방향 등에 따라 적절히 판단하도록
         if let conn = layer.connection {
             conn.automaticallyAdjustsVideoMirroring = true
             // 초기 상태를 브로드캐스트
@@ -690,7 +671,7 @@ private extension CameraManager {
         propagatePreviewMirroring(from: previewLayer?.connection)
     }
     
-    private func updateRecordingMirroring() {
+    func updateRecordingMirroring() {
         // movieOutput
         if let conn = movieOutput.connection(with: .video), conn.isVideoMirroringSupported {
             switch recordingMirrorPolicy {
@@ -709,7 +690,7 @@ private extension CameraManager {
             }
         }
 
-        // (선택) videoOutput도 파일 좌표계와 맞추고 싶으면 동일 처리
+        // videoOutput도 파일 좌표계와 맞추기 위한 동일 처리
         if let conn = videoOutput.connection(with: .video), conn.isVideoMirroringSupported {
             switch recordingMirrorPolicy {
             case .followPreview: conn.isVideoMirrored = isPreviewMirrored
@@ -724,7 +705,7 @@ private extension CameraManager {
 
 extension CameraManager {
     enum RecordingMirrorPolicy {
-        case followPreview   // ✅ 권장: 프리뷰가 미러면 파일도 미러
+        case followPreview   // 권장: 프리뷰가 미러면 파일도 미러
         case alwaysMirrored  // 항상 미러 저장
         case neverMirrored   // 절대 미러 저장 X (기존 방식)
     }
