@@ -33,16 +33,17 @@ struct ChalkakApp: App {
                 BoundingBoxView(shootState: .firstShoot)
                     .navigationDestination(for: Path.self) { path in
                         switch path {
-                        case .clipEdit(let url, let state, let cameraSetting, let timeStampedTiltList):
+                        case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList):
                             ClipEditView(
                                 clipURL: url,
                                 shootState: state,
                                 cameraSetting: cameraSetting,
+                                cameraManager: cameraManager,
                                 timeStampedTiltList: timeStampedTiltList
                             )
                             
-                        case .overlay(let clip, let cameraSetting):
-                            OverlayView(clip: clip, cameraSetting: cameraSetting)
+                        case .overlay(let clip, let cameraSetting, let cameraManager):
+                            OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
                                 .toolbar(.hidden, for: .navigationBar)
 
                         case .camera(let state):
