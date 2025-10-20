@@ -115,7 +115,7 @@ final class ProjectEditViewModel: ObservableObject {
             // 빈 썸네일 배열로 초기화
             let editableClip = EditableClip(
                 id: clip.id,
-                url: validURL,
+                videoURL: validURL,
                 originalDuration: clip.originalDuration,
                 startPoint: clip.startPoint,
                 endPoint: clip.endPoint,
@@ -144,7 +144,7 @@ final class ProjectEditViewModel: ObservableObject {
             for clip in editableClips {
                 group.addTask {
                     let thumbnails = await self.generateThumbnailsBackground(
-                        url: clip.url,
+                        url: clip.videoURL,
                         duration: clip.originalDuration,
                         count: 10
                     )

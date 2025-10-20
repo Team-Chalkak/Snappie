@@ -28,7 +28,7 @@ extension AVMutableComposition {
         
         for clip in editableClips {
             // 원본 에셋 로드
-            let asset = AVAsset(url: clip.url)
+            let asset = AVAsset(url: clip.videoURL)
             guard let assetTrack = asset.tracks(withMediaType: .video).first else {
                 continue
             }
@@ -55,7 +55,7 @@ extension AVMutableComposition {
         
         // renderSize 계산 (첫 클립 기준으로)
         if let firstClip = editableClips.first,
-           let firstAsset = AVAsset(url: firstClip.url).tracks(withMediaType: .video).first
+           let firstAsset = AVAsset(url: firstClip.videoURL).tracks(withMediaType: .video).first
         {
             let t = firstAsset.preferredTransform
             let size = firstAsset.naturalSize.applying(t)

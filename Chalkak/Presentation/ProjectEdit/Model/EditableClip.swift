@@ -8,9 +8,9 @@
 import Foundation
 import UIKit
 
-struct EditableClip: Identifiable {
+struct EditableClip: Identifiable, ClipInfo {
     let id: String
-    let url: URL
+    let videoURL: URL
     let originalDuration: Double
 
     // 트리밍 범위

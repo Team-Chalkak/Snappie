@@ -86,7 +86,7 @@ class VideoManager: ObservableObject {
         let mergerClips = clips.map { clip in
             Clip(
                 id: clip.id,
-                videoURL: clip.url,
+                videoURL: clip.videoURL,
                 originalDuration: clip.originalDuration,
                 startPoint: clip.startPoint,
                 endPoint: clip.endPoint

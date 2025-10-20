@@ -10,7 +10,7 @@ import SwiftData
 
 /// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
 @Model
-class Clip {
+class Clip: ClipInfo {
     /// 클립의 고유 식별자.
     @Attribute(.unique) var id: String
     
