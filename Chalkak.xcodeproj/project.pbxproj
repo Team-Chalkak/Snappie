@@ -97,6 +97,7 @@
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C58415682E78BDF200292431 /* CompositionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58415672E78BDF200292431 /* CompositionBuilder.swift */; };
 		C584156A2E78C44800292431 /* ClipInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58415692E78C44800292431 /* ClipInfo.swift */; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
@@ -244,6 +245,7 @@
 		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
+		C58415672E78BDF200292431 /* CompositionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionBuilder.swift; sourceTree = "<group>"; };
 		C58415692E78C44800292431 /* ClipInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipInfo.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
@@ -468,6 +470,7 @@
 				999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */,
 				99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */,
 				993A1F222E267E0C0059B70A /* Clip.swift */,
+				C58415692E78C44800292431 /* ClipInfo.swift */,
 				993A1F232E267E0C0059B70A /* Guide.swift */,
 				993A1F242E267E0C0059B70A /* Project.swift */,
 				993A1F252E267E0C0059B70A /* Tilt.swift */,
@@ -1078,6 +1081,7 @@
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
 				993A1F742E267E0C0059B70A /* TrimmingControlView.swift in Sources */,
 				C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */,
+				C58415682E78BDF200292431 /* CompositionBuilder.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */,
 				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,

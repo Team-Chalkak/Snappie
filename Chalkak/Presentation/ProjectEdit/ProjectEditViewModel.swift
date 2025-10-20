@@ -206,80 +206,47 @@ final class ProjectEditViewModel: ObservableObject {
     private func setupPlayerAsync() async {
         let savedPlayHead = playHead
         
-        let composition = AVMutableComposition()
-        guard
-            let vidTrack = composition.addMutableTrack(
-                withMediaType: .video,
-                preferredTrackID: kCMPersistentTrackID_Invalid
-            ),
-            let audTrack = composition.addMutableTrack(
-                withMediaType: .audio,
-                preferredTrackID: kCMPersistentTrackID_Invalid
+        do {
+            // 실시간 미리보기용 컴포지션 생성
+            let result = try await CompositionBuilder.buildComposition(
+                from: editableClips,
+                options: .preview
             )
-        else {
-            return
-        }
-        
-        var cursor = CMTime.zero
-        for clip in editableClips {
-            // URL 유효성 재확인
-            guard FileManager.isValidVideoFile(at: clip.url) else {
-                print("setupPlayer: 유효하지 않은 비디오 파일 건너뛰기: \(clip.url)")
-                continue
+            
+            currentComposition = result.composition
+            
+            // AVPlayerItem 생성 및 설정
+            let item = AVPlayerItem(asset: result.composition)
+            item.videoComposition = result.videoComposition
+            player.replaceCurrentItem(with: item)
+            
+            // 이미지 제너레이터 설정
+            imageGenerator = AVAssetImageGenerator(asset: result.composition)
+            imageGenerator?.appliesPreferredTrackTransform = true
+            imageGenerator?.videoComposition = result.videoComposition
+            
+            // 플레이헤드 위치 복원
+            if savedPlayHead > 0, savedPlayHead <= totalDuration {
+                await updatePreviewImage(at: savedPlayHead)
+            } else {
+                await updatePreviewImage(at: playHead)
             }
             
-            let asset = AVAsset(url: clip.url)
-            let start = CMTime(seconds: clip.startPoint, preferredTimescale: 600)
-            let dur = CMTime(seconds: clip.trimmedDuration, preferredTimescale: 600)
-            let range = CMTimeRange(start: start, duration: dur)
-            
-            do {
-                let vidTracks = try await asset.loadTracks(withMediaType: .video)
-                guard !vidTracks.isEmpty else { continue }
-
-                let audTracks = try await asset.loadTracks(withMediaType: .audio)
-                guard !audTracks.isEmpty else { continue }
-
-                if let track = vidTracks.first {
-                    try vidTrack.insertTimeRange(range, of: track, at: cursor)
-                }
-                if let track = audTracks.first {
-                    try audTrack.insertTimeRange(range, of: track, at: cursor)
-                }
-
-                cursor = cursor + dur
-            } catch {
-                print("트랙 삽입 실패 for clip \(clip.id): \(error)")
-                // 실패한 클립은 건너뛰고 계속 진행
+            // 타임 옵저버 설정
+            if let token = timeObserverToken {
+                player.removeTimeObserver(token)
+                timeObserverToken = nil
             }
+            
+            if isTimeObserverActive {
+                addTimeObserver()
+            }
+            addEndObserver()
+            
+        } catch {
+            print("setupPlayerAsync 실패: \(error)")
+            // 에러 처리 로직 추가
         }
-        
-        currentComposition = composition
-        let previewComposition = composition.makePreviewVideoComposition(using: editableClips)
-        let item = AVPlayerItem(asset: composition)
-        item.videoComposition = previewComposition
-        player.replaceCurrentItem(with: item)
-        
-        imageGenerator = AVAssetImageGenerator(asset: composition)
-        imageGenerator?.appliesPreferredTrackTransform = true
-        imageGenerator?.videoComposition = previewComposition
-        
-        // 저장된 플레이헤드 위치로 복원
-        if savedPlayHead > 0, savedPlayHead <= totalDuration {
-            await updatePreviewImage(at: savedPlayHead)
-        } else {
-            await updatePreviewImage(at: playHead)
-        }
-        
-        if let token = timeObserverToken {
-            player.removeTimeObserver(token)
-            timeObserverToken = nil
-        }
-        // 상태가 활성화되어 있을 때만 새로운 옵저버 생성
-        if isTimeObserverActive {
-            addTimeObserver()
-        }
-        addEndObserver()
     }
     
     // MARK: - 동기 메서드들
