@@ -84,6 +84,10 @@
 		99C93A0E2E27BB0700F42541 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A0D2E27BB0300F42541 /* Path.swift */; };
 		99C93A3B2E2B740300F42541 /* CameraSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */; };
 		99C93A3D2E2B998600F42541 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */; };
+		99E6F0122E8D08CD002ED9C2 /* MigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0112E8D08C4002ED9C2 /* MigrationPlan.swift */; };
+		99E6F0142E90DC03002ED9C2 /* SchemaV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */; };
+		99E6F0162E90DCBB002ED9C2 /* AppTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0152E90DCB4002ED9C2 /* AppTypes.swift */; };
+		99E6F01A2E90EDA9002ED9C2 /* SchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */; };
 		B60564A52E3A767F00AACABE /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */; };
 		B60DC5F12E38A621001D8327 /* SnappieProgressAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60DC5F02E38A621001D8327 /* SnappieProgressAlert.swift */; };
 		B64788642E3323C40091A067 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788632E3323C10091A067 /* RecordButton.swift */; };
@@ -231,6 +235,10 @@
 		99C93A0D2E27BB0300F42541 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSetting.swift; sourceTree = "<group>"; };
 		99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Ext.swift"; sourceTree = "<group>"; };
+		99E6F0112E8D08C4002ED9C2 /* MigrationPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationPlan.swift; sourceTree = "<group>"; };
+		99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV1.swift; sourceTree = "<group>"; };
+		99E6F0152E90DCB4002ED9C2 /* AppTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTypes.swift; sourceTree = "<group>"; };
+		99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV2.swift; sourceTree = "<group>"; };
 		B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		B60DC5F02E38A621001D8327 /* SnappieProgressAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieProgressAlert.swift; sourceTree = "<group>"; };
 		B64788632E3323C10091A067 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
@@ -387,6 +395,8 @@
 		993A1F0E2E267E0C0059B70A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				99E6F0152E90DCB4002ED9C2 /* AppTypes.swift */,
+				99E6F0112E8D08C4002ED9C2 /* MigrationPlan.swift */,
 				99C93A092E27BADB00F42541 /* Coordinator.swift */,
 				993A1F0D2E267E0C0059B70A /* ChalkakApp.swift */,
 			);
@@ -462,6 +472,8 @@
 		993A1F262E267E0C0059B70A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */,
+				99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */,
 				999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */,
 				99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */,
 				993A1F222E267E0C0059B70A /* Clip.swift */,
@@ -1001,9 +1013,11 @@
 				992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */,
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */,
+				99E6F01A2E90EDA9002ED9C2 /* SchemaV2.swift in Sources */,
 				993A1F5A2E267E0C0059B70A /* CameraTiltManager.swift in Sources */,
 				993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */,
 				C5FB3EC82E2E110500A4C1BE /* SnappieFont.swift in Sources */,
+				99E6F0122E8D08CD002ED9C2 /* MigrationPlan.swift in Sources */,
 				C5886D482E3902CC000566C5 /* PlayInfoView.swift in Sources */,
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
@@ -1077,6 +1091,8 @@
 				C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */,
+				99E6F0142E90DC03002ED9C2 /* SchemaV1.swift in Sources */,
+				99E6F0162E90DCBB002ED9C2 /* AppTypes.swift in Sources */,
 				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,
 				993A1F772E267E0C0059B70A /* VideoPreviewView.swift in Sources */,
 				9985192F2E4B3CE500A9F695 /* Error.swift in Sources */,

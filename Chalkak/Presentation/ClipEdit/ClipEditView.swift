@@ -43,6 +43,7 @@ struct ClipEditView: View {
     // 1. Input properties
     let shootState: ShootState
     let cameraSetting: CameraSetting
+    let cameraManager: CameraManager
 
     // 2. State & ObservedObject
     @StateObject private var editViewModel: ClipEditViewModel
@@ -68,6 +69,7 @@ struct ClipEditView: View {
         clipURL: URL,
         shootState: ShootState,
         cameraSetting: CameraSetting,
+        cameraManager: CameraManager,
         timeStampedTiltList: [TimeStampedTilt]
     ) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
@@ -78,6 +80,7 @@ struct ClipEditView: View {
         )
         self.shootState = shootState
         self.cameraSetting = cameraSetting
+        self.cameraManager = cameraManager
     }
 
     // 5. body
@@ -100,7 +103,7 @@ struct ClipEditView: View {
                                 coordinator.push(
                                     .overlay(
                                         clip: editViewModel.createClipData(),
-                                        cameraSetting: editViewModel.cameraSetting
+                                        cameraSetting: editViewModel.cameraSetting, cameraManager: cameraManager
                                     )
                                 )
                             case .followUpShoot:
