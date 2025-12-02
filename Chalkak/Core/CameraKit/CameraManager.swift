@@ -344,16 +344,18 @@ class CameraManager: NSObject, ObservableObject {
             device.exposureMode = .continuousAutoExposure
         }
 
-        // 줌 설정
-        let minZoom = device.minAvailableVideoZoomFactor
-        let maxZoom = device.maxAvailableVideoZoomFactor
-        let zoomFactorToSet = backCameraZoomScale * 2.0
-        let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
-        device.videoZoomFactor = clampedZoomFactor
+        // 줌 설정 후면 카메라 한정
+        if device.position == .back {
+            let minZoom = device.minAvailableVideoZoomFactor
+            let maxZoom = device.maxAvailableVideoZoomFactor
+            let zoomFactorToSet = backCameraZoomScale * 2.0
+            let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
+            device.videoZoomFactor = clampedZoomFactor
 
-        // 카메라 줌 UI반영
-        DispatchQueue.main.async { [weak self] in
-            self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            // 카메라 줌 UI반영
+            DispatchQueue.main.async { [weak self] in
+                self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            }
         }
     }
 
@@ -542,6 +544,8 @@ class CameraManager: NSObject, ObservableObject {
     /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
     func setZoomScale(_ scale: CGFloat) {
         guard let device = videoDeviceInput?.device else { return }
+
+        guard device.position == .back else { return }
 
         do {
             try device.lockForConfiguration()
