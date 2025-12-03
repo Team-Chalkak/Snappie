@@ -36,12 +36,13 @@ class CameraViewModel: ObservableObject {
     @Published var showingZoomControl = false
     @Published var zoomScale: CGFloat = 1.0
     @Published var isUsingFrontCamera: Bool = false
+    @Published var isPreviewMirrored: Bool = false
     @Published var hasBadge: Bool = false
     @Published var showProjectSavedAlert: Bool = false
     @Published var lastZoomInteraction = Date() // 줌 슬라이더 타이머 로직을 위해 유지
 
     // MARK: - Core Dependencies & Models
-    private let model: CameraManager
+     var model: CameraManager
     private let swiftDataManager = SwiftDataManager.shared
     @Published var tiltCollector = TiltDataCollector()
 
@@ -93,6 +94,8 @@ class CameraViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.cameraSetupDelay) {
             self.model.setZoomScale(self.zoomScale)
         }
+        
+        setPreviewMirroringUpdateHandler()
     }
 
     // MARK: - Camera Set
@@ -277,6 +280,12 @@ class CameraViewModel: ObservableObject {
         }
     }
 
+    func setPreviewMirroringUpdateHandler() {
+        model.onPreviewMirroringChanged = { [weak self] isMirrored in
+            DispatchQueue.main.async { self?.isPreviewMirrored = isMirrored }
+        }
+    }
+    
     // MARK: - Private Helpers
     private func checkPermissionOrRequestSheet() -> Bool {
         guard hasRequiredPermissions else { needsPermissionRequest = true; return false }

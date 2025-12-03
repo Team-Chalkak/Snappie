@@ -41,11 +41,13 @@ final class OverlayViewModel: ObservableObject {
     var outlineImage: UIImage? { overlayManager.outlineImage }
     var extractedImage: UIImage? { extractor.extractedImage }
     private var coverImage: Data?
-
+    private let cameraManager: CameraManager
+    
     // 4. Init
-    init(clip: Clip, cameraSetting: CameraSetting) {
+    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
         self.clip = clip
         self.cameraSetting = cameraSetting
+        self.cameraManager = cameraManager
         extractor.overlayManager = overlayManager
         prepareOverlay()
     }
@@ -160,35 +162,29 @@ final class OverlayViewModel: ObservableObject {
     /// Guide 객체 생성
     @MainActor
     func makeGuide(clipID: String) -> Guide? {
-        guard let capturedImage = overlayManager.outlineImage else {
+        guard let outlineImage = overlayManager.outlineImage else {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
         // 가이드 tilt 값 결정
         let cameraTilt = determineTilt()
         
-        let outlineImage: UIImage
-        let savedIsFront = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition)
-
-        if savedIsFront == "true" {
-            outlineImage = capturedImage.flippedHorizontally()
-        } else {
-            outlineImage = capturedImage
+        // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
+        let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
+            BoundingBoxInfo(
+                origin: PointWrapper(box.origin),
+                scale: box.width
+            )
         }
         
-        // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
-            let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
-                BoundingBoxInfo(
-                    origin: PointWrapper(box.origin),
-                    scale: box.width // 필요 시 width/height 따로 둘 수도 있음
-                )
-            }
+        let wasMirrored = cameraManager.isRecordingMirrored
         
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
             boundingBoxes: boundingBoxInfos,
-            outlineImage: outlineImage,
-            cameraTilt: cameraTilt
+            outlineImage: outlineImage, // 이미지는 원본 그대로 저장
+            cameraTilt: cameraTilt,
+            wasMirroredAtCapture: wasMirrored // 현재 카메라 설정 값을 정확히 전달
         )
         return guide
     }
