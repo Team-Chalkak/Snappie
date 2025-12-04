@@ -255,13 +255,15 @@ class SwiftDataManager {
         clipID: String,
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
-        cameraTilt: Tilt
+        cameraTilt: Tilt,
+        wasMirroredAtCapture: Bool
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
             boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
-            cameraTilt: cameraTilt
+            cameraTilt: cameraTilt,
+            wasMirroredAtCapture: wasMirroredAtCapture
         )
         context.insert(guide)
         return guide

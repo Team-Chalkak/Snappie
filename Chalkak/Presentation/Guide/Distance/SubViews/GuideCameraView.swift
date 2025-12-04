@@ -9,8 +9,8 @@ import SwiftUI
 
 struct GuideCameraView: View {
     let guide: Guide?
-    let shootState: ShootState 
-
+    let shootState: ShootState
+    
     @StateObject private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
@@ -38,11 +38,15 @@ struct GuideCameraView: View {
                 }
 
             if let guide = guide, let outline = guide.outlineImage {
+                
+                let shouldFlip = guide.wasMirroredAtCapture != cameraViewModel.isPreviewMirrored
+                
                 Image(uiImage: outline)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .allowsHitTesting(false)
-                    .scaleEffect(x: cameraViewModel.isUsingFrontCamera ? -1 : 1, y: 1)
+                    // 개선: 현재 카메라의 Mirror 상태를 기준으로 가이드를 뒤집습니다.
+                    .scaleEffect(x: shouldFlip ? -1 : 1, y: 1)
                     .padding(.top, 12)
                     .padding(.horizontal, 16)
                     .frame(maxHeight: .infinity, alignment: .top)
