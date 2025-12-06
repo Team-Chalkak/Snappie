@@ -282,19 +282,8 @@ class CameraManager: NSObject, ObservableObject {
                 videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             }
 
-            // 세션 설정 이후 프레임,초점
+            // 카메라 설정 (초점, 노출, 줌 포함)
             try configureCameraSettings(for: device)
-
-            // 시작카메라 줌 배율 설정
-            setZoomScale(backCameraZoomScale)
-            
-            // 프리뷰 레이어가 이미 바인딩되어 있다면 자동조정 켜고 현재 상태를 반영
-            if let conn = previewLayer?.connection {
-                conn.automaticallyAdjustsVideoMirroring = true
-                propagatePreviewMirroring(from: conn)
-            }
-            
-            updateRecordingMirroring()
 
         } catch {
             print("카메라 설정 오류: \(error)")
@@ -342,16 +331,13 @@ class CameraManager: NSObject, ObservableObject {
             device.exposureMode = .continuousAutoExposure
         }
 
-        // 줌 설정
-        let minZoom = device.minAvailableVideoZoomFactor
-        let maxZoom = device.maxAvailableVideoZoomFactor
-        let zoomFactorToSet = backCameraZoomScale * 2.0
-        let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
-        device.videoZoomFactor = clampedZoomFactor
+        // 줌 설정 후면 카메라 한정
+        if device.position == .back {
+            applyZoomScale(backCameraZoomScale, to: device)
 
-        // 카메라 줌 UI반영
-        DispatchQueue.main.async { [weak self] in
-            self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            DispatchQueue.main.async { [weak self] in
+                self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            }
         }
     }
 
@@ -539,33 +525,40 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
+    /// 줌 배율 설정
     func setZoomScale(_ scale: CGFloat) {
         guard let device = videoDeviceInput?.device else { return }
+        guard device.position == .back else { return }
 
         do {
             try device.lockForConfiguration()
+            defer { device.unlockForConfiguration() }
 
-            let minZoom = device.minAvailableVideoZoomFactor
-            let maxZoom = device.maxAvailableVideoZoomFactor
+            applyZoomScale(scale, to: device)
 
-            let zoomFactorToSet = scale * 2.0
-
-            // 디바이스 지원 줌 범위로 값 제한
-            let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
-
-            device.videoZoomFactor = clampedZoomFactor
             currentZoomScale = scale
+            backCameraZoomScale = scale
 
-            // 현재 카메라 포지션에 따라 줌 스케일 저장
-            if device.position == .back {
-                backCameraZoomScale = scale
-            }
-
-            device.unlockForConfiguration()
         } catch {
             print("줌 조정 에러 \(error)")
         }
+    }
+
+    /// 디바이스에 실제 줌 배율을 적용
+    /// - Parameters:
+    ///   - scale: UI 줌 배율
+    ///   - device: AVCaptureDevice
+    /// - Note: device.lockForConfiguration() 이미 호출된 상태에서만 활용할 수 있음!  줌 설정이 끝나면  lockForConfiguration역시 필요 합니다 !
+    private func applyZoomScale(_ scale: CGFloat, to device: AVCaptureDevice) {
+        let minZoom = device.minAvailableVideoZoomFactor
+        let maxZoom = device.maxAvailableVideoZoomFactor
+
+        // UI 스케일을 실제 줌 배율 변환
+        let zoomAdjustment = scale * 2.0
+
+        let clampedZoomFactor = max(minZoom, min(zoomAdjustment, maxZoom))
+
+        device.videoZoomFactor = clampedZoomFactor
     }
 
     /// 카메라 세션 시작
