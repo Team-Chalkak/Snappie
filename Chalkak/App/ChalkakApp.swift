@@ -7,6 +7,7 @@
 
 import SwiftData
 import SwiftUI
+import TipKit
 
 @main
 struct ChalkakApp: App {
@@ -15,6 +16,7 @@ struct ChalkakApp: App {
     @StateObject private var coordinator = Coordinator()
     
     init() {
+        try? Tips.configure()
         do {
           self.sharedContainer = try ModelContainer(
             for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,

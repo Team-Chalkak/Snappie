@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
@@ -23,7 +24,7 @@ struct ProjectTimelineView: View {
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
-    
+
     private let unionButtonWidth: CGFloat = 48
 
     // 드래그 상태
@@ -37,6 +38,7 @@ struct ProjectTimelineView: View {
     // 드래그 앵커(손가락이 클립 내부에서 찍힌 상대 X)
     @State private var dragAnchorInClip: CGFloat?
 
+    private let projectClipAddTip = ProjectClipAddTip()
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
@@ -70,7 +72,8 @@ struct ProjectTimelineView: View {
                     if let insertionIndex,
                        insertionIndex == clips.count,
                        isDragActive,
-                       let draggingClip {
+                       let draggingClip
+                    {
                         insertionGap(width: draggingClip.trimmedDuration * pxPerSecond)
                     }
 
@@ -84,6 +87,7 @@ struct ProjectTimelineView: View {
                             )
                     }
                     .padding(.leading, 2)
+                    .popoverTip(projectClipAddTip)
                 }
                 .padding(.horizontal, geo.size.width / 2)
                 .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
@@ -116,7 +120,7 @@ struct ProjectTimelineView: View {
                     ClipTrimmingView(
                         clip: draggingClip,
                         isDragging: .constant(true),
-                        onToggleTrimming: { },
+                        onToggleTrimming: {},
                         onTrimChanged: { _, _ in },
                         onDragStateChanged: onDragStateChanged
                     )
@@ -136,6 +140,7 @@ struct ProjectTimelineView: View {
     }
 
     // MARK: - Drag & Drop Gesture
+
     private func longPressDragGesture(clip: EditableClip, geo: GeometryProxy) -> some Gesture {
         LongPressGesture(minimumDuration: 0.5)
             .onEnded { _ in
@@ -170,7 +175,7 @@ struct ProjectTimelineView: View {
 
                     let clipWidth = draggingClip.trimmedDuration * pxPerSecond
                     var anchor = drag.location.x - clipLeftGlobalX
-                    anchor = max(0, min(anchor, clipWidth))      // 0...clipWidth 로 클램프
+                    anchor = max(0, min(anchor, clipWidth)) // 0...clipWidth 로 클램프
                     dragAnchorInClip = anchor
                 }
 
@@ -212,6 +217,7 @@ struct ProjectTimelineView: View {
     }
 
     // MARK: - Helpers (좌표/인덱스 계산)
+
     /// 타임라인뷰의 글로벌 좌표 기준 시작지점 X를 계산합니다.
     /// - Parameter geo: `GeometryReader`가 넘겨주는 현재 뷰의 지오메트리.
     /// - Returns: 글로벌 좌표계에서 타임라인 콘텐츠의 선두(leading) X 값.
@@ -234,7 +240,7 @@ struct ProjectTimelineView: View {
         }
         return accumulatedX
     }
-    
+
     /// 드래그 중인 클립의 왼쪽 모서리 X(콘텐츠 좌표계 기준) 를 바탕으로,
     /// 현재 배열에서 어느 인덱스 앞에 삽입할지(갭 인덱스)를 계산합니다.
     /// - Parameters:
@@ -246,7 +252,7 @@ struct ProjectTimelineView: View {
         var accumulatedX: CGFloat = 0
         var reducedIdx = 0
         let reducedCount = clips.count - 1
-        
+
         for (index, clip) in clips.enumerated() {
             if index == sourceIndex { continue }
             let clipWidth = clip.trimmedDuration * pxPerSecond
@@ -260,6 +266,7 @@ struct ProjectTimelineView: View {
     }
 
     // MARK: - gap 뷰
+
     @ViewBuilder
     private func insertionGap(width: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: 6)
@@ -274,7 +281,19 @@ struct ProjectTimelineView: View {
 extension ProjectTimelineView {
     func getTimelineFullWidth(geoWidth: CGFloat) -> CGFloat {
         let videoRangeWidth = CGFloat(totalDuration) * pxPerSecond
-        
+
         return geoWidth + videoRangeWidth + unionButtonWidth
+    }
+}
+
+struct ProjectClipAddTip: Tip {
+    var title: Text {
+        Text("클립 추가 방법")
+            .foregroundStyle(.matcha600)
+    }
+
+    var message: Text? {
+        Text("버튼을 눌러서 촬영을 시작하세요.")
+            .foregroundStyle(.matcha400)
     }
 }
