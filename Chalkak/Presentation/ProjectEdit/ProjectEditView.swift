@@ -26,13 +26,6 @@ struct ProjectEditView: View {
 
     var body: some View {
         ZStack {
-            // 배경 탭을 위한 뷰
-            Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.deactivateAllTrimming()
-                }
-            
             VStack(spacing: 0) {
                 SnappieNavigationBar(
                     navigationTitle: "프로젝트 편집",
@@ -53,7 +46,13 @@ struct ProjectEditView: View {
                 )
                 .padding(.bottom, 16)
                 
-                ProjectPreviewSectionView(viewModel: viewModel)
+                VideoPreviewView(
+                    previewImage: viewModel.previewImage,
+                    player: viewModel.player,
+                    isDragging: viewModel.isDragging
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
                 
                 // 재생 일시정지 버튼 & 시간표시하는 서브뷰
                 PlayInfoView(
@@ -61,7 +60,7 @@ struct ProjectEditView: View {
                     onPlayPauseTapped: viewModel.togglePlayback,
                     currentTime: viewModel.playHead,
                     totalDuration: viewModel.totalDuration,
-                    trimmingClip: viewModel.editableClips.first(where: { $0.isTrimming })
+                    trimmingClip: nil
                 )
                 .padding(.vertical, 16)
                 
@@ -74,8 +73,6 @@ struct ProjectEditView: View {
                     isPlaying: viewModel.isPlaying,
                     totalDuration: viewModel.totalDuration,
                     onSeek: viewModel.seekTo,
-                    onToggleTrimming: viewModel.toggleTrimmingMode,
-                    onTrimChanged: viewModel.updateTrimRange,
                     onMove: viewModel.moveClip,
                     onAddClipTapped: {
                         viewModel.setCurrentProjectID()
