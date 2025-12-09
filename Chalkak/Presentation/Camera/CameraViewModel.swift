@@ -42,18 +42,21 @@ class CameraViewModel: ObservableObject {
     @Published var lastZoomInteraction = Date() // 줌 슬라이더 타이머 로직을 위해 유지
 
     // MARK: - Core Dependencies & Models
-     var model: CameraManager
+
+    var model: CameraManager
     private let swiftDataManager = SwiftDataManager.shared
     @Published var tiltCollector = TiltDataCollector()
+    @Published var showOnboarding: Bool = false
 
     // MARK: Internal State
+
     let session: AVCaptureSession
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
     var timeStampedTiltList: [TimeStampedTilt] = []
 
     private var cancellables = Set<AnyCancellable>()
     private var horizontalLevelCancellable: AnyCancellable?
-    
+
     // Private Timers
     private var feedbackTimer: Timer?
     private var zoomSliderAutoHideTimer: Timer?
@@ -71,10 +74,12 @@ class CameraViewModel: ObservableObject {
     private var hasRequiredPermissions: Bool { model.permissionState == .both }
 
     // MARK: - init
+
     init() {
         model = CameraManager()
         session = model.session
-
+        model.$showOnboarding
+            .assign(to: &$showOnboarding)
         model.$isRecording
             .assign(to: &$isRecording)
 
