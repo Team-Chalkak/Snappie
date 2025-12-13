@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FirstShootCameraView: View {
-    @StateObject private var viewModel = BoundingBoxViewModel()
+    @State private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
     var body: some View {

@@ -10,7 +10,7 @@ import SwiftUI
 struct BoundingBoxView: View {
     let shootState: ShootState
 
-    @StateObject private var viewModel = BoundingBoxViewModel()
+    @State private var viewModel = BoundingBoxViewModel()
     @EnvironmentObject private var coordinator: Coordinator
 
     var body: some View {
