@@ -28,26 +28,7 @@ struct ProjectEditView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                SnappieNavigationBar(
-                    navigationTitle: "프로젝트 편집",
-                    leftButtonType: .backward {
-                        if viewModel.hasChanges {
-                            showExitConfirmation = true
-                        } else {
-                            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-                            coordinator.popToScreen(.projectList)
-                        }
-                        Analytics.logEvent("projectEditBackButtonTapped", parameters: nil)
-                    },
-                    rightButtonType: .oneButton(.init(label: "내보내기") {
-                        Task {
-                            await viewModel.exportEditedVideoToPhotos()
-                            showExportSuccessAlert = true
-                        }
-                        Analytics.logEvent("exportProjectButtonTapped", parameters: nil)
-                    })
-                )
-                .padding(.bottom, 16)
+                navigationBar
                 
                 VideoPreviewView(
                     previewImage: viewModel.previewImage,
@@ -172,5 +153,82 @@ struct ProjectEditView: View {
                 }
             }
         )
+    }
+}
+
+// MARK: - Subviews
+
+private extension ProjectEditView {
+    @ViewBuilder
+    var navigationBar: some View {
+        ZStack {
+            HStack {
+                backButton
+                Spacer()
+                rightButtons
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .padding(.bottom, 16)
+    }
+
+    @ViewBuilder
+    private var rightButtons: some View {
+        HStack(spacing: 8) {
+            exportButton
+            saveButton
+        }
+    }
+
+    private var backButton: some View {
+        SnappieButton(
+            .iconBackground(
+                icon: .chevronBackward,
+                size: .medium,
+                isActive: true
+            )
+        ) {
+            if viewModel.hasChanges {
+                showExitConfirmation = true
+            } else {
+                UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                coordinator.popToScreen(.projectList)
+            }
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            Task {
+                await viewModel.exportEditedVideoToPhotos()
+                showExportSuccessAlert = true
+            }
+        } label: {
+            Image(systemName: "square.and.arrow.down")
+                .frame(width: 20, height: 20)
+                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                .padding(6)
+                .background(SnappieColor.containerFillNormal)
+                .frame(width: 32, height: 32)
+                .clipShape(.circle)
+        }
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task {
+                await viewModel.exportEditedVideoToPhotos()
+                showExportSuccessAlert = true
+            }
+        } label: {
+            Text("저장")
+                .font(SnappieFont.style(.proLabel2))
+                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 9)
+                .background(SnappieColor.containerFillNormal)
+                .clipShape(.capsule)
+        }
     }
 }
