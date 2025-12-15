@@ -15,13 +15,11 @@ struct CameraRecordView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Button(action: {
-                coordinator.push(.projectList)
-                Analytics.logEvent("moveToProjectListButtonTapped", parameters: nil)
-            }) {
-                Image(viewModel.hasBadge ? "projectListBadge" : "projectList")
-                    .frame(width: 48, height: 48)
-            }
+            Button {}
+                label: {
+                    Color.clear
+                        .frame(width: 48, height: 48)
+                }
 
             Spacer()
 
