@@ -10,7 +10,7 @@ import SwiftUI
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
-    @StateObject private var viewModel: ProjectEditViewModel
+    @State private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExitConfirmation = false
     @State private var showExportSuccessAlert = false
@@ -20,7 +20,7 @@ struct ProjectEditView: View {
     @State private var newClip: Clip? = nil
     
     init(projectID: String, newClip: Clip? = nil) {
-        self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
+        self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
         self._newClip = State(initialValue: newClip)
     }
 
