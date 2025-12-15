@@ -17,33 +17,35 @@ struct ChalkakApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var coordinator = Coordinator()
-    
+
     init() {
         do {
-          self.sharedContainer = try ModelContainer(
-            for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,
-            migrationPlan: MigrationPlan.self
-          )
+            self.sharedContainer = try ModelContainer(
+                for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,
+                migrationPlan: MigrationPlan.self
+            )
         } catch {
-          assertionFailure("ModelContainer init error: \(error)")
-          fatalError()
+            assertionFailure("ModelContainer init error: \(error)")
+            fatalError()
         }
-        
+
         SwiftDataManager.shared.configure(container: sharedContainer)
-        
+
         backfillGuideWasMirroredIfNeeded(container: sharedContainer)
-        
+
         Task { @MainActor in
             SwiftDataManager.shared.cleanupAllTempProjects()
         }
     }
-    
+
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $coordinator.path) {
-                BoundingBoxView(shootState: .firstShoot)
+                ProjectListView()
                     .navigationDestination(for: Path.self) { path in
                         switch path {
+                        case .startProject:
+                            StartProjectView()
                         case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList):
                             ClipEditView(
                                 clipURL: url,
@@ -52,7 +54,7 @@ struct ChalkakApp: App {
                                 cameraManager: cameraManager,
                                 timeStampedTiltList: timeStampedTiltList
                             )
-                            
+
                         case .overlay(let clip, let cameraSetting, let cameraManager):
                             OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
                                 .toolbar(.hidden, for: .navigationBar)
