@@ -11,14 +11,17 @@ import SwiftUI
 struct NonEmptyProjectView: View {
     @ObservedObject var viewModel: ProjectListViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    
+
     private let gridItems: [GridItem] = [
         GridItem(spacing: 15, alignment: .trailing),
         GridItem(spacing: 15, alignment: .leading)
     ]
 
     var body: some View {
-        ScrollView {
+        VStack(spacing: 18) {
+            Text("나의 프로젝트")
+                .font(.system(size: 22, weight: .bold))
+                .frame(maxWidth: .infinity, alignment: .leading)
             LazyVGrid(columns: gridItems, spacing: 16) {
                 ForEach(viewModel.projects) { project in
                     ProjectCardView(
@@ -40,7 +43,6 @@ struct NonEmptyProjectView: View {
                     )
                 }
             }
-            .padding(.horizontal, 16)
         }
     }
 }

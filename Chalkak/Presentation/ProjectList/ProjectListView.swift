@@ -26,24 +26,34 @@ struct ProjectListView: View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
+            
+            ScrollView {
+                Color.clear
+                    .frame(height: 32)
+                VStack(spacing: 32) {
+                    Button {
+                        coordinator.push(.startProject)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                            Text("새 프로젝트")
+                        }.foregroundStyle(SnappieColor.labelDarkNormal)
+                            .font(SnappieFont.style(.proLabel4))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(16)
+                    .background(SnappieColor.primaryNormal)
+                    .clipShape(.capsule)
 
-            VStack {
-                Button {
-                    coordinator.push(.startProject)
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "plus")
-                        Text("새 프로젝트")
-                    }.foregroundStyle(SnappieColor.labelDarkNormal)
+                    // 컨텐츠
+                    if viewModel.projects.isEmpty {
+                        EmptyProjectView()
+                    }
+                    else {
+                        NonEmptyProjectView(viewModel: viewModel)
+                    }
                 }
-                // 컨텐츠
-                if viewModel.projects.isEmpty {
-                    EmptyProjectView()
-                }
-                else {
-                    NonEmptyProjectView(viewModel: viewModel)
-                }
-            }
+            }.padding(.horizontal, 16)
         }
         .navigationBarBackButtonHidden()
         .snappieAlert(isPresented: $viewModel.showProjectDeletedAlert, message: "프로젝트 삭제됨", showImage: false)
