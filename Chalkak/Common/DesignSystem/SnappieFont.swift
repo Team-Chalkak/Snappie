@@ -61,6 +61,7 @@ enum SnappieFont {
         case proLabel1
         case proLabel2
         case proLabel3
+        case proLabel4
         case proCaption1
         
         case roundCaption1
@@ -72,14 +73,14 @@ enum SnappieFont {
         
         var fontName: FontType {
             switch self {
-            case .proBody1, .proLabel1, .proLabel2, .proLabel3, .proCaption1:
-                    .sfPro
+            case .proBody1, .proLabel1, .proLabel2, .proLabel3,.proLabel4, .proCaption1:
+                .sfPro
                 
             case .roundCaption1, .roundCaption2:
-                    .sfProRounded
+                .sfProRounded
                 
             case .kronaLabel1, .kronaCaption1, .kronaExtra:
-                    .kronaOne
+                .kronaOne
             }
         }
         
@@ -93,14 +94,14 @@ enum SnappieFont {
                 14
             case .proLabel3:
                 14
+            case .proLabel4:
+                20
             case .proCaption1:
                 14
-                
             case .roundCaption1:
                 12
             case .roundCaption2:
                 10
-                
             case .kronaLabel1:
                 14
             case .kronaCaption1:
@@ -113,26 +114,27 @@ enum SnappieFont {
         var weight: Font.Weight {
             switch self {
             case .proBody1:
-                    .regular
+                .regular
             case .proLabel1:
-                    .semibold
+                .semibold
             case .proLabel2:
-                    .semibold
+                .semibold
             case .proLabel3:
-                    .semibold
+                .semibold
+            case .proLabel4:
+                .bold
             case .proCaption1:
-                    .regular
+                .regular
             case .roundCaption1:
-                    .regular
+                .regular
             case .roundCaption2:
-                    .regular
-                
+                .regular
             case .kronaLabel1:
-                    .regular
+                .regular
             case .kronaCaption1:
-                    .regular
+                .regular
             case .kronaExtra:
-                    .regular
+                .regular
             }
         }
         
@@ -153,14 +155,14 @@ enum SnappieFont {
                 self.getSpacing(scale: -2)
             case .proLabel3:
                 self.getSpacing(scale: -2)
+            case .proLabel4:
+                self.getSpacing(scale: -2)
             case .proCaption1:
                 self.getSpacing(scale: -1.2)
-
             case .roundCaption1:
                 self.getSpacing(scale: -1.2)
             case .roundCaption2:
                 self.getSpacing(scale: -2)
-                
             case .kronaLabel1:
                 self.getSpacing(scale: -2)
             case .kronaCaption1:
