@@ -43,7 +43,7 @@ struct StartProjectView: View {
                                 .foregroundStyle(SnappieColor.labelPrimaryDisable)
                             Text("00:00")
                                 .foregroundStyle(SnappieColor.labelPrimaryDisable)
-                        }.font(.system(size: 14, weight: .regular))
+                        }.font(SnappieFont.style(.proCaption1))
 
                         Spacer()
                         SnappieButton(

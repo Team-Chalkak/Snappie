@@ -26,7 +26,7 @@ struct ProjectListView: View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
-            
+
             ScrollView {
                 Color.clear
                     .frame(height: 32)
@@ -39,11 +39,13 @@ struct ProjectListView: View {
                             Text("새 프로젝트")
                         }.foregroundStyle(SnappieColor.labelDarkNormal)
                             .font(SnappieFont.style(.proLabel4))
+                            .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(16)
                     .background(SnappieColor.primaryNormal)
                     .clipShape(.capsule)
+                    .contentShape(.rect)
 
                     // 컨텐츠
                     if viewModel.projects.isEmpty {
@@ -53,7 +55,10 @@ struct ProjectListView: View {
                         NonEmptyProjectView(viewModel: viewModel)
                     }
                 }
-            }.padding(.horizontal, 16)
+            }
+            .padding(.horizontal, 16)
+            .scrollIndicators(.hidden)
+            .safeAreaPadding(.bottom, 20)
         }
         .navigationBarBackButtonHidden()
         .snappieAlert(isPresented: $viewModel.showProjectDeletedAlert, message: "프로젝트 삭제됨", showImage: false)
