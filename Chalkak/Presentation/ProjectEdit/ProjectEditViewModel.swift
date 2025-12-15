@@ -10,7 +10,8 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class ProjectEditViewModel: ObservableObject {
+@Observable
+final class ProjectEditViewModel {
     private var project: Project?
     private var projectID: String
     private var currentComposition: AVMutableComposition?
@@ -18,20 +19,20 @@ final class ProjectEditViewModel: ObservableObject {
     private var isTimeObserverActive = true
     private var imageGenerator: AVAssetImageGenerator?
     
-    @Published var editableClips: [EditableClip] = []
-    @Published var isPlaying = false
-    @Published var playHead: Double = 0
-    @Published var player = AVPlayer()
-    @Published var previewImage: UIImage? = nil
-    @Published var isDragging = false
-    @Published var guide: Guide? = nil /// 프로젝트 로딩중
-    @Published var isLoading = false
-    @Published var showEmptyProjectAlert = false
-    @Published var selectedClipID: String? = nil
+    var editableClips: [EditableClip] = []
+    var isPlaying = false
+    var playHead: Double = 0
+    var player = AVPlayer()
+    var previewImage: UIImage?
+    var isDragging = false
+    var guide: Guide? /// 프로젝트 로딩중
+    var isLoading = false
+    var showEmptyProjectAlert = false
+    var selectedClipID: String? = nil
     
     // MARK: – 저장/내보내기용 프로퍼티
 
-    @Published var isExporting = false
+    var isExporting = false
     private let videoManager = VideoManager()
     private let photoLibrarySaver = PhotoLibrarySaver()
 
