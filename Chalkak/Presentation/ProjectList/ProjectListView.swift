@@ -11,35 +11,32 @@ import SwiftUI
 /// 프로젝트 리스트 메인뷰
 struct ProjectListView: View {
     // MARK: properties
-    
+
     // property wrappers
     @StateObject var viewModel = ProjectListViewModel()
     @EnvironmentObject private var coordinator: Coordinator
-    
+
     let gridItems: [GridItem] = [
         GridItem(spacing: 15, alignment: .trailing),
         GridItem(spacing: 15, alignment: .leading)
     ]
-    
+
     // MARK: body
 
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
-            
+
             VStack {
-                // navigation
-                SnappieNavigationBar(
-                    navigationTitle: "내 프로젝트",
-                    leftButtonType: .backward {
-                        // TODO: 이전 버튼으로 돌아가는 버튼(네비게이션이 아니라 Full screen cover로 진행할 거라서 화면을 없애는 값을 바인딩으로 받아와야 할 것 같아요
-                        coordinator.popLast()
-                        Analytics.logEvent("projectListBackButtonTapped", parameters: nil)
-                    },
-                    rightButtonType: .none
-                )
-                
+                Button {
+                    coordinator.push(.startProject)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                        Text("새 프로젝트")
+                    }.foregroundStyle(SnappieColor.labelDarkNormal)
+                }
                 // 컨텐츠
                 if viewModel.projects.isEmpty {
                     EmptyProjectView()
@@ -53,11 +50,11 @@ struct ProjectListView: View {
         .snappieAlert(isPresented: $viewModel.showProjectDeletedAlert, message: "프로젝트 삭제됨", showImage: false)
         .onAppear {
             viewModel.fetchProjects()
-            
+
             // 삭제할 프로젝트가 있는지 확인
             if let projectIDToDelete = UserDefaults.standard.string(forKey: "ProjectToDelete"),
-               let projectToDelete = viewModel.projects.first(where: { $0.id == projectIDToDelete }) {
-                
+               let projectToDelete = viewModel.projects.first(where: { $0.id == projectIDToDelete })
+            {
                 UserDefaults.standard.removeObject(forKey: "ProjectToDelete")
                 viewModel.deleteProject(projectToDelete)
             }
