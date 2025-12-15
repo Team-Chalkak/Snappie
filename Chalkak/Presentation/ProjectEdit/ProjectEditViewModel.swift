@@ -486,6 +486,10 @@ final class ProjectEditViewModel: ObservableObject {
             print("원본 프로젝트를 찾을 수 없습니다.")
             return
         }
+
+        // ProjectListView에서 ProjectEditView 접근시 해당 프로젝트 뱃지 제거
+        let originalID = originalProject.originalID ?? originalProject.id
+        SwiftDataManager.shared.markProjectAsChecked(projectID: originalID)
         
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
