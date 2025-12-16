@@ -12,7 +12,6 @@ enum AlertType {
     case deleteProject
     case retakeVideo
     case finishShooting
-    case retakeCurrentVideo
     case exitWhileRecording
     case resumeProject
     case emptyProjectDelete
@@ -20,9 +19,8 @@ enum AlertType {
     var title: String {
         switch self {
         case .deleteProject: return "프로젝트를 삭제할까요?"
-        case .retakeVideo: return "다시 촬영할까요?"
+        case .retakeVideo: return "다시 찍으시겠어요?"
         case .finishShooting: return "촬영을 마치고 나갈까요?"
-        case .retakeCurrentVideo: return "다시 촬영할까요?"
         case .exitWhileRecording: return "다시 찍으시겠어요?"
         case .resumeProject: return "촬영 중인 프로젝트가 있어요."
         case .emptyProjectDelete: return "작업 중인 프로젝트를 삭제할까요?"
@@ -32,9 +30,8 @@ enum AlertType {
     var message: String {
         switch self {
         case .deleteProject: return "프로젝트와 안에 있는 장면이 모두 삭제돼요."
-        case .retakeVideo: return "방금 찍은 영상은 저장되지 않아요."
+        case .retakeVideo: return "지금 나가면 방금 찍은 영상이 지워져요."
         case .finishShooting: return "지금까지 찍은 장면은 저장돼요."
-        case .retakeCurrentVideo: return "방금 찍은 영상은 저장되지 않아요."
         case .exitWhileRecording: return "지금 나가면 방금 찍은 영상이 지워져요."
         case .resumeProject: return "다음 장면을 이어서 촬영할까요?"
         case .emptyProjectDelete: return "남아있는 장면이 없으면 프로젝트가 삭제돼요."
@@ -46,13 +43,12 @@ enum AlertType {
         case .deleteProject: return "삭제"
         case .retakeVideo: return "확인"
         case .finishShooting: return "나가기"
-        case .retakeCurrentVideo: return "확인"
         case .exitWhileRecording: return "확인"
         case .resumeProject: return "이어서 촬영"
         case .emptyProjectDelete: return "삭제"
         }
     }
-    
+
     var isDestructive: Bool {
         switch self {
         case .deleteProject, .emptyProjectDelete:
