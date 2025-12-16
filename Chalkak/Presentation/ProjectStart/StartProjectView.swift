@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct StartProjectView: View {
     @EnvironmentObject private var coordinator: Coordinator
+    private let projectAddClipTip = ProjectAddClip()
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
@@ -75,10 +77,23 @@ struct StartProjectView: View {
                                         .fill(SnappieColor.primaryLight)
                                 )
                         }
+                        .popoverTip(projectAddClipTip)
                     }
                 }
                 .padding(.horizontal, 24)
             }
         }
+    }
+}
+
+struct ProjectAddClip: Tip {
+    var title: Text {
+        Text("클립 추가 방법")
+            .foregroundStyle(.matcha600)
+    }
+
+    var message: Text? {
+        Text("버튼을 눌러서 촬영을 시작하세요.")
+            .foregroundStyle(.matcha400)
     }
 }
