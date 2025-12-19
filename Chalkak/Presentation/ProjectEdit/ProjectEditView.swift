@@ -15,11 +15,12 @@ struct ProjectEditView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExitConfirmation = false
     @State private var showExportSuccessAlert = false
+    @State private var showPhotoPermissionDeniedAlert = false
     @State private var isExporting = false
-    
+
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
-    
+
     init(projectID: String, newClip: Clip? = nil) {
         self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
         self._newClip = State(initialValue: newClip)
@@ -129,6 +130,8 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
+                await viewModel.initializeTempProject(loadAfter: false)
+
                 if let clip = newClip {
                     // 새 클립이 있는 경우: temp 초기화 후 클립 추가
                     await viewModel.initializeTempProject(loadAfter: false)
@@ -140,7 +143,7 @@ struct ProjectEditView: View {
                 }
             }
         }
-        
+
         // 뒤로가기 확인 다이얼로그
         .confirmationDialog(
             "편집한 내용을 저장할까요?",
@@ -173,13 +176,13 @@ struct ProjectEditView: View {
         } message: {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }
-        
+
         // 내보내기 완료 알림
         .snappieAlert(
             isPresented: $showExportSuccessAlert,
             message: "내보내기 완료"
         )
-        
+
         // 진행중 로딩 프로그레스
         .snappieProgressAlert(
             isPresented: $isExporting,
@@ -187,7 +190,7 @@ struct ProjectEditView: View {
             loadingMessage: "영상 내보내는 중...",
             completionMessage: ""
         )
-        
+
         // 모든 클립 삭제 시, 프로젝트 삭제 알림
         .alert(
             .emptyProjectDelete,
@@ -198,6 +201,18 @@ struct ProjectEditView: View {
                     if success {
                         coordinator.popToScreen(.projectList)
                     }
+                }
+            }
+        )
+
+        // 사진 라이브러리 권한 허용이 되지 않았을 때 Alert
+        .alert(
+            .photoPermissionDenied,
+            isPresented: $showPhotoPermissionDeniedAlert,
+            confirmAction: {
+                // 설정앱 이동
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
                 }
             }
         )
@@ -249,8 +264,12 @@ private extension ProjectEditView {
     private var exportButton: some View {
         Button {
             Task {
-                await viewModel.exportEditedVideoToPhotos()
-                showExportSuccessAlert = true
+                let success = await viewModel.exportEditedVideoToPhotos()
+                if success {
+                    showExportSuccessAlert = true
+                } else {
+                    showPhotoPermissionDeniedAlert = true
+                }
             }
         } label: {
             Image(systemName: "square.and.arrow.down")
@@ -266,8 +285,12 @@ private extension ProjectEditView {
     private var saveButton: some View {
         Button {
             Task {
-                await viewModel.exportEditedVideoToPhotos()
-                showExportSuccessAlert = true
+                let success = await viewModel.exportEditedVideoToPhotos()
+                if success {
+                    showExportSuccessAlert = true
+                } else {
+                    showPhotoPermissionDeniedAlert = true
+                }
             }
         } label: {
             Text("저장")
