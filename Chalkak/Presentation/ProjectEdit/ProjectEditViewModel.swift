@@ -499,18 +499,20 @@ final class ProjectEditViewModel {
     
     // MARK: – 편집된 영상 갤러리에 내보내기
 
-    func exportEditedVideoToPhotos() async {
+    func exportEditedVideoToPhotos() async -> Bool {
         isExporting = true
         defer { isExporting = false }
-        
+
         do {
             // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
             // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
             let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
-            await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
-            print("내보내기 완료:", finalURL)
+            let success = await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
+
+            return success
         } catch {
             print("내보내기 실패:", error)
+            return false
         }
     }
 
