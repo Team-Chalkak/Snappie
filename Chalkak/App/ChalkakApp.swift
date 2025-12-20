@@ -5,6 +5,9 @@
 //  Created by 배현진 on 7/11/25.
 //
 
+import AdSupport
+import AppTrackingTransparency
+import FirebaseCore
 import SwiftData
 import SwiftUI
 
@@ -12,6 +15,7 @@ import SwiftUI
 struct ChalkakApp: App {
     let sharedContainer: ModelContainer
 
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var coordinator = Coordinator()
     
     init() {
@@ -66,5 +70,30 @@ struct ChalkakApp: App {
             .environmentObject(coordinator)
         }
         .modelContainer(sharedContainer)
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .authorized:
+                    print("Authorized")
+                    print("IDFA = \(ASIdentifierManager.shared().advertisingIdentifier)")
+                    FirebaseApp.configure()
+                case .denied:
+                    print("Denied")
+                case .notDetermined:
+                    print("Not Determined")
+                case .restricted:
+                    print("Restricted")
+                @unknown default:
+                    print("Unknow")
+                }
+            }
+        }
+        return true
     }
 }
