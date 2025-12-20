@@ -5,6 +5,7 @@
 //  Created by 정종문 on 7/14/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 struct CameraDefaultTopControlView: View {
@@ -18,6 +19,7 @@ struct CameraDefaultTopControlView: View {
                     isActive: viewModel.showingCameraControl
                 )) {
                     viewModel.switchCameraControls()
+                    Analytics.logEvent("toggleCameraControlButtonTapped", parameters: nil)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .disabled(viewModel.isTimerRunning) // 타이머 중 비활성화

@@ -5,6 +5,7 @@
 //  Created by Youbin on 7/29/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 /// 프로젝트가 존재할 때 보여지는 리스트 뷰
@@ -30,12 +31,15 @@ struct NonEmptyProjectView: View {
                         timeCreated: project.createdAt,
                         moveToProjectEdit: {
                             coordinator.push(.projectEdit(projectID: project.id))
+                            Analytics.logEvent("moveToProjectEditButtonTapped", parameters: nil)
                         },
                         deleteProject: {
                             viewModel.deleteProject(project)
+                            Analytics.logEvent("deleteProjectButtonTapped", parameters: nil)
                         },
                         editProjectTitle: { newTitle in
                             viewModel.editProjectTitle(project: project, newTitle: newTitle)
+                            Analytics.logEvent("editProjectTitleButtonTapped", parameters: nil)
                         }
                     )
                 }
