@@ -97,6 +97,7 @@
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC022EF9080400A9EC1E /* PlayheadView.swift */; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D352E375A94000566C5 /* ProjectListViewModel.swift */; };
@@ -243,6 +244,7 @@
 		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
+		C54ABC022EF9080400A9EC1E /* PlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayheadView.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */,
 				992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */,
 				C5886D472E3902CC000566C5 /* PlayInfoView.swift */,
+				C54ABC022EF9080400A9EC1E /* PlayheadView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -1021,6 +1024,7 @@
 				0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */,
+				C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */,
 				C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,

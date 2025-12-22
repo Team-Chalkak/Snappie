@@ -21,8 +21,8 @@ struct TrimminglineSliderView: View {
 
     private let pxPerSecond: CGFloat = 50
     private let clipSpacing: CGFloat = 8
-    private let timelineHeight: CGFloat = 60
-    private let rulerHeight: CGFloat = 23
+    private let sliderHeight: CGFloat = 130
+    private let timelineHeight: CGFloat = 97
 
     @State private var dragOffset: CGFloat = 0
 
@@ -42,7 +42,12 @@ struct TrimminglineSliderView: View {
                 onAddClipTapped: onAddClipTapped,
                 onDragStateChanged: onDragStateChanged
             )
-            .frame(height: rulerHeight + timelineHeight)
+            .frame(height: timelineHeight)
+            .background(
+                Rectangle()
+                    .fill(SnappieColor.containerFillNormal)
+                    .frame(maxWidth: .infinity)
+            )
             .gesture(
                 DragGesture()
                     .onChanged { gesture in
@@ -60,12 +65,10 @@ struct TrimminglineSliderView: View {
             )
             
             // Playhead
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.matcha50)
-                .frame(width: 2, height: rulerHeight + timelineHeight)
+            PlayheadView()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .allowsHitTesting(false)
         }
-        .frame(height: rulerHeight + timelineHeight)
+        .frame(height: sliderHeight)
     }
 }

@@ -71,15 +71,15 @@ struct ProjectTimelineView: View {
                     }
 
                     Button(action: onAddClipTapped) {
-                        Image("union")
-                            .padding(.horizontal, 16)
-                            .frame(height: timelineHeight)
+                        IconView(iconType: .union, scale: .large)
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .frame(width: 67, height: timelineHeight, alignment: .center)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .fill(SnappieColor.primaryLight)
+                                    .fill(.deepGreen400)
                             )
                     }
-                    .padding(.leading, 2)
+                    .padding(.leading, 3)
                 }
                 .padding(.horizontal, geo.size.width / 2)
                 .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)

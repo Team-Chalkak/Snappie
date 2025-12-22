@@ -25,70 +25,71 @@ struct ProjectEditView: View {
     }
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                SnappieNavigationBar(
-                    navigationTitle: "프로젝트 편집",
-                    leftButtonType: .backward {
-                        if viewModel.hasChanges {
-                            showExitConfirmation = true
-                        } else {
-                            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-                            coordinator.popToScreen(.projectList)
-                        }
-                    },
-                    rightButtonType: .oneButton(.init(label: "내보내기") {
-                        Task {
-                            await viewModel.exportEditedVideoToPhotos()
-                            showExportSuccessAlert = true
-                        }
-                    })
-                )
-                .padding(.bottom, 16)
-                
-                VideoPreviewView(
-                    previewImage: viewModel.previewImage,
-                    player: viewModel.player,
-                    isDragging: viewModel.isDragging
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
-                
-                // 재생 일시정지 버튼 & 시간표시하는 서브뷰
-                PlayInfoView(
-                    isPlaying: $viewModel.isPlaying,
-                    onPlayPauseTapped: viewModel.togglePlayback,
-                    currentTime: viewModel.playHead,
-                    totalDuration: viewModel.totalDuration,
-                    trimmingClip: nil
-                )
-                .padding(.vertical, 16)
-                
-                Divider().padding(.vertical, 8)
-                
-                TrimminglineSliderView(
-                    clips: $viewModel.editableClips,
-                    playHeadPosition: $viewModel.playHead,
-                    isDragging: $viewModel.isDragging,
-                    isPlaying: viewModel.isPlaying,
-                    totalDuration: viewModel.totalDuration,
-                    onSeek: viewModel.seekTo,
-                    onMove: viewModel.moveClip,
-                    onAddClipTapped: {
-                        viewModel.setCurrentProjectID()
-                        guard let guide = viewModel.guide else {
-                            print("Error: Guide not loaded yet")
-                            return
-                        }
-                        // 추가 촬영 여부
-                        UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
-                        coordinator.push(.camera(state: .appendShoot(guide: guide)))
-                    },
-                    onDragStateChanged: { isDragging in
-                        viewModel.setDraggingState(isDragging)
+        VStack(spacing: 0) {
+            SnappieNavigationBar(
+                navigationTitle: "프로젝트 편집",
+                leftButtonType: .backward {
+                    if viewModel.hasChanges {
+                        showExitConfirmation = true
+                    } else {
+                        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                        coordinator.popToScreen(.projectList)
                     }
-                )
-            }
+                },
+                rightButtonType: .oneButton(.init(label: "내보내기") {
+                    Task {
+                        await viewModel.exportEditedVideoToPhotos()
+                        showExportSuccessAlert = true
+                    }
+                })
+            )
+            .padding(.bottom, 16)
+            
+            VideoPreviewView(
+                previewImage: viewModel.previewImage,
+                player: viewModel.player,
+                isDragging: viewModel.isDragging
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
+            
+            // 재생 일시정지 버튼 & 시간표시하는 서브뷰
+            PlayInfoView(
+                isPlaying: $viewModel.isPlaying,
+                onPlayPauseTapped: viewModel.togglePlayback,
+                currentTime: viewModel.playHead,
+                totalDuration: viewModel.totalDuration,
+                trimmingClip: nil
+            )
+            .padding(.top, 16)
+            
+            Rectangle()
+                .fill(.deepGreen600)
+                .frame(maxWidth: .infinity, maxHeight: 1.5)
+                .padding(.vertical, 8)
+            
+            TrimminglineSliderView(
+                clips: $viewModel.editableClips,
+                playHeadPosition: $viewModel.playHead,
+                isDragging: $viewModel.isDragging,
+                isPlaying: viewModel.isPlaying,
+                totalDuration: viewModel.totalDuration,
+                onSeek: viewModel.seekTo,
+                onMove: viewModel.moveClip,
+                onAddClipTapped: {
+                    viewModel.setCurrentProjectID()
+                    guard let guide = viewModel.guide else {
+                        print("Error: Guide not loaded yet")
+                        return
+                    }
+                    // 추가 촬영 여부
+                    UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
+                    coordinator.push(.camera(state: .appendShoot(guide: guide)))
+                },
+                onDragStateChanged: { isDragging in
+                    viewModel.setDraggingState(isDragging)
+                }
+            )
         }
         .background(
             SnappieColor.darkHeavy
