@@ -119,7 +119,7 @@ final class ProjectEditViewModel: ObservableObject {
                 originalDuration: clip.originalDuration,
                 startPoint: clip.startPoint,
                 endPoint: clip.endPoint,
-                thumbnails: [] // 나중에 비동기로 생성
+                thumbnail: nil // 나중에 비동기로 생성
             )
 
             tempClips.append(editableClip)
@@ -138,65 +138,54 @@ final class ProjectEditViewModel: ObservableObject {
         await generateThumbnailsAsync()
     }
     
-    /// 비동기 썸네일 생성
+    /// 비동기 썸네일 생성 (startPoint 시점의 단일 썸네일)
     private func generateThumbnailsAsync() async {
-        await withTaskGroup(of: (String, [UIImage]).self) { group in
+        await withTaskGroup(of: (String, UIImage?).self) { group in
             for clip in editableClips {
                 group.addTask {
-                    let thumbnails = await self.generateThumbnailsBackground(
+                    let thumbnail = await self.generateSingleThumbnail(
                         url: clip.url,
-                        duration: clip.originalDuration,
-                        count: 10
+                        atTime: clip.startPoint
                     )
-                    return (clip.id, thumbnails)
+                    return (clip.id, thumbnail)
                 }
             }
 
             // 썸네일이 생성되는 대로 업데이트
-            for await (clipID, thumbnails) in group {
+            for await (clipID, thumbnail) in group {
                 if let index = editableClips.firstIndex(where: { $0.id == clipID }) {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        editableClips[index].thumbnails = thumbnails
+                        editableClips[index].thumbnail = thumbnail
                     }
                 }
             }
         }
     }
 
-    private func generateThumbnailsBackground(
-        url: URL,
-        duration: Double,
-        count: Int
-    ) async -> [UIImage] {
+    /// startPoint 시점의 단일 썸네일 생성
+    private func generateSingleThumbnail(url: URL, atTime: Double) async -> UIImage? {
         return await withCheckedContinuation { continuation in
             Task.detached {
-                // URL 유효성 검증
                 guard FileManager.isValidVideoFile(at: url) else {
                     print("유효하지 않은 비디오 파일: \(url)")
-                    continuation.resume(returning: [])
+                    continuation.resume(returning: nil)
                     return
                 }
-                
+
                 let asset = AVAsset(url: url)
                 let generator = AVAssetImageGenerator(asset: asset)
                 generator.appliesPreferredTrackTransform = true
                 generator.requestedTimeToleranceBefore = .zero
                 generator.requestedTimeToleranceAfter = .zero
-                
-                var imgs: [UIImage] = []
-                let interval = duration / Double(count)
 
-                for i in 0 ..< count {
-                    let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
-                    do {
-                        let cg = try generator.copyCGImage(at: time, actualTime: nil)
-                        imgs.append(UIImage(cgImage: cg))
-                    } catch {
-                        print("썸네일 생성 실패 at \(time.seconds)s: \(error)")
-                    }
+                let time = CMTime(seconds: atTime, preferredTimescale: 600)
+                do {
+                    let cg = try generator.copyCGImage(at: time, actualTime: nil)
+                    continuation.resume(returning: UIImage(cgImage: cg))
+                } catch {
+                    print("썸네일 생성 실패 at \(atTime)s: \(error)")
+                    continuation.resume(returning: nil)
                 }
-
-                continuation.resume(returning: imgs)
             }
         }
     }
@@ -583,7 +572,7 @@ final class ProjectEditViewModel: ObservableObject {
         tempProject.clipList.append(clip)
         SwiftDataManager.shared.saveContext()
         
-//        // UI 갱신을 위해 다시 로드
+        // UI 갱신을 위해 다시 로드
         Task {
             await loadProjectAsync()
         }

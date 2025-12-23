@@ -20,9 +20,9 @@ struct TrimminglineSliderView: View {
     let onDragStateChanged: (Bool) -> Void
 
     private let pxPerSecond: CGFloat = 50
-    private let clipSpacing: CGFloat = 8
+    private let clipSpacing: CGFloat = 3
     private let sliderHeight: CGFloat = 130
-    private let timelineHeight: CGFloat = 97
+    private let clipHeight: CGFloat = 97
 
     @State private var dragOffset: CGFloat = 0
 
@@ -37,12 +37,11 @@ struct TrimminglineSliderView: View {
                 dragOffset: dragOffset,
                 pxPerSecond: pxPerSecond,
                 clipSpacing: clipSpacing,
-                timelineHeight: timelineHeight,
                 onMove: onMove,
                 onAddClipTapped: onAddClipTapped,
                 onDragStateChanged: onDragStateChanged
             )
-            .frame(height: timelineHeight)
+            .frame(height: clipHeight)
             .background(
                 Rectangle()
                     .fill(SnappieColor.containerFillNormal)

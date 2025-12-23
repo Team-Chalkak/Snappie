@@ -6,42 +6,28 @@
 //
 
 import SwiftUI
-import AVFoundation
 
 struct ClipTrimmingView: View {
     let clip: EditableClip
     @Binding var isDragging: Bool
-    let isLastClip: Bool = false
     let onDragStateChanged: (Bool) -> Void
 
-    private let pxPerSecond: CGFloat = 50
-    private let thumbnailHeight: CGFloat = 60
-
-    /// 기준이 되는 원본 길이
-    private var originalTimeBasedWidth: CGFloat {
-        CGFloat(clip.originalDuration) * pxPerSecond
-    }
-
-    /// 트리밍된 실제 표시 너비
-    private var trimmedDisplayWidth: CGFloat {
-        CGFloat(clip.trimmedDuration) * pxPerSecond
-    }
+    private let clipWidth: CGFloat = 62
+    private let clipHeight: CGFloat = 97
+    private let clipRadius: CGFloat = 8
 
     var body: some View {
-        // 원본 크기로 썸네일 그리기
-        ProjectThumbnailsView(
-            clip: clip,
-            fullWidth: originalTimeBasedWidth
-        )
-        // 트리밍된 부분만 보이도록 마스킹
-        .mask {
-            Rectangle()
-                .frame(width: trimmedDisplayWidth, height: thumbnailHeight)
+        Group {
+            if let thumbnail = clip.thumbnail {
+                Image(uiImage: thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+            }
         }
-        .frame(
-            width: trimmedDisplayWidth,
-            height: thumbnailHeight
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .frame(width: clipWidth, height: clipHeight)
+        .clipShape(RoundedRectangle(cornerRadius: clipRadius))
     }
 }
