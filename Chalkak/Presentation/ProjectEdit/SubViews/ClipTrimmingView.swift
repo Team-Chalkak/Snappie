@@ -22,6 +22,29 @@ struct ClipTrimmingView: View {
                 Image(uiImage: thumbnail)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .frame(width: clipWidth, height: clipHeight)
+                    .overlay(alignment: .bottom) {
+                        // clip duration
+                        Text("\(String(format: "%.1f", clip.trimmedDuration))초")
+                            .foregroundStyle(.matcha50)
+                            .snappieStyle(.roundCaption1)
+                            .shadow(color: .black.opacity(0.4), radius: 5)
+                            .padding(.bottom, 8)
+                    }
+                    .overlay(alignment: .topLeading) {
+                        // TODO: 가이드가 있는 클립일 경우 아래 주석의 실루엣 배지 띄우기
+//                        Image("silhouette")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 12, height: 12)
+//                            .padding(2)
+//                            .background(
+//                                Circle()
+//                                    .fill(SnappieColor.labelDarkNormal)
+//                            )
+//                            .padding(4)
+                        
+                    }
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.3))
