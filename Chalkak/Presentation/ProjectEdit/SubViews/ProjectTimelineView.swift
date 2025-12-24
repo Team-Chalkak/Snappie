@@ -14,7 +14,7 @@ struct ProjectTimelineView: View {
     let totalDuration: Double
     let dragOffset: CGFloat
 
-    let pxPerSecond: CGFloat
+    let pixelOffsetForTime: (Double) -> CGFloat
     let clipSpacing: CGFloat
 
     let onMove: (IndexSet, Int) -> Void
@@ -81,7 +81,7 @@ struct ProjectTimelineView: View {
                     }
                 }
                 .padding(.horizontal, geo.size.width / 2)
-                .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
+                .offset(x: -pixelOffsetForTime(playHeadPosition) + dragOffset)
                 .frame(
                     height: clipHeight,
                     alignment: .leading
@@ -146,7 +146,7 @@ struct ProjectTimelineView: View {
                 // 드래그 시작 시 1회 앵커 계산: (손가락 전역X) - (클립 전역 왼쪽X)
                 if dragAnchorInClip == nil {
                     let timelineFrame = geo.frame(in: .global)
-                    let timelineOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+                    let timelineOffset = -pixelOffsetForTime(playHeadPosition) + dragOffset
                     let contentStartGlobalX = timelineFrame.minX + (timelineFrame.width / 2) + timelineOffset
 
                     // HStack 내에서 해당 클립의 왼쪽X(콘텐츠 좌표) 합산
@@ -207,7 +207,7 @@ struct ProjectTimelineView: View {
     private func contentStartGlobalX(_ geo: GeometryProxy) -> CGFloat {
         let frame = geo.frame(in: .global)
         let halfWidth = frame.size.width / 2
-        let timelineOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+        let timelineOffset = -pixelOffsetForTime(playHeadPosition) + dragOffset
         return frame.minX + halfWidth + timelineOffset
     }
 

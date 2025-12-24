@@ -88,6 +88,12 @@ struct ProjectEditView: View {
                 },
                 onDragStateChanged: { isDragging in
                     viewModel.setDraggingState(isDragging)
+                },
+                pixelOffsetForTime: { time in
+                    viewModel.pixelOffset(for: time)
+                },
+                timeForPixelOffset: { offset in
+                    viewModel.playTime(for: offset)
                 }
             )
         }

@@ -19,7 +19,10 @@ struct TrimminglineSliderView: View {
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
 
-    private let pxPerSecond: CGFloat = 50
+    // 클립별 duration에 따른 변환 함수
+    let pixelOffsetForTime: (Double) -> CGFloat
+    let timeForPixelOffset: (CGFloat) -> Double
+
     private let clipSpacing: CGFloat = 3
     private let sliderHeight: CGFloat = 130
     private let clipHeight: CGFloat = 97
@@ -35,7 +38,7 @@ struct TrimminglineSliderView: View {
                 playHeadPosition: playHeadPosition,
                 totalDuration: totalDuration,
                 dragOffset: dragOffset,
-                pxPerSecond: pxPerSecond,
+                pixelOffsetForTime: pixelOffsetForTime,
                 clipSpacing: clipSpacing,
                 onMove: onMove,
                 onAddClipTapped: onAddClipTapped,
@@ -55,9 +58,17 @@ struct TrimminglineSliderView: View {
                     }
                     .onEnded { gesture in
                         isDragging = false
-                        let delta = -Double(gesture.translation.width / pxPerSecond)
-                        var newTime = playHeadPosition + delta
+
+                        // 현재 playHead의 픽셀 위치 계산
+                        let currentPixelOffset = pixelOffsetForTime(playHeadPosition)
+
+                        // 드래그 후 픽셀 위치 계산 (왼쪽 드래그는 음수)
+                        let newPixelOffset = currentPixelOffset - gesture.translation.width
+
+                        // 픽셀을 시간으로 변환
+                        var newTime = timeForPixelOffset(newPixelOffset)
                         newTime = min(max(0, newTime), totalDuration)
+
                         onSeek(newTime)
                         dragOffset = 0
                     }
