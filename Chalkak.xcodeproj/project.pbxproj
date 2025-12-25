@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */; };
-		0D5512EE2E432EDA001FA7F9 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */; };
 		0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512F82E541718001FA7F9 /* OnboardingView.swift */; };
 		0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */; };
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
+		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
+		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
 		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
 		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
@@ -163,10 +164,11 @@
 
 /* Begin PBXFileReference section */
 		0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCheckView.swift; sourceTree = "<group>"; };
-		0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
 		0D5512F82E541718001FA7F9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSubView.swift; sourceTree = "<group>"; };
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
+		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
 		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
 		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */,
+				7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */,
 			);
 			path = Permission;
 			sourceTree = "<group>";
@@ -518,9 +521,9 @@
 		993A1F2A2E267E0C0059B70A /* Enum */ = {
 			isa = PBXGroup;
 			children = (
+				7D3DFFD72EFD604200E15204 /* PermissionState.swift */,
 				B64788652E3324020091A067 /* TorchMode.swift */,
 				993A1F292E267E0C0059B70A /* TimerOptions.swift */,
-				0D5512ED2E432EC8001FA7F9 /* PermissionState.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -1042,6 +1045,7 @@
 				C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
+				7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */,
 				992EE7CC2E32AEE00079AFBF /* EditableClip.swift in Sources */,
 				992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */,
 				C5C12EA42E31CDFB00C4DC6D /* SnappieButtonStyle.swift in Sources */,
@@ -1070,6 +1074,7 @@
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
 				C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */,
+				7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */,
 				9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
@@ -1101,7 +1106,6 @@
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
 				999992472E2D869C00D56BD1 /* BoundingBoxInfo.swift in Sources */,
-				0D5512EE2E432EDA001FA7F9 /* PermissionState.swift in Sources */,
 				993A1F692E267E0C0059B70A /* CameraRecordView.swift in Sources */,
 				993A1F6A2E267E0C0059B70A /* CameraTopControlView.swift in Sources */,
 				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,

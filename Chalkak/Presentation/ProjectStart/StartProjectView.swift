@@ -96,4 +96,8 @@ struct ProjectAddClip: Tip {
         Text("버튼을 눌러서 촬영을 시작하세요.")
             .foregroundStyle(.matcha400)
     }
+
+    var options: [TipOption] {
+        Tips.MaxDisplayCount(1)
+    }
 }
