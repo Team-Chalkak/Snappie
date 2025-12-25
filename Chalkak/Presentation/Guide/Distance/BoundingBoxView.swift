@@ -23,22 +23,5 @@ struct BoundingBoxView: View {
                 GuideCameraView(guide: guide, shootState: shootState)
             }
         }
-        .onAppear {
-            if case .firstShoot = shootState {
-                viewModel.checkResumeProject()
-            }
-        }
-        .alert(
-            .resumeProject,
-            isPresented: $viewModel.showResumeAlert,
-            cancelAction: {
-                viewModel.cancelResume()
-            },
-            confirmAction: {
-                if let resumeProjectGuide = viewModel.loadGuideForCurrentProject() {
-                    coordinator.push(.camera(state: .followUpShoot(guide: resumeProjectGuide)))
-                }
-            }
-        )
     }
 }
