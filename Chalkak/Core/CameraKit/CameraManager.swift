@@ -12,15 +12,6 @@ import Photos
 import SwiftUI
 
 class CameraManager: NSObject, ObservableObject {
-    @Published var showOnboarding = !UserDefaults.standard.bool(forKey: UserDefaultKey.hasCompletedOnboarding)
-    // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
-    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published private(set) var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published var permissionState: PermissionState = .none
-    @Published var showPermissionSheet: Bool = false
-
-    private var audioRecordPermission: AVAudioSession.RecordPermission = .undetermined
-
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
@@ -73,165 +64,13 @@ class CameraManager: NSObject, ObservableObject {
     var recordingMirrorPolicy: RecordingMirrorPolicy = .followPreview
     // 현재 파일이 미러로 저장되고 있는지(Clip에 넘겨 기록용)
     @Published private(set) var isRecordingMirrored: Bool = false
-    
-    private var isRequestingPermissions = false
 
     override init() {
         super.init()
-
-        if !showOnboarding {
-            checkPermissions()
-            if permissionState == .both {
-                Task {
-                    await setUpCamera()
-                }
-            }
-        }
     }
 
     deinit {
         session.stopRunning()
-    }
-
-    @inline(__always)
-    private func currentMicPermission() -> AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
-    }
-
-    @inline(__always)
-    private func mapToAVAuthorization(_ record: AVAudioSession.RecordPermission) -> AVAuthorizationStatus {
-        switch record {
-        case .granted: return .authorized
-        case .denied: return .denied
-        case .undetermined: return .notDetermined
-        @unknown default: return .denied
-        }
-    }
-
-    func completeOnboarding() {
-        UserDefaults.standard.set(true, forKey: UserDefaultKey.hasCompletedOnboarding)
-        showOnboarding = false
-
-        checkPermissions()
-    }
-
-    func checkPermissions() {
-        videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        audioRecordPermission = currentMicPermission()
-        audioAuthorizationStatus = mapToAVAuthorization(audioRecordPermission)
-        updatePermissionState()
-    }
-
-    private func updatePermissionState() {
-        let videoGranted = (videoAuthorizationStatus == .authorized)
-        let audioGranted = (audioAuthorizationStatus == .authorized)
-
-        switch (videoGranted, audioGranted) {
-        case (true, true):
-            permissionState = .both
-            showPermissionSheet = false
-
-        case (true, false):
-            permissionState = .cameraOnly
-
-            let shouldShow = !isRequestingPermissions && (audioAuthorizationStatus == .denied)
-            showPermissionSheet = shouldShow
-
-        case (false, true):
-            permissionState = .audioOnly
-
-            let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
-            let shouldShow = !isRequestingPermissions && videoDenied
-            showPermissionSheet = shouldShow
-
-        case (false, false):
-            permissionState = .none
-
-            let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
-            let audioDenied = (audioAuthorizationStatus == .denied)
-
-            let hasActualDenial = videoDenied || audioDenied
-            let shouldShow = !isRequestingPermissions && hasActualDenial
-            showPermissionSheet = shouldShow
-        }
-    }
-
-    func requestAndCheckPermissions() {
-        guard !isRequestingPermissions else { return }
-        isRequestingPermissions = true
-
-        // 최신 상태 캐싱
-        checkPermissions()
-
-        requestCameraIfNeeded { [weak self] in
-            self?.requestMicIfNeeded { [weak self] in
-                self?.finishPermissionRequest() // 두 알럿 콜백 종료 시점 단 한 번
-            }
-        }
-    }
-
-    private func requestCameraIfNeeded(completion: @escaping () -> Void) {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-                    completion()
-                }
-            }
-        default:
-            videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-            completion()
-        }
-    }
-
-    private func requestMicIfNeeded(completion: @escaping () -> Void) {
-        let currentPermission = currentMicPermission()
-
-        if currentPermission == .undetermined {
-            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.audioRecordPermission = self?.currentMicPermission() ?? .undetermined
-                    self?.audioAuthorizationStatus = self?.mapToAVAuthorization(self?.audioRecordPermission ?? .undetermined) ?? .notDetermined
-                    completion()
-                }
-            }
-        } else {
-            audioRecordPermission = currentPermission
-            audioAuthorizationStatus = mapToAVAuthorization(currentPermission)
-            completion()
-        }
-    }
-
-    private func finishPermissionRequest() {
-        DispatchQueue.main.async { [weak self] in
-            self?.isRequestingPermissions = false
-
-            // 최신 상태 갱신
-            self?.checkPermissions()
-
-            // 권한 모두 허용 시 카메라 설정
-            if self?.permissionState == .both {
-                Task { @MainActor in
-                    await self?.setUpCamera()
-                }
-            }
-        }
-    }
-
-    func reevaluateAndPresentIfNeeded() {
-        checkPermissions()
-
-        if !isRequestingPermissions {
-            showPermissionSheet = (permissionState != .both)
-        }
-    }
-
-    func openSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
     }
 
     /// 카메라 세팅
@@ -563,9 +402,8 @@ class CameraManager: NSObject, ObservableObject {
 
     /// 카메라 세션 시작
     func startSession() {
-        // 권한 체크 후 카메라세션 시작
-        checkPermissions()
-        if permissionState == .both, session.inputs.isEmpty {
+        // 권한은 외부(PermissionManager)에서 체크됨
+        if session.inputs.isEmpty {
             Task {
                 await setUpCamera()
                 startSessionInternal()
