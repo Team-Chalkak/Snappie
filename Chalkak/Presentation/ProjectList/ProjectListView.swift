@@ -51,6 +51,7 @@ struct ProjectListView: View {
                     // 컨텐츠
                     if viewModel.projects.isEmpty {
                         EmptyProjectView()
+                            .frame(height: 400)
                     }
                     else {
                         NonEmptyProjectView(viewModel: viewModel)
@@ -75,8 +76,4 @@ struct ProjectListView: View {
             }
         }
     }
-}
-
-#Preview {
-    ProjectListView()
 }
