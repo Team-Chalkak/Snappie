@@ -12,16 +12,13 @@ struct GuideFrameSelectorView: View {
     @Binding var isDragging: Bool
 
     var body: some View {
-        /// 내부 상수 선언
         let totalWidth: CGFloat = TimelineConstants.totalWidth
         let thumbnailLineWidth: CGFloat = TimelineConstants.thumbnailLineWidth
         let handleWidth: CGFloat = TimelineConstants.handleWidth
         let thumbnailHeight: CGFloat = TimelineConstants.thumbnailHeight
 
-        /// 뷰모델에서 계산
         let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
-        // 시작점을 선택된 프레임 시간으로 고정 (트리밍 없음)
-        // frameX 범위 제한: 박스가 오른쪽 핸들을 넘지 않도록
+        // 박스가 오른쪽 핸들 넘지 않게 제한
         let rawFrameX = editViewModel.startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth)
         let maxFrameX = handleWidth + thumbnailLineWidth - TimelineConstants.frameBoxWidth
         let frameX = max(handleWidth, min(rawFrameX, maxFrameX))
@@ -54,31 +51,7 @@ struct GuideFrameSelectorView: View {
                     x: frameX + TimelineConstants.frameBoxOffsetX,
                     y: thumbnailHeight / 2
                 )
-                .gesture(
-                    DragGesture()
-                        .onChanged { gesture in
-                            isDragging = true
-                            editViewModel.player?.pause()
-                            editViewModel.isPlaying = false
-
-                            // 드래그 위치를 타임라인 내부로 제한
-                            // frameX 범위: handleWidth ~ (handleWidth + thumbnailLineWidth - frameBoxWidth)
-                            let draggedFrameX = gesture.location.x
-                            let minFrameX = handleWidth
-                            let maxFrameX = handleWidth + thumbnailLineWidth - TimelineConstants.frameBoxWidth
-                            let clampedFrameX = max(minFrameX, min(draggedFrameX, maxFrameX))
-
-                            // frameX를 시간으로 변환
-                            let ratio = (clampedFrameX - handleWidth) / (thumbnailLineWidth - TimelineConstants.frameBoxWidth)
-                            let newStart = ratio * duration
-
-                            editViewModel.updateStart(newStart)
-                        }
-                        .onEnded { _ in
-                            isDragging = false
-                            editViewModel.seek(to: editViewModel.startPoint)
-                        }
-                )
+                .allowsHitTesting(false)
 
             Image("silhouette")
                 .resizable()
@@ -88,6 +61,7 @@ struct GuideFrameSelectorView: View {
                     x: frameX + TimelineConstants.frameBoxOffsetX,
                     y: thumbnailHeight / 2 + TimelineConstants.frameBoxHeight / 2 + 12
                 )
+                .allowsHitTesting(false)
         }
         .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
         .overlay(
@@ -95,6 +69,28 @@ struct GuideFrameSelectorView: View {
                 .stroke(SnappieColor.darkNormal, lineWidth: 2)
         )
         .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { gesture in
+                    isDragging = true
+                    editViewModel.player?.pause()
+                    editViewModel.isPlaying = false
+
+                    let draggedFrameX = gesture.location.x
+                    let minFrameX = handleWidth
+                    let maxFrameX = handleWidth + thumbnailLineWidth - TimelineConstants.frameBoxWidth
+                    let clampedFrameX = max(minFrameX, min(draggedFrameX, maxFrameX))
+
+                    let ratio = (clampedFrameX - handleWidth) / (thumbnailLineWidth - TimelineConstants.frameBoxWidth)
+                    let newStart = ratio * duration
+
+                    editViewModel.updateStart(newStart)
+                }
+                .onEnded { _ in
+                    isDragging = false
+                    editViewModel.seek(to: editViewModel.startPoint)
+                }
+        )
     }
 }
 
