@@ -57,20 +57,28 @@ struct VideoControlPanelView: View {
                         .fill(SnappieColor.primaryStrong)
                 )
 
-            if overlayImage != nil {
-                SnappieButton(
-                    .iconBackground(
-                        icon: .silhouette,
-                        size: .medium,
-                        isActive: isOverlayVisible
-                    )
-                ) {
-                    isOverlayVisible.toggle()
-                }
-            } else {
-                Spacer()
+            SnappieButton(
+                .iconBackground(
+                    icon: .silhouette,
+                    size: .medium,
+                    isActive: isGuideSelectMode ? isOverlayVisible : false
+                )
+            ) {
+                // TODO: 동작추가예정
             }
+            .hidden(!isGuideSelectMode)
         }
         .padding(.horizontal, 23)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func hidden(_ shouldHide: Bool) -> some View {
+        if shouldHide {
+            self.hidden()
+        } else {
+            self
+        }
     }
 }
