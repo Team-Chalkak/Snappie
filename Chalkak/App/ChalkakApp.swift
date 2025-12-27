@@ -60,9 +60,12 @@ struct ChalkakApp: App {
                                     cameraManager: cameraManager,
                                     timeStampedTiltList: timeStampedTiltList
                                 )
+                            case .guideSelect(let clip, let cameraSetting, let cameraManager):
+                                 GuideSelectView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
+                                     .toolbar(.hidden, for: .navigationBar)
 
-                            case .overlay(let clip, let cameraSetting, let cameraManager):
-                                OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
+                            case .overlay(let clip, let cameraSetting, let cameraManager, let selectedTimestamp):
+                                OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp)
                                     .toolbar(.hidden, for: .navigationBar)
 
                             case .camera(let state):

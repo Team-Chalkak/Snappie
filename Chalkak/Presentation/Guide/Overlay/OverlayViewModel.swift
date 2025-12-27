@@ -27,7 +27,8 @@ final class OverlayViewModel: ObservableObject {
     // 0. Input properties
     let clip: Clip
     let cameraSetting: CameraSetting
-    
+    let selectedTimestamp: Double
+
     // 1. Published properties
     @Published var isLoading = false
     @Published var isOverlayReady = false
@@ -42,20 +43,21 @@ final class OverlayViewModel: ObservableObject {
     var extractedImage: UIImage? { extractor.extractedImage }
     private var coverImage: Data?
     private let cameraManager: CameraManager
-    
+
     // 4. Init
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
+    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
         self.clip = clip
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
+        self.selectedTimestamp = selectedTimestamp
         extractor.overlayManager = overlayManager
         prepareOverlay()
     }
 
-    /// 첫번째 프레임, 오버레이 추출
+    /// 선택한 프레임, 오버레이 추출
     func prepareOverlay() {
         isLoading = true
-        extractor.extractFrame(from: clip.videoURL, at: clip.startPoint) { [weak self] in
+        extractor.extractFrame(from: clip.videoURL, at: selectedTimestamp) { [weak self] in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

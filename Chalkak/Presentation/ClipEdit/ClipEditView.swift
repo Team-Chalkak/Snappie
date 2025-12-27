@@ -53,7 +53,7 @@ struct ClipEditView: View {
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
     @State private var showRetakeAlert = false
-    
+
     // 3. 계산 프로퍼티
     private var guide: Guide? {
         switch shootState {
@@ -73,10 +73,10 @@ struct ClipEditView: View {
         timeStampedTiltList: [TimeStampedTilt]
     ) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
-                clipURL: clipURL,
-                cameraSetting: cameraSetting,
-                timeStampedTiltList: timeStampedTiltList
-            )
+            clipURL: clipURL,
+            cameraSetting: cameraSetting,
+            timeStampedTiltList: timeStampedTiltList
+        )
         )
         self.shootState = shootState
         self.cameraSetting = cameraSetting
@@ -96,21 +96,21 @@ struct ClipEditView: View {
                         showRetakeAlert = true
                     },
                     rightButtonType: .oneButton(
-                        .init(label: shootState == .firstShoot ? "다음" : "완료") {
-                            print("▶️ Right button tapped. shootState:", shootState)
+                        .init(label: "완료") {
                             switch shootState {
                             case .firstShoot:
                                 coordinator.push(
-                                    .overlay(
+                                    .guideSelect(
                                         clip: editViewModel.createClipData(),
-                                        cameraSetting: editViewModel.cameraSetting, cameraManager: cameraManager
+                                        cameraSetting: editViewModel.cameraSetting,
+                                        cameraManager: cameraManager
                                     )
                                 )
                             case .followUpShoot:
                                 showActionSheet = true
                             case .appendShoot:
                                 let newClip = editViewModel.createClipData()
-                                
+
                                 if let projectID = editViewModel.fetchCurrentProjectID() {
                                     editViewModel.clearCurrentProjectID()
                                     coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
@@ -123,15 +123,13 @@ struct ClipEditView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: guide?.outlineImage,
+                    isGuideSelectMode: false,
                     editViewModel: editViewModel
                 )
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
             }
             .padding(.bottom, 14)
-        }
-        .onAppear {
-            print("🔹 ClipEditView appeared. shootState:", shootState)
         }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(

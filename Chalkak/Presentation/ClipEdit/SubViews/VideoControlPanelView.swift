@@ -25,13 +25,15 @@ import SwiftUI
     VideoControlPanelView(
         editViewModel: editViewModel,
         isOverlayVisible: $isOverlayVisible,
-        overlayImage: overlayImage
+        overlayImage: overlayImage,
+        isGuideSelectMode: false
     )
  */
 struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
     let overlayImage: UIImage?
+    let isGuideSelectMode: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 108) {
@@ -45,7 +47,7 @@ struct VideoControlPanelView: View {
                 editViewModel.togglePlayback()
             }
 
-            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
+            Text(String(format: "%.2f초", isGuideSelectMode ? editViewModel.startPoint : editViewModel.currentTrimmedDuration))
                 .font(SnappieFont.style(.proLabel3))
                 .foregroundStyle(SnappieColor.labelDarkNormal)
                 .padding(.horizontal, 9.5)
