@@ -41,10 +41,10 @@ struct OverlayView: View {
     @State private var guide: Guide?
 
     // 3. init
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
+    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
         self.clip = clip
         self.cameraSetting = cameraSetting
-        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager))
+        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp))
     }
 
     var body: some View {
