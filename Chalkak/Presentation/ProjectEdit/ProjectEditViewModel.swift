@@ -27,6 +27,7 @@ final class ProjectEditViewModel: ObservableObject {
     @Published var guide: Guide? = nil /// 프로젝트 로딩중
     @Published var isLoading = false
     @Published var showEmptyProjectAlert = false
+    @Published var selectedClipID: String? = nil
     
     // MARK: – 저장/내보내기용 프로퍼티
 
@@ -386,6 +387,26 @@ final class ProjectEditViewModel: ObservableObject {
         Task {
             await updatePreviewImage(at: time)
         }
+    }
+
+    func selectClip(id: String?) {
+        if selectedClipID == id {
+            // 같은 클립 다시 탭하면 비활성화
+            selectedClipID = nil
+        } else {
+            selectedClipID = id
+
+            // 선택된 클립의 시작점으로 playhead 이동
+            if let clipID = id,
+               let clip = editableClips.first(where: { $0.id == clipID }) {
+                let clipStartTime = allClipStart(of: clip)
+                seekTo(time: clipStartTime)
+            }
+        }
+    }
+
+    func deselectClip() {
+        selectedClipID = nil
     }
     
 

@@ -10,6 +10,7 @@ import SwiftUI
 struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
     @Binding var isDragging: Bool
+    @Binding var selectedClipID: String?
     let playHeadPosition: Double
     let totalDuration: Double
     let dragOffset: CGFloat
@@ -20,6 +21,7 @@ struct ProjectTimelineView: View {
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
+    let onClipTapped: (String) -> Void
 
     // 드래그 상태
     @State private var draggingClip: EditableClip?
@@ -54,7 +56,10 @@ struct ProjectTimelineView: View {
                         ClipTrimmingView(
                             clip: clip,
                             isDragging: $isDragging,
-                            onDragStateChanged: onDragStateChanged
+                            isSelected: selectedClipID == clip.id,
+                            isReordering: isDragActive,
+                            onDragStateChanged: onDragStateChanged,
+                            onTap: { onClipTapped(clip.id) }
                         )
                         .frame(width: isBeingDragged ? 0.0 : clipWidth, height: clipHeight)
                         .opacity(isBeingDragged ? 0.0 : 1.0)
@@ -109,7 +114,10 @@ struct ProjectTimelineView: View {
                     ClipTrimmingView(
                         clip: draggingClip,
                         isDragging: .constant(true),
-                        onDragStateChanged: onDragStateChanged
+                        isSelected: selectedClipID == draggingClip.id,
+                        isReordering: isDragActive,
+                        onDragStateChanged: onDragStateChanged,
+                        onTap: { onClipTapped(draggingClip.id) }
                     )
                     .frame(width: clipWidth, height: clipHeight)
                     .scaleEffect(scaleDuringDrag, anchor: .center)

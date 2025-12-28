@@ -73,6 +73,7 @@ struct ProjectEditView: View {
                 clips: $viewModel.editableClips,
                 playHeadPosition: $viewModel.playHead,
                 isDragging: $viewModel.isDragging,
+                selectedClipID: $viewModel.selectedClipID,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
                 onSeek: viewModel.seekTo,
@@ -90,6 +91,9 @@ struct ProjectEditView: View {
                 onDragStateChanged: { isDragging in
                     viewModel.setDraggingState(isDragging)
                 },
+                onClipTapped: { clipID in
+                    viewModel.selectClip(id: clipID)
+                },
                 pixelOffsetForTime: { time in
                     viewModel.pixelOffset(for: time)
                 },
@@ -97,7 +101,15 @@ struct ProjectEditView: View {
                     viewModel.playTime(for: offset)
                 }
             )
+
+            // ClipToolbarView - 선택된 클립이 있을 때만 표시
+            if viewModel.selectedClipID != nil {
+                ClipToolbarView(selectedClipID: $viewModel.selectedClipID)
+                    .padding(.top, 16)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
+        .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
         .background(
             SnappieColor.darkHeavy
                 .ignoresSafeArea()

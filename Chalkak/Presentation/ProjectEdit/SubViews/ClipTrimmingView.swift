@@ -10,7 +10,10 @@ import SwiftUI
 struct ClipTrimmingView: View {
     let clip: EditableClip
     @Binding var isDragging: Bool
+    let isSelected: Bool
+    let isReordering: Bool
     let onDragStateChanged: (Bool) -> Void
+    let onTap: () -> Void
 
     private let clipWidth: CGFloat = 62
     private let clipHeight: CGFloat = 97
@@ -52,5 +55,14 @@ struct ClipTrimmingView: View {
         }
         .frame(width: clipWidth, height: clipHeight)
         .clipShape(RoundedRectangle(cornerRadius: clipRadius))
+        .overlay {
+            if isSelected && !isReordering {
+                RoundedRectangle(cornerRadius: clipRadius)
+                    .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+            }
+        }
+        .onTapGesture {
+            onTap()
+        }
     }
 }

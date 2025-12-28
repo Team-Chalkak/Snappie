@@ -11,6 +11,7 @@ struct TrimminglineSliderView: View {
     @Binding var clips: [EditableClip]
     @Binding var playHeadPosition: Double
     @Binding var isDragging: Bool
+    @Binding var selectedClipID: String?
     let isPlaying: Bool
     let totalDuration: Double
 
@@ -18,6 +19,7 @@ struct TrimminglineSliderView: View {
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
+    let onClipTapped: (String) -> Void
 
     // 클립별 duration에 따른 변환 함수
     let pixelOffsetForTime: (Double) -> CGFloat
@@ -35,6 +37,7 @@ struct TrimminglineSliderView: View {
             ProjectTimelineView(
                 clips: $clips,
                 isDragging: $isDragging,
+                selectedClipID: $selectedClipID,
                 playHeadPosition: playHeadPosition,
                 totalDuration: totalDuration,
                 dragOffset: dragOffset,
@@ -42,7 +45,8 @@ struct TrimminglineSliderView: View {
                 clipSpacing: clipSpacing,
                 onMove: onMove,
                 onAddClipTapped: onAddClipTapped,
-                onDragStateChanged: onDragStateChanged
+                onDragStateChanged: onDragStateChanged,
+                onClipTapped: onClipTapped
             )
             .frame(height: clipHeight)
             .background(

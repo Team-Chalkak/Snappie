@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct ClipToolbarView: View {
+    @Binding var selectedClipID: String?
+
     private let buttonWidth: CGFloat = 52
     private let buttonHeight: CGFloat = 40
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             // 내리기 버튼
             Button {
-                
+                selectedClipID = nil
             } label: {
                 IconView(iconType: .chevronDown, scale: .xlarge)
                     .foregroundStyle(SnappieColor.labelPrimaryNormal)
@@ -44,10 +46,5 @@ struct ClipToolbarView: View {
         .padding(.vertical, 2)
     }
 }
-
-#Preview {
-    ClipToolbarView()
-}
-
 
 
