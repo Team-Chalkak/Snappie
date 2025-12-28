@@ -6,6 +6,7 @@
 //
 
 import AVKit
+import FirebaseAnalytics
 import SwiftUI
 
 /// 프로젝트 편집 메인뷰
@@ -43,12 +44,14 @@ struct ProjectEditView: View {
                             UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                             coordinator.popToScreen(.projectList)
                         }
+                        Analytics.logEvent("projectEditBackButtonTapped", parameters: nil)
                     },
                     rightButtonType: .oneButton(.init(label: "내보내기") {
                         Task {
                             await viewModel.exportEditedVideoToPhotos()
                             showExportSuccessAlert = true
                         }
+                        Analytics.logEvent("exportProjectButtonTapped", parameters: nil)
                     })
                 )
                 .padding(.bottom, 16)
@@ -86,6 +89,7 @@ struct ProjectEditView: View {
                         // 추가 촬영 여부
                         UserDefaults.standard.set(true, forKey: UserDefaultKey.isAppendingShoot)
                         coordinator.push(.camera(state: .appendShoot(guide: guide)))
+                        Analytics.logEvent("addClipButtonTapped", parameters: nil)
                     },
                     onDragStateChanged: { isDragging in
                         viewModel.setDraggingState(isDragging)
@@ -125,6 +129,7 @@ struct ProjectEditView: View {
                         coordinator.popToScreen(.projectList)
                     }
                 }
+                Analytics.logEvent("saveEditProjectButtonTapped", parameters: nil)
             }
             Button("저장하지 않고 나가기") {
                 Task {
@@ -134,8 +139,11 @@ struct ProjectEditView: View {
                         coordinator.popToScreen(.projectList)
                     }
                 }
+                Analytics.logEvent("removeEditProjectButtonTapped", parameters: nil)
             }
-            Button("취소", role: .cancel) {}
+            Button("취소", role: .cancel) {
+                Analytics.logEvent("cancelButtonTapped", parameters: nil)
+            }
         } message: {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }

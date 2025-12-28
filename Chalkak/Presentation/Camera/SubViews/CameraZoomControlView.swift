@@ -5,6 +5,7 @@
 //  Created by 정종문 on 7/25/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 struct CameraZoomControlView: View {
@@ -50,7 +51,10 @@ struct CameraZoomControlView: View {
             width: config.width
         )
         .zoomButtonGestures(
-            onTap: { handleTapGesture(for: range) },
+            onTap: {
+                handleTapGesture(for: range)
+                Analytics.logEvent("zoomButtonTapped", parameters: ["zoomScale" : range.preset])
+            },
             onLongPress: handleLongPressGesture
         )
     }
@@ -69,6 +73,7 @@ struct CameraZoomControlView: View {
 
         withAnimation(.easeInOut(duration: Layout.animationDuration)) {
             viewModel.toggleZoomControl()
+            Analytics.logEvent("zoomSliderTapped", parameters: nil)
         }
     }
 
