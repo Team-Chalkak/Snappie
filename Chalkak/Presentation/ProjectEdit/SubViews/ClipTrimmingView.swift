@@ -12,18 +12,16 @@ struct ClipTrimmingView: View {
     let clip: EditableClip
     @Binding var isDragging: Bool
     let isLastClip: Bool = false
-    let onToggleTrimming: () -> Void
-    let onTrimChanged: (Double, Double) -> Void
     let onDragStateChanged: (Bool) -> Void
 
     private let pxPerSecond: CGFloat = 50
     private let thumbnailHeight: CGFloat = 60
-    
+
     /// 기준이 되는 원본 길이
     private var originalTimeBasedWidth: CGFloat {
         CGFloat(clip.originalDuration) * pxPerSecond
     }
-    
+
     /// 트리밍된 실제 표시 너비
     private var trimmedDisplayWidth: CGFloat {
         CGFloat(clip.trimmedDuration) * pxPerSecond
@@ -40,26 +38,10 @@ struct ClipTrimmingView: View {
             Rectangle()
                 .frame(width: trimmedDisplayWidth, height: thumbnailHeight)
         }
-        .onTapGesture { onToggleTrimming() }
         .frame(
             width: trimmedDisplayWidth,
             height: thumbnailHeight
         )
-        .clipShape(RoundedRectangle(cornerRadius: clip.isTrimming ? 0 : 6))
-        .overlay {
-            // 트리밍 라인 뷰
-            if clip.isTrimming {
-                ProjectTrimmingLineView(
-                    clip: clip,
-                    fullWidth: originalTimeBasedWidth,
-                    trimmedWidth: trimmedDisplayWidth,
-                    thumbnailHeight: thumbnailHeight,
-                    isDragging: $isDragging,
-                    onTrimChanged: onTrimChanged,
-                    onDragStateChanged: onDragStateChanged
-                )
-            }
-        }
-        .zIndex(clip.isTrimming ? 1 : 0)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
