@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct ClipToolbarView: View {
-    @Binding var selectedClipID: String?
+    let hideToolbar: () -> Void
+    let onTapEditClip: () -> Void
+    let onTapEditGuide: () -> Void
+    let onTapDeleteClip: () -> Void
 
     private let buttonWidth: CGFloat = 52
     private let buttonHeight: CGFloat = 40
@@ -17,7 +20,7 @@ struct ClipToolbarView: View {
         HStack(alignment: .top, spacing: 8) {
             // 내리기 버튼
             Button {
-                selectedClipID = nil
+                hideToolbar()
             } label: {
                 IconView(iconType: .chevronDown, scale: .xlarge)
                     .foregroundStyle(SnappieColor.labelPrimaryNormal)
@@ -27,17 +30,17 @@ struct ClipToolbarView: View {
             
             // 장면 다듬기 버튼
             ToolButtonView(buttonStyle: .editClip) {
-                // TODO: 장면 다듬기 이동
+                onTapEditClip()
             }
             
             // 가이드 수정 버튼
             ToolButtonView(buttonStyle: .editGuide) {
-                // TODO: 가이드 수정으로 이동
+                onTapEditGuide()
             }
             
             // 장면 삭제 버튼
             ToolButtonView(buttonStyle: .deleteClip) {
-                // TODO: 장면 삭제 액션 실행
+                onTapDeleteClip()
             }
             
             Spacer()

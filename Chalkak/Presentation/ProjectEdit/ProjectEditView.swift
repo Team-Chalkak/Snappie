@@ -103,10 +103,23 @@ struct ProjectEditView: View {
             )
 
             // ClipToolbarView - 선택된 클립이 있을 때만 표시
-            if viewModel.selectedClipID != nil {
-                ClipToolbarView(selectedClipID: $viewModel.selectedClipID)
-                    .padding(.top, 16)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            if let selectedClipID = viewModel.selectedClipID {
+                ClipToolbarView(
+                    hideToolbar: {
+                        viewModel.selectedClipID = nil
+                    },
+                    onTapEditClip: {
+                        // TODO: 클립편집 연결하기
+                    },
+                    onTapEditGuide: {
+                        // TODO: 가이드 선택 연결하기
+                    },
+                    onTapDeleteClip: {
+                        viewModel.deleteClip(id: selectedClipID)
+                    }
+                )
+                .padding(.top, 16)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
