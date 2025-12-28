@@ -5,6 +5,7 @@
 //  Created by Youbin on 7/15/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 /**
@@ -70,6 +71,7 @@ struct OverlayView: View {
             SnappieNavigationBar(
                 leftButtonType: .backward {
                     // 가이드 확정 없이 뒤로가기 시 프로젝트 제거
+                    Analytics.logEvent("remakeGuideButtonTapped", parameters: nil)
                     UserDefaults.standard.removeObject(forKey: UserDefaultKey.currentProjectID)
                     dismiss()
                 },
@@ -107,6 +109,7 @@ struct OverlayView: View {
                     if let guide = overlayViewModel.guide {
                         coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                     }
+                    Analytics.logEvent("confirmGuideButtonTapped", parameters: nil)
                 }) {
                     Text(Context.buttonTitle)
                         .snappieStyle(.proLabel1)
