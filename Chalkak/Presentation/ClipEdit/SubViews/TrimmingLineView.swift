@@ -59,7 +59,7 @@ struct TrimmingLineView: View {
                 TrimmingHandleView(isStart: false)
             }
             .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
-            
+
             // 2. 트리밍 라인 박스
             Rectangle()
                 .stroke(SnappieColor.primaryNormal, lineWidth: 2)
@@ -131,15 +131,6 @@ struct TrimmingLineView: View {
                             isDragging = false
                             editViewModel.seek(to: editViewModel.endPoint)
                         }
-                )
-            
-            // 5. 영상 첫번째 프레임 강조 박스
-            RoundedRectangle(cornerRadius: TimelineConstants.frameBoxCornerRadius)
-                .stroke(TimelineConstants.frameBoxStrokeColor, lineWidth: 2)
-                .frame(width: TimelineConstants.frameBoxWidth, height: TimelineConstants.frameBoxHeight)
-                .position(
-                    x: startX + TimelineConstants.frameBoxOffsetX,
-                    y: thumbnailHeight / 2
                 )
         }
         .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
