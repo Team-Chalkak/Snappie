@@ -5,6 +5,7 @@
 //  Created by 정종문 on 7/14/25.
 //
 
+import FirebaseAnalytics
 import SwiftData
 import SwiftUI
 
@@ -16,6 +17,7 @@ struct CameraRecordView: View {
         HStack(spacing: 0) {
             Button(action: {
                 coordinator.push(.projectList)
+                Analytics.logEvent("moveToProjectListButtonTapped", parameters: nil)
             }) {
                 Image(viewModel.hasBadge ? "projectListBadge" : "projectList")
                     .frame(width: 48, height: 48)
@@ -29,8 +31,10 @@ struct CameraRecordView: View {
             ) {
                 if viewModel.isRecording || viewModel.isTimerRunning {
                     viewModel.stopVideoRecording()
+                    Analytics.logEvent("stopRecordingButtonTapped", parameters: nil)
                 } else {
                     viewModel.startVideoRecording()
+                    Analytics.logEvent("startRecordingButtonTapped", parameters: nil)
                 }
             }
 
@@ -39,6 +43,7 @@ struct CameraRecordView: View {
             SnappieButton(.solidSecondary(contentType: .icon(.conversion), size: .medium, isOutlined: false)
             ) {
                 viewModel.changeCamera()
+                Analytics.logEvent("changeCameraModeButtonTapped", parameters: nil)
             }
             .hidden()
             .overlay(
