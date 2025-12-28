@@ -5,6 +5,7 @@
 //  Created by 정종문 on 7/12/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 struct CameraView: View {
@@ -98,6 +99,7 @@ struct CameraView: View {
                             isActive: true
                         )) {
                             showExitAlert = true
+                            Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
                         }
                         .padding(.leading, 30)
                         .padding(.top, 25)
@@ -190,6 +192,7 @@ struct CameraView: View {
             Button("취소", role: .cancel) {}
             Button("나가기", role: .destructive) {
                 handleExitCamera()
+                Analytics.logEvent("exitCameraButtonTapped", parameters: nil)
             }
         } message: {
             Text("지금까지 찍은 장면은 저장돼요.")
