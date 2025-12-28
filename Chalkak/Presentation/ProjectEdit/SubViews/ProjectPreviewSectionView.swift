@@ -5,6 +5,7 @@
 //  Created by 배현진 on 8/21/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 struct ProjectPreviewSectionView: View {
@@ -26,6 +27,7 @@ struct ProjectPreviewSectionView: View {
                     Spacer()
                     Button(action: {
                         viewModel.deleteClip(id: trimmingClip.id)
+                        Analytics.logEvent("deleteClipButtonTapped", parameters: nil)
                     }) {
                         Image(systemName: "trash")
                             .font(.system(size: 17, weight: .semibold))

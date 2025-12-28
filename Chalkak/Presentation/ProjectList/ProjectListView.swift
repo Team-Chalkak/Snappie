@@ -5,6 +5,7 @@
 //  Created by 석민솔 on 7/28/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 /// 프로젝트 리스트 메인뷰

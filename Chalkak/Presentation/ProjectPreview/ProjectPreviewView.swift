@@ -6,6 +6,7 @@
 //
 
 import AVKit
+import FirebaseAnalytics
 import SwiftUI
 
 /// 합본 영상을 확인하고 갤러리로 내보내기 할 수 있는 뷰
@@ -39,6 +40,7 @@ struct ProjectPreviewView: View {
                                 await viewModel.exportToPhotos()
                                 showExportSuccessAlert = true
                             }
+                            Analytics.logEvent("exportProjectButtonTapped", parameters: nil)
                         }
                     ))
                 )

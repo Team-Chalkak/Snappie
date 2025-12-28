@@ -5,6 +5,7 @@
 //  Created by Murphy on 8/12/25.
 //
 
+import FirebaseAnalytics
 import SwiftUI
 
 struct OnboardingView: View {
@@ -42,6 +43,7 @@ struct OnboardingView: View {
 
                 if currentIndex == 2 {
                     Button("시작하기") {
+                        Analytics.logEvent("startButtonTapped", parameters: nil)
                         onComplete()
                     }
                     .font(.headline)

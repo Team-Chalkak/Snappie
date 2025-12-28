@@ -6,6 +6,7 @@
 //
 
 import AVKit
+import FirebaseAnalytics
 import SwiftData
 import SwiftUI
 
@@ -94,9 +95,11 @@ struct ClipEditView: View {
                     navigationTitle: "장면 다듬기",
                     leftButtonType: .backward {
                         showRetakeAlert = true
+                        Analytics.logEvent("clipEditBackButtonTapped", parameters: nil)
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
+                           Analytics.logEvent("clipEditFinishButtonTapped", parameters: nil)
                             switch shootState {
                             case .firstShoot:
                                 coordinator.push(
@@ -145,12 +148,16 @@ struct ClipEditView: View {
                 if let guide = guide {
                     coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                 }
+                
+                Analytics.logEvent("continueShootButtonTapped", parameters: nil)
             }
 
             Button("촬영 마치기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
                 coordinator.push(.projectPreview)
+                
+                Analytics.logEvent("FinishShootButtonTapped", parameters: nil)
             }
 
             Button("취소", role: .cancel) {}
@@ -159,6 +166,7 @@ struct ClipEditView: View {
         }
         .alert(.retakeVideo, isPresented: $showRetakeAlert) {
             coordinator.popLast()
+            Analytics.logEvent("retakeButtonTapped", parameters: nil)
         }
         .task {
             if shootState != .firstShoot {

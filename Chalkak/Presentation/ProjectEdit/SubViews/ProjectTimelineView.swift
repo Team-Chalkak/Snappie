@@ -18,8 +18,6 @@ struct ProjectTimelineView: View {
     let clipSpacing: CGFloat
     let timelineHeight: CGFloat
 
-    let onToggleTrimming: (String) -> Void
-    let onTrimChanged: (String, Double, Double) -> Void
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
@@ -56,8 +54,6 @@ struct ProjectTimelineView: View {
                         ClipTrimmingView(
                             clip: clip,
                             isDragging: $isDragging,
-                            onToggleTrimming: { onToggleTrimming(clip.id) },
-                            onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) },
                             onDragStateChanged: onDragStateChanged
                         )
                         .frame(width: isBeingDragged ? 0.0 : clipWidth, height: timelineHeight)
@@ -116,8 +112,6 @@ struct ProjectTimelineView: View {
                     ClipTrimmingView(
                         clip: draggingClip,
                         isDragging: .constant(true),
-                        onToggleTrimming: { },
-                        onTrimChanged: { _, _ in },
                         onDragStateChanged: onDragStateChanged
                     )
                     .frame(width: clipWidth)
