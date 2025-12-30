@@ -17,6 +17,9 @@ struct EditableClip: Identifiable {
     var startPoint: Double
     var endPoint: Double
 
+    // 트리밍 모드 활성화 플래그
+    var isTrimming: Bool = false
+
     // 미리 생성된 썸네일 배열
     var thumbnails: [UIImage]
 
