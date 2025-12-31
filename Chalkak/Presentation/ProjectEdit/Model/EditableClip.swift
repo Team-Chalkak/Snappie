@@ -17,8 +17,8 @@ struct EditableClip: Identifiable {
     var startPoint: Double
     var endPoint: Double
 
-    // 미리 생성된 썸네일 배열
-    var thumbnails: [UIImage]
+    // startPoint 시점의 단일 썸네일
+    var thumbnail: UIImage?
 
     // 실제 재생되는 길이
     var trimmedDuration: Double {

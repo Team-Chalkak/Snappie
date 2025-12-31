@@ -6,42 +6,63 @@
 //
 
 import SwiftUI
-import AVFoundation
 
 struct ClipTrimmingView: View {
     let clip: EditableClip
     @Binding var isDragging: Bool
-    let isLastClip: Bool = false
+    let isSelected: Bool
+    let isReordering: Bool
     let onDragStateChanged: (Bool) -> Void
+    let onTap: () -> Void
 
-    private let pxPerSecond: CGFloat = 50
-    private let thumbnailHeight: CGFloat = 60
-
-    /// 기준이 되는 원본 길이
-    private var originalTimeBasedWidth: CGFloat {
-        CGFloat(clip.originalDuration) * pxPerSecond
-    }
-
-    /// 트리밍된 실제 표시 너비
-    private var trimmedDisplayWidth: CGFloat {
-        CGFloat(clip.trimmedDuration) * pxPerSecond
-    }
+    private let clipWidth: CGFloat = 62
+    private let clipHeight: CGFloat = 97
+    private let clipRadius: CGFloat = 8
 
     var body: some View {
-        // 원본 크기로 썸네일 그리기
-        ProjectThumbnailsView(
-            clip: clip,
-            fullWidth: originalTimeBasedWidth
-        )
-        // 트리밍된 부분만 보이도록 마스킹
-        .mask {
-            Rectangle()
-                .frame(width: trimmedDisplayWidth, height: thumbnailHeight)
+        Group {
+            if let thumbnail = clip.thumbnail {
+                Image(uiImage: thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: clipWidth, height: clipHeight)
+                    .overlay(alignment: .bottom) {
+                        // clip duration
+                        Text("\(String(format: "%.1f", clip.trimmedDuration))초")
+                            .foregroundStyle(.matcha50)
+                            .snappieStyle(.roundCaption1)
+                            .shadow(color: .black.opacity(0.4), radius: 5)
+                            .padding(.bottom, 8)
+                    }
+                    .overlay(alignment: .topLeading) {
+                        // TODO: 가이드가 있는 클립일 경우 아래 주석의 실루엣 배지 띄우기
+//                        Image("silhouette")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 12, height: 12)
+//                            .padding(2)
+//                            .background(
+//                                Circle()
+//                                    .fill(SnappieColor.labelDarkNormal)
+//                            )
+//                            .padding(4)
+                        
+                    }
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+            }
         }
-        .frame(
-            width: trimmedDisplayWidth,
-            height: thumbnailHeight
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .frame(width: clipWidth, height: clipHeight)
+        .clipShape(RoundedRectangle(cornerRadius: clipRadius))
+        .overlay {
+            if isSelected && !isReordering {
+                RoundedRectangle(cornerRadius: clipRadius)
+                    .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+            }
+        }
+        .onTapGesture {
+            onTap()
+        }
     }
 }

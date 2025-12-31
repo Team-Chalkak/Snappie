@@ -25,7 +25,6 @@
 		992EE7CE2E32AF030079AFBF /* ClipTrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */; };
 		992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */; };
 		992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */; };
-		992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */; };
 		992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
@@ -104,6 +103,10 @@
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC022EF9080400A9EC1E /* PlayheadView.swift */; };
+		C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */; };
+		C54ABC112F01AC8400A9EC1E /* ToolButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */; };
+		C54ABC132F01ACAE00A9EC1E /* ToolbarButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC122F01ACAE00A9EC1E /* ToolbarButtonStyle.swift */; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D352E375A94000566C5 /* ProjectListViewModel.swift */; };
@@ -176,7 +179,6 @@
 		992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipTrimmingView.swift; sourceTree = "<group>"; };
 		992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVMutableComposition + Ext.swift"; sourceTree = "<group>"; };
 		992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTimeView.swift; sourceTree = "<group>"; };
-		992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectThumbnailsView.swift; sourceTree = "<group>"; };
 		992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTimelineView.swift; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,6 +253,10 @@
 		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
+		C54ABC022EF9080400A9EC1E /* PlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayheadView.swift; sourceTree = "<group>"; };
+		C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipToolbarView.swift; sourceTree = "<group>"; };
+		C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolButtonView.swift; sourceTree = "<group>"; };
+		C54ABC122F01ACAE00A9EC1E /* ToolbarButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtonStyle.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
@@ -356,11 +362,13 @@
 			isa = PBXGroup;
 			children = (
 				992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */,
-				992EE80E2E36CE570079AFBF /* ProjectThumbnailsView.swift */,
 				992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */,
 				992EE7CD2E32AEF80079AFBF /* ClipTrimmingView.swift */,
 				992EE7C52E32AD7B0079AFBF /* TrimmingLineSliderView.swift */,
 				C5886D472E3902CC000566C5 /* PlayInfoView.swift */,
+				C54ABC022EF9080400A9EC1E /* PlayheadView.swift */,
+				C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */,
+				C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -369,6 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				992EE7CB2E32AED70079AFBF /* EditableClip.swift */,
+				C54ABC122F01ACAE00A9EC1E /* ToolbarButtonStyle.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1018,6 +1027,7 @@
 				B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */,
 				93A137672E32756A00777CF8 /* VideoControlView.swift in Sources */,
 				9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */,
+				C54ABC132F01ACAE00A9EC1E /* ToolbarButtonStyle.swift in Sources */,
 				C5886D3F2E376DE2000566C5 /* ProjectCardMenuView.swift in Sources */,
 				993A1F532E267E0C0059B70A /* ChalkakApp.swift in Sources */,
 				993A1F542E267E0C0059B70A /* CameraManager.swift in Sources */,
@@ -1030,6 +1040,7 @@
 				B68A46CF2E38A25D0062F04E /* SnappieProgress.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
 				992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */,
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
@@ -1043,6 +1054,7 @@
 				993A1F5B2E267E0C0059B70A /* TiltDataCollector.swift in Sources */,
 				993A1F5C2E267E0C0059B70A /* TiltFeedbackView.swift in Sources */,
 				B60564A52E3A767F00AACABE /* FileManager+Extensions.swift in Sources */,
+				C54ABC112F01AC8400A9EC1E /* ToolButtonView.swift in Sources */,
 				993A1F5D2E267E0C0059B70A /* VideoFrameExtractor.swift in Sources */,
 				993A1F5E2E267E0C0059B70A /* VideoManager.swift in Sources */,
 				C5C12EA02E2FED5A00C4DC6D /* ButtonStyler.swift in Sources */,
@@ -1054,6 +1066,7 @@
 				0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */,
+				C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */,
 				C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */,
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
@@ -1101,7 +1114,6 @@
 				9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */,
 				B6A592622E37B49000D3DF6A /* ZoomButtonGestureModifier.swift in Sources */,
 				993A1F732E267E0C0059B70A /* OverlayViewModel.swift in Sources */,
-				992EE80F2E36CE690079AFBF /* ProjectThumbnailsView.swift in Sources */,
 				B647886A2E33A34F0091A067 /* ZoomButton.swift in Sources */,
 				B64788642E3323C40091A067 /* RecordButton.swift in Sources */,
 				993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */,
