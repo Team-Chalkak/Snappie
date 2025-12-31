@@ -48,12 +48,14 @@ struct GuideSelectView: View {
                     },
                     rightButtonType: .oneButton(
                         .init(label: "다음") {
+                            // 트리밍 시간을 원본시간으로 변환
+                            let originalTimestamp = clip.startPoint + editViewModel.startPoint
                             coordinator.push(
                                 .overlay(
                                     clip: clip,
                                     cameraSetting: cameraSetting,
                                     cameraManager: cameraManager,
-                                    selectedTimestamp: editViewModel.startPoint
+                                    selectedTimestamp: originalTimestamp
                                 )
                             )
                         }
@@ -79,7 +81,7 @@ struct GuideSelectView: View {
 
                         Spacer()
 
-                        Text(clip.originalDuration.formattedTime)
+                        Text((clip.endPoint - clip.startPoint).formattedTime)
                             .font(SnappieFont.style(.roundCaption1))
                             .foregroundStyle(SnappieColor.primaryHeavy)
                     }
@@ -92,5 +94,12 @@ struct GuideSelectView: View {
             .padding(.bottom, 14)
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            // 트리밍된 구간만 보여주도록 설정
+            await editViewModel.trimmedClip(
+                trimStart: clip.startPoint,
+                trimEnd: clip.endPoint
+            )
+        }
     }
 }

@@ -562,7 +562,7 @@ final class ProjectEditViewModel {
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
             if loadAfter {
-                await loadProjectAsync()
+                await loadProject()
             }
             return
         }
