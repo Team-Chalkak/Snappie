@@ -66,7 +66,7 @@ final class ProjectEditViewModel: ObservableObject {
 
     // MARK: - 비동기 로딩 메서드
 
-    func loadProjectAsync() async {
+    func loadProject() async {
         isLoading = true
 
         await self.loadProjectData()
@@ -131,11 +131,11 @@ final class ProjectEditViewModel: ObservableObject {
         await setupPlayerAsync()
 
         // 썸네일을 백그라운드에서 비동기로 생성
-        await generateThumbnailsAsync()
+        await generateThumbnails()
     }
     
     /// 비동기 썸네일 생성 (startPoint 시점의 단일 썸네일)
-    private func generateThumbnailsAsync() async {
+    private func generateThumbnails() async {
         await withTaskGroup(of: (String, UIImage?).self) { group in
             for clip in editableClips {
                 group.addTask {
@@ -490,7 +490,7 @@ final class ProjectEditViewModel: ObservableObject {
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
             if loadAfter {
-                await loadProjectAsync()
+                await loadProject()
             }
             return
         }
@@ -565,7 +565,7 @@ final class ProjectEditViewModel: ObservableObject {
         project = tempProject
         
         if loadAfter {
-            await loadProjectAsync()
+            await loadProject()
         }
     }
 
@@ -590,7 +590,7 @@ final class ProjectEditViewModel: ObservableObject {
         
         // UI 갱신을 위해 다시 로드
         Task {
-            await loadProjectAsync()
+            await loadProject()
         }
     }
     
