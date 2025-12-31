@@ -23,13 +23,15 @@ import AVFoundation
     VideoControlView(
         isDragging: isDragging,
         overlayImage: guide?.outlineImage,
-        editViewModel: editViewModel
+        editViewModel: editViewModel,
+        isGuideSelectMode: false
     )
  */
 struct VideoControlView: View {
     let isDragging: Bool
     let overlayImage: UIImage?
-    
+    let isGuideSelectMode: Bool
+
     @ObservedObject var editViewModel: ClipEditViewModel
     @State private var isOverlayVisible: Bool = true
     
@@ -47,7 +49,8 @@ struct VideoControlView: View {
             VideoControlPanelView(
                 editViewModel: editViewModel,
                 isOverlayVisible: $isOverlayVisible,
-                overlayImage: overlayImage
+                overlayImage: overlayImage,
+                isGuideSelectMode: isGuideSelectMode
             )
         })
     }

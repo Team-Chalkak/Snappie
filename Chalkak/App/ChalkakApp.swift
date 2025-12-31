@@ -10,6 +10,7 @@ import AppTrackingTransparency
 import FirebaseCore
 import SwiftData
 import SwiftUI
+import TipKit
 
 @main
 struct ChalkakApp: App {
@@ -17,69 +18,95 @@ struct ChalkakApp: App {
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var coordinator = Coordinator()
-    
+    @State private var permissionManager = PermissionManager()
+
+    @AppStorage(UserDefaultKey.hasCompletedOnboarding)
+    private var hasCompletedOnboarding: Bool = false
+
     init() {
+        // TipKit 적용
+        try? Tips.configure()
+
         do {
-          self.sharedContainer = try ModelContainer(
-            for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,
-            migrationPlan: MigrationPlan.self
-          )
+            self.sharedContainer = try ModelContainer(
+                for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,
+                migrationPlan: MigrationPlan.self
+            )
         } catch {
-          assertionFailure("ModelContainer init error: \(error)")
-          fatalError()
+            assertionFailure("ModelContainer init error: \(error)")
+            fatalError()
         }
-        
+
         SwiftDataManager.shared.configure(container: sharedContainer)
-        
+
         backfillGuideWasMirroredIfNeeded(container: sharedContainer)
-        
+
         Task { @MainActor in
             SwiftDataManager.shared.cleanupAllTempProjects()
         }
     }
-    
+
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $coordinator.path) {
-                BoundingBoxView(shootState: .firstShoot)
-                    .navigationDestination(for: Path.self) { path in
-                        switch path {
-                        case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList):
-                            ClipEditView(
-                                clipURL: url,
-                                shootState: state,
-                                cameraSetting: cameraSetting,
-                                cameraManager: cameraManager,
-                                timeStampedTiltList: timeStampedTiltList
-                            )
-                            
-                        case .overlay(let clip, let cameraSetting, let cameraManager):
-                            OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
-                                .toolbar(.hidden, for: .navigationBar)
+            if hasCompletedOnboarding {
+                NavigationStack(path: $coordinator.path) {
+                    ProjectListView()
+                        .navigationDestination(for: Path.self) { path in
+                            switch path {
+                            case .startProject:
+                                StartProjectView()
 
-                        case .camera(let state):
-                            BoundingBoxView(shootState: state)
-                                .toolbar(.hidden, for: .navigationBar)
-                            
-                            
-                        case .projectPreview:
-                            ProjectPreviewView()
-                        
-                        case .projectEdit(let projectID, let newClip):
-                            ProjectEditView(projectID: projectID, newClip: newClip)
-                                .toolbar(.hidden, for: .navigationBar)
-                            
-                        case .projectList:
-                            ProjectListView()
+                            case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList):
+                                ClipEditView(
+                                    clipURL: url,
+                                    shootState: state,
+                                    cameraSetting: cameraSetting,
+                                    cameraManager: cameraManager,
+                                    timeStampedTiltList: timeStampedTiltList
+                                )
+                            case .guideSelect(let clip, let cameraSetting, let cameraManager):
+                                 GuideSelectView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager)
+                                     .toolbar(.hidden, for: .navigationBar)
+
+                            case .overlay(let clip, let cameraSetting, let cameraManager, let selectedTimestamp):
+                                OverlayView(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp)
+                                    .toolbar(.hidden, for: .navigationBar)
+
+                            case .camera(let state):
+                                BoundingBoxView(shootState: state)
+                                    .toolbar(.hidden, for: .navigationBar)
+
+                            case .projectPreview:
+                                ProjectPreviewView()
+
+                            case .projectEdit(let projectID, let newClip):
+                                ProjectEditView(projectID: projectID, newClip: newClip)
+                                    .toolbar(.hidden, for: .navigationBar)
+
+                            case .projectList:
+                                ProjectListView()
+                            }
                         }
-                        
-                    }
+                }
+                .environmentObject(coordinator)
+                .environment(permissionManager)
+                .sheet(isPresented: $permissionManager.showPermissionSheet) {
+                    CameraPermissionSheet(permissionManager: permissionManager)
+                }
+            } else {
+                OnboardingView(onComplete: {
+                    hasCompletedOnboarding = true
+                })
             }
-            .environmentObject(coordinator)
         }
         .modelContainer(sharedContainer)
+        .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
+            if oldValue == false && newValue == true {
+                permissionManager.requestAndCheckPermissions()
+            }
+        }
     }
-    
+
     private func backfillGuideWasMirroredIfNeeded(container: ModelContainer) {
         let flagKey = "didBackfill_GuideWasMirroredAtCapture_v2_0_0"
         guard !UserDefaults.standard.bool(forKey: flagKey) else { return }

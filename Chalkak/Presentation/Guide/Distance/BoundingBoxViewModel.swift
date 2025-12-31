@@ -7,14 +7,15 @@
 
 import Foundation
 
-class BoundingBoxViewModel: ObservableObject {
-    @Published var liveBoundingBoxes: [CGRect] = []
-    @Published var referenceBoundingBoxes: [CGRect] = []
-    @Published var isSettingReference: Bool = false
-    @Published var isAligned: Bool = false
-    @Published var tiltManager: CameraTiltManager?
-    @Published var guide: Guide?
-    @Published var showResumeAlert = false
+@Observable
+class BoundingBoxViewModel {
+    var liveBoundingBoxes: [CGRect] = []
+    var referenceBoundingBoxes: [CGRect] = []
+    var isSettingReference: Bool = false
+    var isAligned: Bool = false
+    var tiltManager: CameraTiltManager?
+    var guide: Guide?
+    var showResumeAlert = false
 
     // MARK: - init
 

@@ -10,7 +10,8 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class ProjectEditViewModel: ObservableObject {
+@Observable
+final class ProjectEditViewModel {
     private var project: Project?
     private var projectID: String
     private var currentComposition: AVMutableComposition?
@@ -18,20 +19,20 @@ final class ProjectEditViewModel: ObservableObject {
     private var isTimeObserverActive = true
     private var imageGenerator: AVAssetImageGenerator?
     
-    @Published var editableClips: [EditableClip] = []
-    @Published var isPlaying = false
-    @Published var playHead: Double = 0
-    @Published var player = AVPlayer()
-    @Published var previewImage: UIImage? = nil
-    @Published var isDragging = false
-    @Published var guide: Guide? = nil /// 프로젝트 로딩중
-    @Published var isLoading = false
-    @Published var showEmptyProjectAlert = false
-    @Published var selectedClipID: String? = nil
+    var editableClips: [EditableClip] = []
+    var isPlaying = false
+    var playHead: Double = 0
+    var player = AVPlayer()
+    var previewImage: UIImage?
+    var isDragging = false
+    var guide: Guide? /// 프로젝트 로딩중
+    var isLoading = false
+    var showEmptyProjectAlert = false
+    var selectedClipID: String? = nil
     
     // MARK: – 저장/내보내기용 프로퍼티
 
-    @Published var isExporting = false
+    var isExporting = false
     private let videoManager = VideoManager()
     private let photoLibrarySaver = PhotoLibrarySaver()
 
@@ -162,6 +163,7 @@ final class ProjectEditViewModel: ObservableObject {
     private func generateSingleThumbnail(url: URL, atTime: Double) async -> UIImage? {
         return await withCheckedContinuation { continuation in
             Task.detached {
+                // URL 유효성 검증
                 guard FileManager.isValidVideoFile(at: url) else {
                     print("유효하지 않은 비디오 파일: \(url)")
                     continuation.resume(returning: nil)
@@ -282,18 +284,33 @@ final class ProjectEditViewModel: ObservableObject {
             queue: .main
         ) { [weak self] time in
             guard let self = self else { return }
-
+            
             // 드래그 중이면 아무것도 안 함
             guard !self.isDragging else { return }
-
+            
             let secs = CMTimeGetSeconds(time)
             DispatchQueue.main.async {
                 self.playHead = secs
                 Task { await self.updatePreviewImage(at: secs) }
-
-                if secs >= self.totalDuration {
-                    self.isPlaying = false
-                    self.player.pause()
+                
+                // 기존 트리밍 로직도 그대로 유지
+                if let clip = self.editableClips.first(where: { $0.isTrimming }) {
+                    let allStart = self.allClipStart(of: clip)
+                    let allEnd = allStart + clip.trimmedDuration
+                    if secs >= allEnd {
+                        self.player.seek(
+                            to: CMTime(seconds: allStart, preferredTimescale: 600),
+                            toleranceBefore: .zero, toleranceAfter: .zero
+                        )
+                        if self.isPlaying {
+                            self.player.play()
+                        }
+                    }
+                } else {
+                    if secs >= self.totalDuration {
+                        self.isPlaying = false
+                        self.player.pause()
+                    }
                 }
             }
         }
@@ -365,13 +382,30 @@ final class ProjectEditViewModel: ObservableObject {
     }
     
     func togglePlayback() {
+        if let clip = editableClips.first(where: { $0.isTrimming }) {
+            let allStart = allClipStart(of: clip)
+            let allEnd = allStart + clip.trimmedDuration
+            
+            if playHead < allStart || playHead >= allEnd {
+                seekTo(time: allStart)
+            }
+            
+            isPlaying.toggle()
+            if isPlaying {
+                player.play()
+            } else {
+                player.pause()
+            }
+            return
+        }
+        
         // 끝에 도달했을 때 0초로 리셋하지 않고 그 자리에서 정지
         if playHead >= totalDuration {
             isPlaying = false
             player.pause()
             return
         }
-
+        
         isPlaying.toggle()
         if isPlaying {
             player.play()
@@ -409,6 +443,38 @@ final class ProjectEditViewModel: ObservableObject {
         selectedClipID = nil
     }
     
+    func toggleTrimmingMode(for clipID: String) {
+        // 트리밍 모드 토글
+        editableClips = editableClips.map { clip in
+            var c = clip
+            c.isTrimming = (c.id == clipID) ? !c.isTrimming : false
+            return c
+        }
+        
+        // 트리밍 모드가 활성화된 클립을 찾고, 해당 클립의 시작 위치로 플레이헤드 이동
+        if let trimmingClip = editableClips.first(where: { $0.isTrimming }) {
+            // 해당 클립의 타임라인상 시작 위치
+            let clipStartTime = allClipStart(of: trimmingClip)
+            
+            // 범위 체크
+            let safeTime = min(max(0, clipStartTime), totalDuration)
+            
+            // 트리밍된 부분의 시작점으로 플레이헤드 이동
+            seekTo(time: safeTime)
+            
+            // 재생 중이었다면 일시정지
+            if isPlaying {
+                isPlaying = false
+                player.pause()
+            }
+        }
+    }
+
+    func deactivateAllTrimming() {
+        for i in 0 ..< editableClips.count {
+            editableClips[i].isTrimming = false
+        }
+    }
 
     func allClipStart(of clip: EditableClip) -> Double {
         guard let idx = editableClips.firstIndex(where: { $0.id == clip.id }) else {
@@ -439,18 +505,20 @@ final class ProjectEditViewModel: ObservableObject {
     
     // MARK: – 편집된 영상 갤러리에 내보내기
 
-    func exportEditedVideoToPhotos() async {
+    func exportEditedVideoToPhotos() async -> Bool {
         isExporting = true
         defer { isExporting = false }
-        
+
         do {
             // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
             // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
             let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
-            await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
-            print("내보내기 완료:", finalURL)
+            let success = await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
+
+            return success
         } catch {
             print("내보내기 실패:", error)
+            return false
         }
     }
 
@@ -486,6 +554,10 @@ final class ProjectEditViewModel: ObservableObject {
             print("원본 프로젝트를 찾을 수 없습니다.")
             return
         }
+
+        // ProjectListView에서 ProjectEditView 접근시 해당 프로젝트 뱃지 제거
+        let originalID = originalProject.originalID ?? originalProject.id
+        SwiftDataManager.shared.markProjectAsChecked(projectID: originalID)
         
         // 이미 temp면 그대로 로드
         if originalProject.isTemp {
@@ -651,6 +723,28 @@ final class ProjectEditViewModel: ObservableObject {
         }
     }
     
+    /// 트리밍 범위 업데이트 (temp에만 반영)
+    func updateTrimRange(for clipID: String, start: Double, end: Double) {
+        // UI 업데이트
+        guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
+        editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
+        editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
+        
+        // 드래그 중이 아닐 때 플레이어 업데이트 수행
+        if !isDragging {
+            setupPlayer()
+        }
+        
+        // temp 프로젝트의 clip도 업데이트
+        if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+           tempProject.isTemp,
+           let tempClip = tempProject.clipList.first(where: { $0.id == clipID })
+        {
+            tempClip.startPoint = editableClips[idx].startPoint
+            tempClip.endPoint = editableClips[idx].endPoint
+            SwiftDataManager.shared.saveContext()
+        }
+    }
     
     /// 변경사항 저장 (temp → 원본으로 머지)
     func commitChanges() async -> Bool {

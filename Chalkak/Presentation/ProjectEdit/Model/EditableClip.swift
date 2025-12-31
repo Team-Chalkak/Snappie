@@ -19,6 +19,8 @@ struct EditableClip: Identifiable {
 
     // startPoint 시점의 단일 썸네일
     var thumbnail: UIImage?
+    // 트리밍 모드 활성화 플래그
+    var isTrimming: Bool = false
 
     // 실제 재생되는 길이
     var trimmedDuration: Double {

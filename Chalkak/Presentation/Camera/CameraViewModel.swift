@@ -15,6 +15,7 @@ import SwiftUI
 
 class CameraViewModel: ObservableObject {
     // MARK: - Published Properties (UI State)
+
     // 뷰가 직접 구독하는 상태 변수들을 그룹화합니다.
     @Published var needsPermissionRequest = false
     @Published var isTimerRunning = false
@@ -26,10 +27,12 @@ class CameraViewModel: ObservableObject {
     @Published var isHorizontalLevelActive = false {
         didSet { isHorizontalLevelActive ? startObservingTilt() : stopObservingTilt() }
     }
+
     @Published var isHorizontal = false
     @Published var cameraPostion: AVCaptureDevice.Position = .back {
         didSet { isUsingFrontCamera = (cameraPostion == .front) }
     }
+
     @Published var isRecording = false
     @Published var recordingTime = 0
     @Published var timerCountdown = 0
@@ -46,7 +49,6 @@ class CameraViewModel: ObservableObject {
     var model: CameraManager
     private let swiftDataManager = SwiftDataManager.shared
     @Published var tiltCollector = TiltDataCollector()
-    @Published var showOnboarding: Bool = false
 
     // MARK: Internal State
 
@@ -66,20 +68,18 @@ class CameraViewModel: ObservableObject {
     private var recordingStartDate: Date?
 
     // MARK: - Computed Properties
+
     var minZoomScale: CGFloat { 0.5 }
     var maxZoomScale: CGFloat { 6.0 }
     var formattedTime: String { String(format: "%02d:%02d", recordingTime / 60, recordingTime % 60) }
     var currentTimerIcon: Icon { selectedTimerDuration.icon }
     var currentFlashIcon: Icon { torchMode.icon }
-    private var hasRequiredPermissions: Bool { model.permissionState == .both }
 
     // MARK: - init
 
     init() {
         model = CameraManager()
         session = model.session
-        model.$showOnboarding
-            .assign(to: &$showOnboarding)
         model.$isRecording
             .assign(to: &$isRecording)
 
@@ -99,11 +99,12 @@ class CameraViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.cameraSetupDelay) {
             self.model.setZoomScale(self.zoomScale)
         }
-        
+
         setPreviewMirroringUpdateHandler()
     }
 
     // MARK: - Camera Set
+
     func startCamera() { model.startSession() }
     func stopCamera() {
         if isRecording { stopVideoRecording() }
@@ -116,11 +117,13 @@ class CameraViewModel: ObservableObject {
         torchMode.toggle()
         model.setTorchMode(torchMode)
     }
+
     func switchGrid() { isGrid.toggle() }
     func switchHorizontalLevel() { isHorizontalLevelActive.toggle() }
     func setBoundingBoxUpdateHandler(_ handler: @escaping ([CGRect]) -> Void) {
         model.onMultiBoundingBoxUpdate = handler
     }
+
     func toggleTimerOption() {
         selectedTimerDuration = selectedTimerDuration.next()
         guard selectedTimerDuration != .off else { return }
@@ -133,6 +136,7 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - Zoom Logic
+
     func toggleZoomControl() {
         guard !isUsingFrontCamera else { return }
         showingZoomControl.toggle()
@@ -156,8 +160,8 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - Recording Logic
+
     func startVideoRecording() {
-        guard checkPermissionOrRequestSheet() else { return }
         showingCameraControl = false
         selectedTimerDuration != .off ? startTimerCountdown() : executeVideoRecording()
     }
@@ -173,7 +177,6 @@ class CameraViewModel: ObservableObject {
     }
 
     private func executeVideoRecording() {
-        guard checkPermissionOrRequestSheet() else { return }
         model.startRecording()
         recordingStartDate = Date()
         timeStampedTiltList.removeAll()
@@ -182,6 +185,7 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - Timer Management
+
     private func startTimerCountdown() {
         isTimerRunning = true
         timerCountdown = selectedTimerDuration.rawValue
@@ -233,6 +237,7 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - Tilt Observation
+
     private func startObservingTilt() {
         horizontalLevelCancellable = tiltCollector.gravityXPublisher.sink { [weak self] gravityX in
             self?.isHorizontal = abs(gravityX) < 0.05
@@ -245,6 +250,7 @@ class CameraViewModel: ObservableObject {
     }
 
     // MARK: - Settings Persistence
+
     func saveCameraSettings() {
         let setting = CameraSetting(
             zoomScale: zoomScale,
@@ -264,8 +270,9 @@ class CameraViewModel: ObservableObject {
         selectedTimerDuration = TimerOptions(rawValue: UserDefaults.standard.integer(forKey: UserDefaultKey.timerSecond)) ?? .off
         cameraPostion = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition) ? .front : .back
     }
-    
+
     // MARK: - Camera Switching
+
     func changeCamera() {
         let newPosition: AVCaptureDevice.Position = cameraPostion == .back ? .front : .back
 
@@ -290,12 +297,6 @@ class CameraViewModel: ObservableObject {
             DispatchQueue.main.async { self?.isPreviewMirrored = isMirrored }
         }
     }
-    
-    // MARK: - Private Helpers
-    private func checkPermissionOrRequestSheet() -> Bool {
-        guard hasRequiredPermissions else { needsPermissionRequest = true; return false }
-        return true
-    }
 
     @MainActor
     func updateBadgeState() {
@@ -309,6 +310,7 @@ class CameraViewModel: ObservableObject {
 }
 
 // MARK: - UI Logic Extensions
+
 // ViewModel의 부담을 줄이고 관련 코드를 모델과 가깝게 배치하기 위해 extension으로 분리합니다.
 extension TorchMode {
     var icon: Icon {
@@ -347,8 +349,8 @@ extension TiltDataCollector {
     }
 }
 
-
 // MARK: - Constants
+
 // 하드코딩된 숫자들을 의미있는 상수로 변경
 extension CameraViewModel {
     private static let cameraSetupDelay: TimeInterval = 0.5
