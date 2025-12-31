@@ -109,7 +109,16 @@ struct ProjectEditView: View {
                         viewModel.selectedClipID = nil
                     },
                     onTapEditClip: {
-                        // TODO: 클립편집 연결하기
+                        guard let payload = viewModel.makeClipEditPayload(
+                            selectedClipID: selectedClipID
+                        ) else { return }
+                        
+                        coordinator.push(.clipEdit(
+                            clipURL: payload.clipURL,
+                            state: payload.state,
+                            cameraSetting: payload.cameraSetting,
+                            cameraManager: CameraManager(),
+                            TimeStampedTiltList: payload.tiltList))
                     },
                     onTapEditGuide: {
                         // TODO: 가이드 선택 연결하기

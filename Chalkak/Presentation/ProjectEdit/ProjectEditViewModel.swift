@@ -879,3 +879,55 @@ extension ProjectEditViewModel {
         return accumulatedTime
     }
 }
+
+// MARK: - ClipEdit으로 화면 이동을 위한 함수들
+
+extension ProjectEditViewModel {
+
+    /// ClipEdit 화면으로 넘길 payload
+    struct ClipEditPayload {
+        let clipURL: URL
+        let tiltList: [TimeStampedTilt]
+        let cameraSetting: CameraSetting
+        let state: ShootState
+    }
+
+    /// selectedClipID 기준으로 ClipEdit에 필요한 값들을 만든다.
+    func makeClipEditPayload(selectedClipID: String) -> ClipEditPayload? {
+        // 현재 프로젝트(temp) 가져오기
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID) else {
+            print("makeClipEditPayload: project not found")
+            return nil
+        }
+
+        // 선택된 클립(모델 Clip) 찾기 -> tiltList 확보용
+        guard let modelClip = tempProject.clipList.first(where: { $0.id == selectedClipID }) else {
+            print("makeClipEditPayload: clip not found for id=\(selectedClipID)")
+            return nil
+        }
+
+        // URL 유효성 검사
+        guard let validURL = FileManager.validVideoURL(from: modelClip.videoURL) else {
+            print("makeClipEditPayload: invalid video url \(modelClip.videoURL)")
+            return nil
+        }
+
+        // CameraSetting (없으면 기본값으로 fallback)
+        let setting = tempProject.cameraSetting ?? CameraSetting(
+            zoomScale: 1.0,
+            isGridEnabled: false,
+            isFrontPosition: false,
+            timerSecond: 0
+        )
+
+        // ShootState는 “클립 편집” 케이스로 구성
+        let state: ShootState = .followUpShoot(guide: tempProject.guide)
+
+        return ClipEditPayload(
+            clipURL: validURL,
+            tiltList: modelClip.tiltList,
+            cameraSetting: setting,
+            state: state
+        )
+    }
+}
