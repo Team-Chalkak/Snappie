@@ -41,10 +41,10 @@ struct OverlayView: View {
     @State private var guide: Guide?
 
     // 3. init
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
+    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
         self.clip = clip
         self.cameraSetting = cameraSetting
-        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager))
+        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp))
     }
 
     var body: some View {
@@ -126,7 +126,7 @@ private extension OverlayView {
     enum Context {
         static let guideGeneratedMessage = "촬영을 위한 가이드가 만들어졌어요."
         static let guideFailedMessage = "가이드 생성에 실패했어요.\n인물이 나오는 장면을 촬영해주세요."
-        static let buttonTitle = "다음 장면 촬영하기"
+        static let buttonTitle = "가이드로 사용하기"
         static let buttonPlaceholder = " "
     }
 

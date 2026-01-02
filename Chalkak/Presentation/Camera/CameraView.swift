@@ -11,7 +11,7 @@ import SwiftUI
 struct CameraView: View {
     let shootState: ShootState
     let isAligned: Bool
-    
+
     private var guide: Guide? {
         switch shootState {
         case .firstShoot:
@@ -20,9 +20,10 @@ struct CameraView: View {
             return guide
         }
     }
-    
-    @ObservedObject var viewModel: CameraViewModel
+
+    @StateObject var viewModel = CameraViewModel()
     @EnvironmentObject private var coordinator: Coordinator
+    @Environment(PermissionManager.self) private var permissionManager
 
     @State private var clipUrl: URL?
     @State private var navigateToEdit = false
@@ -39,23 +40,17 @@ struct CameraView: View {
             }
             
             ZStack {
-                if !viewModel.model.showOnboarding {
-                    CameraPreviewView(
-                        session: viewModel.session,
-                        cameraManager: viewModel.model, // cameraManager 전달
-                        tabToFocus: viewModel.focusAtPoint,
-                        onPinchZoom: viewModel.selectZoomScale,
-                        currentZoomScale: viewModel.zoomScale,
-                        isUsingFrontCamera: viewModel.isUsingFrontCamera,
-                        showGrid: $viewModel.isGrid
-                    )
-                    .aspectRatio(9 / 16, contentMode: .fit)
-                    .clipped()
-                } else {
-                    // 온보딩 중일 때는 빈 뷰 또는 플레이스홀더
-                    Color.black
-                        .aspectRatio(9 / 16, contentMode: .fit)
-                }
+                CameraPreviewView(
+                    session: viewModel.session,
+                    cameraManager: viewModel.model, // cameraManager 전달
+                    tabToFocus: viewModel.focusAtPoint,
+                    onPinchZoom: viewModel.selectZoomScale,
+                    currentZoomScale: viewModel.zoomScale,
+                    isUsingFrontCamera: viewModel.isUsingFrontCamera,
+                    showGrid: $viewModel.isGrid
+                )
+                .aspectRatio(9 / 16, contentMode: .fit)
+                .clipped()
                 
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
@@ -77,38 +72,30 @@ struct CameraView: View {
             .padding(.top, Layout.preViewTopPadding)
             .padding(.horizontal, Layout.preViewHorizontalPadding)
             .frame(maxHeight: .infinity, alignment: .top)
-            
-            if viewModel.model.showOnboarding {
-                OnboardingView(cameraManager: viewModel.model)
-                    .transition(.move(edge: .bottom))
-                    .zIndex(1)
-            }
-            
+
             // 수평 레벨 표시
             if viewModel.isHorizontalLevelActive {
                 HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
             
-            // 두번째 촬영부터-중간이탈버튼
-            if guide != nil {
-                VStack {
-                    HStack {
-                        SnappieButton(.iconBackground(
-                            icon: .dismiss,
-                            size: .large,
-                            isActive: true
-                        )) {
-                            showExitAlert = true
+            // 촬영 이탈버튼
+            VStack {
+                HStack {
+                    SnappieButton(.iconBackground(
+                        icon: .dismiss,
+                        size: .large,
+                        isActive: true
+                    )) {
+                        showExitAlert = true
                             Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
-                        }
-                        .padding(.leading, 30)
-                        .padding(.top, 25)
-                        
-                        Spacer()
                     }
-                    
+                    .padding(.leading, 30)
+                    .padding(.top, 25)
+                        
                     Spacer()
                 }
+                    
+                Spacer()
             }
             
             VStack {
@@ -162,25 +149,20 @@ struct CameraView: View {
             )
         }
         .onAppear {
-            if !viewModel.model.showOnboarding {
+            permissionManager.reevaluateAndPresentIfNeeded()
+
+            if permissionManager.permissionState == .both {
                 viewModel.startCamera()
             }
         }
-        .onChange(of: viewModel.model.showOnboarding) { oldValue, newValue in
-            if oldValue == true && newValue == false {
-                viewModel.model.showPermissionSheet = true
-                viewModel.model.requestAndCheckPermissions() // 권한 요청
-                viewModel.startCamera()
-            }
-        }
-        .onChange(of: viewModel.model.permissionState) { _, newValue in
+        .onChange(of: permissionManager.permissionState) { _, newValue in
             if newValue == .both {
                 viewModel.startCamera()
             }
         }
         .onChange(of: viewModel.needsPermissionRequest) { _, needsRequest in
             if needsRequest {
-                viewModel.model.reevaluateAndPresentIfNeeded()
+                permissionManager.reevaluateAndPresentIfNeeded()
                 viewModel.needsPermissionRequest = false
             }
         }
@@ -198,46 +180,22 @@ struct CameraView: View {
             Text("지금까지 찍은 장면은 저장돼요.")
         }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
-        .sheet(isPresented: $viewModel.model.showPermissionSheet) {
-            CameraPermissionSheet(cameraManager: viewModel.model)
-        }
-        .animation(.easeInOut(duration: 0.5), value: viewModel.model.showOnboarding)
     }
     
     private func handleExitCamera() {
         viewModel.stopCamera()
-        
-        switch shootState {
-        case .appendShoot:
-            // 프로젝트 편집을 통한 클립추가로 온 경우
-            let isAppendingShoot = UserDefaults.standard.bool(forKey: UserDefaultKey.isAppendingShoot)
-            
-            if isAppendingShoot {
-                if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
-                    UserDefaults.standard.set(false, forKey: UserDefaultKey.isAppendingShoot)
-                    
-                    // temp프로젝트에서 originalId추출해서 연결
-                    if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-                       let originalID = tempProject.originalID
-                    {
-                        coordinator.popToScreen(.projectEdit(projectID: originalID))
-                    } else {
-                        coordinator.removeAll()
-                    }
-                } else {
-                    coordinator.removeAll()
-                }
+
+        // 이제 CameraView는 ProjectEditView를 통해서만 접근이 가능함
+        if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
+            if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+               let originalID = tempProject.originalID // Temp 여부에 따라 originalID or projectId
+            {
+                coordinator.popToScreen(.projectEdit(projectID: originalID))
             } else {
-                // 일반촬영에서의 X버튼
-                if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
-                    coordinator.popToScreen(.projectEdit(projectID: projectID))
-                } else {
-                    coordinator.removeAll()
-                }
+                coordinator.popToScreen(.projectEdit(projectID: projectID))
             }
-        case .firstShoot, .followUpShoot:
-            // 프로젝트 편집을 통해서 온 것이 아닐때는 루트뷰로 이동
-            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+        } else {
+            // fallback
             coordinator.removeAll()
         }
     }

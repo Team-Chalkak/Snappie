@@ -25,13 +25,15 @@ import SwiftUI
     VideoControlPanelView(
         editViewModel: editViewModel,
         isOverlayVisible: $isOverlayVisible,
-        overlayImage: overlayImage
+        overlayImage: overlayImage,
+        isGuideSelectMode: false
     )
  */
 struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
     let overlayImage: UIImage?
+    let isGuideSelectMode: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 108) {
@@ -45,7 +47,7 @@ struct VideoControlPanelView: View {
                 editViewModel.togglePlayback()
             }
 
-            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
+            Text(String(format: "%.2f초", isGuideSelectMode ? editViewModel.startPoint : editViewModel.currentTrimmedDuration))
                 .font(SnappieFont.style(.proLabel3))
                 .foregroundStyle(SnappieColor.labelDarkNormal)
                 .padding(.horizontal, 9.5)
@@ -55,20 +57,28 @@ struct VideoControlPanelView: View {
                         .fill(SnappieColor.primaryStrong)
                 )
 
-            if overlayImage != nil {
-                SnappieButton(
-                    .iconBackground(
-                        icon: .silhouette,
-                        size: .medium,
-                        isActive: isOverlayVisible
-                    )
-                ) {
-                    isOverlayVisible.toggle()
-                }
-            } else {
-                Spacer()
+            SnappieButton(
+                .iconBackground(
+                    icon: .silhouette,
+                    size: .medium,
+                    isActive: isGuideSelectMode ? isOverlayVisible : false
+                )
+            ) {
+                // TODO: 동작추가예정
             }
+            .hidden(!isGuideSelectMode)
         }
         .padding(.horizontal, 23)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func hidden(_ shouldHide: Bool) -> some View {
+        if shouldHide {
+            self.hidden()
+        } else {
+            self
+        }
     }
 }

@@ -31,20 +31,10 @@ struct TrimmingTimeDisplayView: View {
             Spacer()
             
             //오른쪽 - 원본 영상길이
-            Text(formatTime(editViewModel.duration))
+            Text(editViewModel.duration.formattedTime)
                 .font(SnappieFont.style(.roundCaption1))
                 .foregroundStyle(SnappieColor.primaryHeavy)
         })
         .padding(.horizontal, 24)
-    }
-    
-    //MARK: - Function
-    //Time Formatter
-    private func formatTime(_ seconds: Double) -> String {
-        guard !seconds.isNaN && !seconds.isInfinite else { return "00:00" }
-        let totalSeconds = Int(seconds)
-        let minutes = totalSeconds / 60
-        let secs = totalSeconds % 60
-        return String(format: "%02d:%02d", minutes, secs)
     }
 }

@@ -61,6 +61,8 @@ final class ClipEditViewModel: ObservableObject {
     private var debounceTimer: Timer?
     private let thumbnailCount = 10
     
+    private var trimOffset: Double = 0
+    
     // 5. init & deinit
     init(
         clipURL: URL,
@@ -127,7 +129,7 @@ final class ClipEditViewModel: ObservableObject {
                     images.append(UIImage(cgImage: cgImage))
                 }
             } catch {
-                print("⚠️ Thumbnail \(i) error: \(error)")
+                print("Thumbnail error: \(error)")
             }
         }
         thumbnails = images
@@ -136,13 +138,15 @@ final class ClipEditViewModel: ObservableObject {
     /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
     @MainActor
     func updatePreviewImage(at time: Double) async {
-        let time = CMTime(seconds: time, preferredTimescale: 600)
+        // trimOffset으로 시작지점 조정
+        let actualTime = time + trimOffset
+        let cmTime = CMTime(seconds: actualTime, preferredTimescale: 600)
         do {
-            if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
+            if let cgImage = try imageGenerator?.copyCGImage(at: cmTime, actualTime: nil) {
                 previewImage = UIImage(cgImage: cgImage)
             }
         } catch {
-            print("⚠️ Preview error at \(time): \(error)")
+            print(error)
         }
     }
     
@@ -160,7 +164,9 @@ final class ClipEditViewModel: ObservableObject {
     
     /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
-        player?.seek(to: CMTime(seconds: time, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+        // trimOffset으로 시작지점 조정
+        let actualTime = time + trimOffset
+        player?.seek(to: CMTime(seconds: actualTime, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
     }
     
     /// 재생/일시정지 상태 토글 - 현재 상태에 따라 playPreview() 또는 pause를 수행
@@ -197,17 +203,24 @@ final class ClipEditViewModel: ObservableObject {
             player?.removeTimeObserver(token)
             timeObserverToken = nil
         }
-        
+
         let currentTime = player?.currentTime() ?? .zero
         let currentTimeSeconds = CMTimeGetSeconds(currentTime)
-        
+
+        let actualStart = startPoint + trimOffset
+        let actualEnd = endPoint + trimOffset
+
         /// 재생을 시작하고 종료 시점을 감지하는 로직
         let startPlaybackAndObserve = { [weak self] in
             guard let self = self else { return }
             self.player?.play()
             self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
                 guard let self = self else { return }
-                if CMTimeGetSeconds(time) >= self.endPoint {
+                let currentSeconds = CMTimeGetSeconds(time)
+                
+                // trimOffset 고려
+                let checkEndPoint = self.endPoint + self.trimOffset
+                if currentSeconds >= checkEndPoint {
                     self.player?.pause()
                     self.isPlaying = false
                     if let token = self.timeObserverToken {
@@ -217,9 +230,9 @@ final class ClipEditViewModel: ObservableObject {
                 }
             }
         }
-        
+
         /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
-        if currentTimeSeconds >= startPoint, currentTimeSeconds < endPoint {
+        if currentTimeSeconds >= actualStart, currentTimeSeconds < actualEnd {
             startPlaybackAndObserve()
         } else {
             /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
@@ -234,9 +247,43 @@ final class ClipEditViewModel: ObservableObject {
         let trimmingLength = endPoint - startPoint
         let newStart = max(0, min(startPoint + delta, duration - trimmingLength))
         let newEnd = newStart + trimmingLength
-        
+
         startPoint = newStart
         endPoint = newEnd
+    }
+
+    /// GuideSelectView에서 트리밍된 구간만 보여주게끔 조정
+    @MainActor
+    func trimmedClip(trimStart: Double, trimEnd: Double) async {
+        // 원본시간
+        trimOffset = trimStart
+
+        // 사용자가 보기에 시작은 0초로 고정
+        let trimmedDuration = trimEnd - trimStart
+        startPoint = 0
+        duration = trimmedDuration
+        endPoint = trimmedDuration
+
+        seek(to: 0)
+
+        await updatePreviewImage(at: 0)
+
+        guard let asset = asset else { return }
+        thumbnails = []
+        let interval = trimmedDuration / Double(thumbnailCount)
+        var images: [UIImage] = []
+
+        for i in 0 ..< thumbnailCount {
+            let time = CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
+            do {
+                if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
+                    images.append(UIImage(cgImage: cgImage))
+                }
+            } catch {
+                print("썸네일트리밍 error \(error)")
+            }
+        }
+        thumbnails = images
     }
     
     /// Project의 referenceDuration 값을 기반으로

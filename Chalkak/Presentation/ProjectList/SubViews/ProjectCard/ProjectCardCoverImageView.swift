@@ -30,38 +30,39 @@ struct ProjectCardCoverImageView: View {
     }
     
     // MARK: body
+
     var body: some View {
         GeometryReader { geometry in
-            if !isCurrentProject {
-                ZStack(alignment: .bottomTrailing) {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: geometry.size.width, height: geometry.size.width, alignment: .center)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
-                    Text(formattedTime)
-                        .font(SnappieFont.style(.proLabel2))
-                        .foregroundStyle(Color.matcha50)
-                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 0)
-                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                        .padding(12)
-                }
-                .onTapGesture {
-                    moveToProjectEdit()
-                }
-            }
-            else {
-                Text("촬영 중인\n프로젝트는\n선택할 수 없음")
-                    .font(SnappieFont.style(.proBody1))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.deepGreen200)
+//            if !isCurrentProject {
+            ZStack(alignment: .bottomTrailing) {
+                image
+                    .resizable()
+                    .scaledToFill()
                     .frame(width: geometry.size.width, height: geometry.size.width, alignment: .center)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(SnappieColor.darkStrong)
-                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    
+                Text(formattedTime)
+                    .font(SnappieFont.style(.proLabel2))
+                    .foregroundStyle(Color.matcha50)
+                    .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 0)
+                    .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    .padding(12)
             }
+            .onTapGesture {
+                moveToProjectEdit()
+            }
+//            }
+//            else {
+//                Text("촬영 중인\n프로젝트는\n선택할 수 없음")
+//                    .font(SnappieFont.style(.proBody1))
+//                    .multilineTextAlignment(.center)
+//                    .foregroundStyle(Color.deepGreen200)
+//                    .frame(width: geometry.size.width, height: geometry.size.width, alignment: .center)
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 16)
+//                            .fill(SnappieColor.darkStrong)
+//                    )
+//            }
         }
         .aspectRatio(1, contentMode: .fit) // 정사각형 비율 유지
     }

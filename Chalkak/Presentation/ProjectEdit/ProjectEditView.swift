@@ -11,17 +11,18 @@ import SwiftUI
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
-    @StateObject private var viewModel: ProjectEditViewModel
+    @State private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExitConfirmation = false
     @State private var showExportSuccessAlert = false
+    @State private var showPhotoPermissionDeniedAlert = false
     @State private var isExporting = false
-    
+
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
-    
+
     init(projectID: String, newClip: Clip? = nil) {
-        self._viewModel = StateObject(wrappedValue: ProjectEditViewModel(projectID: projectID))
+        self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
         self._newClip = State(initialValue: newClip)
     }
 
@@ -138,6 +139,8 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
+                await viewModel.initializeTempProject(loadAfter: false)
+
                 if let clip = newClip {
                     // 새 클립이 있는 경우: temp 초기화 후 클립 추가
                     await viewModel.initializeTempProject(loadAfter: false)
@@ -149,7 +152,7 @@ struct ProjectEditView: View {
                 }
             }
         }
-        
+
         // 뒤로가기 확인 다이얼로그
         .confirmationDialog(
             "편집한 내용을 저장할까요?",
@@ -182,13 +185,13 @@ struct ProjectEditView: View {
         } message: {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }
-        
+
         // 내보내기 완료 알림
         .snappieAlert(
             isPresented: $showExportSuccessAlert,
             message: "내보내기 완료"
         )
-        
+
         // 진행중 로딩 프로그레스
         .snappieProgressAlert(
             isPresented: $isExporting,
@@ -196,7 +199,7 @@ struct ProjectEditView: View {
             loadingMessage: "영상 내보내는 중...",
             completionMessage: ""
         )
-        
+
         // 모든 클립 삭제 시, 프로젝트 삭제 알림
         .alert(
             .emptyProjectDelete,
@@ -210,5 +213,102 @@ struct ProjectEditView: View {
                 }
             }
         )
+
+        // 사진 라이브러리 권한 허용이 되지 않았을 때 Alert
+        .alert(
+            .photoPermissionDenied,
+            isPresented: $showPhotoPermissionDeniedAlert,
+            confirmAction: {
+                // 설정앱 이동
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }
+        )
+    }
+}
+
+// MARK: - Subviews
+
+private extension ProjectEditView {
+    @ViewBuilder
+    var navigationBar: some View {
+        ZStack {
+            HStack {
+                backButton
+                Spacer()
+                rightButtons
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .padding(.bottom, 16)
+    }
+
+    @ViewBuilder
+    private var rightButtons: some View {
+        HStack(spacing: 8) {
+            exportButton
+            saveButton
+        }
+    }
+
+    private var backButton: some View {
+        SnappieButton(
+            .iconBackground(
+                icon: .chevronBackward,
+                size: .medium,
+                isActive: true
+            )
+        ) {
+            if viewModel.hasChanges {
+                showExitConfirmation = true
+            } else {
+                UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                coordinator.popToScreen(.projectList)
+            }
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            Task {
+                let success = await viewModel.exportEditedVideoToPhotos()
+                if success {
+                    showExportSuccessAlert = true
+                } else {
+                    showPhotoPermissionDeniedAlert = true
+                }
+            }
+        } label: {
+            Image(systemName: "square.and.arrow.down")
+                .frame(width: 20, height: 20)
+                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                .padding(6)
+                .background(SnappieColor.containerFillNormal)
+                .frame(width: 32, height: 32)
+                .clipShape(.circle)
+        }
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task {
+                let success = await viewModel.exportEditedVideoToPhotos()
+                if success {
+                    showExportSuccessAlert = true
+                } else {
+                    showPhotoPermissionDeniedAlert = true
+                }
+            }
+        } label: {
+            Text("저장")
+                .font(SnappieFont.style(.proLabel2))
+                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 9)
+                .background(SnappieColor.containerFillNormal)
+                .clipShape(.capsule)
+        }
     }
 }
