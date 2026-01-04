@@ -118,21 +118,23 @@ final class ClipEditViewModel: ObservableObject {
     /// 영상 전체 길이와 썸네일 간격을 계산하여, 일정 시간 간격으로 트리밍 타임라인 썸네일 이미지 생성
     @MainActor
     private func generateThumbnails(for asset: AVAsset) async {
+        guard let imageGenerator = imageGenerator else { return }
         thumbnails = []
         let interval = duration / Double(thumbnailCount)
-        var images: [UIImage] = []
         
-        for i in 0 ..< thumbnailCount {
-            let time = CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
-            do {
-                if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
-                    images.append(UIImage(cgImage: cgImage))
-                }
-            } catch {
-                print("Thumbnail error: \(error)")
-            }
+        let times = (0 ..< thumbnailCount).map { i in
+            CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
         }
-        thumbnails = images
+        
+        do {
+            for try await result in imageGenerator.images(for: times) {
+                let cgImage = try result.image
+                let uiImage = UIImage(cgImage: cgImage)
+                thumbnails.append(uiImage)
+            }
+        } catch {
+            print("Thumbnail error: \(error)")
+        }
     }
     
     /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
@@ -142,8 +144,8 @@ final class ClipEditViewModel: ObservableObject {
         let actualTime = time + trimOffset
         let cmTime = CMTime(seconds: actualTime, preferredTimescale: 600)
         do {
-            if let cgImage = try imageGenerator?.copyCGImage(at: cmTime, actualTime: nil) {
-                previewImage = UIImage(cgImage: cgImage)
+            if let result = try await imageGenerator?.image(at: cmTime) {
+                previewImage = UIImage(cgImage: result.image)
             }
         } catch {
             print(error)
@@ -255,6 +257,7 @@ final class ClipEditViewModel: ObservableObject {
     /// GuideSelectView에서 트리밍된 구간만 보여주게끔 조정
     @MainActor
     func trimmedClip(trimStart: Double, trimEnd: Double) async {
+        guard let imageGenerator = imageGenerator else { return }
         // 원본시간
         trimOffset = trimStart
 
@@ -268,22 +271,22 @@ final class ClipEditViewModel: ObservableObject {
 
         await updatePreviewImage(at: 0)
 
-        guard let asset = asset else { return }
         thumbnails = []
         let interval = trimmedDuration / Double(thumbnailCount)
-        var images: [UIImage] = []
 
-        for i in 0 ..< thumbnailCount {
-            let time = CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
-            do {
-                if let cgImage = try imageGenerator?.copyCGImage(at: time, actualTime: nil) {
-                    images.append(UIImage(cgImage: cgImage))
-                }
-            } catch {
-                print("썸네일트리밍 error \(error)")
-            }
+        let times = (0 ..< thumbnailCount).map { i in
+            CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
         }
-        thumbnails = images
+        
+        do {
+            for try await result in imageGenerator.images(for: times) {
+                let cgImage = try result.image
+                let uiImage = UIImage(cgImage: cgImage)
+                thumbnails.append(uiImage)
+            }
+        } catch {
+            print("썸네일트리밍 error \(error)")
+        }
     }
     
     /// Project의 referenceDuration 값을 기반으로
