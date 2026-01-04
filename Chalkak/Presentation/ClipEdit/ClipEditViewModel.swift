@@ -140,13 +140,14 @@ final class ClipEditViewModel: ObservableObject {
     /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
     @MainActor
     func updatePreviewImage(at time: Double) async {
+        guard let imageGenerator = imageGenerator else { return }
+        
         // trimOffset으로 시작지점 조정
         let actualTime = time + trimOffset
         let cmTime = CMTime(seconds: actualTime, preferredTimescale: 600)
         do {
-            if let result = try await imageGenerator?.image(at: cmTime) {
-                previewImage = UIImage(cgImage: result.image)
-            }
+            let result = try await imageGenerator.image(at: cmTime)
+            previewImage = UIImage(cgImage: result.image)
         } catch {
             print(error)
         }
