@@ -15,6 +15,7 @@ import SwiftUI
  */
 struct GuideSelectView: View {
     let clip: Clip
+    let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
 
@@ -22,8 +23,28 @@ struct GuideSelectView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
 
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
+    private var overlayImage: UIImage? {
+        switch shootState {
+        case .firstShoot:
+            return nil
+        case .followUpShoot(let guide),
+             .appendShoot(let guide):
+            return guide.outlineImage
+        }
+    }
+    
+    private var isGuideSelectMode: Bool {
+        overlayImage != nil
+    }
+    
+    init(
+        clip: Clip,
+        shootState: ShootState,
+        cameraSetting: CameraSetting,
+        cameraManager: CameraManager
+    ) {
         self.clip = clip
+        self.shootState = shootState
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
 
@@ -47,25 +68,36 @@ struct GuideSelectView: View {
                         coordinator.popLast()
                     },
                     rightButtonType: .oneButton(
-                        .init(label: "다음") {
-                            // 트리밍 시간을 원본시간으로 변환
-                            let originalTimestamp = clip.startPoint + editViewModel.startPoint
-                            coordinator.push(
-                                .overlay(
-                                    clip: clip,
-                                    cameraSetting: cameraSetting,
-                                    cameraManager: cameraManager,
-                                    selectedTimestamp: originalTimestamp
+                        .init(label: "완료") {
+                            guard let previous = coordinator.previousPath else {
+                                return
+                            }
+                            
+                            switch previous {
+                            case .projectEdit:
+                                // TODO: - 가이드 수정을 (임시본에) 반영하면서 프로젝트 편집 화면으로 돌아가기
+                                coordinator.popLast()
+                            default:
+                                // 트리밍 시간을 원본시간으로 변환
+                                let originalTimestamp = clip.startPoint + editViewModel.startPoint
+                                
+                                coordinator.push(
+                                    .overlay(
+                                        clip: clip,
+                                        cameraSetting: cameraSetting,
+                                        cameraManager: cameraManager,
+                                        selectedTimestamp: originalTimestamp
+                                    )
                                 )
-                            )
+                            }
                         }
                     )
                 )
 
                 VideoControlView(
                     isDragging: isDragging,
-                    overlayImage: nil,
-                    isGuideSelectMode: true,
+                    overlayImage: overlayImage,
+                    isGuideSelectMode: isGuideSelectMode,
                     editViewModel: editViewModel
                 )
 

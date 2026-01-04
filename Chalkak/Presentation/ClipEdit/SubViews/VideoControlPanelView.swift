@@ -32,7 +32,6 @@ import SwiftUI
 struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
-    let overlayImage: UIImage?
     let isGuideSelectMode: Bool
 
     var body: some View {
@@ -65,6 +64,8 @@ struct VideoControlPanelView: View {
                 )
             ) {
                 // TODO: 동작추가예정
+                guard isGuideSelectMode else { return }
+                isOverlayVisible.toggle()
             }
             .hidden(!isGuideSelectMode)
         }

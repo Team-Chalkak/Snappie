@@ -43,13 +43,12 @@ struct VideoControlView: View {
                 player: editViewModel.player,
                 isDragging: isDragging,
                 overlayImage: overlayImage,
-                isOverlayVisible: isOverlayVisible
+                isOverlayVisible: $isOverlayVisible
             )
             
             VideoControlPanelView(
                 editViewModel: editViewModel,
                 isOverlayVisible: $isOverlayVisible,
-                overlayImage: overlayImage,
                 isGuideSelectMode: isGuideSelectMode
             )
         })

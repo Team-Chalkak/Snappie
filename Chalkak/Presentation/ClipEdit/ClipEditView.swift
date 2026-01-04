@@ -94,28 +94,49 @@ struct ClipEditView: View {
                 SnappieNavigationBar(
                     navigationTitle: "장면 다듬기",
                     leftButtonType: .backward {
-                        showRetakeAlert = true
+                        guard let previous = coordinator.previousPath else {
+                            return
+                        }
+                        
+                        switch previous {
+                        case .camera:
+                            showRetakeAlert = true
+                        default:
+                            coordinator.popLast()
+                        }
+                        
                         Analytics.logEvent("clipEditBackButtonTapped", parameters: nil)
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
-                            switch shootState {
-                            case .firstShoot:
-                                coordinator.push(
-                                    .guideSelect(
-                                        clip: editViewModel.createClipData(),
-                                        cameraSetting: editViewModel.cameraSetting,
-                                        cameraManager: cameraManager
+                            guard let previous = coordinator.previousPath else {
+                                return
+                            }
+                            
+                            switch previous {
+                            case .projectEdit:
+                                // TODO: - 클립 수정을 (임시본에) 반영하면서 프로젝트 편집 화면으로 돌아가기
+                                coordinator.popLast()
+                            default:
+                                switch shootState {
+                                case .firstShoot:
+                                    coordinator.push(
+                                        .guideSelect(
+                                            clip: editViewModel.createClipData(),
+                                            state: shootState,
+                                            cameraSetting: editViewModel.cameraSetting,
+                                            cameraManager: cameraManager
+                                        )
                                     )
-                                )
-                            case .followUpShoot:
-                                showActionSheet = true
-                            case .appendShoot:
-                                let newClip = editViewModel.createClipData()
+                                case .followUpShoot:
+                                    showActionSheet = true
+                                case .appendShoot:
+                                    let newClip = editViewModel.createClipData()
 
-                                if let projectID = editViewModel.fetchCurrentProjectID() {
-                                    editViewModel.clearCurrentProjectID()
-                                    coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
+                                    if let projectID = editViewModel.fetchCurrentProjectID() {
+                                        editViewModel.clearCurrentProjectID()
+                                        coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
+                                    }
                                 }
                             }
                         }

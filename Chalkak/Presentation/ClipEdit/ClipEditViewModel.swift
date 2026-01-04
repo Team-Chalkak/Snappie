@@ -381,3 +381,20 @@ final class ClipEditViewModel: ObservableObject {
         )
     }
 }
+
+// MARK: - 클립 수정 내용 임시 저장 (`ProjectEdit` 화면에서 수정 버튼을 통해 넘어온 경우)
+
+extension ClipEditViewModel {
+    /// 클립 수정 내용 임시 저장
+    @MainActor
+    func updateClipInTempProject() {
+        guard let clipID = self.clipID else { return }
+        
+        // SwiftDataManager를 통해 DB에서 해당 클립을 가져와 업데이트
+        SwiftDataManager.shared.updateClipPoints(
+            id: clipID,
+            start: startPoint,
+            end: endPoint
+        )
+    }
+}

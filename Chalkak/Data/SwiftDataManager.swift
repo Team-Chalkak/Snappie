@@ -247,6 +247,28 @@ class SwiftDataManager {
     func deleteClip(_ clip: Clip) {
         context.delete(clip)
     }
+    
+    /// `Clip` 업데이트
+    func updateClipPoints(id: String, start: Double, end: Double) {
+        let descriptor = FetchDescriptor<Clip>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            let clips = try context.fetch(descriptor)
+            if let clip = clips.first {
+                clip.startPoint = start
+                clip.endPoint = end
+                
+                saveContext()
+                print("Successfully updated clip \(id): \(start)s ~ \(end)s")
+            } else {
+                print("Error: Clip with ID \(id) not found")
+            }
+        } catch {
+            print("Failed to fetch clip for update: \(error)")
+        }
+    }
 
     // MARK: - Guide
 
@@ -281,6 +303,19 @@ class SwiftDataManager {
         context.delete(guide)
     }
     
+    /// `Guide` 업데이트
+    func updateGuide(projectID: String, guide: Guide) {
+        guard let project = fetchProject(byID: projectID),
+              project.isTemp
+        else { return }
+
+        project.guide.boundingBoxes = guide.boundingBoxes
+        project.guide.outlineImageData = guide.outlineImageData
+        project.guide.cameraTilt = guide.cameraTilt
+
+        saveContext()
+    }
+
     // MARK: - CameraSetting
     
     /// `CameraSetting` 생성

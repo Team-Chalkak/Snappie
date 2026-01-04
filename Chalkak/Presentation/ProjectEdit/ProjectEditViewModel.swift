@@ -18,6 +18,7 @@ final class ProjectEditViewModel {
     private var timeObserverToken: Any?
     private var isTimeObserverActive = true
     private var imageGenerator: AVAssetImageGenerator?
+    var isAlreadyInitialized = false
     
     var editableClips: [EditableClip] = []
     var isPlaying = false
@@ -980,10 +981,12 @@ extension ProjectEditViewModel {
 
     /// ClipEdit 화면으로 넘길 payload
     struct ClipEditPayload {
+        let clip: Clip
         let clipURL: URL
         let tiltList: [TimeStampedTilt]
         let cameraSetting: CameraSetting
         let state: ShootState
+        let guide: Guide
     }
 
     /// selectedClipID 기준으로 ClipEdit에 필요한 값들을 만든다.
@@ -1016,12 +1019,16 @@ extension ProjectEditViewModel {
 
         // ShootState는 “클립 편집” 케이스로 구성
         let state: ShootState = .followUpShoot(guide: tempProject.guide)
+        
+        let guide = tempProject.guide
 
         return ClipEditPayload(
+            clip: modelClip,
             clipURL: validURL,
             tiltList: modelClip.tiltList,
             cameraSetting: setting,
-            state: state
+            state: state,
+            guide: guide
         )
     }
 }

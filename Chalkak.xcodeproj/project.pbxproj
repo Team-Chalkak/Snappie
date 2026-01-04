@@ -722,7 +722,6 @@
 			isa = PBXGroup;
 			children = (
 				999992482E2D8EB300D56BD1 /* Constant */,
-				B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */,
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
 				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
@@ -739,6 +738,7 @@
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
 				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
+				B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
