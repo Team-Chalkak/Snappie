@@ -42,7 +42,7 @@ final class OverlayViewModel: ObservableObject {
     var outlineImage: UIImage? { overlayManager.outlineImage }
     var extractedImage: UIImage? { extractor.extractedImage }
     private var coverImage: Data?
-    private let cameraManager: CameraManager
+    let cameraManager: CameraManager
 
     // 4. Init
     init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
@@ -104,13 +104,13 @@ final class OverlayViewModel: ObservableObject {
     /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
-    func saveProjectData() {
+    func saveProjectData() -> String {
         saveClipData()
         saveCameraSetting()
         
         guard let newGuide = makeGuide(clipID: clip.id) else {
             print("❌ 가이드 생성에 실패하여 프로젝트를 저장할 수 없습니다.")
-            return
+            return ""
         }
         self.guide = newGuide
         
@@ -138,6 +138,8 @@ final class OverlayViewModel: ObservableObject {
     
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+        
+        return projectID
     }
     
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
