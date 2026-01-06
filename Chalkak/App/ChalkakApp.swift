@@ -29,7 +29,7 @@ struct ChalkakApp: App {
 
         do {
             self.sharedContainer = try ModelContainer(
-                for: SchemaV2.Clip.self, SchemaV2.Guide.self, SchemaV2.Project.self, SchemaV2.CameraSetting.self,
+                for: SchemaV3.Clip.self, SchemaV3.Guide.self, SchemaV3.Project.self, SchemaV3.CameraSetting.self,
                 migrationPlan: MigrationPlan.self
             )
         } catch {
@@ -120,12 +120,12 @@ struct ChalkakApp: App {
 
         do {
             // 아직 false인 것만 대상(초기 기본값 false)
-            var fd = FetchDescriptor<SchemaV2.Guide>()
-            fd.predicate = #Predicate<SchemaV2.Guide> { $0.wasMirroredAtCapture == false }
+            var fd = FetchDescriptor<SchemaV3.Guide>()
+            fd.predicate = #Predicate<SchemaV3.Guide> { $0.wasMirroredAtCapture == false }
             let guides = try context.fetch(fd)
 
             // 프로젝트 미리 로드해서 메모리 매칭
-            let projects = try context.fetch(FetchDescriptor<SchemaV2.Project>())
+            let projects = try context.fetch(FetchDescriptor<SchemaV3.Project>())
 
             for guide in guides {
                 if let project = projects.first(where: { $0.guide.clipID == guide.clipID }),
