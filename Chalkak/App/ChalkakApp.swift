@@ -56,13 +56,14 @@ struct ChalkakApp: App {
                             case .startProject:
                                 StartProjectView()
 
-                            case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList):
+                            case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList, let clipID):
                                 ClipEditView(
                                     clipURL: url,
                                     shootState: state,
                                     cameraSetting: cameraSetting,
                                     cameraManager: cameraManager,
-                                    timeStampedTiltList: timeStampedTiltList
+                                    timeStampedTiltList: timeStampedTiltList,
+                                    clipID: clipID
                                 )
                             case .guideSelect(let clip, let state, let cameraSetting, let cameraManager):
                                 GuideSelectView(

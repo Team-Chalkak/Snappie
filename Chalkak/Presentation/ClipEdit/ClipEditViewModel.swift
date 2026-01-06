@@ -67,11 +67,13 @@ final class ClipEditViewModel: ObservableObject {
     init(
         clipURL: URL,
         cameraSetting: CameraSetting,
-        timeStampedTiltList: [TimeStampedTilt]
+        timeStampedTiltList: [TimeStampedTilt],
+        clipID: String? = nil
     ) {
         self.clipURL = clipURL
         self.cameraSetting = cameraSetting
         self.timeStampedTiltList = timeStampedTiltList
+        self.clipID = clipID
         setupPlayer()
     }
     
@@ -108,7 +110,18 @@ final class ClipEditViewModel: ObservableObject {
                 await generateThumbnails(for: asset)
                 await updatePreviewImage(at: 0)
                 playPreview()
-                
+
+                // clipID가 있으면 트리밍값을 덮어씌움
+                if let clipID {
+                    await MainActor.run {
+                        if let savedClip = SwiftDataManager.shared.fetchClip(byID: clipID) {
+                            self.startPoint = savedClip.startPoint
+                            self.endPoint = savedClip.endPoint
+                        }
+                    }
+                    await updatePreviewImage(at: self.startPoint)
+                }
+
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
             }
@@ -388,7 +401,9 @@ extension ClipEditViewModel {
     /// 클립 수정 내용 임시 저장
     @MainActor
     func updateClipInTempProject() {
-        guard let clipID = self.clipID else { return }
+        guard let clipID = clipID else {
+            return
+        }
         
         // SwiftDataManager를 통해 DB에서 해당 클립을 가져와 업데이트
         SwiftDataManager.shared.updateClipPoints(

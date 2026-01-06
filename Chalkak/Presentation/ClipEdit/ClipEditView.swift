@@ -71,12 +71,14 @@ struct ClipEditView: View {
         shootState: ShootState,
         cameraSetting: CameraSetting,
         cameraManager: CameraManager,
-        timeStampedTiltList: [TimeStampedTilt]
+        timeStampedTiltList: [TimeStampedTilt],
+        clipID: String? = nil
     ) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
             clipURL: clipURL,
             cameraSetting: cameraSetting,
-            timeStampedTiltList: timeStampedTiltList
+            timeStampedTiltList: timeStampedTiltList,
+            clipID: clipID
         )
         )
         self.shootState = shootState
@@ -115,7 +117,7 @@ struct ClipEditView: View {
                             
                             switch previous {
                             case .projectEdit:
-                                // TODO: - 클립 수정을 (임시본에) 반영하면서 프로젝트 편집 화면으로 돌아가기
+                                editViewModel.updateClipInTempProject()
                                 coordinator.popLast()
                             default:
                                 switch shootState {

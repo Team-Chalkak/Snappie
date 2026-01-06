@@ -113,13 +113,14 @@ struct ProjectEditView: View {
                         guard let payload = viewModel.makeClipEditPayload(
                             selectedClipID: selectedClipID
                         ) else { return }
-                        
+
                         coordinator.push(.clipEdit(
                             clipURL: payload.clipURL,
                             state: payload.state,
                             cameraSetting: payload.cameraSetting,
                             cameraManager: CameraManager(),
-                            TimeStampedTiltList: payload.tiltList))
+                            TimeStampedTiltList: payload.tiltList,
+                            clipID: payload.clip.id))
                     },
                     onTapEditGuide: {
                         guard let payload = viewModel.makeClipEditPayload(
