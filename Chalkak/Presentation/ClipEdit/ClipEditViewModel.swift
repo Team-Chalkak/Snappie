@@ -102,25 +102,26 @@ final class ClipEditViewModel: ObservableObject {
                 
                 await MainActor.run {
                     self.duration = durationSeconds
-                    self.endPoint = durationSeconds
+
+                    if let clipID,
+                       let savedClip = SwiftDataManager.shared.fetchClip(byID: clipID)
+                    {
+                        // clipID가 있는 경우 트리밍 정보를 가져옴
+                        self.startPoint = savedClip.startPoint
+                        self.endPoint = savedClip.endPoint
+                    } else {
+                        // 아이디가 없는 새촬영일때
+                        self.startPoint = 0
+                        self.endPoint = durationSeconds
+                    }
+
                     let playerItem = AVPlayerItem(asset: asset)
                     self.player = AVPlayer(playerItem: playerItem)
                 }
-                
-                await generateThumbnails(for: asset)
-                await updatePreviewImage(at: 0)
-                playPreview()
 
-                // clipID가 있으면 트리밍값을 덮어씌움
-                if let clipID {
-                    await MainActor.run {
-                        if let savedClip = SwiftDataManager.shared.fetchClip(byID: clipID) {
-                            self.startPoint = savedClip.startPoint
-                            self.endPoint = savedClip.endPoint
-                        }
-                    }
-                    await updatePreviewImage(at: self.startPoint)
-                }
+                await generateThumbnails(for: asset)
+                await updatePreviewImage(at: self.startPoint)
+                playPreview()
 
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
