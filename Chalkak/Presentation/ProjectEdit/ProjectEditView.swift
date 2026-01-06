@@ -123,6 +123,7 @@ struct ProjectEditView: View {
                             clipID: payload.clip.id))
                     },
                     onTapEditGuide: {
+                        viewModel.setCurrentProjectID()
                         guard let payload = viewModel.makeClipEditPayload(
                             selectedClipID: selectedClipID
                         ) else { return }

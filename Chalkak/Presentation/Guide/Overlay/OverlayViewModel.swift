@@ -105,6 +105,27 @@ final class OverlayViewModel: ObservableObject {
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
     func saveProjectData() -> String {
+        // temp 프로젝트면 가이드만 업데이트
+        if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
+           let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+           project.isTemp,
+           let outlineImage = overlayManager.outlineImage
+        {
+            let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
+                BoundingBoxInfo(origin: PointWrapper(box.origin), scale: box.width)
+            }
+            project.guide.boundingBoxes = boundingBoxInfos
+            project.guide.outlineImageData = outlineImage.pngData() ?? Data()
+            project.guide.cameraTilt = determineTilt()
+            project.guide.wasMirroredAtCapture = cameraManager.isRecordingMirrored
+            project.guide.selectedTimestamp = selectedTimestamp
+            project.guide.clipID = clip.id
+
+            guide = project.guide
+            SwiftDataManager.shared.saveContext()
+            return projectID
+        }
+
         saveClipData()
         saveCameraSetting()
 
@@ -171,27 +192,23 @@ final class OverlayViewModel: ObservableObject {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
-        // 가이드 tilt 값 결정
-        let cameraTilt = determineTilt()
 
-        // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
-        let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
+        let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
             BoundingBoxInfo(
                 origin: PointWrapper(box.origin),
                 scale: box.width
             )
         }
 
-        let wasMirrored = cameraManager.isRecordingMirrored
-
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
             boundingBoxes: boundingBoxInfos,
-            outlineImage: outlineImage, // 이미지는 원본 그대로 저장
-            cameraTilt: cameraTilt,
-            wasMirroredAtCapture: wasMirrored, // 현재 카메라 설정 값을 정확히 전달
+            outlineImage: outlineImage,
+            cameraTilt: determineTilt(),
+            wasMirroredAtCapture: cameraManager.isRecordingMirrored,
             selectedTimestamp: selectedTimestamp
         )
+        SwiftDataManager.shared.saveContext()
         return guide
     }
 
