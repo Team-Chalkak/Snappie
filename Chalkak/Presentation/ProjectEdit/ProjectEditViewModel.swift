@@ -575,7 +575,9 @@ final class ProjectEditViewModel {
             clipID: "temp_\(originalProject.guide.clipID)",
             boundingBoxes: originalProject.guide.boundingBoxes,
             outlineImage: originalProject.guide.outlineImage ?? UIImage(),
-            cameraTilt: originalProject.guide.cameraTilt
+            cameraTilt: originalProject.guide.cameraTilt,
+            wasMirroredAtCapture: originalProject.guide.wasMirroredAtCapture,
+            selectedTimestamp: originalProject.guide.selectedTimestamp
         )
         
         // CameraSetting 복사본 생성 (있는 경우)

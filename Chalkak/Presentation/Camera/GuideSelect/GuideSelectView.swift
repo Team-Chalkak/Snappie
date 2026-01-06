@@ -32,11 +32,7 @@ struct GuideSelectView: View {
             return guide.outlineImage
         }
     }
-    
-    private var isGuideSelectMode: Bool {
-        overlayImage != nil
-    }
-    
+
     init(
         clip: Clip,
         shootState: ShootState,
@@ -72,24 +68,18 @@ struct GuideSelectView: View {
                             guard let previous = coordinator.previousPath else {
                                 return
                             }
-                            
-                            switch previous {
-                            case .projectEdit:
-                                // TODO: - 가이드 수정을 (임시본에) 반영하면서 프로젝트 편집 화면으로 돌아가기
-                                coordinator.popLast()
-                            default:
-                                // 트리밍 시간을 원본시간으로 변환
-                                let originalTimestamp = clip.startPoint + editViewModel.startPoint
-                                
-                                coordinator.push(
-                                    .overlay(
-                                        clip: clip,
-                                        cameraSetting: cameraSetting,
-                                        cameraManager: cameraManager,
-                                        selectedTimestamp: originalTimestamp
-                                    )
+
+                            // 트리밍 시간을 원본시간으로 변환
+                            let originalTimestamp = clip.startPoint + editViewModel.startPoint
+
+                            coordinator.push(
+                                .overlay(
+                                    clip: clip,
+                                    cameraSetting: cameraSetting,
+                                    cameraManager: cameraManager,
+                                    selectedTimestamp: originalTimestamp
                                 )
-                            }
+                            )
                         }
                     )
                 )
@@ -97,7 +87,7 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
-                    isGuideSelectMode: isGuideSelectMode,
+                    isGuideSelectMode: true,
                     editViewModel: editViewModel
                 )
 
@@ -132,6 +122,20 @@ struct GuideSelectView: View {
                 trimStart: clip.startPoint,
                 trimEnd: clip.endPoint
             )
+            // 저장된 가이드 타임스탬프가 있으면 초기 프레임 위치로 반영
+            if case .followUpShoot(let guide) = shootState {
+                if let selectedTimestamp = guide.selectedTimestamp {
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
+                    editViewModel.updateStart(clamped)
+                    editViewModel.seek(to: clamped)
+                }
+            } else if case .appendShoot(let guide) = shootState {
+                if let selectedTimestamp = guide.selectedTimestamp {
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
+                    editViewModel.updateStart(clamped)
+                    editViewModel.seek(to: clamped)
+                }
+            }
         }
     }
 }

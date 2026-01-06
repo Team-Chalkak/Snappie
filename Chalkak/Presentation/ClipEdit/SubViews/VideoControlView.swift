@@ -49,7 +49,8 @@ struct VideoControlView: View {
             VideoControlPanelView(
                 editViewModel: editViewModel,
                 isOverlayVisible: $isOverlayVisible,
-                isGuideSelectMode: isGuideSelectMode
+                isGuideSelectMode: isGuideSelectMode,
+                showOverlayToggle: overlayImage != nil
             )
         })
     }

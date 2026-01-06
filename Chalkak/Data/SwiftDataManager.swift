@@ -278,14 +278,16 @@ class SwiftDataManager {
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
-        wasMirroredAtCapture: Bool
+        wasMirroredAtCapture: Bool,
+        selectedTimestamp: Double? = nil
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
             boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
             cameraTilt: cameraTilt,
-            wasMirroredAtCapture: wasMirroredAtCapture
+            wasMirroredAtCapture: wasMirroredAtCapture,
+            selectedTimestamp: selectedTimestamp
         )
         context.insert(guide)
         return guide
@@ -312,6 +314,7 @@ class SwiftDataManager {
         project.guide.boundingBoxes = guide.boundingBoxes
         project.guide.outlineImageData = guide.outlineImageData
         project.guide.cameraTilt = guide.cameraTilt
+        project.guide.selectedTimestamp = guide.selectedTimestamp
 
         saveContext()
     }
@@ -342,6 +345,7 @@ class SwiftDataManager {
     }
     
     // MARK: - Save & Rollback
+
     /// Context 저장하기 - 변경사항 반영
     func saveContext() {
         do {

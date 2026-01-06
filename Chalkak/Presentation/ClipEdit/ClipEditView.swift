@@ -99,14 +99,14 @@ struct ClipEditView: View {
                         guard let previous = coordinator.previousPath else {
                             return
                         }
-                        
+
                         switch previous {
                         case .camera:
                             showRetakeAlert = true
                         default:
                             coordinator.popLast()
                         }
-                        
+
                         Analytics.logEvent("clipEditBackButtonTapped", parameters: nil)
                     },
                     rightButtonType: .oneButton(
@@ -114,7 +114,7 @@ struct ClipEditView: View {
                             guard let previous = coordinator.previousPath else {
                                 return
                             }
-                            
+
                             switch previous {
                             case .projectEdit:
                                 editViewModel.updateClipInTempProject()
@@ -170,7 +170,7 @@ struct ClipEditView: View {
                 if let guide = guide {
                     coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                 }
-                
+
                 Analytics.logEvent("continueShootButtonTapped", parameters: nil)
             }
 
@@ -178,7 +178,7 @@ struct ClipEditView: View {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
                 coordinator.push(.projectPreview)
-                
+
                 Analytics.logEvent("FinishShootButtonTapped", parameters: nil)
             }
 
@@ -191,7 +191,8 @@ struct ClipEditView: View {
             Analytics.logEvent("retakeButtonTapped", parameters: nil)
         }
         .task {
-            if shootState != .firstShoot {
+            // 저장된 트리밍 값 유지
+            if shootState != .firstShoot, editViewModel.clipID == nil {
                 editViewModel.applyReferenceDuration()
             }
         }

@@ -16,6 +16,7 @@ enum SchemaV2: VersionedSchema {
     }
 
     // MARK: - Clip
+
     /// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
     @Model
     class Clip {
@@ -53,8 +54,7 @@ enum SchemaV2: VersionedSchema {
         
         /// temp 클립이 참조하는 원본 클립의 ID
         /// 새로 추가된 클립의 경우 nil
-        var originalClipID: String? = nil
-        
+        var originalClipID: String?
         
         /// 새로운 Clip 인스턴스를 초기화합니다.
         /// - Parameters:
@@ -90,6 +90,7 @@ enum SchemaV2: VersionedSchema {
     }
     
     // MARK: - Guide
+
     /// 클립 간의 구도 일치를 위한 가이드 정보를 담는 모델입니다.
     @Model
     class Guide: Identifiable {
@@ -104,7 +105,10 @@ enum SchemaV2: VersionedSchema {
         
         /// 가이드 생성 당시 프리뷰가 미러였는지 (V2에서 새로 추가)
         var wasMirroredAtCapture: Bool = false
-            
+
+        /// 가이드 프레임의 타임스탬프 값
+        var selectedTimestamp: Double?
+
         /// 가이드가 생성된 시점.
         var createdAt: Date
         
@@ -130,19 +134,22 @@ enum SchemaV2: VersionedSchema {
             boundingBoxes: [BoundingBoxInfo],
             outlineImage: UIImage,
             cameraTilt: Tilt,
-            wasMirroredAtCapture: Bool = false, // 마이그레이션을 위해 기본값 추가
+            wasMirroredAtCapture: Bool = false,
+            selectedTimestamp: Double? = nil,
             createdAt: Date = .now
         ) {
             self.clipID = clipID
             self.boundingBoxes = boundingBoxes
             self.cameraTilt = cameraTilt
             self.wasMirroredAtCapture = wasMirroredAtCapture
+            self.selectedTimestamp = selectedTimestamp
             self.createdAt = createdAt
             self.outlineImageData = outlineImage.pngData() ?? Data()
         }
     }
 
     // MARK: - Project
+
     /// 하나의 영상으로 만들기 위한 클립 목록과 가이드를 포함하는 프로젝트 모델입니다.
     @Model
     class Project: Identifiable {
@@ -187,8 +194,7 @@ enum SchemaV2: VersionedSchema {
         
         /// temp 프로젝트가 참조하는 원본 프로젝트의 ID
         /// temp가 아닌 경우 nil
-        var originalID: String? = nil
-        
+        var originalID: String?
         
         /// 새로운 `Project` 인스턴스를 초기화합니다.
         /// - Parameters:
@@ -223,6 +229,7 @@ enum SchemaV2: VersionedSchema {
     }
     
     // MARK: - CameraSetting
+
     /// 영상 데이터와 관련된 메타 정보를 저장하는 클립 모델입니다.
     @Model
     class CameraSetting {

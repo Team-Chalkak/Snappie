@@ -71,16 +71,16 @@ final class OverlayViewModel: ObservableObject {
     private func determineTilt() -> Tilt {
         let tiltList = clip.tiltList
         let startPoint = clip.startPoint
-        
+
         let timestampedTilt = tiltList
             .filter { $0.time >= startPoint }
             .min {
                 abs($0.time - startPoint) < abs($1.time - startPoint)
             }
-        
+
         return timestampedTilt?.tilt ?? Tilt(degreeX: 0.0, degreeZ: 0.0)
     }
-    
+
     /// 뒤로가기 버튼 누를 시, 오버레이 초기화
     func dismissOverlay() {
         isOverlayReady = false
@@ -91,7 +91,7 @@ final class OverlayViewModel: ObservableObject {
         extractor.extractedImage = nil
         extractor.extractedCIImage = nil
     }
-    
+
     /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
     private func generateTimeBasedTitle(from date: Date) -> String {
         let formatter = DateFormatter()
@@ -99,7 +99,7 @@ final class OverlayViewModel: ObservableObject {
         let timeString = formatter.string(from: date)
         return "프로젝트 \(timeString)"
     }
-    
+
     /// `Project` 저장
     /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
@@ -107,24 +107,25 @@ final class OverlayViewModel: ObservableObject {
     func saveProjectData() -> String {
         saveClipData()
         saveCameraSetting()
-        
+
         guard let newGuide = makeGuide(clipID: clip.id) else {
             print("❌ 가이드 생성에 실패하여 프로젝트를 저장할 수 없습니다.")
             return ""
         }
-        self.guide = newGuide
-        
+        guide = newGuide
+
         if let originalImage = extractedImage,
-           let croppedImage = croppedToSquare(image: originalImage) {
+           let croppedImage = croppedToSquare(image: originalImage)
+        {
             coverImage = croppedImage.jpegData(compressionQuality: 0.8)
         }
 
         let projectID = UUID().uuidString
         let createdAt = Date()
-        
+
         // 프로젝트 이름 자동 생성
         let generatedTitle = generateTimeBasedTitle(from: createdAt)
-        
+
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
             guide: newGuide,
@@ -135,13 +136,13 @@ final class OverlayViewModel: ObservableObject {
             coverImage: coverImage,
             createdAt: createdAt
         )
-    
+
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
-        
+
         return projectID
     }
-    
+
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() {
@@ -153,12 +154,12 @@ final class OverlayViewModel: ObservableObject {
             print("클립 저장에 실패했습니다: \(error)")
         }
     }
-    
+
     @MainActor
     func saveCameraSetting() {
         do {
             try SwiftDataManager.shared.createCameraSetting(cameraSetting: cameraSetting)
-        } catch  {
+        } catch {
             print("cameraSetting 저장에 실패했습니다: \(error)")
         }
     }
@@ -172,7 +173,7 @@ final class OverlayViewModel: ObservableObject {
         }
         // 가이드 tilt 값 결정
         let cameraTilt = determineTilt()
-        
+
         // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
         let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
             BoundingBoxInfo(
@@ -180,22 +181,23 @@ final class OverlayViewModel: ObservableObject {
                 scale: box.width
             )
         }
-        
+
         let wasMirrored = cameraManager.isRecordingMirrored
-        
+
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
             boundingBoxes: boundingBoxInfos,
             outlineImage: outlineImage, // 이미지는 원본 그대로 저장
             cameraTilt: cameraTilt,
-            wasMirroredAtCapture: wasMirrored // 현재 카메라 설정 값을 정확히 전달
+            wasMirroredAtCapture: wasMirrored, // 현재 카메라 설정 값을 정확히 전달
+            selectedTimestamp: selectedTimestamp
         )
         return guide
     }
-    
+
     /// 정사각형 중앙 크롭 이미지 반환 함수
     func croppedToSquare(image: UIImage) -> UIImage? {
-        let originalWidth  = image.size.width
+        let originalWidth = image.size.width
         let originalHeight = image.size.height
         let sideLength = min(originalWidth, originalHeight)
 
