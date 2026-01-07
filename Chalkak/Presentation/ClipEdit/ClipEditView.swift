@@ -71,12 +71,14 @@ struct ClipEditView: View {
         shootState: ShootState,
         cameraSetting: CameraSetting,
         cameraManager: CameraManager,
-        timeStampedTiltList: [TimeStampedTilt]
+        timeStampedTiltList: [TimeStampedTilt],
+        clipID: String? = nil
     ) {
         _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
             clipURL: clipURL,
             cameraSetting: cameraSetting,
-            timeStampedTiltList: timeStampedTiltList
+            timeStampedTiltList: timeStampedTiltList,
+            clipID: clipID
         )
         )
         self.shootState = shootState
@@ -94,28 +96,49 @@ struct ClipEditView: View {
                 SnappieNavigationBar(
                     navigationTitle: "장면 다듬기",
                     leftButtonType: .backward {
-                        showRetakeAlert = true
+                        guard let previous = coordinator.previousPath else {
+                            return
+                        }
+
+                        switch previous {
+                        case .camera:
+                            showRetakeAlert = true
+                        default:
+                            coordinator.popLast()
+                        }
+
                         Analytics.logEvent("clipEditBackButtonTapped", parameters: nil)
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
-                            switch shootState {
-                            case .firstShoot:
-                                coordinator.push(
-                                    .guideSelect(
-                                        clip: editViewModel.createClipData(),
-                                        cameraSetting: editViewModel.cameraSetting,
-                                        cameraManager: cameraManager
-                                    )
-                                )
-                            case .followUpShoot:
-                                showActionSheet = true
-                            case .appendShoot:
-                                let newClip = editViewModel.createClipData()
+                            guard let previous = coordinator.previousPath else {
+                                return
+                            }
 
-                                if let projectID = editViewModel.fetchCurrentProjectID() {
-                                    editViewModel.clearCurrentProjectID()
-                                    coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
+                            switch previous {
+                            case .projectEdit:
+                                editViewModel.updateClipInTempProject()
+                                coordinator.popLast()
+                            default:
+                                switch shootState {
+                                case .firstShoot:
+                                    coordinator.push(
+                                        .guideSelect(
+                                            clip: editViewModel.createClipData(),
+                                            state: shootState,
+                                            cameraSetting: editViewModel.cameraSetting,
+                                            cameraManager: cameraManager
+                                        )
+                                    )
+                                case .followUpShoot:
+                                    showActionSheet = true
+                                case .appendShoot:
+                                    let newClip = editViewModel.createClipData()
+
+                                    if let projectID = editViewModel.fetchCurrentProjectID() {
+                                        editViewModel.clearCurrentProjectID()
+                                        coordinator.push(.projectEdit(projectID: projectID, newClip: newClip))
+                                    }
                                 }
                             }
                         }
@@ -147,7 +170,7 @@ struct ClipEditView: View {
                 if let guide = guide {
                     coordinator.push(.camera(state: .followUpShoot(guide: guide)))
                 }
-                
+
                 Analytics.logEvent("continueShootButtonTapped", parameters: nil)
             }
 
@@ -155,7 +178,7 @@ struct ClipEditView: View {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
                 coordinator.push(.projectPreview)
-                
+
                 Analytics.logEvent("FinishShootButtonTapped", parameters: nil)
             }
 
@@ -168,7 +191,8 @@ struct ClipEditView: View {
             Analytics.logEvent("retakeButtonTapped", parameters: nil)
         }
         .task {
-            if shootState != .firstShoot {
+            // 저장된 트리밍 값 유지
+            if shootState != .firstShoot, editViewModel.clipID == nil {
                 editViewModel.applyReferenceDuration()
             }
         }

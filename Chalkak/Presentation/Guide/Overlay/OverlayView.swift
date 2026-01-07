@@ -41,7 +41,12 @@ struct OverlayView: View {
     @State private var guide: Guide?
 
     // 3. init
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
+    init(
+        clip: Clip,
+        cameraSetting: CameraSetting,
+        cameraManager: CameraManager,
+        selectedTimestamp: Double
+    ) {
         self.clip = clip
         self.cameraSetting = cameraSetting
         self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp))
@@ -105,9 +110,14 @@ struct OverlayView: View {
 
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
-                    overlayViewModel.saveProjectData()
+                    let projectID = overlayViewModel.saveProjectData()
                     if let guide = overlayViewModel.guide {
-                        coordinator.push(.camera(state: .followUpShoot(guide: guide)))
+                        coordinator.push(
+                            .projectEdit(
+                                projectID: projectID,
+                                newClip: nil
+                            )
+                        )
                     }
                     Analytics.logEvent("confirmGuideButtonTapped", parameters: nil)
                 }) {

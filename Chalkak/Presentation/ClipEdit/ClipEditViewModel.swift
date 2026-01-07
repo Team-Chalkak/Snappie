@@ -67,11 +67,13 @@ final class ClipEditViewModel: ObservableObject {
     init(
         clipURL: URL,
         cameraSetting: CameraSetting,
-        timeStampedTiltList: [TimeStampedTilt]
+        timeStampedTiltList: [TimeStampedTilt],
+        clipID: String? = nil
     ) {
         self.clipURL = clipURL
         self.cameraSetting = cameraSetting
         self.timeStampedTiltList = timeStampedTiltList
+        self.clipID = clipID
         setupPlayer()
     }
     
@@ -100,15 +102,27 @@ final class ClipEditViewModel: ObservableObject {
                 
                 await MainActor.run {
                     self.duration = durationSeconds
-                    self.endPoint = durationSeconds
+
+                    if let clipID,
+                       let savedClip = SwiftDataManager.shared.fetchClip(byID: clipID)
+                    {
+                        // clipID가 있는 경우 트리밍 정보를 가져옴
+                        self.startPoint = savedClip.startPoint
+                        self.endPoint = savedClip.endPoint
+                    } else {
+                        // 아이디가 없는 새촬영일때
+                        self.startPoint = 0
+                        self.endPoint = durationSeconds
+                    }
+
                     let playerItem = AVPlayerItem(asset: asset)
                     self.player = AVPlayer(playerItem: playerItem)
                 }
-                
+
                 await generateThumbnails(for: asset)
-                await updatePreviewImage(at: 0)
+                await updatePreviewImage(at: self.startPoint)
                 playPreview()
-                
+
             } catch {
                 print("⚠️ Failed to load duration: \(error)")
             }
@@ -378,6 +392,25 @@ final class ClipEditViewModel: ObservableObject {
             tiltList: timeStampedTiltList,
             isTemp: true,
             originalClipID: nil
+        )
+    }
+}
+
+// MARK: - 클립 수정 내용 임시 저장 (`ProjectEdit` 화면에서 수정 버튼을 통해 넘어온 경우)
+
+extension ClipEditViewModel {
+    /// 클립 수정 내용 임시 저장
+    @MainActor
+    func updateClipInTempProject() {
+        guard let clipID = clipID else {
+            return
+        }
+        
+        // SwiftDataManager를 통해 DB에서 해당 클립을 가져와 업데이트
+        SwiftDataManager.shared.updateClipPoints(
+            id: clipID,
+            start: startPoint,
+            end: endPoint
         )
     }
 }

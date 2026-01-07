@@ -13,6 +13,7 @@
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
 		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
 		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
+		7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D60F6482F0D141700621874 /* SchemaV3.swift */; };
 		7DB5DE822F02C64100E1FAE8 /* ProjectPreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */; };
 		7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */; };
 		7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */; };
@@ -174,6 +175,7 @@
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
 		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
+		7D60F6482F0D141700621874 /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewSectionView.swift; sourceTree = "<group>"; };
 		7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectView.swift; sourceTree = "<group>"; };
 		7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideFrameSelectorView.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 			children = (
 				99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */,
 				99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */,
+				7D60F6482F0D141700621874 /* SchemaV3.swift */,
 				999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */,
 				99C93A3A2E2B73FD00F42541 /* CameraSetting.swift */,
 				993A1F222E267E0C0059B70A /* Clip.swift */,
@@ -722,7 +725,6 @@
 			isa = PBXGroup;
 			children = (
 				999992482E2D8EB300D56BD1 /* Constant */,
-				B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */,
 				99C93A0B2E27BAF700F42541 /* Util */,
 				993A21802E26AB9C0059B70A /* Extension */,
 				C5FB3ECC2E2E114600A4C1BE /* DesignSystem */,
@@ -739,6 +741,7 @@
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
 				993A21812E26ABA70059B70A /* Array + Ext.swift */,
 				C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */,
+				B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1117,6 +1120,7 @@
 				993A1F652E267E0C0059B70A /* CameraPreviewView.swift in Sources */,
 				993A1F662E267E0C0059B70A /* CameraBaseFeatureSelectView.swift in Sources */,
 				C5C12EB12E33684F00C4DC6D /* SnappieNavigationBar.swift in Sources */,
+				7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,

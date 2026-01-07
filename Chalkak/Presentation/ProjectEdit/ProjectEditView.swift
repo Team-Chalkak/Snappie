@@ -110,10 +110,30 @@ struct ProjectEditView: View {
                         viewModel.selectedClipID = nil
                     },
                     onTapEditClip: {
-                        // TODO: 클립편집 연결하기
+                        guard let payload = viewModel.makeClipEditPayload(
+                            selectedClipID: selectedClipID
+                        ) else { return }
+
+                        coordinator.push(.clipEdit(
+                            clipURL: payload.clipURL,
+                            state: payload.state,
+                            cameraSetting: payload.cameraSetting,
+                            cameraManager: CameraManager(),
+                            TimeStampedTiltList: payload.tiltList,
+                            clipID: payload.clip.id))
                     },
                     onTapEditGuide: {
-                        // TODO: 가이드 선택 연결하기
+                        viewModel.setCurrentProjectID()
+                        guard let payload = viewModel.makeClipEditPayload(
+                            selectedClipID: selectedClipID
+                        ) else { return }
+                        
+                        coordinator.push(.guideSelect(
+                            clip: payload.clip,
+                            state: payload.state,
+                            cameraSetting: payload.cameraSetting,
+                            cameraManager: CameraManager())
+                        )
                     },
                     onTapDeleteClip: {
                         viewModel.deleteClip(id: selectedClipID)
@@ -130,16 +150,18 @@ struct ProjectEditView: View {
         )
         .onAppear {
             Task {
-                await viewModel.initializeTempProject(loadAfter: false)
-
-                if let clip = newClip {
-                    // 새 클립이 있는 경우: temp 초기화 후 클립 추가
-                    await viewModel.initializeTempProject(loadAfter: false)
-                    viewModel.addClipToTemp(clip: clip)
-                    newClip = nil
-                } else {
-                    // 일반적인 경우: temp 초기화와 동시에 로드
+                if !viewModel.isAlreadyInitialized {
+                    // 임시 프로젝트 생성 및 초기 로드
                     await viewModel.initializeTempProject(loadAfter: true)
+                    
+                    if let clip = newClip {
+                        viewModel.addClipToTemp(clip: clip)
+                        newClip = nil
+                    }
+                    viewModel.isAlreadyInitialized = true
+                } else {
+                    // 데이터만 새로고침 (플레이어 재설정 등)
+                    await viewModel.loadProject()
                 }
             }
         }
