@@ -32,7 +32,6 @@ import SwiftUI
 struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
-    let isGuideSelectMode: Bool
     let showOverlayToggle: Bool
 
     var body: some View {
@@ -47,7 +46,7 @@ struct VideoControlPanelView: View {
                 editViewModel.togglePlayback()
             }
 
-            Text(String(format: "%.2f초", isGuideSelectMode ? editViewModel.startPoint : editViewModel.currentTrimmedDuration))
+            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
                 .font(SnappieFont.style(.proLabel3))
                 .foregroundStyle(SnappieColor.labelDarkNormal)
                 .padding(.horizontal, 9.5)
@@ -64,11 +63,8 @@ struct VideoControlPanelView: View {
                     isActive: showOverlayToggle ? isOverlayVisible : false
                 )
             ) {
-                // TODO: 동작추가예정
-                guard isGuideSelectMode else { return }
                 isOverlayVisible.toggle()
             }
-            .hidden(!showOverlayToggle)
         }
         .padding(.horizontal, 23)
     }
