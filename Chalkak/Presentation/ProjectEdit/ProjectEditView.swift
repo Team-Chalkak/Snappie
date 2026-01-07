@@ -17,6 +17,7 @@ struct ProjectEditView: View {
     @State private var showExportSuccessAlert = false
     @State private var showPhotoPermissionDeniedAlert = false
     @State private var isExporting = false
+    @State private var isOverlayVisible: Bool = true
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -47,21 +48,25 @@ struct ProjectEditView: View {
             )
             .padding(.bottom, 16)
             
-            VideoPreviewView(
+            VideoPreviewWithOverlay(
                 previewImage: viewModel.previewImage,
                 player: viewModel.player,
-                isDragging: viewModel.isDragging
+                isDragging: viewModel.isDragging,
+                overlayImage: viewModel.guide?.outlineImage,
+                isOverlayVisible: $isOverlayVisible
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
             
             // 재생 일시정지 버튼 & 시간표시하는 서브뷰
             PlayInfoView(
-                isPlaying: $viewModel.isPlaying,
                 onPlayPauseTapped: viewModel.togglePlayback,
                 currentTime: viewModel.playHead,
                 totalDuration: viewModel.totalDuration,
-                trimmingClip: nil
+                trimmingClip: nil,
+                showOverlayToggle: viewModel.guide?.outlineImage != nil,
+                isPlaying: $viewModel.isPlaying,
+                isOverlayVisible: $isOverlayVisible
             )
             .padding(.top, 16)
             

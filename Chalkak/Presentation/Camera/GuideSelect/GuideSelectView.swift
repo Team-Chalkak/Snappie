@@ -87,7 +87,6 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
-                    isGuideSelectMode: true,
                     editViewModel: editViewModel
                 )
 
