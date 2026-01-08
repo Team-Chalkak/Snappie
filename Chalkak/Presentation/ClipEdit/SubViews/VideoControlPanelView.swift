@@ -32,8 +32,8 @@ import SwiftUI
 struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
-    let overlayImage: UIImage?
     let isGuideSelectMode: Bool
+    let showOverlayToggle: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 108) {
@@ -61,12 +61,14 @@ struct VideoControlPanelView: View {
                 .iconBackground(
                     icon: .silhouette,
                     size: .medium,
-                    isActive: isGuideSelectMode ? isOverlayVisible : false
+                    isActive: showOverlayToggle ? isOverlayVisible : false
                 )
             ) {
                 // TODO: 동작추가예정
+                guard isGuideSelectMode else { return }
+                isOverlayVisible.toggle()
             }
-            .hidden(!isGuideSelectMode)
+            .hidden(!showOverlayToggle)
         }
         .padding(.horizontal, 23)
     }

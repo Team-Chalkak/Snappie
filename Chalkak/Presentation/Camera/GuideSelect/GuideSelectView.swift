@@ -15,6 +15,7 @@ import SwiftUI
  */
 struct GuideSelectView: View {
     let clip: Clip
+    let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
 
@@ -22,8 +23,24 @@ struct GuideSelectView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
 
-    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager) {
+    private var overlayImage: UIImage? {
+        switch shootState {
+        case .firstShoot:
+            return nil
+        case .followUpShoot(let guide),
+             .appendShoot(let guide):
+            return guide.outlineImage
+        }
+    }
+
+    init(
+        clip: Clip,
+        shootState: ShootState,
+        cameraSetting: CameraSetting,
+        cameraManager: CameraManager
+    ) {
         self.clip = clip
+        self.shootState = shootState
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
 
@@ -47,9 +64,14 @@ struct GuideSelectView: View {
                         coordinator.popLast()
                     },
                     rightButtonType: .oneButton(
-                        .init(label: "다음") {
+                        .init(label: "완료") {
+                            guard let previous = coordinator.previousPath else {
+                                return
+                            }
+
                             // 트리밍 시간을 원본시간으로 변환
                             let originalTimestamp = clip.startPoint + editViewModel.startPoint
+
                             coordinator.push(
                                 .overlay(
                                     clip: clip,
@@ -64,7 +86,7 @@ struct GuideSelectView: View {
 
                 VideoControlView(
                     isDragging: isDragging,
-                    overlayImage: nil,
+                    overlayImage: overlayImage,
                     isGuideSelectMode: true,
                     editViewModel: editViewModel
                 )
@@ -100,6 +122,20 @@ struct GuideSelectView: View {
                 trimStart: clip.startPoint,
                 trimEnd: clip.endPoint
             )
+            // 저장된 가이드 타임스탬프가 있으면 초기 프레임 위치로 반영
+            if case .followUpShoot(let guide) = shootState {
+                if let selectedTimestamp = guide.selectedTimestamp {
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
+                    editViewModel.updateStart(clamped)
+                    editViewModel.seek(to: clamped)
+                }
+            } else if case .appendShoot(let guide) = shootState {
+                if let selectedTimestamp = guide.selectedTimestamp {
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
+                    editViewModel.updateStart(clamped)
+                    editViewModel.seek(to: clamped)
+                }
+            }
         }
     }
 }

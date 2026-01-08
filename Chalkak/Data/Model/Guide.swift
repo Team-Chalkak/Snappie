@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 import UIKit
 
-extension SchemaV2.Guide: Hashable {
-    public static func == (lhs: SchemaV2.Guide, rhs: SchemaV2.Guide) -> Bool { lhs.clipID == rhs.clipID }
+extension SchemaV3.Guide: Hashable {
+    public static func == (lhs: SchemaV3.Guide, rhs: SchemaV3.Guide) -> Bool { lhs.clipID == rhs.clipID }
     public func hash(into hasher: inout Hasher) { hasher.combine(clipID) }
 }

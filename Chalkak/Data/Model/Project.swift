@@ -8,6 +8,6 @@
 import Foundation
 import SwiftData
 
-extension SchemaV2.Project {
-    
+extension SchemaV3.Project {
+
 }
