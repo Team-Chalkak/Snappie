@@ -7,6 +7,7 @@
 
 import AdSupport
 import AppTrackingTransparency
+import FirebaseAnalytics
 import FirebaseCore
 import SwiftData
 import SwiftUI
@@ -147,13 +148,17 @@ struct ChalkakApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        FirebaseApp.configure()
+        
+        configureAnalyticsUserType()
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
                 case .authorized:
                     print("Authorized")
                     print("IDFA = \(ASIdentifierManager.shared().advertisingIdentifier)")
-                    FirebaseApp.configure()
                 case .denied:
                     print("Denied")
                 case .notDetermined:
@@ -166,5 +171,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
         return true
+    }
+    
+    private func configureAnalyticsUserType() {
+        #if DEBUG
+        Analytics.setUserProperty("internal traffic", forName: "traffic_type")
+        
+        #else
+        if isTestFlight() {
+            Analytics.setUserProperty("internal traffic", forName: "traffic_type")
+        } else {
+            Analytics.setUserProperty("external traffic", forName: "traffic_type")
+        }
+        #endif
+    }
+
+    private func isTestFlight() -> Bool {
+        guard let receiptURL = Bundle.main.appStoreReceiptURL else { return false }
+        return receiptURL.lastPathComponent == "sandboxReceipt"
     }
 }
