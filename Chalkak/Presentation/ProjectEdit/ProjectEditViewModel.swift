@@ -27,10 +27,11 @@ final class ProjectEditViewModel {
     var previewImage: UIImage?
     var isDragging = false
     var guide: Guide? /// 프로젝트 로딩중
+  
     var isLoading = false
     var showEmptyProjectAlert = false
     var selectedClipID: String?
-
+    
     // MARK: – 저장/내보내기용 프로퍼티
 
     var isExporting = false
@@ -162,30 +163,26 @@ final class ProjectEditViewModel {
 
     /// startPoint 시점의 단일 썸네일 생성
     private func generateSingleThumbnail(url: URL, atTime: Double) async -> UIImage? {
-        return await withCheckedContinuation { continuation in
-            Task.detached {
-                // URL 유효성 검증
-                guard FileManager.isValidVideoFile(at: url) else {
-                    print("유효하지 않은 비디오 파일: \(url)")
-                    continuation.resume(returning: nil)
-                    return
-                }
+        // URL 유효성 검증
+        guard FileManager.isValidVideoFile(at: url) else {
+            print("유효하지 않은 비디오 파일: \(url)")
+            return nil
+        }
 
-                let asset = AVAsset(url: url)
-                let generator = AVAssetImageGenerator(asset: asset)
-                generator.appliesPreferredTrackTransform = true
-                generator.requestedTimeToleranceBefore = .zero
-                generator.requestedTimeToleranceAfter = .zero
+        let asset = AVAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        generator.requestedTimeToleranceBefore = .zero
+        generator.requestedTimeToleranceAfter = .zero
 
-                let time = CMTime(seconds: atTime, preferredTimescale: 600)
-                do {
-                    let cg = try generator.copyCGImage(at: time, actualTime: nil)
-                    continuation.resume(returning: UIImage(cgImage: cg))
-                } catch {
-                    print("썸네일 생성 실패 at \(atTime)s: \(error)")
-                    continuation.resume(returning: nil)
-                }
-            }
+        let time = CMTime(seconds: atTime, preferredTimescale: 600)
+        do {
+            let result = try await generator.image(at: time)
+            return UIImage(cgImage: result.image)
+    
+        } catch {
+            print("썸네일 생성 실패 at \(atTime)s: \(error)")
+            return nil
         }
     }
 
@@ -372,13 +369,16 @@ final class ProjectEditViewModel {
         }
     }
 
+    @MainActor
     func updatePreviewImage(at time: Double) async {
-        guard let gen = imageGenerator else { return }
-        let cm = CMTime(seconds: time, preferredTimescale: 600)
-        if let cg = try? gen.copyCGImage(at: cm, actualTime: nil) {
-            await MainActor.run {
-                self.previewImage = UIImage(cgImage: cg)
-            }
+        guard let generator = imageGenerator else { return }
+        let time = CMTime(seconds: time, preferredTimescale: 600)
+        
+        do {
+            let result = try await generator.image(at: time)
+            previewImage = UIImage(cgImage: result.image)
+        } catch {
+            print("미리보기 업데이트 에러 \(error)")
         }
     }
 
