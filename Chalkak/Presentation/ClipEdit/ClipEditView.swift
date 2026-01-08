@@ -148,7 +148,6 @@ struct ClipEditView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: guide?.outlineImage,
-                    isGuideSelectMode: false,
                     editViewModel: editViewModel
                 )
 
