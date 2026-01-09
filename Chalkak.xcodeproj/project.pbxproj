@@ -21,6 +21,7 @@
 		7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */; };
 		7DD82CC32EFECCA000AD8DFC /* TimeLineConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */; };
 		7DD82CC52EFFB03000AD8DFC /* TimeInterval+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CC42EFFB01A00AD8DFC /* TimeInterval+Extension.swift */; };
+		7DD91F8D2F10D96900FF2B3D /* ClipRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD91F8C2F10D90F00FF2B3D /* ClipRepository.swift */; };
 		9332D8582E38A233002C47F6 /* EmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8572E38A229002C47F6 /* EmptyProjectView.swift */; };
 		9332D85A2E38A240002C47F6 /* NonEmptyProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */; };
 		9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */; };
@@ -185,6 +186,7 @@
 		7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideFrameSelectorView.swift; sourceTree = "<group>"; };
 		7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineConstants.swift; sourceTree = "<group>"; };
 		7DD82CC42EFFB01A00AD8DFC /* TimeInterval+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extension.swift"; sourceTree = "<group>"; };
+		7DD91F8C2F10D90F00FF2B3D /* ClipRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRepository.swift; sourceTree = "<group>"; };
 		9332D8572E38A229002C47F6 /* EmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectView.swift; sourceTree = "<group>"; };
 		9332D8592E38A23D002C47F6 /* NonEmptyProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonEmptyProjectView.swift; sourceTree = "<group>"; };
 		9340078A2E340445006BE89C /* TrimmingTimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingTimeDisplayView.swift; sourceTree = "<group>"; };
@@ -501,6 +503,7 @@
 		993A1F202E267E0C0059B70A /* VideoEditor */ = {
 			isa = PBXGroup;
 			children = (
+				7DD91F8C2F10D90F00FF2B3D /* ClipRepository.swift */,
 				993A1F1E2E267E0C0059B70A /* VideoFrameExtractor.swift */,
 				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
 				C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */,
@@ -1129,6 +1132,7 @@
 				7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
+				7DD91F8D2F10D96900FF2B3D /* ClipRepository.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */,
 				B60DC5F12E38A621001D8327 /* SnappieProgressAlert.swift in Sources */,

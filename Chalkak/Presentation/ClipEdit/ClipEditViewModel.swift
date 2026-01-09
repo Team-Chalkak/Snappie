@@ -34,6 +34,7 @@ import UIKit
  */
 
 @Observable
+@MainActor
 final class ClipEditViewModel {
     // 1. Input
     var clipURL: URL
@@ -53,12 +54,12 @@ final class ClipEditViewModel {
     }
 
     private var asset: AVAsset?
-    private var debounceTimer: Timer?
     private var trimOffset: Double = 0
 
     // 서비스 로직
     private let playerService = VideoPlayerService()
     private let thumbnailService = ThumbnailService()
+    private let clipRepository = ClipRepository()
 
     var player: AVPlayer? { playerService.player }
     var isPlaying: Bool { playerService.isPlaying }
@@ -74,10 +75,6 @@ final class ClipEditViewModel {
         self.timeStampedTiltList = timeStampedTiltList
         self.clipID = clipID
         setupPlayer()
-    }
-
-    deinit {
-        debounceTimer?.invalidate()
     }
 
     /// ViewModel을 초기화할 때 영상 URL을 기반으로 AVAsset과 player를 구성, 썸네일 및 preview 이미지를 준비
@@ -247,15 +244,15 @@ final class ClipEditViewModel {
         endPoint = min(refDuration, duration)
     }
 
-    /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
+    /// clipID 생성 및 저장
     @MainActor
     func saveClipData() -> Clip? {
         let clip = createClipData()
         do {
-            try SwiftDataManager.shared.createClip(clip: clip)
+            try clipRepository.save(clip)
             return clip
         } catch {
-            print("clip 새성 실패: \(error)")
+            print("clip 생성 실패: \(error)")
             return nil
         }
     }
@@ -282,15 +279,16 @@ final class ClipEditViewModel {
             return
         }
 
-        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
-              let project = SwiftDataManager.shared.fetchProject(byID: projectID)
-        else {
-            print("기존 Project를 찾을 수 없습니다.")
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) else {
+            print("⚠️ currentProjectID가 없습니다.")
             return
         }
 
-        project.clipList.append(newClip)
-        SwiftDataManager.shared.saveContext()
+        do {
+            try clipRepository.appendToProject(clip: newClip, projectID: projectID)
+        } catch {
+            print("기존 Project를 찾을 수 없습니다.")
+        }
     }
 
     // MARK: - 유저 디폴트
@@ -336,8 +334,8 @@ extension ClipEditViewModel {
             return
         }
 
-        // SwiftDataManager를 통해 DB에서 해당 클립을 가져와 업데이트
-        SwiftDataManager.shared.updateClipPoints(
+        // 클립 업데이트
+        clipRepository.updatePoints(
             id: clipID,
             start: startPoint,
             end: endPoint
