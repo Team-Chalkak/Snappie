@@ -25,7 +25,7 @@ import SwiftUI
 import SwiftUI
 
 struct TrimmingLineView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
     var body: some View {
@@ -96,8 +96,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
-                            editViewModel.isPlaying = false
+                            editViewModel.pause()
 
                             let x = gesture.location.x - handleWidth
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
@@ -118,8 +117,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
-                            editViewModel.isPlaying = false
+                            editViewModel.pause()
 
                             let x = gesture.location.x - handleWidth
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
@@ -140,8 +138,7 @@ struct TrimmingLineView: View {
             DragGesture()
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player?.pause()
-                    editViewModel.isPlaying = false
+                    editViewModel.pause()
 
                     let locationRatio = gesture.location.x / TimelineConstants.thumbnailLineWidth
                     let centerTime = locationRatio * editViewModel.duration

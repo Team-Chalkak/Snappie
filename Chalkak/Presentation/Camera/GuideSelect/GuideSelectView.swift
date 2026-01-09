@@ -19,7 +19,7 @@ struct GuideSelectView: View {
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
 
-    @StateObject private var editViewModel: ClipEditViewModel
+    @State private var editViewModel: ClipEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
 
@@ -45,7 +45,7 @@ struct GuideSelectView: View {
         self.cameraManager = cameraManager
 
         // ClipEditViewModel 재사용 (트리밍 기능은 사용하지 않음)
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
+        _editViewModel = State(wrappedValue: ClipEditViewModel(
             clipURL: clip.videoURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: []

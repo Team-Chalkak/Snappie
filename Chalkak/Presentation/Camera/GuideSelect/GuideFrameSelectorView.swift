@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GuideFrameSelectorView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
     var body: some View {
@@ -73,8 +73,7 @@ struct GuideFrameSelectorView: View {
             DragGesture(minimumDistance: 0)
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player?.pause()
-                    editViewModel.isPlaying = false
+                    editViewModel.pause()
 
                     let draggedFrameX = gesture.location.x
                     let minFrameX = handleWidth

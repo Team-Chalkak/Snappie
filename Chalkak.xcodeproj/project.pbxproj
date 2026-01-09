@@ -13,6 +13,7 @@
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
 		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
 		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
+		7D552F512F10CCC100A9EA73 /* VideoPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D552F502F10CCC100A9EA73 /* VideoPlayerService.swift */; };
 		7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D60F6482F0D141700621874 /* SchemaV3.swift */; };
 		7DB5DE822F02C64100E1FAE8 /* ProjectPreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */; };
 		7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */; };
@@ -175,6 +176,7 @@
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
 		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
+		7D552F502F10CCC100A9EA73 /* VideoPlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerService.swift; sourceTree = "<group>"; };
 		7D60F6482F0D141700621874 /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewSectionView.swift; sourceTree = "<group>"; };
 		7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectView.swift; sourceTree = "<group>"; };
@@ -501,6 +503,7 @@
 				993A1F1F2E267E0C0059B70A /* VideoManager.swift */,
 				C5FB3EBC2E26AA0700A4C1BE /* VideoMerger.swift */,
 				C5FB3EBE2E277CAA00A4C1BE /* VideoLoader.swift */,
+				7D552F502F10CCC100A9EA73 /* VideoPlayerService.swift */,
 				C5FB3EC02E28F11100A4C1BE /* PhotoLibrarySaver.swift */,
 			);
 			path = VideoEditor;
@@ -1167,6 +1170,7 @@
 				C5886D462E37AEDB000566C5 /* ProjectListView.swift in Sources */,
 				993A1F752E267E0C0059B70A /* TrimmingLineView.swift in Sources */,
 				992EE7C42E32ACFD0079AFBF /* ProjectEditViewModel.swift in Sources */,
+				7D552F512F10CCC100A9EA73 /* VideoPlayerService.swift in Sources */,
 				99E6F0142E90DC03002ED9C2 /* SchemaV1.swift in Sources */,
 				99E6F0162E90DCBB002ED9C2 /* AppTypes.swift in Sources */,
 				B647886C2E33A5A50091A067 /* CameraZoomControlView.swift in Sources */,

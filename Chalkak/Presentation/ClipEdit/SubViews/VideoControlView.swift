@@ -31,7 +31,7 @@ struct VideoControlView: View {
     let isDragging: Bool
     let overlayImage: UIImage?
 
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @State private var isOverlayVisible: Bool = true
     
     var body: some View {

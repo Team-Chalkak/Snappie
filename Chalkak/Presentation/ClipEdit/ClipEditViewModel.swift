@@ -32,37 +32,43 @@ import UIKit
     ├─ guide == nil : saveProjectData() 호출 → Clip 및 Project 생성
     └─ guide != nil : appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
  */
-final class ClipEditViewModel: ObservableObject {
+
+@Observable
+final class ClipEditViewModel {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
     var timeStampedTiltList: [TimeStampedTilt]
-    
-    // 2. Published properties
-    @Published var player: AVPlayer?
-    @Published var startPoint: Double = 0
-    @Published var endPoint: Double = 0
-    @Published var duration: Double = 0
-    @Published var thumbnails: [UIImage] = []
-    @Published var isPlaying = false
-    @Published var previewImage: UIImage?
-    @Published var clipID: String? = nil
-    
+
+    var startPoint: Double = 0
+    var endPoint: Double = 0
+    var duration: Double = 0
+    var thumbnails: [UIImage] = []
+    var previewImage: UIImage?
+    var clipID: String?
+
     // 3. 계산 프로퍼티
     /// 현재 트리밍된 영상 길이 (초 단위)
     var currentTrimmedDuration: Double {
         endPoint - startPoint
     }
-    
+
     // 4. Private 저장 프로퍼티
     private var asset: AVAsset?
     private var imageGenerator: AVAssetImageGenerator?
-    private var timeObserverToken: Any?
+
     private var debounceTimer: Timer?
     private let thumbnailCount = 10
-    
+
     private var trimOffset: Double = 0
-    
+
+    // 5. Services
+    private let playerService = VideoPlayerService()
+
+    // 6. Player 위임
+    var player: AVPlayer? { playerService.player }
+    var isPlaying: Bool { playerService.isPlaying }
+
     // 5. init & deinit
     init(
         clipURL: URL,
@@ -76,30 +82,27 @@ final class ClipEditViewModel: ObservableObject {
         self.clipID = clipID
         setupPlayer()
     }
-    
+
     deinit {
-        if let timeObserverToken = timeObserverToken {
-            player?.removeTimeObserver(timeObserverToken)
-        }
         debounceTimer?.invalidate()
     }
-    
+
     /// ViewModel을 초기화할 때 영상 URL을 기반으로 AVAsset과 player를 구성, 썸네일 및 preview 이미지를 준비
     private func setupPlayer() {
         let asset = AVAsset(url: clipURL)
         self.asset = asset
-        
+
         let imageGenerator = AVAssetImageGenerator(asset: asset)
         imageGenerator.appliesPreferredTrackTransform = true
         imageGenerator.requestedTimeToleranceBefore = .zero
         imageGenerator.requestedTimeToleranceAfter = .zero
         self.imageGenerator = imageGenerator
-        
+
         Task {
             do {
                 let durationCMTime = try await asset.load(.duration)
                 let durationSeconds = CMTimeGetSeconds(durationCMTime)
-                
+
                 await MainActor.run {
                     self.duration = durationSeconds
 
@@ -115,8 +118,9 @@ final class ClipEditViewModel: ObservableObject {
                         self.endPoint = durationSeconds
                     }
 
+                    // Player 생성 → Service로 위임
                     let playerItem = AVPlayerItem(asset: asset)
-                    self.player = AVPlayer(playerItem: playerItem)
+                    self.playerService.player = AVPlayer(playerItem: playerItem)
                 }
 
                 await generateThumbnails(for: asset)
@@ -128,18 +132,18 @@ final class ClipEditViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// 영상 전체 길이와 썸네일 간격을 계산하여, 일정 시간 간격으로 트리밍 타임라인 썸네일 이미지 생성
     @MainActor
     private func generateThumbnails(for asset: AVAsset) async {
         guard let imageGenerator = imageGenerator else { return }
         thumbnails = []
         let interval = duration / Double(thumbnailCount)
-        
+
         let times = (0 ..< thumbnailCount).map { i in
             CMTime(seconds: Double(i) * interval, preferredTimescale: 600)
         }
-        
+
         do {
             for try await result in imageGenerator.images(for: times) {
                 let cgImage = try result.image
@@ -150,12 +154,12 @@ final class ClipEditViewModel: ObservableObject {
             print("Thumbnail error: \(error)")
         }
     }
-    
+
     /// 특정 시간의 프레임을 추출하여 preview 이미지를 갱신
     @MainActor
     func updatePreviewImage(at time: Double) async {
         guard let imageGenerator = imageGenerator else { return }
-        
+
         // trimOffset으로 시작지점 조정
         let actualTime = time + trimOffset
         let cmTime = CMTime(seconds: actualTime, preferredTimescale: 600)
@@ -166,98 +170,74 @@ final class ClipEditViewModel: ObservableObject {
             print(error)
         }
     }
-    
+
     /// 트리밍 시작 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateStart(_ value: Double) {
         startPoint = value
         Task { await updatePreviewImage(at: value) }
     }
-    
+
     /// 트리밍 종료 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateEnd(_ value: Double) {
         endPoint = value
         Task { await updatePreviewImage(at: value) }
     }
-    
+
+    /// 재생 일시정지
+    func pause() {
+        playerService.pause()
+    }
+
     /// AVPlayer를 지정된 시간으로 이동
     func seek(to time: Double) {
-        // trimOffset으로 시작지점 조정
-        let actualTime = time + trimOffset
-        player?.seek(to: CMTime(seconds: actualTime, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+        playerService.seek(to: time, trimOffset: trimOffset)
     }
-    
+
     /// 재생/일시정지 상태 토글 - 현재 상태에 따라 playPreview() 또는 pause를 수행
     func togglePlayback() {
-        isPlaying.toggle()
-        isPlaying ? playPreview() : player?.pause()
+        playerService.togglePlayback(
+            startPoint: startPoint,
+            endPoint: endPoint,
+            trimOffset: trimOffset,
+            onPlayPreview: { [weak self] in
+                self?.playPreview()
+            }
+        )
     }
-    
+
     // 썸네일 하나의 너비 계산
     func thumbnailUnitWidth(for thumbnailLineWidth: CGFloat) -> CGFloat {
         let availableWidth = thumbnailLineWidth
         let count = max(thumbnails.count, 1)
         return availableWidth / CGFloat(count)
     }
-    
+
     // startX 계산 (좌측 핸들의 오른쪽 끝)
     func startX(thumbnailLineWidth: CGFloat, handleWidth: CGFloat) -> CGFloat {
         guard duration > 0 else { return handleWidth }
         let ratio = startPoint / duration
         return handleWidth + ratio * thumbnailLineWidth
     }
-    
+
     // endX 계산 (우측 핸들의 왼쪽 끝)
     func endX(thumbnailLineWidth: CGFloat, handleWidth: CGFloat) -> CGFloat {
         guard duration > 0 else { return handleWidth + thumbnailLineWidth }
         let ratio = endPoint / duration
         return handleWidth + ratio * thumbnailLineWidth
     }
-    
+
     /// 트리밍 시작 시점부터 재생을 시작하고, 종료 시점에 도달하면 자동으로 정지
-    /// 시간 업데이트를 감지하기 위해 AVPlayer에 timeObserver를 등록
     func playPreview() {
-        if let token = timeObserverToken {
-            player?.removeTimeObserver(token)
-            timeObserverToken = nil
-        }
-
-        let currentTime = player?.currentTime() ?? .zero
-        let currentTimeSeconds = CMTimeGetSeconds(currentTime)
-
-        let actualStart = startPoint + trimOffset
-        let actualEnd = endPoint + trimOffset
-
-        /// 재생을 시작하고 종료 시점을 감지하는 로직
-        let startPlaybackAndObserve = { [weak self] in
-            guard let self = self else { return }
-            self.player?.play()
-            self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
-                guard let self = self else { return }
-                let currentSeconds = CMTimeGetSeconds(time)
-                
-                // trimOffset 고려
-                let checkEndPoint = self.endPoint + self.trimOffset
-                if currentSeconds >= checkEndPoint {
-                    self.player?.pause()
-                    self.isPlaying = false
-                    if let token = self.timeObserverToken {
-                        self.player?.removeTimeObserver(token)
-                        self.timeObserverToken = nil
-                    }
-                }
+        playerService.playPreview(
+            startPoint: startPoint,
+            endPoint: endPoint,
+            trimOffset: trimOffset,
+            onSeek: { [weak self] time in
+                self?.seek(to: time)
             }
-        }
-
-        /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
-        if currentTimeSeconds >= actualStart, currentTimeSeconds < actualEnd {
-            startPlaybackAndObserve()
-        } else {
-            /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
-            seek(to: startPoint)
-            startPlaybackAndObserve()
-        }
+        )
     }
-    
+
     /// 드래깅해서 트리밍 박스를 일정 거리만큼 좌우로 이동시키는 함수
     @MainActor
     func shiftTrimmingRange(by delta: Double) {
@@ -292,7 +272,7 @@ final class ClipEditViewModel: ObservableObject {
         let times = (0 ..< thumbnailCount).map { i in
             CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
         }
-        
+
         do {
             for try await result in imageGenerator.images(for: times) {
                 let cgImage = try result.image
@@ -303,7 +283,7 @@ final class ClipEditViewModel: ObservableObject {
             print("썸네일트리밍 error \(error)")
         }
     }
-    
+
     /// Project의 referenceDuration 값을 기반으로
     /// 트리밍 구간(startPoint, endPoint)을 초기화합니다.
     /// 두 번째 촬영 이후부터 호출됩니다.
@@ -316,11 +296,11 @@ final class ClipEditViewModel: ObservableObject {
             print("⚠️ Project not found or referenceDuration is nil")
             return
         }
-        
+
         startPoint = 0
         endPoint = min(refDuration, duration)
     }
-    
+
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() -> Clip? {
@@ -333,7 +313,7 @@ final class ClipEditViewModel: ObservableObject {
             return nil
         }
     }
-    
+
     /// 현재 트리밍 상태를 바탕으로 Clip 모델을 생성
     func createClipData() -> Clip {
         let clipID = UUID().uuidString
@@ -347,7 +327,7 @@ final class ClipEditViewModel: ObservableObject {
             tiltList: timeStampedTiltList
         )
     }
-    
+
     /// 기존 Project에 새로운 Clip을 추가
     /// UserDefaults에 저장된 currentProjectID를 기준으로 Project를 찾아 clipList에 추가
     @MainActor
@@ -362,11 +342,11 @@ final class ClipEditViewModel: ObservableObject {
             print("기존 Project를 찾을 수 없습니다.")
             return
         }
-        
+
         project.clipList.append(newClip)
         SwiftDataManager.shared.saveContext()
     }
-    
+
     // MARK: - 유저 디폴트
 
     // 1. 현재 currentProjectID 가져오기
@@ -378,12 +358,12 @@ final class ClipEditViewModel: ObservableObject {
             return nil
         }
     }
-    
+
     // 2. currentProjectID nil로 초기화
     func clearCurrentProjectID() {
         UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
     }
-    
+
     // MARK: - Temp 관련 메소드
 
     func createTempClip() -> Clip {
@@ -409,7 +389,7 @@ extension ClipEditViewModel {
         guard let clipID = clipID else {
             return
         }
-        
+
         // SwiftDataManager를 통해 DB에서 해당 클립을 가져와 업데이트
         SwiftDataManager.shared.updateClipPoints(
             id: clipID,

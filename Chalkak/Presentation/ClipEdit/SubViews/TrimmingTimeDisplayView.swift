@@ -19,7 +19,7 @@ import SwiftUI
     TrimmingTimeDisplayView(editViewModel: editViewModel)
  */
 struct TrimmingTimeDisplayView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     
     var body: some View {
         HStack(content: {

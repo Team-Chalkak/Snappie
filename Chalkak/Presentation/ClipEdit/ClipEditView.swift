@@ -47,7 +47,7 @@ struct ClipEditView: View {
     let cameraManager: CameraManager
 
     // 2. State & ObservedObject
-    @StateObject private var editViewModel: ClipEditViewModel
+    @State private var editViewModel: ClipEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
@@ -74,7 +74,7 @@ struct ClipEditView: View {
         timeStampedTiltList: [TimeStampedTilt],
         clipID: String? = nil
     ) {
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
+        _editViewModel = State(wrappedValue: ClipEditViewModel(
             clipURL: clipURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: timeStampedTiltList,
