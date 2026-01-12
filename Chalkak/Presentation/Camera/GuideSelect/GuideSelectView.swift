@@ -112,8 +112,15 @@ struct GuideSelectView: View {
                     }
                     .padding(.horizontal, 24)
                     // 하단 썸네일 부분
-                    GuideFrameSelectorView(editViewModel: editViewModel, isDragging: $isDragging)
-                        .padding(.horizontal, 26)
+                    GuideFrameSelectorView(
+                        state: editViewModel.makeTrimmingState(
+                            thumbnailLineWidth: TimelineConstants.thumbnailLineWidth,
+                            handleWidth: TimelineConstants.handleWidth
+                        ),
+                        actions: editViewModel.trimmingActions,
+                        isDragging: $isDragging
+                    )
+                    .padding(.horizontal, 26)
                 }
             }
             .padding(.bottom, 14)

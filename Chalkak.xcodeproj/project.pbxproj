@@ -313,6 +313,14 @@
 		C5FB3ED02E2E8EAF00A4C1BE /* Text + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text + Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		7D3623D62F14DFC40071E58E /* Model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Model;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		993A1CC32E2049D50059B70A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -628,6 +636,7 @@
 		993A1F452E267E0C0059B70A /* ClipEdit */ = {
 			isa = PBXGroup;
 			children = (
+				7D3623D62F14DFC40071E58E /* Model */,
 				993A1F422E267E0C0059B70A /* SubViews */,
 				993A1F432E267E0C0059B70A /* ClipEditView.swift */,
 				993A1F442E267E0C0059B70A /* ClipEditViewModel.swift */,
@@ -935,6 +944,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7D3623D62F14DFC40071E58E /* Model */,
 			);
 			name = Chalkak;
 			packageProductDependencies = (

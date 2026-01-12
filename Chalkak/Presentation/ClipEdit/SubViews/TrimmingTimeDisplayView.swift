@@ -19,7 +19,8 @@ import SwiftUI
     TrimmingTimeDisplayView(editViewModel: editViewModel)
  */
 struct TrimmingTimeDisplayView: View {
-    var editViewModel: ClipEditViewModel
+    
+    var durationTime : String
     
     var body: some View {
         HStack(content: {
@@ -31,7 +32,7 @@ struct TrimmingTimeDisplayView: View {
             Spacer()
             
             //오른쪽 - 원본 영상길이
-            Text(editViewModel.duration.formattedTime)
+            Text(durationTime)
                 .font(SnappieFont.style(.roundCaption1))
                 .foregroundStyle(SnappieColor.primaryHeavy)
         })
