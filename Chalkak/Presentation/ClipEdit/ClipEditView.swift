@@ -155,7 +155,14 @@ struct ClipEditView: View {
                     togglePlayback: editViewModel.togglePlayback
                 )
 
-                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+                TrimmingControlView(
+                    state: editViewModel.makeTrimmingState(
+                        thumbnailLineWidth: TimelineConstants.thumbnailLineWidth,
+                        handleWidth: TimelineConstants.handleWidth
+                    ),
+                    actions: editViewModel.trimmingActions,
+                    isDragging: $isDragging
+                )
             }
             .padding(.bottom, 14)
         }

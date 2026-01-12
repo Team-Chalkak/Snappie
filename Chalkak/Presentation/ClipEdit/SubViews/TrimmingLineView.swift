@@ -25,7 +25,8 @@ import SwiftUI
 import SwiftUI
 
 struct TrimmingLineView: View {
-    var editViewModel: ClipEditViewModel
+    let state: TrimmingState
+    let actions: TrimmingActions
     @Binding var isDragging: Bool
 
     var body: some View {
@@ -35,11 +36,10 @@ struct TrimmingLineView: View {
         let handleWidth: CGFloat = TimelineConstants.handleWidth
         let thumbnailHeight: CGFloat = TimelineConstants.thumbnailHeight
 
-        /// 뷰모델에서 계산
-        let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
-        let startX = max(0, editViewModel.startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
-        let endX = max(startX + 1, editViewModel.endX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth))
-        let duration = editViewModel.duration
+        let thumbnailUnitWidth = state.thumbnailUnitWidth
+        let startX = max(0, state.startX)
+        let endX = max(startX + 1, state.endX)
+        let duration = state.duration
 
         ZStack(alignment: .leading) {
             // 1. 썸네일 라인 + 어두운 좌우 핸들
@@ -47,7 +47,7 @@ struct TrimmingLineView: View {
                 TrimmingHandleView(isStart: true)
 
                 HStack(spacing: 0) {
-                    ForEach(Array(editViewModel.thumbnails.enumerated()), id: \.offset) { _, image in
+                    ForEach(Array(state.thumbnails.enumerated()), id: \.offset) { _, image in
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()
@@ -96,17 +96,17 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.pause()
+                            actions.pause()
 
                             let x = gesture.location.x - handleWidth
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
-                            let newStart = min(ratio * duration, editViewModel.endPoint - 0.1)
+                            let newStart = min(ratio * duration, state.endPoint - 0.1)
 
-                            editViewModel.updateStart(newStart)
+                            actions.updateStart(newStart)
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.startPoint)
+                            actions.seek(state.startPoint)
                         }
                 )
 
@@ -117,17 +117,17 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.pause()
+                            actions.pause()
 
                             let x = gesture.location.x - handleWidth
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
-                            let newEnd = max(ratio * duration, editViewModel.startPoint + 0.1)
+                            let newEnd = max(ratio * duration, state.startPoint + 0.1)
 
-                            editViewModel.updateEnd(newEnd)
+                            actions.updateEnd(newEnd)
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.endPoint)
+                            actions.seek(state.endPoint)
                         }
                 )
         }
@@ -138,22 +138,22 @@ struct TrimmingLineView: View {
             DragGesture()
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.pause()
+                    actions.pause()
 
                     let locationRatio = gesture.location.x / TimelineConstants.thumbnailLineWidth
-                    let centerTime = locationRatio * editViewModel.duration
-                    let currentCenter = (editViewModel.startPoint + editViewModel.endPoint) / 2
+                    let centerTime = locationRatio * state.duration
+                    let currentCenter = (state.startPoint + state.endPoint) / 2
                     let delta = centerTime - currentCenter
 
-                    editViewModel.shiftTrimmingRange(by: delta)
+                    actions.shiftTrimmingRange(delta)
 
                     Task {
-                        await editViewModel.updatePreviewImage(at: editViewModel.startPoint)
+                        await actions.updatePreviewImage(state.startPoint)
                     }
                 }
                 .onEnded { _ in
                     isDragging = false
-                    editViewModel.seek(to: editViewModel.startPoint)
+                    actions.seek(state.startPoint)
                 }
         )
     }

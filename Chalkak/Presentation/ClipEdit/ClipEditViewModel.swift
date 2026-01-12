@@ -342,3 +342,34 @@ extension ClipEditViewModel {
         )
     }
 }
+
+/// 트리밍 관련 뷰 파라미터용
+extension ClipEditViewModel {
+    func makeTrimmingState(
+        thumbnailLineWidth: CGFloat,
+        handleWidth: CGFloat
+    ) -> TrimmingState {
+        TrimmingState(
+            thumbnails: thumbnails,
+            duration: duration,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            thumbnailUnitWidth: thumbnailUnitWidth(for: thumbnailLineWidth),
+            startX: startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth),
+            endX: endX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth)
+        )
+    }
+
+    var trimmingActions: TrimmingActions {
+        TrimmingActions(
+            pause: { [weak self] in self?.pause() },
+            updateStart: { [weak self] value in self?.updateStart(value) },
+            updateEnd: { [weak self] value in self?.updateEnd(value) },
+            seek: { [weak self] time in self?.seek(to: time) },
+            shiftTrimmingRange: { [weak self] delta in self?.shiftTrimmingRange(by: delta) },
+            updatePreviewImage: { [weak self] time in
+                await self?.updatePreviewImage(at: time)
+            }
+        )
+    }
+}
