@@ -148,7 +148,11 @@ struct ClipEditView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: guide?.outlineImage,
-                    editViewModel: editViewModel
+                    previewImage: editViewModel.previewImage,
+                    player: editViewModel.player,
+                    isPlaying: editViewModel.isPlaying,
+                    currentTrimmedDuration: editViewModel.currentTrimmedDuration,
+                    togglePlayback: editViewModel.togglePlayback
                 )
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)

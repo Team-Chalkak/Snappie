@@ -30,7 +30,9 @@ import SwiftUI
     )
  */
 struct VideoControlPanelView: View {
-    var editViewModel: ClipEditViewModel
+    let isPlaying: Bool
+    let currentTrimmedDuration: Double
+    let togglePlayback: () -> Void
     @Binding var isOverlayVisible: Bool
     let showOverlayToggle: Bool
 
@@ -38,15 +40,15 @@ struct VideoControlPanelView: View {
         HStack(alignment: .center, spacing: 108) {
             SnappieButton(
                 .iconBackground(
-                    icon: editViewModel.isPlaying ? .pauseFill : .playFill,
+                    icon: isPlaying ? .pauseFill : .playFill,
                     size: .medium,
                     isActive: true
                 )
             ) {
-                editViewModel.togglePlayback()
+                togglePlayback()
             }
 
-            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
+            Text(String(format: "%.2f초", currentTrimmedDuration))
                 .font(SnappieFont.style(.proLabel3))
                 .foregroundStyle(SnappieColor.labelDarkNormal)
                 .padding(.horizontal, 9.5)

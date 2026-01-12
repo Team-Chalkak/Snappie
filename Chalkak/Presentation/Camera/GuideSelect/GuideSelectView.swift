@@ -87,7 +87,11 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
-                    editViewModel: editViewModel
+                    previewImage: editViewModel.previewImage,
+                    player: editViewModel.player,
+                    isPlaying: editViewModel.isPlaying,
+                    currentTrimmedDuration: editViewModel.currentTrimmedDuration,
+                    togglePlayback: editViewModel.togglePlayback
                 )
 
                 // 클립 시간 표시
