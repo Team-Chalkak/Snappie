@@ -14,13 +14,14 @@ import SwiftUI
  ClipEditView와 거의 동일한 UI 구조를 가짐. 가이드 박스(흰색 박스)를 드래그하여 가이드 프레임을 선택
  */
 struct GuideSelectView: View {
+    @EnvironmentObject private var coordinator: Coordinator
+
     let clip: Clip
     let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
 
     @State private var editViewModel: ClipEditViewModel
-    @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
 
     private var overlayImage: UIImage? {
