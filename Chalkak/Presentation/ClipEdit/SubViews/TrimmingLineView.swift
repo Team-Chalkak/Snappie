@@ -132,6 +132,17 @@ struct TrimmingLineView: View {
                             editViewModel.seek(to: editViewModel.endPoint)
                         }
                 )
+            
+            // Playhead
+            ClipPlayheadView()
+                .frame(height: thumbnailHeight)
+                .position(
+                    x: editViewModel.playHeadX(
+                        thumbnailLineWidth: thumbnailLineWidth,
+                        handleWidth: handleWidth),
+                    y: thumbnailHeight / 2
+                )
+                .allowsTightening(false)
         }
         .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
         .contentShape(Rectangle())

@@ -47,6 +47,7 @@ final class ClipEditViewModel: ObservableObject {
     @Published var isPlaying = false
     @Published var previewImage: UIImage?
     @Published var clipID: String? = nil
+    @Published var currentPlayTime: Double = 0
     
     // 3. 계산 프로퍼티
     /// 현재 트리밍된 영상 길이 (초 단위)
@@ -213,6 +214,16 @@ final class ClipEditViewModel: ObservableObject {
         return handleWidth + ratio * thumbnailLineWidth
     }
     
+    /// playHead 위치를 위한 타임라인 좌표 계산 메서드
+    func playHeadX(
+        thumbnailLineWidth: CGFloat,
+        handleWidth: CGFloat
+    ) -> CGFloat {
+        guard duration > 0 else { return handleWidth }
+        let ratio = currentPlayTime / duration
+        return handleWidth + ratio * thumbnailLineWidth
+    }
+    
     /// 트리밍 시작 시점부터 재생을 시작하고, 종료 시점에 도달하면 자동으로 정지
     /// 시간 업데이트를 감지하기 위해 AVPlayer에 timeObserver를 등록
     func playPreview() {
@@ -231,9 +242,14 @@ final class ClipEditViewModel: ObservableObject {
         let startPlaybackAndObserve = { [weak self] in
             guard let self = self else { return }
             self.player?.play()
-            self.timeObserverToken = self.player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.01, preferredTimescale: 600), queue: .main) { [weak self] time in
+            self.timeObserverToken = self.player?.addPeriodicTimeObserver(
+                forInterval: CMTime(seconds: 0.01, preferredTimescale: 600),
+                queue: .main
+            ) { [weak self] time in
                 guard let self = self else { return }
+                
                 let currentSeconds = CMTimeGetSeconds(time)
+                self.currentPlayTime = currentSeconds - self.trimOffset
                 
                 // trimOffset 고려
                 let checkEndPoint = self.endPoint + self.trimOffset

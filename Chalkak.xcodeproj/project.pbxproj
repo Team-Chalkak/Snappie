@@ -79,6 +79,7 @@
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 		994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE12F18884C0029AAE3 /* SchemaV4.swift */; };
+		994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */; };
 		998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998230512EF1CE500081CE94 /* GoogleService-Info.plist */; };
 		998230562EF1D5660081CE94 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 998230552EF1D5660081CE94 /* FirebaseCore */; };
 		998230582EF1E5180081CE94 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 998230572EF1E5180081CE94 /* FirebaseAnalytics */; };
@@ -245,6 +246,7 @@
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		994EFAE12F18884C0029AAE3 /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
+		994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlayheadView.swift; sourceTree = "<group>"; };
 		998230512EF1CE500081CE94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
@@ -607,6 +609,7 @@
 		993A1F422E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */,
 				934007902E3652BD006BE89C /* TrimmingHandleView.swift */,
 				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
@@ -1154,6 +1157,7 @@
 				C5C12EB12E33684F00C4DC6D /* SnappieNavigationBar.swift in Sources */,
 				7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
+				994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */,
