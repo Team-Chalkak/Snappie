@@ -22,6 +22,16 @@ struct StartProjectView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 8) {
+                SnappieNavigationBar(
+                    leftButtonType: .backward {
+                        coordinator.popLast()
+                    },
+                    rightButtonType: .twoButton(
+                        primary: .init(label: "저장", isEnabled: false) {},
+                        secondary: .init(icon: .export, isEnabled: false) {}
+                    )
+                )
+                
                 ZStack(alignment: .center) {
                     Rectangle()
                         .fill(SnappieColor.gradientFillNormal)
