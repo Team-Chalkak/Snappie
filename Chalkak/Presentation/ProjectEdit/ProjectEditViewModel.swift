@@ -31,12 +31,6 @@ final class ProjectEditViewModel {
     var isLoading = false
     var showEmptyProjectAlert = false
     var selectedClipID: String?
-    
-    // MARK: – 저장/내보내기용 프로퍼티
-
-    var isExporting = false
-    private let videoManager = VideoManager()
-    private let photoLibrarySaver = PhotoLibrarySaver()
 
     // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
     private var originalClips: [EditableClip] = []
@@ -502,25 +496,6 @@ final class ProjectEditViewModel {
             if currentTime > 0 && currentTime <= self.totalDuration {
                 self.seekTo(time: currentTime)
             }
-        }
-    }
-
-    // MARK: – 편집된 영상 갤러리에 내보내기
-
-    func exportEditedVideoToPhotos() async -> Bool {
-        isExporting = true
-        defer { isExporting = false }
-
-        do {
-            // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
-            // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
-            let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
-            let success = await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
-
-            return success
-        } catch {
-            print("내보내기 실패:", error)
-            return false
         }
     }
 

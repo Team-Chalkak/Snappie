@@ -14,10 +14,9 @@ struct ProjectEditView: View {
     @State private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExitConfirmation = false
-    @State private var showExportSuccessAlert = false
     @State private var showPhotoPermissionDeniedAlert = false
-    @State private var isExporting = false
     @State private var isOverlayVisible: Bool = true
+    @State private var showExportView = false
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -44,7 +43,7 @@ struct ProjectEditView: View {
                         print("플젝 저장 버튼 눌림")
                     },
                     secondary: .init(icon: .export) {
-                        print("갤러리 저장 버튼 눌림")
+                        showExportView.toggle()
                     }
                 )
             )
@@ -205,20 +204,11 @@ struct ProjectEditView: View {
         } message: {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }
-
-        // 내보내기 완료 알림
-        .snappieAlert(
-            isPresented: $showExportSuccessAlert,
-            message: "내보내기 완료"
-        )
-
-        // 진행중 로딩 프로그레스
-        .snappieProgressAlert(
-            isPresented: $isExporting,
-            isLoading: $isExporting,
-            loadingMessage: "영상 내보내는 중...",
-            completionMessage: ""
-        )
+        
+        // 내보내기 시트
+        .sheet(isPresented: $showExportView) {
+            ProjectPreviewView(editableClips: viewModel.editableClips)
+        }
 
         // 모든 클립 삭제 시, 프로젝트 삭제 알림
         .alert(
@@ -249,7 +239,7 @@ struct ProjectEditView: View {
 }
 
 // MARK: - Subviews
-
+/*
 private extension ProjectEditView {
     @ViewBuilder
     var navigationBar: some View {
@@ -332,3 +322,4 @@ private extension ProjectEditView {
         }
     }
 }
+*/
