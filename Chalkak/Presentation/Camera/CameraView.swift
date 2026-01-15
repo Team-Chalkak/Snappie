@@ -77,38 +77,33 @@ struct CameraView: View {
             if viewModel.isHorizontalLevelActive {
                 HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
-            
+
             // 촬영 이탈버튼
-            VStack {
-                HStack {
-                    SnappieButton(.iconBackground(
-                        icon: .dismiss,
-                        size: .large,
-                        isActive: true
-                    )) {
-                        showExitAlert = true
-                            Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
-                    }
-                    .padding(.leading, 30)
-                    .padding(.top, 25)
-                        
-                    Spacer()
+            if !viewModel.isRecording {
+                SnappieButton(.iconBackground(
+                    icon: .dismiss,
+                    size: .large,
+                    isActive: true
+                )) {
+                    showExitAlert = true
+                    Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
                 }
-                    
-                Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(.leading, 30)
+                .padding(.top, 25)
             }
-            
+
             VStack {
                 CameraTopControlView(viewModel: viewModel, guide: guide)
-                
+
                 Spacer()
-                
+
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
         }
         .onChange(of: viewModel.showTimerFeedback) { _, newValue in
             fadeOutTask?.cancel()
-            
+
             if newValue != nil {
                 // 즉시 opacity 1
                 feedbackOpacity = 1
