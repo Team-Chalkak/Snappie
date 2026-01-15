@@ -17,6 +17,8 @@ struct ProjectEditView: View {
     @State private var showPhotoPermissionDeniedAlert = false
     @State private var isOverlayVisible: Bool = true
     @State private var showExportView = false
+    @State private var isSaving = false
+    @State private var showSaveCompleteAlert: Bool = false
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -31,7 +33,7 @@ struct ProjectEditView: View {
             SnappieNavigationBar(
                 navigationTitle: "프로젝트 편집",
                 leftButtonType: .backward {
-                    if viewModel.hasChanges {
+                    if viewModel.hasChanges && !isSaving {
                         showExitConfirmation = true
                     } else {
                         UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
@@ -40,7 +42,16 @@ struct ProjectEditView: View {
                 },
                 rightButtonType: .twoButton(
                     primary: .init(label: "저장") {
-                        print("플젝 저장 버튼 눌림")
+                        Task {
+                            isSaving = true
+                            let success = await viewModel.commitChanges()
+                            if success {
+                                // 저장 후 새로운 temp 프로젝트 생성
+                                await viewModel.initializeTempProject(loadAfter: true)
+                                showSaveCompleteAlert = true
+                            }
+                            isSaving = false
+                        }
                     },
                     secondary: .init(icon: .export) {
                         showExportView.toggle()
@@ -234,6 +245,14 @@ struct ProjectEditView: View {
                     UIApplication.shared.open(settingsURL)
                 }
             }
+        )
+        
+        // 프로젝트 저장 커스텀 Alert
+        .snappieProgressAlert(
+            isPresented: $showSaveCompleteAlert,
+            isLoading: $isSaving,
+            loadingMessage: "저장 중...",
+            completionMessage: "편집 내용 저장됨"
         )
     }
 }
