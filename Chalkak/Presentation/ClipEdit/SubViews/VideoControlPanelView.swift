@@ -33,6 +33,11 @@ struct VideoControlPanelView: View {
     @ObservedObject var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
     let showOverlayToggle: Bool
+    var displayTime: Double? = nil
+
+    private var timeToDisplay: Double {
+        displayTime ?? editViewModel.currentTrimmedDuration
+    }
 
     var body: some View {
         ZStack(alignment: .center) {
@@ -51,7 +56,7 @@ struct VideoControlPanelView: View {
             HStack(alignment: .center) {
                 Spacer()
 
-                Text(String(format: "%.2f초", self.editViewModel.currentTrimmedDuration))
+                Text(String(format: "%.2f초", timeToDisplay))
                     .font(SnappieFont.style(.proLabel3))
                     .foregroundStyle(SnappieColor.labelDarkNormal)
                     .padding(.horizontal, 9.5)

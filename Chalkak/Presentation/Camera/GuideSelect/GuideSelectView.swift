@@ -87,6 +87,7 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
+                    displayTime: editViewModel.startPoint,
                     editViewModel: editViewModel
                 )
 
@@ -101,6 +102,7 @@ struct GuideSelectView: View {
                             .foregroundStyle(SnappieColor.primaryHeavy)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 24)
+
 
                         Text((clip.endPoint - clip.startPoint).formattedTime)
                             .font(SnappieFont.style(.roundCaption1))
