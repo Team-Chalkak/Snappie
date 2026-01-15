@@ -64,6 +64,7 @@ struct CameraView: View {
                     Text("\(viewModel.timerCountdown)")
                         .font(SnappieFont.style(.kronaExtra))
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
+                        .frame(width: 200, height: 200)
                         .transition(.opacity)
                         .animation(.easeOut(duration: 0.4), value: viewModel.timerCountdown)
                 }
