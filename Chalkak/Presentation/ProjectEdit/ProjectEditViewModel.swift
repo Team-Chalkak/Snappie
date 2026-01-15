@@ -577,7 +577,6 @@ final class ProjectEditViewModel {
             boundingBoxes: originalProject.guide.boundingBoxes,
             outlineImage: originalProject.guide.outlineImage ?? UIImage(),
             cameraTilt: originalProject.guide.cameraTilt,
-            wasMirroredAtCapture: originalProject.guide.wasMirroredAtCapture,
             selectedTimestamp: originalProject.guide.selectedTimestamp
         )
 
@@ -773,7 +772,6 @@ final class ProjectEditViewModel {
         originalProject.guide.boundingBoxes = tempProject.guide.boundingBoxes
         originalProject.guide.outlineImageData = tempProject.guide.outlineImageData
         originalProject.guide.cameraTilt = tempProject.guide.cameraTilt
-        originalProject.guide.wasMirroredAtCapture = tempProject.guide.wasMirroredAtCapture
         originalProject.guide.selectedTimestamp = tempProject.guide.selectedTimestamp
 
         // temp 클립의 originalClipID -> 원본 clipID로 복원
