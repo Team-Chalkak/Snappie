@@ -54,6 +54,7 @@ struct ChalkakApp: App {
                             switch path {
                             case .startProject:
                                 StartProjectView()
+                                    .toolbar(.hidden, for: .navigationBar)
 
                             case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList, let clipID):
                                 ClipEditView(

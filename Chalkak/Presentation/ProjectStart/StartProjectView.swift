@@ -10,12 +10,28 @@ import TipKit
 
 struct StartProjectView: View {
     @EnvironmentObject private var coordinator: Coordinator
+    
     private let projectAddClipTip = ProjectAddClip()
+    private let clipWidth: CGFloat = 62
+    private let clipHeight: CGFloat = 97
+    private let clipRadius: CGFloat = 8
+    
     var body: some View {
         ZStack {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
+            
             VStack(spacing: 8) {
+                SnappieNavigationBar(
+                    leftButtonType: .backward {
+                        coordinator.popLast()
+                    },
+                    rightButtonType: .twoButton(
+                        primary: .init(label: "저장", isEnabled: false) {},
+                        secondary: .init(icon: .export, isEnabled: false) {}
+                    )
+                )
+                
                 ZStack(alignment: .center) {
                     Rectangle()
                         .fill(SnappieColor.gradientFillNormal)
@@ -28,6 +44,7 @@ struct StartProjectView: View {
                 .frame(maxWidth: .infinity)
                 .aspectRatio(9.0 / 16.0, contentMode: .fit)
                 .padding(.horizontal, 16)
+                .padding(.vertical, 8)
 
                 VStack {
                     HStack {
@@ -56,31 +73,43 @@ struct StartProjectView: View {
                             )
                         ) {}
                     }
+                    .padding(.horizontal, 24)
 
-                    HStack(spacing: 4) {
-//                        Play선의 필요성에 대한 고찰
-//                        RoundedRectangle(cornerRadius: 2)
-//                            .stroke(.white, lineWidth: 1)
-//                            .frame(width: 1, height: 110)
-
+                    // 구분선
+                    Rectangle()
+                        .fill(.deepGreen600)
+                        .frame(maxWidth: .infinity, maxHeight: 1.5)
+                        .padding(.vertical, 8)
+                    
+                    ZStack {
+                        // 색상 배경
+                        Rectangle()
+                            .fill(SnappieColor.containerFillNormal)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: clipHeight)
+                        
+                        // 촬영 버튼
                         Button {
                             coordinator.push(.camera(state: .firstShoot))
                         }
                         label: {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 25, weight: .regular))
-                                .foregroundStyle(SnappieColor.labelDarkNormal)
-                                .padding(.horizontal, 16)
-                                .frame(height: 100)
+                            IconView(iconType: .camera, scale: .xlarge)
+                                .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                                .frame(width: clipWidth, height: clipHeight)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(SnappieColor.primaryLight)
+                                    RoundedRectangle(cornerRadius: clipRadius)
+                                        .fill(.deepGreen400)
                                 )
                         }
                         .popoverTip(projectAddClipTip)
+                        .offset(x: clipWidth / 2)
+                        
+                        // Playhead
+                        PlayheadView()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .allowsHitTesting(false)
                     }
                 }
-                .padding(.horizontal, 24)
             }
         }
     }

@@ -38,6 +38,7 @@ enum Icon: String {
     case playFill
     case dismiss
     case union
+    case camera
 }
 
 /// 아이콘의 크기 
