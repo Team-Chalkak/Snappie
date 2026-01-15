@@ -45,6 +45,10 @@ final class ProjectEditViewModel {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
     }
 
+    var projectTitle: String {
+        project?.title ?? "프로젝트 편집"
+    }
+
     // MARK: - Temp 관련 프로퍼티
 
     var hasChanges: Bool {
