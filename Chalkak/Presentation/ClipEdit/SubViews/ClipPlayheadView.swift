@@ -10,8 +10,13 @@ import SwiftUI
 struct ClipPlayheadView: View {
     var body: some View {
         Rectangle()
-            .fill(SnappieColor.matcha50)
-            .frame(width: 3)
+            .fill(Color.clear)
+            .frame(width: 30)
             .frame(maxHeight: .infinity)
+            .overlay(
+                Rectangle()
+                    .fill(SnappieColor.matcha50)
+                    .frame(width: 3)
+            )
     }
 }
