@@ -278,7 +278,6 @@ class SwiftDataManager {
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
         cameraTilt: Tilt,
-        wasMirroredAtCapture: Bool,
         selectedTimestamp: Double? = nil
     ) -> Guide {
         let guide = Guide(
@@ -286,7 +285,6 @@ class SwiftDataManager {
             boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
             cameraTilt: cameraTilt,
-            wasMirroredAtCapture: wasMirroredAtCapture,
             selectedTimestamp: selectedTimestamp
         )
         context.insert(guide)

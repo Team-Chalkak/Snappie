@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-extension SchemaV3.Clip: Hashable {
+extension SchemaV4.Clip: Hashable {
     static func == (lhs: Clip, rhs: Clip) -> Bool {
         lhs.id == rhs.id
     }

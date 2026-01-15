@@ -78,6 +78,7 @@
 		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE12F18884C0029AAE3 /* SchemaV4.swift */; };
 		998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998230512EF1CE500081CE94 /* GoogleService-Info.plist */; };
 		998230562EF1D5660081CE94 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 998230552EF1D5660081CE94 /* FirebaseCore */; };
 		998230582EF1E5180081CE94 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 998230572EF1E5180081CE94 /* FirebaseAnalytics */; };
@@ -243,6 +244,7 @@
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		994EFAE12F18884C0029AAE3 /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
 		998230512EF1CE500081CE94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 		993A1F262E267E0C0059B70A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				994EFAE12F18884C0029AAE3 /* SchemaV4.swift */,
 				99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */,
 				99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */,
 				7D60F6482F0D141700621874 /* SchemaV3.swift */,
@@ -1142,6 +1145,7 @@
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
 				9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */,
+				994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */,

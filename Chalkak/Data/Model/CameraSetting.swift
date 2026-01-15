@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-extension SchemaV3.CameraSetting: Hashable {
+extension SchemaV4.CameraSetting: Hashable {
     static func == (lhs: CameraSetting, rhs: CameraSetting) -> Bool {
         lhs.id == rhs.id
     }

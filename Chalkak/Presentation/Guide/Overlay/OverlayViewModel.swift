@@ -117,7 +117,6 @@ final class OverlayViewModel: ObservableObject {
             project.guide.boundingBoxes = boundingBoxInfos
             project.guide.outlineImageData = outlineImage.pngData() ?? Data()
             project.guide.cameraTilt = determineTilt()
-            project.guide.wasMirroredAtCapture = cameraManager.isRecordingMirrored
             project.guide.selectedTimestamp = selectedTimestamp
             project.guide.clipID = clip.id
 
@@ -205,7 +204,6 @@ final class OverlayViewModel: ObservableObject {
             boundingBoxes: boundingBoxInfos,
             outlineImage: outlineImage,
             cameraTilt: determineTilt(),
-            wasMirroredAtCapture: cameraManager.isRecordingMirrored,
             selectedTimestamp: selectedTimestamp
         )
         SwiftDataManager.shared.saveContext()
