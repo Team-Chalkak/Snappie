@@ -59,6 +59,21 @@ struct TrimminglineSliderView: View {
                     .onChanged { gesture in
                         isDragging = true;
                         dragOffset = gesture.translation.width
+                        
+                        // 현재 playHead의 픽셀 위치
+                        let currentPixelOffset = pixelOffsetForTime(playHeadPosition)
+
+                        // 드래그 중 임시 픽셀 위치
+                        let newPixelOffset = currentPixelOffset - gesture.translation.width
+
+                        // 픽셀 → 시간
+                        let newTime = min(max(0, timeForPixelOffset(newPixelOffset)), totalDuration)
+
+                        // playHead를 실시간으로 갱신
+                        playHeadPosition = newTime
+
+                        // ViewModel에 즉시 프리뷰 요청
+                        onSeek(newTime)
                     }
                     .onEnded { gesture in
                         isDragging = false
