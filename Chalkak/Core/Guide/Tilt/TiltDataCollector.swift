@@ -27,6 +27,7 @@ class TiltDataCollector: ObservableObject {
     // MARK: - Properties
     /// CoreMotion 데이터를 수집하는 모션 매니저
     private var motionManager = CMMotionManager()
+    private let motionQueue = OperationQueue()
 
     /// 디바이스가 좌우로 기울어진 정도
     @Published var gravityX: Double = 0.0
@@ -34,24 +35,34 @@ class TiltDataCollector: ObservableObject {
     /// 디바이스가 앞뒤로 기울어진 정도
     @Published var gravityZ: Double = 0.0
 
-    // MARK: - init
-    /// TiltDataCollector를 초기화하고 CoreMotion 데이터 수집을 시작합니다.
     init() {
-        // 디바이스 모션 업데이트 시작
-        if motionManager.isDeviceMotionAvailable {
-            motionManager.deviceMotionUpdateInterval = 1.0 / 60.0  // 1초에 60번(60FPS)
-            motionManager.startDeviceMotionUpdates(to: .main) {
-                [weak self] (data, error) in
-                guard let self = self, let data = data else { return }
+        motionQueue.name = "TiltMotionQueue"
+        motionQueue.qualityOfService = .userInteractive
+    }
+    
+    // 디바이스 모션 업데이트 시작
+    func start() {
+        guard motionManager.isDeviceMotionAvailable else { return }
+        guard !motionManager.isDeviceMotionActive else { return }
 
+        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        motionManager.startDeviceMotionUpdates(to: motionQueue) { [weak self] data, _ in
+            guard let self, let data else { return }
+
+            DispatchQueue.main.async {
                 self.gravityX = data.gravity.x
                 self.gravityZ = data.gravity.z
             }
         }
     }
     
+    func stop() {
+        guard motionManager.isDeviceMotionActive else { return }
+        motionManager.stopDeviceMotionUpdates()
+    }
+    
     /// TiltDataCollector가 해제될 때 motion updates를 자동으로 중지하도록 처리
     deinit {
-        motionManager.stopDeviceMotionUpdates()
+        stop()
     }
 }

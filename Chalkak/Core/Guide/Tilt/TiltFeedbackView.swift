@@ -40,14 +40,15 @@ struct TiltFeedbackView: View {
     // MARK: - Properties
     // MARK: input properties
     /// X축 기울기 오프셋 값: 기기의 좌우 기울기
-    var offsetX: CGFloat
+    private var offsetX: CGFloat { CGFloat(tiltManager.offsetX) }
     
     /// Y축 기울기 오프셋 값: 기기의 앞뒤 기울기
-    var offsetY: CGFloat
+    private var offsetY: CGFloat { CGFloat(tiltManager.offsetZ) }
     
     // MARK: State properties
     /// 디졸브 애니메이션을 위한 opacity 상태
     @State private var dissolveOpacity: Double = 1.0
+    @ObservedObject var tiltManager: CameraTiltManager
     
     // MARK: computed properties
     /// 자주 사용되는 offset 절대값
@@ -60,16 +61,12 @@ struct TiltFeedbackView: View {
     }
     
     /// 현재 위치가 적절한 범위 내에 있는지 확인하는 계산 프로퍼티
-    var isProperPosition: Bool {
-        if absOffsetX < 3 && absOffsetY < 3 {
-            return true
-        } else {
-            return false
-        }
+    private var isProperPosition: Bool {
+        absOffsetX < 3 && absOffsetY < 3
     }
     
     /// 원의 투명도 결정하는 계산 프로퍼티
-    var circleOpacity: Double {
+    private var circleOpacity: Double {
         // 50 이상이면 안보이게
         if absOffsetX > 50 || absOffsetY > 50 {
             return 0
@@ -83,12 +80,6 @@ struct TiltFeedbackView: View {
         else {
             return 1
         }
-    }
-    
-    // MARK: - init
-    init(offsetX: Float, offsetY: Float) {
-        self.offsetX = CGFloat(offsetX)
-        self.offsetY = CGFloat(offsetY)
     }
     
     // MARK: - View
@@ -124,14 +115,5 @@ struct TiltFeedbackView: View {
                     }
                 }
             }
-    }
-}
-
-#Preview {
-    ZStack {
-        Color.black.opacity(0.7)
-            .ignoresSafeArea()
-        
-        TiltFeedbackView(offsetX: -40, offsetY: -45)
     }
 }
