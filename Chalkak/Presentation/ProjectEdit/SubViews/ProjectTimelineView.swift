@@ -11,6 +11,7 @@ struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
     @Binding var isDragging: Bool
     @Binding var selectedClipID: String?
+    let guideClipID: String?
     let playHeadPosition: Double
     let totalDuration: Double
     let dragOffset: CGFloat
@@ -59,7 +60,8 @@ struct ProjectTimelineView: View {
                             isSelected: selectedClipID == clip.id,
                             isReordering: isDragActive,
                             onDragStateChanged: onDragStateChanged,
-                            onTap: { onClipTapped(clip.id) }
+                            onTap: { onClipTapped(clip.id) },
+                            isGuideClip: guideClipID == clip.id
                         )
                         .frame(width: isBeingDragged ? 0.0 : clipWidth, height: clipHeight)
                         .opacity(isBeingDragged ? 0.0 : 1.0)
@@ -117,7 +119,8 @@ struct ProjectTimelineView: View {
                         isSelected: selectedClipID == draggingClip.id,
                         isReordering: isDragActive,
                         onDragStateChanged: onDragStateChanged,
-                        onTap: { onClipTapped(draggingClip.id) }
+                        onTap: { onClipTapped(draggingClip.id) },
+                        isGuideClip: guideClipID == draggingClip.id
                     )
                     .frame(width: clipWidth, height: clipHeight)
                     .scaleEffect(scaleDuringDrag, anchor: .center)
