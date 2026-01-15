@@ -73,9 +73,20 @@ extension SnappieNavigationBar {
 
                 // Primary (우측 오른쪽)
                 if let primary = primaryRightButton {
-                    rightButtonView(primary, isPrimary: true)
+                    if let secondaryButtonStyle = secondaryRightButton?.style,
+                       case .icon = secondaryButtonStyle {
+                        rightButtonView(
+                            primary,
+                            isPrimary: true,
+                            isSecondaryStyleIcon: true
+                        )
                         .disabled(!primary.isEnabled)
                         .opacity(primary.isEnabled ? 1.0 : 0.4)
+                    } else {
+                        rightButtonView(primary, isPrimary: true)
+                            .disabled(!primary.isEnabled)
+                            .opacity(primary.isEnabled ? 1.0 : 0.4)
+                    }
                 }
             }
         }
@@ -83,18 +94,30 @@ extension SnappieNavigationBar {
         @ViewBuilder
         private func rightButtonView(
             _ item: ItemsForButton,
-            isPrimary: Bool
+            isPrimary: Bool,
+            isSecondaryStyleIcon: Bool = false
         ) -> some View {
             switch item.style {
             case .text(let title):
                 if isPrimary {
-                    SnappieButton(
-                        .solidPrimary(
-                            title: title,
-                            size: .medium
-                        ),
-                        action: item.action
-                    )
+                    if isSecondaryStyleIcon {
+                        SnappieButton(
+                            .solidSecondary(
+                                contentType: .text(title),
+                                size: .medium,
+                                isOutlined: false
+                            ),
+                            action: item.action
+                        )
+                    } else {
+                        SnappieButton(
+                            .solidPrimary(
+                                title: title,
+                                size: .medium
+                            ),
+                            action: item.action
+                        )
+                    }
                 } else {
                     SnappieButton(
                         .solidSecondary(
