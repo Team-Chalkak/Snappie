@@ -35,38 +35,47 @@ struct VideoControlPanelView: View {
     let showOverlayToggle: Bool
 
     var body: some View {
-        HStack(alignment: .center, spacing: 108) {
+        ZStack(alignment: .center) {
             SnappieButton(
                 .iconBackground(
-                    icon: editViewModel.isPlaying ? .pauseFill : .playFill,
+                    icon: self.editViewModel.isPlaying ? .pauseFill : .playFill,
                     size: .medium,
                     isActive: true
                 )
             ) {
-                editViewModel.togglePlayback()
+                self.editViewModel.togglePlayback()
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 24)
 
-            Text(String(format: "%.2f초", editViewModel.currentTrimmedDuration))
-                .font(SnappieFont.style(.proLabel3))
-                .foregroundStyle(SnappieColor.labelDarkNormal)
-                .padding(.horizontal, 9.5)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(SnappieColor.primaryStrong)
-                )
+            HStack(alignment: .center) {
+                Spacer()
+
+                Text(String(format: "%.2f초", self.editViewModel.currentTrimmedDuration))
+                    .font(SnappieFont.style(.proLabel3))
+                    .foregroundStyle(SnappieColor.labelDarkNormal)
+                    .padding(.horizontal, 9.5)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(SnappieColor.primaryStrong)
+                    )
+
+                Spacer()
+            }
 
             SnappieButton(
                 .iconBackground(
                     icon: .silhouette,
                     size: .medium,
-                    isActive: showOverlayToggle ? isOverlayVisible : false
+                    isActive: self.showOverlayToggle ? self.isOverlayVisible : false
                 )
             ) {
-                isOverlayVisible.toggle()
+                self.isOverlayVisible.toggle()
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.trailing, 24)
         }
-        .padding(.horizontal, 23)
     }
 }
 
