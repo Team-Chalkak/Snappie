@@ -142,7 +142,31 @@ struct TrimmingLineView: View {
                         handleWidth: handleWidth),
                     y: thumbnailHeight / 2
                 )
-                .allowsTightening(false)
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            isDragging = true
+                            editViewModel.player?.pause()
+                            editViewModel.isPlaying = false
+
+                            let x = max(handleWidth,
+                                        min(gesture.location.x,
+                                            handleWidth + thumbnailLineWidth))
+
+                            let ratio = (x - handleWidth) / thumbnailLineWidth
+                            let time = ratio * editViewModel.duration
+
+                            editViewModel.currentPlayTime = time
+
+                            Task {
+                                await editViewModel.updatePreviewImage(at: time)
+                            }
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            editViewModel.seek(to: editViewModel.currentPlayTime)
+                        }
+                )
         }
         .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
         .contentShape(Rectangle())
