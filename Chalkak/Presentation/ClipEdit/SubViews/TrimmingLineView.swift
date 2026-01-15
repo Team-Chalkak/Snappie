@@ -107,7 +107,6 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.startPoint)
                         }
                 )
 
@@ -129,7 +128,6 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.endPoint)
                         }
                 )
             

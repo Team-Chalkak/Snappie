@@ -171,20 +171,41 @@ final class ClipEditViewModel: ObservableObject {
     /// 트리밍 시작 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateStart(_ value: Double) {
         startPoint = value
-        Task { await updatePreviewImage(at: value) }
+        
+        if currentPlayTime < startPoint {
+            seek(to: startPoint)
+            Task { await updatePreviewImage(at: value) }
+        }
     }
     
     /// 트리밍 종료 지점을 갱신하고, 해당 시점의 프리뷰 이미지를 갱신
     func updateEnd(_ value: Double) {
         endPoint = value
-        Task { await updatePreviewImage(at: value) }
+        
+        if currentPlayTime > endPoint {
+            seek(to: endPoint)
+            Task { await updatePreviewImage(at: value) }
+        }
     }
     
     /// AVPlayer를 지정된 시간으로 이동
-    func seek(to time: Double) {
+    func seek(
+        to time: Double,
+        completion: (() -> Void)? = nil
+    ) {
         // trimOffset으로 시작지점 조정
         let actualTime = time + trimOffset
-        player?.seek(to: CMTime(seconds: actualTime, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+        let cmTime = CMTime(seconds: actualTime, preferredTimescale: 600)
+        
+        currentPlayTime = time
+        
+        player?.seek(
+            to: cmTime,
+            toleranceBefore: .zero,
+            toleranceAfter: .zero
+        ) { _ in
+            completion?()
+        }
     }
     
     /// 재생/일시정지 상태 토글 - 현재 상태에 따라 playPreview() 또는 pause를 수행
@@ -264,13 +285,17 @@ final class ClipEditViewModel: ObservableObject {
             }
         }
 
+        // 경계값(끝에 딱 걸린 경우) 처리를 위한 변수
+        let epsilon = 0.001
+        
         /// 만약 재생이 트리밍 구간 내에서 멈춘 상태라면, 바로 이어서 재생
-        if currentTimeSeconds >= actualStart, currentTimeSeconds < actualEnd {
+        if currentTimeSeconds >= actualStart, currentTimeSeconds < (actualEnd - epsilon) {
             startPlaybackAndObserve()
         } else {
             /// 그렇지 않다면(처음 재생 또는 재생 완료 후), 시작점으로 이동 후 재생
-            seek(to: startPoint)
-            startPlaybackAndObserve()
+            seek(to: startPoint) {
+                startPlaybackAndObserve()
+            }
         }
     }
     
