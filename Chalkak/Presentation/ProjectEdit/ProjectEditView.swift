@@ -39,12 +39,14 @@ struct ProjectEditView: View {
                         coordinator.popToScreen(.projectList)
                     }
                 },
-                rightButtonType: .oneButton(.init(label: "내보내기") {
-                    Task {
-                        await viewModel.exportEditedVideoToPhotos()
-                        showExportSuccessAlert = true
+                rightButtonType: .twoButton(
+                    primary: .init(label: "저장") {
+                        print("플젝 저장 버튼 눌림")
+                    },
+                    secondary: .init(icon: .export) {
+                        print("갤러리 저장 버튼 눌림")
                     }
-                })
+                )
             )
             .padding(.bottom, 16)
             
