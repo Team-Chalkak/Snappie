@@ -105,9 +105,13 @@ class CameraViewModel: ObservableObject {
 
     // MARK: - Camera Set
 
-    func startCamera() { model.startSession() }
+    func startCamera() {
+        tiltCollector.start()
+        model.startSession()
+    }
     func stopCamera() {
         if isRecording { stopVideoRecording() }
+        tiltCollector.stop()
         model.stopSession()
     }
 

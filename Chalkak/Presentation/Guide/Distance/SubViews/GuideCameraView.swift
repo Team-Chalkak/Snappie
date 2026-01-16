@@ -54,7 +54,7 @@ struct GuideCameraView: View {
 
             // Tilt 피드백 뷰
             if let tiltManager = viewModel.tiltManager {
-                TiltFeedbackView(offsetX: tiltManager.offsetX, offsetY: tiltManager.offsetZ)
+                TiltFeedbackView(tiltManager: tiltManager)
             }
         }
         .onAppear {
