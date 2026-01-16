@@ -265,14 +265,23 @@ class CameraViewModel: ObservableObject {
         UserDefaults.standard.set(setting.isGridEnabled, forKey: UserDefaultKey.isGridOn)
         UserDefaults.standard.set(setting.zoomScale, forKey: UserDefaultKey.zoomScale)
         UserDefaults.standard.set(setting.timerSecond, forKey: UserDefaultKey.timerSecond)
-        UserDefaults.standard.set(setting.isFrontPosition, forKey: UserDefaultKey.isFrontPosition)
+
+        let positionValue = setting.isFrontPosition ? "front" : "back"
+        UserDefaults.standard.set(positionValue, forKey: UserDefaultKey.cameraPosition)
     }
 
     private func loadSavedSettings() {
         isGrid = UserDefaults.standard.bool(forKey: UserDefaultKey.isGridOn)
         zoomScale = UserDefaults.standard.object(forKey: UserDefaultKey.zoomScale) as? CGFloat ?? 1.0
         selectedTimerDuration = TimerOptions(rawValue: UserDefaults.standard.integer(forKey: UserDefaultKey.timerSecond)) ?? .off
-        cameraPostion = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition) ? .front : .back
+
+        if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition),
+           savedValue == "front"
+        {
+            cameraPostion = .front
+        } else {
+            cameraPostion = .back
+        }
     }
 
     // MARK: - Camera Switching

@@ -45,7 +45,13 @@ class OverlayManager: ObservableObject {
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
         rectangleRequest.upperBodyOnly = true
         let handler = VNImageRequestHandler(ciImage: image, options: [:])
-        let savedIsFront = UserDefaults.standard.bool(forKey: UserDefaultKey.isFrontPosition)
+        
+        let isFront: Bool
+        if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition) {
+            isFront = (savedValue == "front")
+        } else {
+            isFront = false
+        }
 
         DispatchQueue.global().async {
             do {
@@ -55,7 +61,7 @@ class OverlayManager: ObservableObject {
                 if let results = rectangleRequest.results, !results.isEmpty {
                     let correctedBoxes = results.map { observation -> CGRect in
                             let box = observation.boundingBox
-                            if savedIsFront {
+                            if isFront {
                                 // 좌우 반전
                                 return CGRect(
                                     x: 1 - box.origin.x - box.size.width,
