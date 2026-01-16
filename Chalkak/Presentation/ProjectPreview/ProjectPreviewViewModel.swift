@@ -7,48 +7,81 @@
 
 import AVFoundation
 import Foundation
-import SwiftData
 
 /// ProjectPreviewView의 뷰모델
 final class ProjectPreviewViewModel: ObservableObject {
     // MARK: - Properties
+    // input properties
+    let editableClips: [EditableClip]
+    var onExport: (() async -> URL?)?
+
+    // Property Wrappers
+    @Published var player: AVQueuePlayer?
+    @Published var isExporting: Bool = false
+
     private var finalVideoURL: URL?
-    let photoLibrarySaver = PhotoLibrarySaver()
+    private var playerLooper: AVPlayerLooper?
     
-    @Published var player: AVPlayer?
-    @Published var isMerging: Bool = false
-    @Published var videoManager = VideoManager()
-    
-    /// 영상 병합 및 플레이어 세팅
-    @MainActor
-    func startMerging() async {
-        isMerging = true
-        do {
-            let url = try await videoManager.processAndSaveVideo()
-            self.finalVideoURL = url
-            self.player = AVPlayer(url: url)
-            self.player?.play()
-        } catch {
-            print("⚠️ mergeVideo 실패: \(error.localizedDescription)")
-        }
-        isMerging = false 
+    private let videoManager = VideoManager()
+    private let photoLibrarySaver = PhotoLibrarySaver()
+
+
+    // MARK: - init
+    init(editableClips: [EditableClip]) {
+        self.editableClips = editableClips
     }
     
+    
     // MARK: - Methods
-    /// 비디오를 사진 라이브러리에 저장
-    func exportToPhotos() async {
-        guard let finalVideoURL else { return }
-        await photoLibrarySaver.saveVideoToLibrary(videoURL: finalVideoURL)
+    func exportAndSetPlayer() async -> Bool {
+        finalVideoURL = await exportEditedVideoToPhotos()
+
+        if let finalVideoURL {
+            await setupLoopingPlayer(url: finalVideoURL)
+        }
+
+        return finalVideoURL != nil
+    }
+    
+    @MainActor
+    func exportEditedVideoToPhotos() async -> URL? {
+        isExporting = true
+        defer { isExporting = false }
+
+        do {
+            // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
+            // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
+            let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
+            let success = await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
+
+            return success ? finalURL : nil
+        } catch {
+            print("내보내기 실패:", error)
+            return nil
+        }
+
+    }
+
+    @MainActor
+    func setupLoopingPlayer(url: URL) {
+        let playerItem = AVPlayerItem(url: url)
+        player = AVQueuePlayer(playerItem: playerItem)
+
+        // 무한 반복 설정
+        guard let player else {
+            return
+        }
+        playerLooper = AVPlayerLooper(
+            player: player,
+            templateItem: playerItem
+        )
+
+        player.play()
     }
 
     /// 합본 영상을 임시 저장소에서 제거
     func cleanupTemporaryVideoFile() async {
         guard let finalVideoURL else { return }
         try? FileManager.default.removeItem(at: finalVideoURL)
-    }
-    
-    /// UserDefaults에서 currentProjectID 제거
-    func clearCurrentProjectID() {
-        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
     }
 }

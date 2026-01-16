@@ -81,8 +81,8 @@ struct ChalkakApp: App {
                                 BoundingBoxView(shootState: state)
                                     .toolbar(.hidden, for: .navigationBar)
 
-                            case .projectPreview:
-                                ProjectPreviewView()
+                            case .projectPreview(let editableClips):
+                                ProjectPreviewView(editableClips: editableClips)
 
                             case .projectEdit(let projectID, let newClip):
                                 ProjectEditView(projectID: projectID, newClip: newClip)

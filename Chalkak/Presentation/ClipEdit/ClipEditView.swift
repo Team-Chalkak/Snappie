@@ -176,7 +176,8 @@ struct ClipEditView: View {
             Button("촬영 마치기") {
                 // 트리밍한 클립 프로젝트에 추가
                 editViewModel.appendClipToCurrentProject()
-                coordinator.push(.projectPreview)
+                // TODO: case 확인 필요 (ssol)
+                coordinator.push(.projectPreview(editableClips: []))
 
                 Analytics.logEvent("FinishShootButtonTapped", parameters: nil)
             }
