@@ -63,7 +63,7 @@ final class ClipEditViewModel: ObservableObject {
     private let thumbnailCount = 10
     
     private var trimOffset: Double = 0
-    
+
     // 5. init & deinit
     init(
         clipURL: URL,
@@ -120,7 +120,6 @@ final class ClipEditViewModel: ObservableObject {
                     self.player = AVPlayer(playerItem: playerItem)
                 }
 
-                await generateThumbnails(for: asset)
                 await updatePreviewImage(at: self.startPoint)
                 playPreview()
 
@@ -132,7 +131,7 @@ final class ClipEditViewModel: ObservableObject {
     
     /// 영상 전체 길이와 썸네일 간격을 계산하여, 일정 시간 간격으로 트리밍 타임라인 썸네일 이미지 생성
     @MainActor
-    private func generateThumbnails(for asset: AVAsset) async {
+    func generateThumbnails() async {
         guard let imageGenerator = imageGenerator else { return }
         thumbnails = []
         let interval = duration / Double(thumbnailCount)

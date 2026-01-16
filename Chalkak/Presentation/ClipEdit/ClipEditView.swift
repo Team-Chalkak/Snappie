@@ -191,6 +191,7 @@ struct ClipEditView: View {
             Analytics.logEvent("retakeButtonTapped", parameters: nil)
         }
         .task {
+            await editViewModel.generateThumbnails()
             // 저장된 트리밍 값 유지
             if shootState != .firstShoot, editViewModel.clipID == nil {
                 editViewModel.applyReferenceDuration()
