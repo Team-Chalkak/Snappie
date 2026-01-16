@@ -82,6 +82,7 @@ struct ProjectEditView: View {
                 selectedClipID: $viewModel.selectedClipID,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
+                guideClipID: viewModel.guide?.clipID,
                 onSeek: viewModel.seekTo,
                 onMove: viewModel.moveClip,
                 onAddClipTapped: {

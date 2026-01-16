@@ -617,7 +617,7 @@ final class ProjectEditViewModel {
         }
         for (idx, originalClip) in originalOrdered.enumerated() {
             let tempClip = Clip(
-                id: "temp_\(UUID().uuidString)",
+                id: "temp_\(originalClip.id)",
                 videoURL: originalClip.videoURL,
                 originalDuration: originalClip.originalDuration,
                 startPoint: originalClip.startPoint,

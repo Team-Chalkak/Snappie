@@ -14,6 +14,7 @@ struct ClipTrimmingView: View {
     let isReordering: Bool
     let onDragStateChanged: (Bool) -> Void
     let onTap: () -> Void
+    let isGuideClip: Bool
 
     private let clipWidth: CGFloat = 62
     private let clipHeight: CGFloat = 97
@@ -35,17 +36,18 @@ struct ClipTrimmingView: View {
                             .padding(.bottom, 8)
                     }
                     .overlay(alignment: .topLeading) {
-                        // TODO: 가이드가 있는 클립일 경우 아래 주석의 실루엣 배지 띄우기
-//                        Image("silhouette")
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 12, height: 12)
-//                            .padding(2)
-//                            .background(
-//                                Circle()
-//                                    .fill(SnappieColor.labelDarkNormal)
-//                            )
-//                            .padding(4)
+                        if isGuideClip {
+                            Image("silhouette")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 12, height: 12)
+                                .padding(2)
+                                .background(
+                                    Circle()
+                                        .fill(SnappieColor.labelDarkNormal)
+                                )
+                                .padding(4)
+                        }
                         
                     }
             } else {
