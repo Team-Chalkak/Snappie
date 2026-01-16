@@ -30,6 +30,7 @@ final class ProjectEditViewModel {
   
     var isLoading = false
     var showEmptyProjectAlert = false
+    var showCannotDeletGuideClipAlert = false
     var selectedClipID: String?
 
     // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
@@ -666,6 +667,11 @@ final class ProjectEditViewModel {
                 showEmptyProjectAlert = true
                 return // 여기서 완전히 종료, 아무것도 삭제하지 않음
             }
+        }
+        // 가이드 클립인지 확인 - 삭제 불가능 alert
+        if tempProject.guide.clipID == id {
+            showCannotDeletGuideClipAlert = true
+            return // 삭제하지 않고 실행 종료
         }
         let currentTime = playHead
 
