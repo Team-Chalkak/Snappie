@@ -45,7 +45,7 @@ struct CameraRecordView: View {
             }
             .hidden()
             .overlay(
-                viewModel.isRecording ? nil :
+                (viewModel.isRecording || viewModel.isTimerRunning) ? nil :
                     SnappieButton(.solidSecondary(contentType: .icon(.conversion), size: .medium, isOutlined: false)
                     ) {
                         viewModel.changeCamera()
