@@ -221,18 +221,41 @@ struct ProjectEditView: View {
         .sheet(isPresented: $showExportView) {
             ProjectPreviewView(editableClips: viewModel.editableClips)
         }
-
+        
+        // 가이드 클립 삭제 시, 불가능 알림
+        .alert(
+            AlertType.cannotDeleteGuideClip.title,
+            isPresented: $viewModel.showCannotDeletGuideClipAlert,
+            actions: {
+                Button("확인") {
+                    print("삭제 못하고 확인버튼을 누르기")
+                }
+            },
+            message: {
+                Text(AlertType.cannotDeleteGuideClip.message)
+            }
+        )
+        
         // 모든 클립 삭제 시, 프로젝트 삭제 알림
         .alert(
-            .emptyProjectDelete,
+            AlertType.emptyProjectDelete.title,
             isPresented: $viewModel.showEmptyProjectAlert,
-            confirmAction: {
-                Task {
-                    let success = await viewModel.deleteEmptyProject()
-                    if success {
-                        coordinator.popToScreen(.projectList)
+            actions: {
+                Button(AlertType.emptyProjectDelete.confirmText, role: .destructive) {
+                    Task {
+                        let success = await viewModel.deleteEmptyProject()
+                        if success {
+                            coordinator.popToScreen(.projectList)
+                        }
                     }
                 }
+                
+                Button("취소", role: .cancel) {
+                    print("삭제 취소")
+                }
+            },
+            message: {
+                Text(AlertType.emptyProjectDelete.message)
             }
         )
 
