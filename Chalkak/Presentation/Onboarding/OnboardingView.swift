@@ -9,44 +9,42 @@ import FirebaseAnalytics
 import SwiftUI
 
 struct OnboardingView: View {
-    @ObservedObject var cameraManager: CameraManager
+    let onComplete: () -> Void
+
     @State private var currentIndex = 0
 
-    
     var body: some View {
         ZStack {
             SnappieColor.darkStrong.ignoresSafeArea()
-            
-            
+
             TabView(selection: $currentIndex) {
                 Onboard(ImageName: "onboard_image1",
                         title: "첫 촬영으로 가이드 완성",
                         description: "원하는 장면을 찍으면 자동으로 \n촬영 가이드가 만들어져요.")
-                .tag(0)
-                
+                    .tag(0)
+
                 Onboard(ImageName: "onboard_image2",
                         title: "촬영 직후 간단 편집",
                         description: "장면을 촬영할 때마다 \n길이만 간단히 조절하면 돼요.")
-                .tag(1)
-                
+                    .tag(1)
+
                 Onboard(ImageName: "onboard_image3",
                         title: "다 찍으면 영상 완성",
                         description: "원하는 장면을 다 찍고 종료하면 \n영상이 하나로 이어져 완성돼요.")
-                .tag(2)
+                    .tag(2)
             }
             .padding(.vertical, 48)
             .padding(.bottom, 56)
             .tabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
-            
-    
+
             VStack {
                 Spacer()
-                
+
                 if currentIndex == 2 {
                     Button("시작하기") {
+                        onComplete()
                         Analytics.logEvent("startButtonTapped", parameters: nil)
-                        cameraManager.completeOnboarding()
                     }
                     .font(.headline)
                     .foregroundColor(SnappieColor.labelDarkNormal)
@@ -63,7 +61,3 @@ struct OnboardingView: View {
         }
     }
 }
-
-
-
-

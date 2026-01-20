@@ -27,7 +27,8 @@ final class OverlayViewModel: ObservableObject {
     // 0. Input properties
     let clip: Clip
     let cameraSetting: CameraSetting
-    
+    let selectedTimestamp: Double
+
     // 1. Published properties
     @Published var isLoading = false
     @Published var isOverlayReady = false
@@ -41,19 +42,22 @@ final class OverlayViewModel: ObservableObject {
     var outlineImage: UIImage? { overlayManager.outlineImage }
     var extractedImage: UIImage? { extractor.extractedImage }
     private var coverImage: Data?
+    let cameraManager: CameraManager
 
     // 4. Init
-    init(clip: Clip, cameraSetting: CameraSetting) {
+    init(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double) {
         self.clip = clip
         self.cameraSetting = cameraSetting
+        self.cameraManager = cameraManager
+        self.selectedTimestamp = selectedTimestamp
         extractor.overlayManager = overlayManager
         prepareOverlay()
     }
 
-    /// 첫번째 프레임, 오버레이 추출
+    /// 선택한 프레임, 오버레이 추출
     func prepareOverlay() {
         isLoading = true
-        extractor.extractFrame(from: clip.videoURL, at: clip.startPoint) { [weak self] in
+        extractor.extractFrame(from: clip.videoURL, at: selectedTimestamp) { [weak self] in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -67,16 +71,16 @@ final class OverlayViewModel: ObservableObject {
     private func determineTilt() -> Tilt {
         let tiltList = clip.tiltList
         let startPoint = clip.startPoint
-        
+
         let timestampedTilt = tiltList
             .filter { $0.time >= startPoint }
             .min {
                 abs($0.time - startPoint) < abs($1.time - startPoint)
             }
-        
+
         return timestampedTilt?.tilt ?? Tilt(degreeX: 0.0, degreeZ: 0.0)
     }
-    
+
     /// 뒤로가기 버튼 누를 시, 오버레이 초기화
     func dismissOverlay() {
         isOverlayReady = false
@@ -87,7 +91,7 @@ final class OverlayViewModel: ObservableObject {
         extractor.extractedImage = nil
         extractor.extractedCIImage = nil
     }
-    
+
     /// 시가 기반 이름 자동 생성 함수 - 날짜 Formatter
     private func generateTimeBasedTitle(from date: Date) -> String {
         let formatter = DateFormatter()
@@ -95,32 +99,53 @@ final class OverlayViewModel: ObservableObject {
         let timeString = formatter.string(from: date)
         return "프로젝트 \(timeString)"
     }
-    
+
     /// `Project` 저장
     /// 첫번째 영상 촬영 시점에 Clip 먼저 저장한 후에 해당 데이터와 nil 상태인 guide를 함께 저장
     /// ProjectID는 UserDefault에도 저장되어 있습니다.
     @MainActor
-    func saveProjectData() {
+    func saveProjectData() -> String {
+        // temp 프로젝트면 가이드만 업데이트
+        if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID),
+           let project = SwiftDataManager.shared.fetchProject(byID: projectID),
+           project.isTemp,
+           let outlineImage = overlayManager.outlineImage
+        {
+            let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
+                BoundingBoxInfo(origin: PointWrapper(box.origin), scale: box.width)
+            }
+            project.guide.boundingBoxes = boundingBoxInfos
+            project.guide.outlineImageData = outlineImage.pngData() ?? Data()
+            project.guide.cameraTilt = determineTilt()
+            project.guide.selectedTimestamp = selectedTimestamp
+            project.guide.clipID = clip.id
+
+            guide = project.guide
+            SwiftDataManager.shared.saveContext()
+            return projectID
+        }
+
         saveClipData()
         saveCameraSetting()
-        
+
         guard let newGuide = makeGuide(clipID: clip.id) else {
             print("❌ 가이드 생성에 실패하여 프로젝트를 저장할 수 없습니다.")
-            return
+            return ""
         }
-        self.guide = newGuide
-        
+        guide = newGuide
+
         if let originalImage = extractedImage,
-           let croppedImage = croppedToSquare(image: originalImage) {
+           let croppedImage = croppedToSquare(image: originalImage)
+        {
             coverImage = croppedImage.jpegData(compressionQuality: 0.8)
         }
 
         let projectID = UUID().uuidString
         let createdAt = Date()
-        
+
         // 프로젝트 이름 자동 생성
         let generatedTitle = generateTimeBasedTitle(from: createdAt)
-        
+
         _ = SwiftDataManager.shared.createProject(
             id: projectID,
             guide: newGuide,
@@ -131,11 +156,13 @@ final class OverlayViewModel: ObservableObject {
             coverImage: coverImage,
             createdAt: createdAt
         )
-    
+
         SwiftDataManager.shared.saveContext()
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
+
+        return projectID
     }
-    
+
     /// clipID를 생성하고, SwiftDataManager를 통해 SwiftData에 저장
     @MainActor
     func saveClipData() {
@@ -147,12 +174,12 @@ final class OverlayViewModel: ObservableObject {
             print("클립 저장에 실패했습니다: \(error)")
         }
     }
-    
+
     @MainActor
     func saveCameraSetting() {
         do {
             try SwiftDataManager.shared.createCameraSetting(cameraSetting: cameraSetting)
-        } catch  {
+        } catch {
             print("cameraSetting 저장에 실패했습니다: \(error)")
         }
     }
@@ -160,42 +187,32 @@ final class OverlayViewModel: ObservableObject {
     /// Guide 객체 생성
     @MainActor
     func makeGuide(clipID: String) -> Guide? {
-        guard let capturedImage = overlayManager.outlineImage else {
+        guard let outlineImage = overlayManager.outlineImage else {
             print("❌ outlineImage가 없습니다.")
             return nil
         }
-        // 가이드 tilt 값 결정
-        let cameraTilt = determineTilt()
-        
-        let outlineImage: UIImage
-        let savedIsFront = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition)
 
-        if savedIsFront == "true" {
-            outlineImage = capturedImage.flippedHorizontally()
-        } else {
-            outlineImage = capturedImage
+        let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
+            BoundingBoxInfo(
+                origin: PointWrapper(box.origin),
+                scale: box.width
+            )
         }
-        
-        // 여러 BoundingBox → BoundingBoxInfo 배열로 변환
-            let boundingBoxInfos: [BoundingBoxInfo] = overlayManager.boundingBoxes.map { box in
-                BoundingBoxInfo(
-                    origin: PointWrapper(box.origin),
-                    scale: box.width // 필요 시 width/height 따로 둘 수도 있음
-                )
-            }
-        
+
         let guide = SwiftDataManager.shared.createGuide(
             clipID: clipID,
             boundingBoxes: boundingBoxInfos,
             outlineImage: outlineImage,
-            cameraTilt: cameraTilt
+            cameraTilt: determineTilt(),
+            selectedTimestamp: selectedTimestamp
         )
+        SwiftDataManager.shared.saveContext()
         return guide
     }
-    
+
     /// 정사각형 중앙 크롭 이미지 반환 함수
     func croppedToSquare(image: UIImage) -> UIImage? {
-        let originalWidth  = image.size.width
+        let originalWidth = image.size.width
         let originalHeight = image.size.height
         let sideLength = min(originalWidth, originalHeight)
 

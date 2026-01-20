@@ -23,31 +23,34 @@ import AVFoundation
     VideoControlView(
         isDragging: isDragging,
         overlayImage: guide?.outlineImage,
-        editViewModel: editViewModel
+        editViewModel: editViewModel,
+        isGuideSelectMode: false
     )
  */
 struct VideoControlView: View {
     let isDragging: Bool
     let overlayImage: UIImage?
-    
+    var displayTime: Double? = nil
+
     @ObservedObject var editViewModel: ClipEditViewModel
     @State private var isOverlayVisible: Bool = true
-    
+
     var body: some View {
         VStack(alignment: .center, spacing: 16 ,content: {
-            
+
             VideoPreviewWithOverlay(
                 previewImage: editViewModel.previewImage,
                 player: editViewModel.player,
                 isDragging: isDragging,
                 overlayImage: overlayImage,
-                isOverlayVisible: isOverlayVisible
+                isOverlayVisible: $isOverlayVisible
             )
-            
+
             VideoControlPanelView(
                 editViewModel: editViewModel,
                 isOverlayVisible: $isOverlayVisible,
-                overlayImage: overlayImage
+                showOverlayToggle: overlayImage != nil,
+                displayTime: displayTime
             )
         })
     }

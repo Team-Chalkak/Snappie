@@ -22,6 +22,8 @@ enum Icon: String {
     case timer10sec
     case timerOff
     case ellipsis
+    case silhouette
+    case export
     
     // common
     case arrowBackward
@@ -35,7 +37,8 @@ enum Icon: String {
     case pauseFill
     case playFill
     case dismiss
-    case silhouette
+    case union
+    case camera
 }
 
 /// 아이콘의 크기 

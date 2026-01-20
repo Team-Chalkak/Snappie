@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct EditableClip: Identifiable {
+struct EditableClip: Identifiable, Equatable, Hashable { // TODO: ClipEditView 확인 후 Identifiable만 남기기
     let id: String
     let url: URL
     let originalDuration: Double
@@ -17,11 +17,10 @@ struct EditableClip: Identifiable {
     var startPoint: Double
     var endPoint: Double
 
+    // startPoint 시점의 단일 썸네일
+    var thumbnail: UIImage?
     // 트리밍 모드 활성화 플래그
     var isTrimming: Bool = false
-
-    // 미리 생성된 썸네일 배열
-    var thumbnails: [UIImage]
 
     // 실제 재생되는 길이
     var trimmedDuration: Double {

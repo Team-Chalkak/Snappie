@@ -9,9 +9,9 @@ import SwiftUI
 
 struct GuideCameraView: View {
     let guide: Guide?
-    let shootState: ShootState 
-
-    @StateObject private var viewModel = BoundingBoxViewModel()
+    let shootState: ShootState
+    
+    @State private var viewModel = BoundingBoxViewModel()
     @StateObject private var cameraViewModel = CameraViewModel()
 
     init(guide: Guide?, shootState: ShootState) {
@@ -20,7 +20,7 @@ struct GuideCameraView: View {
 
         let cameraVM = CameraViewModel()
         self._cameraViewModel = StateObject(wrappedValue: cameraVM)
-        self._viewModel = StateObject(
+        self._viewModel = State(
             wrappedValue: BoundingBoxViewModel(
                 properTilt: guide?.cameraTilt,
                 tiltDataCollector: cameraVM.tiltCollector
@@ -42,7 +42,6 @@ struct GuideCameraView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .allowsHitTesting(false)
-                    .scaleEffect(x: cameraViewModel.isUsingFrontCamera ? -1 : 1, y: 1)
                     .padding(.top, 12)
                     .padding(.horizontal, 16)
                     .frame(maxHeight: .infinity, alignment: .top)
@@ -55,7 +54,7 @@ struct GuideCameraView: View {
 
             // Tilt 피드백 뷰
             if let tiltManager = viewModel.tiltManager {
-                TiltFeedbackView(offsetX: tiltManager.offsetX, offsetY: tiltManager.offsetZ)
+                TiltFeedbackView(tiltManager: tiltManager)
             }
         }
         .onAppear {

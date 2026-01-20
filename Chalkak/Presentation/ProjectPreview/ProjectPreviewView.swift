@@ -9,13 +9,22 @@ import AVKit
 import FirebaseAnalytics
 import SwiftUI
 
-/// 합본 영상을 확인하고 갤러리로 내보내기 할 수 있는 뷰
+/// 합본 영상을 갤러리로 내보내고 확인할 수 있는 뷰
 struct ProjectPreviewView: View {
     // MARK: Property Wrappers
 
-    @StateObject private var viewModel = ProjectPreviewViewModel()
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var viewModel: ProjectPreviewViewModel
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var showExportSuccessAlert = false
+    @State private var showPhotoPermissionDeniedAlert = false
+    @State private var isExporting = false
+
+    // MARK: Init
+
+    init(editableClips: [EditableClip]) {
+        self._viewModel = StateObject(wrappedValue: ProjectPreviewViewModel(editableClips: editableClips))
+    }
    
     // MARK: body
 
@@ -23,27 +32,12 @@ struct ProjectPreviewView: View {
         ZStack {
             SnappieColor.darkHeavy.ignoresSafeArea()
 
-            VStack(alignment: .center, spacing: 8, content: {
-                SnappieNavigationBar(
-                    leftButtonType: .dismiss {
-                        viewModel.clearCurrentProjectID()
-
-                        // 홈으로 이동 후 alert를 위한 userdefaults플래그 설정
-                        UserDefaults.standard.set(true, forKey: "showProjectSavedAlert")
-
-                        coordinator.removeAll()
-                    },
-                    rightButtonType: .oneButton(.init(
-                        label: "내보내기",
-                        action: {
-                            Task {
-                                await viewModel.exportToPhotos()
-                                showExportSuccessAlert = true
-                            }
-                            Analytics.logEvent("exportProjectButtonTapped", parameters: nil)
-                        }
-                    ))
-                )
+            VStack(alignment: .center, spacing: 8) {
+                SnappieButton(.iconNormal(icon: .dismiss, size: .large)) {
+                    dismiss()
+                }
+                .padding([.leading, .top])
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if let player = viewModel.player {
                     VideoPlayer(player: player)
@@ -51,23 +45,39 @@ struct ProjectPreviewView: View {
                 } else {
                     Spacer()
                 }
-            })
+            }
         }
         .navigationBarBackButtonHidden()
-        .snappieAlert(isPresented: $showExportSuccessAlert, message: "내보내기 완료")
         .snappieProgressAlert(
-            isPresented: $viewModel.isMerging,
-            isLoading: $viewModel.isMerging,
-            loadingMessage: "영상 생성 중...",
-            completionMessage: ""
+            isPresented: $viewModel.isExporting,
+            isLoading: $viewModel.isExporting,
+            loadingMessage: "내보내는 중...",
+            completionMessage: "내보내기 완료"
+        )
+        .snappieAlert(
+            isPresented: $showExportSuccessAlert,
+            message: "내보내기 완료"
+        )
+        .alert(
+            .photoPermissionDenied,
+            isPresented: $showPhotoPermissionDeniedAlert,
+            confirmAction: {
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }
         )
         .onAppear {
             Task {
-                await viewModel.startMerging()
+                let success = await viewModel.exportAndSetPlayer()
+                if success {
+                    showExportSuccessAlert = true
+                } else {
+                    showPhotoPermissionDeniedAlert = true
+                }
             }
         }
         .onDisappear {
-            // ✅ 원래 네가 작성한 클린업 로직 유지
             let taskID = UIApplication.shared.beginBackgroundTask(withName: "cleanTempVideo")
 
             Task.detached {
@@ -79,5 +89,5 @@ struct ProjectPreviewView: View {
 }
 
 #Preview {
-    ProjectPreviewView()
+    ProjectPreviewView(editableClips: [])
 }

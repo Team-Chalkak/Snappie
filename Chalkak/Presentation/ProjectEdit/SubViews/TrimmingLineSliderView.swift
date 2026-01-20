@@ -11,79 +11,80 @@ struct TrimminglineSliderView: View {
     @Binding var clips: [EditableClip]
     @Binding var playHeadPosition: Double
     @Binding var isDragging: Bool
+    @Binding var selectedClipID: String?
     let isPlaying: Bool
     let totalDuration: Double
+    let guideClipID: String?
 
     let onSeek: (Double) -> Void
-    let onToggleTrimming: (String) -> Void
-    let onTrimChanged: (String, Double, Double) -> Void
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
+    let onClipTapped: (String) -> Void
 
-    private let pxPerSecond: CGFloat = 50
-    private let clipSpacing: CGFloat = 8
-    private let timelineHeight: CGFloat = 60
-    private let rulerHeight: CGFloat = 23
-    private let timeBoardPadding: CGFloat = 11
+    // 클립별 duration에 따른 변환 함수
+    let pixelOffsetForTime: (Double) -> CGFloat
+    let timeForPixelOffset: (CGFloat) -> Double
+
+    private let clipSpacing: CGFloat = 3
+    private let sliderHeight: CGFloat = 130
+    private let clipHeight: CGFloat = 97
 
     @State private var dragOffset: CGFloat = 0
 
     var body: some View {
         ZStack {
-            VStack(spacing: 0) {
-                // 타임 보드
-                ProjectTimeBoardView(
-                    totalDuration: totalDuration,
-                    playHeadPosition: playHeadPosition,
-                    dragOffset: dragOffset,
-                    pxPerSecond: pxPerSecond,
-                    rulerHeight: rulerHeight
-                )
-                .padding(.bottom, timeBoardPadding)
-                
-                // 타임 라인
-                ProjectTimelineView(
-                    clips: $clips,
-                    isDragging: $isDragging,
-                    playHeadPosition: playHeadPosition,
-                    totalDuration: totalDuration,
-                    dragOffset: dragOffset,
-                    pxPerSecond: pxPerSecond,
-                    clipSpacing: clipSpacing,
-                    timelineHeight: timelineHeight,
-                    onToggleTrimming: onToggleTrimming,
-                    onTrimChanged: onTrimChanged,
-                    onMove: onMove,
-                    onAddClipTapped: onAddClipTapped,
-                    onDragStateChanged: onDragStateChanged
-                )
-                .gesture(
-                    DragGesture()
-                        .onChanged { gesture in
-                            isDragging = true;
-                            dragOffset = gesture.translation.width
-                        }
-                        .onEnded { gesture in
-                            isDragging = false
-                            let delta = -Double(gesture.translation.width / pxPerSecond)
-                            var newTime = playHeadPosition + delta
-                            newTime = min(max(0, newTime), totalDuration)
-                            onSeek(newTime)
-                            dragOffset = 0
-                        }
-                )
-            }
-            .frame(height: rulerHeight + timelineHeight)
+            // 타임 라인
+            ProjectTimelineView(
+                clips: $clips,
+                isDragging: $isDragging,
+                selectedClipID: $selectedClipID,
+                guideClipID: guideClipID,
+                playHeadPosition: playHeadPosition,
+                totalDuration: totalDuration,
+                dragOffset: dragOffset,
+                pixelOffsetForTime: pixelOffsetForTime,
+                clipSpacing: clipSpacing,
+                onMove: onMove,
+                onAddClipTapped: onAddClipTapped,
+                onDragStateChanged: onDragStateChanged,
+                onClipTapped: onClipTapped
+            )
+            .frame(height: clipHeight)
+            .background(
+                Rectangle()
+                    .fill(SnappieColor.containerFillNormal)
+                    .frame(maxWidth: .infinity)
+            )
+            .gesture(
+                DragGesture()
+                    .onChanged { gesture in
+                        isDragging = true;
+                        dragOffset = gesture.translation.width
+                    }
+                    .onEnded { gesture in
+                        isDragging = false
+
+                        // 현재 playHead의 픽셀 위치 계산
+                        let currentPixelOffset = pixelOffsetForTime(playHeadPosition)
+
+                        // 드래그 후 픽셀 위치 계산 (왼쪽 드래그는 음수)
+                        let newPixelOffset = currentPixelOffset - gesture.translation.width
+
+                        // 픽셀을 시간으로 변환
+                        var newTime = timeForPixelOffset(newPixelOffset)
+                        newTime = min(max(0, newTime), totalDuration)
+
+                        onSeek(newTime)
+                        dragOffset = 0
+                    }
+            )
             
             // Playhead
-            RoundedRectangle(cornerRadius: 2)
-                .fill(Color.matcha50)
-                .frame(width: 2, height: rulerHeight + timelineHeight + timeBoardPadding)
+            PlayheadView()
                 .frame(maxWidth: .infinity, alignment: .center)
-                .offset(y: 20)
                 .allowsHitTesting(false)
         }
-        .frame(height: rulerHeight + timeBoardPadding + timelineHeight)
+        .frame(height: sliderHeight)
     }
 }

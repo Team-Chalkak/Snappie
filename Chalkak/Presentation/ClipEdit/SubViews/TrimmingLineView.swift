@@ -30,10 +30,10 @@ struct TrimmingLineView: View {
 
     var body: some View {
         /// 내부 상수 선언
-        let totalWidth: CGFloat = Layout.totalWidth
-        let thumbnailLineWidth: CGFloat = Layout.thumbnailLineWidth
-        let handleWidth: CGFloat = Layout.handleWidth
-        let thumbnailHeight: CGFloat = Layout.thumbnailHeight
+        let totalWidth: CGFloat = TimelineConstants.totalWidth
+        let thumbnailLineWidth: CGFloat = TimelineConstants.thumbnailLineWidth
+        let handleWidth: CGFloat = TimelineConstants.handleWidth
+        let thumbnailHeight: CGFloat = TimelineConstants.thumbnailHeight
 
         /// 뷰모델에서 계산
         let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
@@ -58,12 +58,12 @@ struct TrimmingLineView: View {
 
                 TrimmingHandleView(isStart: false)
             }
-            .frame(width: totalWidth, height: Layout.thumbnailHeight)
-            
+            .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
+
             // 2. 트리밍 라인 박스
             Rectangle()
                 .stroke(SnappieColor.primaryNormal, lineWidth: 2)
-                .frame(width: thumbnailLineWidth, height: Layout.trimmingBoxHeight)
+                .frame(width: thumbnailLineWidth, height: TimelineConstants.trimmingBoxHeight)
                 .position(x: thumbnailLineWidth / 2 + handleWidth, y: thumbnailHeight / 2)
 
             // 3-1. 어두운 오버레이 (좌측)
@@ -80,13 +80,13 @@ struct TrimmingLineView: View {
                 topTrailingRadius: 6
             )
             .fill(SnappieColor.darkHeavy.opacity(0.6))
-            .frame(width: totalWidth - endX, height: thumbnailHeight)
-            .position(x: endX + (totalWidth - endX) / 2, y: thumbnailHeight / 2)
+            .frame(width: max(0, thumbnailLineWidth + handleWidth - endX), height: thumbnailHeight)
+            .offset(x: endX)
 
             // 4. 트리밍 박스
             Rectangle()
                 .stroke(SnappieColor.primaryNormal, lineWidth: 2)
-                .frame(width: endX - startX, height: Layout.trimmingBoxHeight)
+                .frame(width: endX - startX, height: TimelineConstants.trimmingBoxHeight)
                 .position(x: (startX + endX) / 2, y: thumbnailHeight / 2)
 
             // 5-1. 밝은 핸들 - 왼쪽 (드래그 가능)
@@ -107,7 +107,6 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.startPoint)
                         }
                 )
 
@@ -129,20 +128,45 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.endPoint)
                         }
                 )
             
-            // 5. 영상 첫번째 프레임 강조 박스
-            RoundedRectangle(cornerRadius: Layout.frameBoxCornerRadius)
-                .stroke(Layout.frameBoxStrokeColor, lineWidth: 2)
-                .frame(width: Layout.frameBoxWidth, height: Layout.frameBoxHeight)
+            // Playhead
+            ClipPlayheadView()
+                .frame(height: thumbnailHeight)
                 .position(
-                    x: startX + Layout.frameBoxOffsetX,
+                    x: editViewModel.playHeadX(
+                        thumbnailLineWidth: thumbnailLineWidth,
+                        handleWidth: handleWidth),
                     y: thumbnailHeight / 2
                 )
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            isDragging = true
+                            editViewModel.player?.pause()
+                            editViewModel.isPlaying = false
+
+                            let x = max(handleWidth,
+                                        min(gesture.location.x,
+                                            handleWidth + thumbnailLineWidth))
+
+                            let ratio = (x - handleWidth) / thumbnailLineWidth
+                            let time = ratio * editViewModel.duration
+
+                            editViewModel.currentPlayTime = time
+
+                            Task {
+                                await editViewModel.updatePreviewImage(at: time)
+                            }
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            editViewModel.seek(to: editViewModel.currentPlayTime)
+                        }
+                )
         }
-        .frame(width: totalWidth, height: Layout.thumbnailHeight)
+        .frame(width: totalWidth, height: TimelineConstants.thumbnailHeight)
         .contentShape(Rectangle())
         .gesture(
             // 드래그 제스처
@@ -152,7 +176,7 @@ struct TrimmingLineView: View {
                     editViewModel.player?.pause()
                     editViewModel.isPlaying = false
 
-                    let locationRatio = gesture.location.x / Layout.thumbnailLineWidth
+                    let locationRatio = gesture.location.x / TimelineConstants.thumbnailLineWidth
                     let centerTime = locationRatio * editViewModel.duration
                     let currentCenter = (editViewModel.startPoint + editViewModel.endPoint) / 2
                     let delta = centerTime - currentCenter
@@ -168,30 +192,5 @@ struct TrimmingLineView: View {
                     editViewModel.seek(to: editViewModel.startPoint)
                 }
         )
-    }
-}
-
-// MARK: - Layout Constants
-private extension TrimmingLineView {
-    enum Layout {
-        // 전체 뷰 너비
-        static let totalWidth: CGFloat = 345
-        
-        // 썸네일
-        static let thumbnailHeight: CGFloat = 60
-        static let thumbnailLineWidth: CGFloat = 305
-        
-        // 핸들
-        static let handleWidth: CGFloat = 20
-        
-        // 트리밍박스 : 썸네일 높이 - 2
-        static let trimmingBoxHeight: CGFloat = 58
-
-        // 첫번째 프레임 강조 박스
-        static let frameBoxCornerRadius: CGFloat = 6
-        static let frameBoxWidth: CGFloat = 38
-        static let frameBoxHeight: CGFloat = 56
-        static let frameBoxOffsetX: CGFloat = 19
-        static let frameBoxStrokeColor: Color = SnappieColor.labelPrimaryNormal
     }
 }

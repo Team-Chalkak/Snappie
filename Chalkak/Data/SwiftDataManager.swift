@@ -247,6 +247,28 @@ class SwiftDataManager {
     func deleteClip(_ clip: Clip) {
         context.delete(clip)
     }
+    
+    /// `Clip` 업데이트
+    func updateClipPoints(id: String, start: Double, end: Double) {
+        let descriptor = FetchDescriptor<Clip>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            let clips = try context.fetch(descriptor)
+            if let clip = clips.first {
+                clip.startPoint = start
+                clip.endPoint = end
+                
+                saveContext()
+                print("Successfully updated clip \(id): \(start)s ~ \(end)s")
+            } else {
+                print("Error: Clip with ID \(id) not found")
+            }
+        } catch {
+            print("Failed to fetch clip for update: \(error)")
+        }
+    }
 
     // MARK: - Guide
 
@@ -255,13 +277,15 @@ class SwiftDataManager {
         clipID: String,
         boundingBoxes: [BoundingBoxInfo],
         outlineImage: UIImage,
-        cameraTilt: Tilt
+        cameraTilt: Tilt,
+        selectedTimestamp: Double? = nil
     ) -> Guide {
         let guide = Guide(
             clipID: clipID,
             boundingBoxes: boundingBoxes,
             outlineImage: outlineImage,
-            cameraTilt: cameraTilt
+            cameraTilt: cameraTilt,
+            selectedTimestamp: selectedTimestamp
         )
         context.insert(guide)
         return guide
@@ -279,6 +303,20 @@ class SwiftDataManager {
         context.delete(guide)
     }
     
+    /// `Guide` 업데이트
+    func updateGuide(projectID: String, guide: Guide) {
+        guard let project = fetchProject(byID: projectID),
+              project.isTemp
+        else { return }
+
+        project.guide.boundingBoxes = guide.boundingBoxes
+        project.guide.outlineImageData = guide.outlineImageData
+        project.guide.cameraTilt = guide.cameraTilt
+        project.guide.selectedTimestamp = guide.selectedTimestamp
+
+        saveContext()
+    }
+
     // MARK: - CameraSetting
     
     /// `CameraSetting` 생성
@@ -305,6 +343,7 @@ class SwiftDataManager {
     }
     
     // MARK: - Save & Rollback
+
     /// Context 저장하기 - 변경사항 반영
     func saveContext() {
         do {

@@ -10,8 +10,9 @@ import SwiftUI
 struct BoundingBoxView: View {
     let shootState: ShootState
 
-    @StateObject private var viewModel = BoundingBoxViewModel()
+    @State private var viewModel = BoundingBoxViewModel()
     @EnvironmentObject private var coordinator: Coordinator
+    @Environment(PermissionManager.self) private var permissionManager
 
     var body: some View {
         Group {
@@ -24,21 +25,7 @@ struct BoundingBoxView: View {
             }
         }
         .onAppear {
-            if case .firstShoot = shootState {
-                viewModel.checkResumeProject()
-            }
+            permissionManager.reevaluateAndPresentIfNeeded()
         }
-        .alert(
-            .resumeProject,
-            isPresented: $viewModel.showResumeAlert,
-            cancelAction: {
-                viewModel.cancelResume()
-            },
-            confirmAction: {
-                if let resumeProjectGuide = viewModel.loadGuideForCurrentProject() {
-                    coordinator.push(.camera(state: .followUpShoot(guide: resumeProjectGuide)))
-                }
-            }
-        )
     }
 }

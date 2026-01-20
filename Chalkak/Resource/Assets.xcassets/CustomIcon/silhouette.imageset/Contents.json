@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "union.svg",
+      "filename" : "silhouette.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "silhouette 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "silhouette 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

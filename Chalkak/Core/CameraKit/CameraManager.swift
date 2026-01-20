@@ -12,15 +12,6 @@ import Photos
 import SwiftUI
 
 class CameraManager: NSObject, ObservableObject {
-    @Published var showOnboarding = !UserDefaults.standard.bool(forKey: UserDefaultKey.hasCompletedOnboarding)
-    // 앱 실행 시 카메라 화면에서 카메라, 마이크 권한 체크
-    @Published var videoAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published private(set) var audioAuthorizationStatus: AVAuthorizationStatus = .notDetermined
-    @Published var permissionState: PermissionState = .none
-    @Published var showPermissionSheet: Bool = false
-
-    private var audioRecordPermission: AVAudioSession.RecordPermission = .undetermined
-
     var session = AVCaptureSession()
     var videoDeviceInput: AVCaptureDeviceInput!
     let movieOutput = AVCaptureMovieFileOutput()
@@ -64,184 +55,22 @@ class CameraManager: NSObject, ObservableObject {
             UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
         }
     }
+    @Published private(set) var isPreviewMirrored: Bool = false
 
-    private var isRequestingPermissions = false
-    private var didBecomeActiveObserver: NSObjectProtocol?
+    var onPreviewMirroringChanged: ((Bool) -> Void)?
+    private weak var previewLayer: AVCaptureVideoPreviewLayer?
+
+    // 정책(원하면 설정 화면에서 바꿀 수 있게)
+    var recordingMirrorPolicy: RecordingMirrorPolicy = .followPreview
+    // 현재 파일이 미러로 저장되고 있는지(Clip에 넘겨 기록용)
+    @Published private(set) var isRecordingMirrored: Bool = false
 
     override init() {
         super.init()
-
-        if !showOnboarding {
-            checkPermissions()
-            if permissionState == .both {
-                Task {
-                    await setUpCamera()
-                }
-            }
-        }
     }
 
     deinit {
         session.stopRunning()
-        if let token = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(token)
-        }
-    }
-
-    @inline(__always)
-    private func currentMicPermission() -> AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
-    }
-
-    @inline(__always)
-    private func mapToAVAuthorization(_ record: AVAudioSession.RecordPermission) -> AVAuthorizationStatus {
-        switch record {
-        case .granted: return .authorized
-        case .denied: return .denied
-        case .undetermined: return .notDetermined
-        @unknown default: return .denied
-        }
-    }
-
-    func completeOnboarding() {
-        UserDefaults.standard.set(true, forKey: UserDefaultKey.hasCompletedOnboarding)
-        showOnboarding = false
-
-        checkPermissions()
-    }
-
-    func checkPermissions() {
-        videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        audioRecordPermission = currentMicPermission()
-        audioAuthorizationStatus = mapToAVAuthorization(audioRecordPermission)
-        updatePermissionState()
-    }
-
-    private func updatePermissionState() {
-        let videoGranted = (videoAuthorizationStatus == .authorized)
-        let audioGranted = (audioAuthorizationStatus == .authorized)
-
-        switch (videoGranted, audioGranted) {
-        case (true, true):
-            permissionState = .both
-            showPermissionSheet = false
-
-        case (true, false):
-            permissionState = .cameraOnly
-
-            let shouldShow = !isRequestingPermissions && (audioAuthorizationStatus == .denied)
-            showPermissionSheet = shouldShow
-
-        case (false, true):
-            permissionState = .audioOnly
-
-            let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
-            let shouldShow = !isRequestingPermissions && videoDenied
-            showPermissionSheet = shouldShow
-
-        case (false, false):
-            permissionState = .none
-
-            let videoDenied = (videoAuthorizationStatus == .denied || videoAuthorizationStatus == .restricted)
-            let audioDenied = (audioAuthorizationStatus == .denied)
-
-            let hasActualDenial = videoDenied || audioDenied
-            let shouldShow = !isRequestingPermissions && hasActualDenial
-            showPermissionSheet = shouldShow
-        }
-    }
-
-    func requestAndCheckPermissions() {
-        guard !isRequestingPermissions else { return }
-        isRequestingPermissions = true
-
-        // 최신 상태 캐싱
-        checkPermissions()
-
-        requestCameraIfNeeded { [weak self] in
-            self?.requestMicIfNeeded { [weak self] in
-                self?.finishPermissionRequest() // 두 알럿 콜백 종료 시점 단 한 번
-            }
-        }
-    }
-
-    /// 앱 첫 실행에서만 호출
-    func requestPermissionsIfNeededAtFirstLaunch() {
-        guard !isRequestingPermissions else { return }
-        isRequestingPermissions = true
-        showPermissionSheet = false
-
-        checkPermissions()
-
-        requestCameraIfNeeded { [weak self] in
-            self?.requestMicIfNeeded { [weak self] in
-                self?.finishPermissionRequest()
-            }
-        }
-    }
-
-    private func requestCameraIfNeeded(completion: @escaping () -> Void) {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-                    completion()
-                }
-            }
-        default:
-            videoAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-            completion()
-        }
-    }
-
-    private func requestMicIfNeeded(completion: @escaping () -> Void) {
-        let currentPermission = currentMicPermission()
-
-        if currentPermission == .undetermined {
-            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.audioRecordPermission = self?.currentMicPermission() ?? .undetermined
-                    self?.audioAuthorizationStatus = self?.mapToAVAuthorization(self?.audioRecordPermission ?? .undetermined) ?? .notDetermined
-                    completion()
-                }
-            }
-        } else {
-            audioRecordPermission = currentPermission
-            audioAuthorizationStatus = mapToAVAuthorization(currentPermission)
-            completion()
-        }
-    }
-
-    private func finishPermissionRequest() {
-        DispatchQueue.main.async { [weak self] in
-            self?.isRequestingPermissions = false
-
-            // 최신 상태 갱신
-            self?.checkPermissions()
-
-            // 권한 모두 허용 시 카메라 설정
-            if self?.permissionState == .both {
-                Task { @MainActor in
-                    await self?.setUpCamera()
-                }
-            }
-        }
-    }
-
-    func reevaluateAndPresentIfNeeded() {
-        checkPermissions()
-
-        if !isRequestingPermissions {
-            showPermissionSheet = (permissionState != .both)
-        }
-    }
-
-    func openSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
     }
 
     /// 카메라 세팅
@@ -292,11 +121,8 @@ class CameraManager: NSObject, ObservableObject {
                 videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             }
 
-            // 세션 설정 이후 프레임,초점
+            // 카메라 설정 (초점, 노출, 줌 포함)
             try configureCameraSettings(for: device)
-
-            // 시작카메라 줌 배율 설정
-            setZoomScale(backCameraZoomScale)
 
         } catch {
             print("카메라 설정 오류: \(error)")
@@ -344,16 +170,13 @@ class CameraManager: NSObject, ObservableObject {
             device.exposureMode = .continuousAutoExposure
         }
 
-        // 줌 설정
-        let minZoom = device.minAvailableVideoZoomFactor
-        let maxZoom = device.maxAvailableVideoZoomFactor
-        let zoomFactorToSet = backCameraZoomScale * 2.0
-        let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
-        device.videoZoomFactor = clampedZoomFactor
+        // 줌 설정 후면 카메라 한정
+        if device.position == .back {
+            applyZoomScale(backCameraZoomScale, to: device)
 
-        // 카메라 줌 UI반영
-        DispatchQueue.main.async { [weak self] in
-            self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            DispatchQueue.main.async { [weak self] in
+                self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
+            }
         }
     }
 
@@ -520,11 +343,13 @@ class CameraManager: NSObject, ObservableObject {
             // 카메라 위치 저장
             initialCameraPosition = newPosition
 
-            if let connection = movieOutput.connection(with: .video) {
-                if connection.isVideoMirroringSupported {
-                    connection.isVideoMirrored = newPosition == .front
-                }
+            // ✅ 프리뷰는 자동조정 켜고, 현재 값 브로드캐스트
+            if let conn = previewLayer?.connection {
+                conn.automaticallyAdjustsVideoMirroring = true
+                propagatePreviewMirroring(from: conn)
             }
+
+            updateRecordingMirroring()
 
         } catch {
             // 실패시 기존 카메라 복구
@@ -539,40 +364,46 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// 줌 배율 설정 (가상 카메라를 사용하여 끊김 없는 줌)
+    /// 줌 배율 설정
     func setZoomScale(_ scale: CGFloat) {
         guard let device = videoDeviceInput?.device else { return }
+        guard device.position == .back else { return }
 
         do {
             try device.lockForConfiguration()
+            defer { device.unlockForConfiguration() }
 
-            let minZoom = device.minAvailableVideoZoomFactor
-            let maxZoom = device.maxAvailableVideoZoomFactor
+            applyZoomScale(scale, to: device)
 
-            let zoomFactorToSet = scale * 2.0
-
-            // 디바이스 지원 줌 범위로 값 제한
-            let clampedZoomFactor = max(minZoom, min(zoomFactorToSet, maxZoom))
-
-            device.videoZoomFactor = clampedZoomFactor
             currentZoomScale = scale
+            backCameraZoomScale = scale
 
-            // 현재 카메라 포지션에 따라 줌 스케일 저장
-            if device.position == .back {
-                backCameraZoomScale = scale
-            }
-
-            device.unlockForConfiguration()
         } catch {
             print("줌 조정 에러 \(error)")
         }
     }
 
+    /// 디바이스에 실제 줌 배율을 적용
+    /// - Parameters:
+    ///   - scale: UI 줌 배율
+    ///   - device: AVCaptureDevice
+    /// - Note: device.lockForConfiguration() 이미 호출된 상태에서만 활용할 수 있음!  줌 설정이 끝나면  lockForConfiguration역시 필요 합니다 !
+    private func applyZoomScale(_ scale: CGFloat, to device: AVCaptureDevice) {
+        let minZoom = device.minAvailableVideoZoomFactor
+        let maxZoom = device.maxAvailableVideoZoomFactor
+
+        // UI 스케일을 실제 줌 배율 변환
+        let zoomAdjustment = scale * 2.0
+
+        let clampedZoomFactor = max(minZoom, min(zoomAdjustment, maxZoom))
+
+        device.videoZoomFactor = clampedZoomFactor
+    }
+
     /// 카메라 세션 시작
     func startSession() {
-        // 권한 체크 후 카메라세션 시작
-        checkPermissions()
-        if permissionState == .both, session.inputs.isEmpty {
+        // 권한은 외부(PermissionManager)에서 체크됨
+        if session.inputs.isEmpty {
             Task {
                 await setUpCamera()
                 startSessionInternal()
@@ -587,6 +418,11 @@ class CameraManager: NSObject, ObservableObject {
             guard let self = self else { return }
             if !self.session.isRunning {
                 self.session.startRunning()
+                // 세션이 돌기 시작하면 프리뷰 연결이 유효해지는 시점이므로 약간의 지연 후 갱신
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.refreshPreviewMirroring()
+                    self.updateRecordingMirroring()
+                }
             }
         }
     }
@@ -628,5 +464,80 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             return
         }
         videoSaved(url: outputFileURL)
+    }
+}
+
+extension CameraManager {
+    /// 카메라 프리뷰 레이어를 연결하고, 미러링 자동조정을 활성화한다.
+    func bindPreviewLayer(_ layer: AVCaptureVideoPreviewLayer) {
+        previewLayer = layer
+        layer.videoGravity = .resizeAspectFill
+
+        // 시스템이 전/후면 전환/방향 등에 따라 적절히 판단하도록
+        if let conn = layer.connection {
+            conn.automaticallyAdjustsVideoMirroring = true
+            // 초기 상태를 브로드캐스트
+            propagatePreviewMirroring(from: conn)
+            updateRecordingMirroring()
+        }
+    }
+}
+
+private extension CameraManager {
+    func propagatePreviewMirroring(from connection: AVCaptureConnection?) {
+        guard let connection = connection else { return }
+        let mirrored = connection.isVideoMirrored
+
+        if self.isPreviewMirrored != mirrored {
+            DispatchQueue.main.async {
+                self.isPreviewMirrored = mirrored
+                self.onPreviewMirroringChanged?(mirrored)
+                self.updateRecordingMirroring()
+            }
+        }
+    }
+
+    /// 프리뷰 레이어 연결에서 현재 미러링 상태를 읽어 반영
+    func refreshPreviewMirroring() {
+        propagatePreviewMirroring(from: previewLayer?.connection)
+    }
+    
+    func updateRecordingMirroring() {
+        // movieOutput
+        if let conn = movieOutput.connection(with: .video), conn.isVideoMirroringSupported {
+            switch recordingMirrorPolicy {
+            case .followPreview:
+                conn.automaticallyAdjustsVideoMirroring = false
+                conn.isVideoMirrored = isPreviewMirrored
+                isRecordingMirrored = isPreviewMirrored
+            case .alwaysMirrored:
+                conn.automaticallyAdjustsVideoMirroring = false
+                conn.isVideoMirrored = true
+                isRecordingMirrored = true
+            case .neverMirrored:
+                conn.automaticallyAdjustsVideoMirroring = false
+                conn.isVideoMirrored = false
+                isRecordingMirrored = false
+            }
+        }
+
+        // videoOutput도 파일 좌표계와 맞추기 위한 동일 처리
+        if let conn = videoOutput.connection(with: .video), conn.isVideoMirroringSupported {
+            switch recordingMirrorPolicy {
+            case .followPreview: conn.isVideoMirrored = isPreviewMirrored
+            case .alwaysMirrored: conn.isVideoMirrored = true
+            case .neverMirrored: conn.isVideoMirrored = false
+            }
+            conn.automaticallyAdjustsVideoMirroring = false
+        }
+    }
+
+}
+
+extension CameraManager {
+    enum RecordingMirrorPolicy {
+        case followPreview   // 권장: 프리뷰가 미러면 파일도 미러
+        case alwaysMirrored  // 항상 미러 저장
+        case neverMirrored   // 절대 미러 저장 X (기존 방식)
     }
 }

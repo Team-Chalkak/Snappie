@@ -10,21 +10,19 @@ import SwiftUI
 struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
     @Binding var isDragging: Bool
+    @Binding var selectedClipID: String?
+    let guideClipID: String?
     let playHeadPosition: Double
     let totalDuration: Double
     let dragOffset: CGFloat
 
-    let pxPerSecond: CGFloat
+    let pixelOffsetForTime: (Double) -> CGFloat
     let clipSpacing: CGFloat
-    let timelineHeight: CGFloat
 
-    let onToggleTrimming: (String) -> Void
-    let onTrimChanged: (String, Double, Double) -> Void
     let onMove: (IndexSet, Int) -> Void
     let onAddClipTapped: () -> Void
     let onDragStateChanged: (Bool) -> Void
-    
-    private let unionButtonWidth: CGFloat = 48
+    let onClipTapped: (String) -> Void
 
     // 드래그 상태
     @State private var draggingClip: EditableClip?
@@ -36,31 +34,36 @@ struct ProjectTimelineView: View {
 
     // 드래그 앵커(손가락이 클립 내부에서 찍힌 상대 X)
     @State private var dragAnchorInClip: CGFloat?
+    
+    private let clipWidth: CGFloat = 62
+    private let clipHeight: CGFloat = 97
+    private let clipRadius: CGFloat = 8
+    private let unionButtonWidth: CGFloat = 48
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 // Layer 1: timeline content
-                HStack(alignment: .center, spacing: 0) {
+                HStack(alignment: .center, spacing: clipSpacing) {
                     ForEach(Array(clips.enumerated()), id: \.1.id) { index, clip in
                         let isBeingDragged = (draggingClip?.id == clip.id && isDragActive)
-                        let clipWidth = clip.trimmedDuration * pxPerSecond
-                        let draggingWidth = (draggingClip?.trimmedDuration ?? 0) * pxPerSecond
 
                         // gap
-                        if let insertionIndex, insertionIndex == index, isDragActive, draggingWidth > 0 {
-                            insertionGap(width: draggingWidth)
+                        if let insertionIndex, insertionIndex == index, isDragActive {
+                            insertionGap(width: clipWidth)
                         }
 
                         // 드래그 중 원본은 숨김(겹침 방지)
                         ClipTrimmingView(
                             clip: clip,
                             isDragging: $isDragging,
-                            onToggleTrimming: { onToggleTrimming(clip.id) },
-                            onTrimChanged: { s, e in onTrimChanged(clip.id, s, e) },
-                            onDragStateChanged: onDragStateChanged
+                            isSelected: selectedClipID == clip.id,
+                            isReordering: isDragActive,
+                            onDragStateChanged: onDragStateChanged,
+                            onTap: { onClipTapped(clip.id) },
+                            isGuideClip: guideClipID == clip.id
                         )
-                        .frame(width: isBeingDragged ? 0.0 : clipWidth, height: timelineHeight)
+                        .frame(width: isBeingDragged ? 0.0 : clipWidth, height: clipHeight)
                         .opacity(isBeingDragged ? 0.0 : 1.0)
                         .animation(.interactiveSpring(response: 0.22, dampingFraction: 0.88), value: insertionIndex)
                         .gesture(longPressDragGesture(clip: clip, geo: geo))
@@ -70,32 +73,29 @@ struct ProjectTimelineView: View {
                     if let insertionIndex,
                        insertionIndex == clips.count,
                        isDragActive,
-                       let draggingClip {
-                        insertionGap(width: draggingClip.trimmedDuration * pxPerSecond)
+                       draggingClip != nil {
+                        insertionGap(width: clipWidth)
                     }
 
                     Button(action: onAddClipTapped) {
-                        Image("union")
-                            .padding(.horizontal, 16)
-                            .frame(height: timelineHeight)
+                        IconView(iconType: .union, scale: .large)
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .frame(width: clipWidth, height: clipHeight, alignment: .center)
                             .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(SnappieColor.primaryLight)
+                                RoundedRectangle(cornerRadius: clipRadius)
+                                    .fill(.deepGreen400)
                             )
                     }
-                    .padding(.leading, 2)
                 }
                 .padding(.horizontal, geo.size.width / 2)
-                .offset(x: -CGFloat(playHeadPosition) * pxPerSecond + dragOffset)
+                .offset(x: -pixelOffsetForTime(playHeadPosition) + dragOffset)
                 .frame(
-                    width: geo.size.width + CGFloat(totalDuration) * pxPerSecond,
-                    height: timelineHeight,
+                    height: clipHeight,
                     alignment: .leading
                 )
 
                 // Layer 2: overlay (앵커 기반 왼쪽 정렬)
                 if let draggingClip = draggingClip, isDragActive, let dragValue = self.dragValue {
-                    let clipWidth = draggingClip.trimmedDuration * pxPerSecond
                     let viewMinX = geo.frame(in: .global).minX
 
                     // 손가락이 누른 위치(클립 내부 상대 X). 없으면 가운데로.
@@ -116,23 +116,24 @@ struct ProjectTimelineView: View {
                     ClipTrimmingView(
                         clip: draggingClip,
                         isDragging: .constant(true),
-                        onToggleTrimming: { },
-                        onTrimChanged: { _, _ in },
-                        onDragStateChanged: onDragStateChanged
+                        isSelected: selectedClipID == draggingClip.id,
+                        isReordering: isDragActive,
+                        onDragStateChanged: onDragStateChanged,
+                        onTap: { onClipTapped(draggingClip.id) },
+                        isGuideClip: guideClipID == draggingClip.id
                     )
-                    .frame(width: clipWidth)
+                    .frame(width: clipWidth, height: clipHeight)
                     .scaleEffect(scaleDuringDrag, anchor: .center)
                     .offset(x: adjustedOffsetX)
                     .shadow(radius: 10)
                 }
             }
             .frame(
-                width: getTimelineFullWidth(geoWidth: geo.size.width),
-                height: timelineHeight,
+                height: clipHeight,
                 alignment: .leading
             )
         }
-        .frame(height: timelineHeight)
+        .frame(height: clipHeight)
     }
 
     // MARK: - Drag & Drop Gesture
@@ -156,19 +157,18 @@ struct ProjectTimelineView: View {
                 // 드래그 시작 시 1회 앵커 계산: (손가락 전역X) - (클립 전역 왼쪽X)
                 if dragAnchorInClip == nil {
                     let timelineFrame = geo.frame(in: .global)
-                    let timelineOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+                    let timelineOffset = -pixelOffsetForTime(playHeadPosition) + dragOffset
                     let contentStartGlobalX = timelineFrame.minX + (timelineFrame.width / 2) + timelineOffset
 
                     // HStack 내에서 해당 클립의 왼쪽X(콘텐츠 좌표) 합산
                     var leadingXInContent: CGFloat = 0
                     for (index, clip) in clips.enumerated() {
                         if clip.id == draggingClip.id { break }
-                        leadingXInContent += clip.trimmedDuration * pxPerSecond
+                        leadingXInContent += clipWidth
                         if index < clips.count - 1 { leadingXInContent += clipSpacing }
                     }
                     let clipLeftGlobalX = contentStartGlobalX + leadingXInContent
 
-                    let clipWidth = draggingClip.trimmedDuration * pxPerSecond
                     var anchor = drag.location.x - clipLeftGlobalX
                     anchor = max(0, min(anchor, clipWidth))      // 0...clipWidth 로 클램프
                     dragAnchorInClip = anchor
@@ -218,7 +218,7 @@ struct ProjectTimelineView: View {
     private func contentStartGlobalX(_ geo: GeometryProxy) -> CGFloat {
         let frame = geo.frame(in: .global)
         let halfWidth = frame.size.width / 2
-        let timelineOffset = -CGFloat(playHeadPosition) * pxPerSecond + dragOffset
+        let timelineOffset = -pixelOffsetForTime(playHeadPosition) + dragOffset
         return frame.minX + halfWidth + timelineOffset
     }
 
@@ -229,12 +229,12 @@ struct ProjectTimelineView: View {
         var accumulatedX: CGFloat = 0
         for (index, clip) in clips.enumerated() {
             if clip.id == clipID { break }
-            accumulatedX += clip.trimmedDuration * pxPerSecond
+            accumulatedX += clipWidth
             if index < clips.count - 1 { accumulatedX += 2 } // 구분선 폭과 동일하게
         }
         return accumulatedX
     }
-    
+
     /// 드래그 중인 클립의 왼쪽 모서리 X(콘텐츠 좌표계 기준) 를 바탕으로,
     /// 현재 배열에서 어느 인덱스 앞에 삽입할지(갭 인덱스)를 계산합니다.
     /// - Parameters:
@@ -246,10 +246,9 @@ struct ProjectTimelineView: View {
         var accumulatedX: CGFloat = 0
         var reducedIdx = 0
         let reducedCount = clips.count - 1
-        
-        for (index, clip) in clips.enumerated() {
+
+        for (index, _) in clips.enumerated() {
             if index == sourceIndex { continue }
-            let clipWidth = clip.trimmedDuration * pxPerSecond
             let spacingAfter: CGFloat = (reducedIdx < reducedCount - 1) ? clipSpacing : 0
             let boundaryMidX = accumulatedX + (clipWidth + spacingAfter) / 2
             if leftX < boundaryMidX { return index }
@@ -265,16 +264,8 @@ struct ProjectTimelineView: View {
         RoundedRectangle(cornerRadius: 6)
             .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 6]))
             .foregroundStyle(SnappieColor.primaryLight)
-            .frame(width: max(4, width), height: timelineHeight)
+            .frame(width: max(4, width), height: clipHeight)
             .transition(.opacity.combined(with: .move(edge: .leading)))
             .animation(.easeInOut(duration: 0.18), value: insertionIndex)
-    }
-}
-
-extension ProjectTimelineView {
-    func getTimelineFullWidth(geoWidth: CGFloat) -> CGFloat {
-        let videoRangeWidth = CGFloat(totalDuration) * pxPerSecond
-        
-        return geoWidth + videoRangeWidth + unionButtonWidth
     }
 }

@@ -9,7 +9,7 @@ import FirebaseAnalytics
 import SwiftUI
 
 struct ProjectPreviewSectionView: View {
-    @ObservedObject var viewModel: ProjectEditViewModel
+    @State var viewModel: ProjectEditViewModel
     
     var body: some View {
         ZStack {

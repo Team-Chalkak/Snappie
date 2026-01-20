@@ -9,6 +9,12 @@ import Foundation
 
 final class Coordinator: ObservableObject {
     @Published var path: [Path] = []
+    
+    /// 직전 화면을 알 수 있는 변수
+    var previousPath: Path? {
+        guard path.count >= 2 else { return nil }
+        return path[path.count - 2]
+    }
 
     func push(_ path: Path) {
         self.path.append(path)

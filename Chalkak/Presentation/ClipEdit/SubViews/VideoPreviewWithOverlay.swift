@@ -34,16 +34,16 @@ struct VideoPreviewWithOverlay: View {
     let player: AVPlayer?
     let isDragging: Bool
     let overlayImage: UIImage?
-    let isOverlayVisible: Bool
+    
+    @Binding var isOverlayVisible: Bool
 
     var body: some View {
-        ZStack {
-            VideoPreviewView(
-                previewImage: previewImage,
-                player: player,
-                isDragging: isDragging
-            )
-
+        VideoPreviewView(
+            previewImage: previewImage,
+            player: player,
+            isDragging: isDragging
+        )
+        .overlay {
             if isOverlayVisible, let overlayImage {
                 Image(uiImage: overlayImage)
                     .resizable()
