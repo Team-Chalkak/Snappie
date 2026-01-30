@@ -14,7 +14,7 @@ enum Path: Hashable {
     case overlay(clip: Clip, cameraSetting: CameraSetting, cameraManager: CameraManager, selectedTimestamp: Double)
     case camera(state: ShootState)
 
-    case projectPreview
+    case projectPreview(editableClips: [EditableClip])
     case projectEdit(projectID: String, newClip: Clip? = nil)
     case projectList
 }

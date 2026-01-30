@@ -87,6 +87,7 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
+                    displayTime: editViewModel.startPoint,
                     editViewModel: editViewModel
                 )
 
@@ -95,18 +96,20 @@ struct GuideSelectView: View {
                     Divider()
                         .foregroundStyle(Color.deepGreen50.opacity(0.1))
 
-                    HStack {
+                    ZStack(alignment: .center) {
                         Text("00:00")
                             .font(SnappieFont.style(.roundCaption1))
                             .foregroundStyle(SnappieColor.primaryHeavy)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 24)
 
-                        Spacer()
 
                         Text((clip.endPoint - clip.startPoint).formattedTime)
                             .font(SnappieFont.style(.roundCaption1))
                             .foregroundStyle(SnappieColor.primaryHeavy)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, 24)
                     }
-                    .padding(.horizontal, 24)
                     // 하단 썸네일 부분
                     GuideFrameSelectorView(editViewModel: editViewModel, isDragging: $isDragging)
                         .padding(.horizontal, 26)

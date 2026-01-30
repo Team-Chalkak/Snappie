@@ -30,7 +30,7 @@ struct ChalkakApp: App {
 
         do {
             self.sharedContainer = try ModelContainer(
-                for: SchemaV3.Clip.self, SchemaV3.Guide.self, SchemaV3.Project.self, SchemaV3.CameraSetting.self,
+                for: SchemaV4.Clip.self, SchemaV4.Guide.self, SchemaV4.Project.self, SchemaV4.CameraSetting.self,
                 migrationPlan: MigrationPlan.self
             )
         } catch {
@@ -39,9 +39,7 @@ struct ChalkakApp: App {
         }
 
         SwiftDataManager.shared.configure(container: sharedContainer)
-
-        backfillGuideWasMirroredIfNeeded(container: sharedContainer)
-
+        
         Task { @MainActor in
             SwiftDataManager.shared.cleanupAllTempProjects()
         }
@@ -56,6 +54,7 @@ struct ChalkakApp: App {
                             switch path {
                             case .startProject:
                                 StartProjectView()
+                                    .toolbar(.hidden, for: .navigationBar)
 
                             case .clipEdit(let url, let state, let cameraSetting, let cameraManager, let timeStampedTiltList, let clipID):
                                 ClipEditView(
@@ -82,8 +81,8 @@ struct ChalkakApp: App {
                                 BoundingBoxView(shootState: state)
                                     .toolbar(.hidden, for: .navigationBar)
 
-                            case .projectPreview:
-                                ProjectPreviewView()
+                            case .projectPreview(let editableClips):
+                                ProjectPreviewView(editableClips: editableClips)
 
                             case .projectEdit(let projectID, let newClip):
                                 ProjectEditView(projectID: projectID, newClip: newClip)
@@ -110,37 +109,6 @@ struct ChalkakApp: App {
             if oldValue == false && newValue == true {
                 permissionManager.requestAndCheckPermissions()
             }
-        }
-    }
-
-    private func backfillGuideWasMirroredIfNeeded(container: ModelContainer) {
-        let flagKey = "didBackfill_GuideWasMirroredAtCapture_v2_0_0"
-        guard !UserDefaults.standard.bool(forKey: flagKey) else { return }
-
-        let context = ModelContext(container)
-
-        do {
-            // 아직 false인 것만 대상(초기 기본값 false)
-            var fd = FetchDescriptor<SchemaV3.Guide>()
-            fd.predicate = #Predicate<SchemaV3.Guide> { $0.wasMirroredAtCapture == false }
-            let guides = try context.fetch(fd)
-
-            // 프로젝트 미리 로드해서 메모리 매칭
-            let projects = try context.fetch(FetchDescriptor<SchemaV3.Project>())
-
-            for guide in guides {
-                if let project = projects.first(where: { $0.guide.clipID == guide.clipID }),
-                   let cam = project.cameraSetting,
-                   cam.isFrontPosition
-                {
-                    guide.wasMirroredAtCapture = true
-                }
-            }
-
-            try context.save()
-            UserDefaults.standard.set(true, forKey: flagKey)
-        } catch {
-            print("Backfill failed: \(error)")
         }
     }
 }

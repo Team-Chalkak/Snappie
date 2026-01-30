@@ -14,6 +14,7 @@ struct TrimminglineSliderView: View {
     @Binding var selectedClipID: String?
     let isPlaying: Bool
     let totalDuration: Double
+    let guideClipID: String?
 
     let onSeek: (Double) -> Void
     let onMove: (IndexSet, Int) -> Void
@@ -38,6 +39,7 @@ struct TrimminglineSliderView: View {
                 clips: $clips,
                 isDragging: $isDragging,
                 selectedClipID: $selectedClipID,
+                guideClipID: guideClipID,
                 playHeadPosition: playHeadPosition,
                 totalDuration: totalDuration,
                 dragOffset: dragOffset,

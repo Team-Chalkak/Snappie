@@ -17,6 +17,7 @@ import SwiftUI
  ```
  */
 enum SnappieColor {
+    // MARK: - Semantic 색상
     static let darkLight: Color = Color("deep-green-200")
     static let darkNormal: Color = Color("deep-green-400")
     static let darkStrong: Color = Color("deep-green-600")
@@ -35,6 +36,11 @@ enum SnappieColor {
     static let containerFillNormal: Color = SnappieColor.darkStrong
     static let redRecording: Color = Color("red-recording")
     static let gradientFillNormal = Gradient(colors: [ Color("matcha-200").opacity(0.2), Color("deep-green-600").opacity(0.15)])
+    
+    // MARK: - Foundation 색상
+    static let matcha50: Color = Color("matcha-50")
+    
+    // MARK: - 추가 색상 활용
     static var overlayStroke: CGColor? {
         return UIColor(named: "matcha-100")?.cgColor
     }

@@ -78,6 +78,8 @@
 		993A217B2E26A07C0059B70A /* BoundingBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217A2E26A0760059B70A /* BoundingBoxView.swift */; };
 		993A217D2E26A0870059B70A /* BoundingBoxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */; };
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
+		994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE12F18884C0029AAE3 /* SchemaV4.swift */; };
+		994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */; };
 		998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998230512EF1CE500081CE94 /* GoogleService-Info.plist */; };
 		998230562EF1D5660081CE94 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 998230552EF1D5660081CE94 /* FirebaseCore */; };
 		998230582EF1E5180081CE94 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 998230572EF1E5180081CE94 /* FirebaseAnalytics */; };
@@ -243,6 +245,8 @@
 		993A217A2E26A0760059B70A /* BoundingBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxView.swift; sourceTree = "<group>"; };
 		993A217C2E26A0810059B70A /* BoundingBoxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxViewModel.swift; sourceTree = "<group>"; };
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
+		994EFAE12F18884C0029AAE3 /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
+		994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlayheadView.swift; sourceTree = "<group>"; };
 		998230512EF1CE500081CE94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
@@ -519,6 +523,7 @@
 		993A1F262E267E0C0059B70A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				994EFAE12F18884C0029AAE3 /* SchemaV4.swift */,
 				99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */,
 				99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */,
 				7D60F6482F0D141700621874 /* SchemaV3.swift */,
@@ -604,6 +609,7 @@
 		993A1F422E267E0C0059B70A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */,
 				934007902E3652BD006BE89C /* TrimmingHandleView.swift */,
 				993A1F3E2E267E0C0059B70A /* TrimmingControlView.swift */,
 				993A1F3F2E267E0C0059B70A /* TrimmingLineView.swift */,
@@ -922,6 +928,7 @@
 				993A1CC22E2049D50059B70A /* Sources */,
 				993A1CC32E2049D50059B70A /* Frameworks */,
 				993A1CC42E2049D50059B70A /* Resources */,
+				994EFAE02F1016AA0029AAE3 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1058,6 +1065,33 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		994EFAE02F1016AA0029AAE3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		993A1CC22E2049D50059B70A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1114,6 +1148,7 @@
 				99C93A0A2E27BADE00F42541 /* Coordinator.swift in Sources */,
 				993A1F622E267E0C0059B70A /* Tilt.swift in Sources */,
 				9340078F2E340467006BE89C /* VideoPreviewWithOverlay.swift in Sources */,
+				994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */,
 				993A1F632E267E0C0059B70A /* SwiftDataManager.swift in Sources */,
 				993A1F642E267E0C0059B70A /* TimerOptions.swift in Sources */,
 				992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */,
@@ -1122,6 +1157,7 @@
 				C5C12EB12E33684F00C4DC6D /* SnappieNavigationBar.swift in Sources */,
 				7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
+				994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
 				7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */,
@@ -1352,7 +1388,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F83F8K6223;
@@ -1376,7 +1413,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.DeveloperAcademy.Chalkak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1397,7 +1434,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F83F8K6223;
@@ -1421,7 +1458,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.DeveloperAcademy.Chalkak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

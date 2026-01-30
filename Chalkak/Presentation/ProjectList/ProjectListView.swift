@@ -36,7 +36,10 @@ struct ProjectListView: View {
                         coordinator.push(.startProject)
                     } label: {
                         HStack(spacing: 4) {
-                            Image(systemName: "plus")
+                            Image("plus")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20,height: 20)
                             Text("새 프로젝트")
                         }.foregroundStyle(SnappieColor.labelDarkNormal)
                             .font(SnappieFont.style(.proLabel4))

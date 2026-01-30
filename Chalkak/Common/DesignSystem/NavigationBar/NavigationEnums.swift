@@ -26,7 +26,33 @@ extension SnappieNavigationBar {
 
     /// 버튼을 위해 필요한 정보들
     struct ItemsForButton {
-        let label: String
+        enum Style {
+            case text(String)
+            case icon(Icon)
+        }
+        
+        let style: Style
+        let isEnabled: Bool
         let action: () -> Void
+        
+        init(
+            label: String,
+            isEnabled: Bool = true,
+            action: @escaping () -> Void
+        ) {
+            self.style = .text(label)
+            self.isEnabled = isEnabled
+            self.action = action
+        }
+        
+        init(
+            icon: Icon,
+            isEnabled: Bool = true,
+            action: @escaping () -> Void
+        ) {
+            self.style = .icon(icon)
+            self.isEnabled = isEnabled
+            self.action = action
+        }
     }
 }

@@ -14,10 +14,11 @@ struct ProjectEditView: View {
     @State private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var showExitConfirmation = false
-    @State private var showExportSuccessAlert = false
     @State private var showPhotoPermissionDeniedAlert = false
-    @State private var isExporting = false
     @State private var isOverlayVisible: Bool = true
+    @State private var showExportView = false
+    @State private var isSaving = false
+    @State private var showSaveCompleteAlert: Bool = false
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -30,21 +31,32 @@ struct ProjectEditView: View {
     var body: some View {
         VStack(spacing: 0) {
             SnappieNavigationBar(
-                navigationTitle: "프로젝트 편집",
+                navigationTitle: viewModel.projectTitle,
                 leftButtonType: .backward {
-                    if viewModel.hasChanges {
+                    if viewModel.hasChanges && !isSaving {
                         showExitConfirmation = true
                     } else {
                         UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
                         coordinator.popToScreen(.projectList)
                     }
                 },
-                rightButtonType: .oneButton(.init(label: "내보내기") {
-                    Task {
-                        await viewModel.exportEditedVideoToPhotos()
-                        showExportSuccessAlert = true
+                rightButtonType: .twoButton(
+                    primary: .init(label: "저장") {
+                        Task {
+                            isSaving = true
+                            let success = await viewModel.commitChanges()
+                            if success {
+                                // 저장 후 새로운 temp 프로젝트 생성
+                                await viewModel.initializeTempProject(loadAfter: true)
+                                showSaveCompleteAlert = true
+                            }
+                            isSaving = false
+                        }
+                    },
+                    secondary: .init(icon: .export) {
+                        showExportView.toggle()
                     }
-                })
+                )
             )
             .padding(.bottom, 16)
             
@@ -82,6 +94,7 @@ struct ProjectEditView: View {
                 selectedClipID: $viewModel.selectedClipID,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
+                guideClipID: viewModel.guide?.clipID,
                 onSeek: viewModel.seekTo,
                 onMove: viewModel.moveClip,
                 onAddClipTapped: {
@@ -203,32 +216,46 @@ struct ProjectEditView: View {
         } message: {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
         }
-
-        // 내보내기 완료 알림
-        .snappieAlert(
-            isPresented: $showExportSuccessAlert,
-            message: "내보내기 완료"
+        
+        // 내보내기 시트
+        .sheet(isPresented: $showExportView) {
+            ProjectPreviewView(editableClips: viewModel.editableClips)
+        }
+        
+        // 가이드 클립 삭제 시, 불가능 알림
+        .alert(
+            AlertType.cannotDeleteGuideClip.title,
+            isPresented: $viewModel.showCannotDeletGuideClipAlert,
+            actions: {
+                Button("확인") {
+                    print("삭제 못하고 확인버튼을 누르기")
+                }
+            },
+            message: {
+                Text(AlertType.cannotDeleteGuideClip.message)
+            }
         )
-
-        // 진행중 로딩 프로그레스
-        .snappieProgressAlert(
-            isPresented: $isExporting,
-            isLoading: $isExporting,
-            loadingMessage: "영상 내보내는 중...",
-            completionMessage: ""
-        )
-
+        
         // 모든 클립 삭제 시, 프로젝트 삭제 알림
         .alert(
-            .emptyProjectDelete,
+            AlertType.emptyProjectDelete.title,
             isPresented: $viewModel.showEmptyProjectAlert,
-            confirmAction: {
-                Task {
-                    let success = await viewModel.deleteEmptyProject()
-                    if success {
-                        coordinator.popToScreen(.projectList)
+            actions: {
+                Button(AlertType.emptyProjectDelete.confirmText, role: .destructive) {
+                    Task {
+                        let success = await viewModel.deleteEmptyProject()
+                        if success {
+                            coordinator.popToScreen(.projectList)
+                        }
                     }
                 }
+                
+                Button("취소", role: .cancel) {
+                    print("삭제 취소")
+                }
+            },
+            message: {
+                Text(AlertType.emptyProjectDelete.message)
             }
         )
 
@@ -243,11 +270,19 @@ struct ProjectEditView: View {
                 }
             }
         )
+        
+        // 프로젝트 저장 커스텀 Alert
+        .snappieProgressAlert(
+            isPresented: $showSaveCompleteAlert,
+            isLoading: $isSaving,
+            loadingMessage: "저장 중...",
+            completionMessage: "편집 내용 저장됨"
+        )
     }
 }
 
 // MARK: - Subviews
-
+/*
 private extension ProjectEditView {
     @ViewBuilder
     var navigationBar: some View {
@@ -330,3 +365,4 @@ private extension ProjectEditView {
         }
     }
 }
+*/

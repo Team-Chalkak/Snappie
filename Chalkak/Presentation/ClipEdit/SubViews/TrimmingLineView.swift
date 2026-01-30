@@ -107,7 +107,6 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.startPoint)
                         }
                 )
 
@@ -129,7 +128,41 @@ struct TrimmingLineView: View {
                         }
                         .onEnded { _ in
                             isDragging = false
-                            editViewModel.seek(to: editViewModel.endPoint)
+                        }
+                )
+            
+            // Playhead
+            ClipPlayheadView()
+                .frame(height: thumbnailHeight)
+                .position(
+                    x: editViewModel.playHeadX(
+                        thumbnailLineWidth: thumbnailLineWidth,
+                        handleWidth: handleWidth),
+                    y: thumbnailHeight / 2
+                )
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            isDragging = true
+                            editViewModel.player?.pause()
+                            editViewModel.isPlaying = false
+
+                            let x = max(handleWidth,
+                                        min(gesture.location.x,
+                                            handleWidth + thumbnailLineWidth))
+
+                            let ratio = (x - handleWidth) / thumbnailLineWidth
+                            let time = ratio * editViewModel.duration
+
+                            editViewModel.currentPlayTime = time
+
+                            Task {
+                                await editViewModel.updatePreviewImage(at: time)
+                            }
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            editViewModel.seek(to: editViewModel.currentPlayTime)
                         }
                 )
         }

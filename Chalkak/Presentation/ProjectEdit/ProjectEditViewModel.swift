@@ -30,19 +30,18 @@ final class ProjectEditViewModel {
   
     var isLoading = false
     var showEmptyProjectAlert = false
+    var showCannotDeletGuideClipAlert = false
     var selectedClipID: String?
-    
-    // MARK: – 저장/내보내기용 프로퍼티
-
-    var isExporting = false
-    private let videoManager = VideoManager()
-    private let photoLibrarySaver = PhotoLibrarySaver()
 
     // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
     private var originalClips: [EditableClip] = []
 
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
+    }
+
+    var projectTitle: String {
+        project?.title ?? "프로젝트 편집"
     }
 
     // MARK: - Temp 관련 프로퍼티
@@ -505,25 +504,6 @@ final class ProjectEditViewModel {
         }
     }
 
-    // MARK: – 편집된 영상 갤러리에 내보내기
-
-    func exportEditedVideoToPhotos() async -> Bool {
-        isExporting = true
-        defer { isExporting = false }
-
-        do {
-            // videoManager는 processAndSaveVideo(clips:)를 구현해 두세요.
-            // 클립 배열을 받아 합쳐진 URL을 리턴하도록 만듭니다.
-            let finalURL = try await videoManager.processAndSaveVideo(clips: editableClips)
-            let success = await photoLibrarySaver.saveVideoToLibrary(videoURL: finalURL)
-
-            return success
-        } catch {
-            print("내보내기 실패:", error)
-            return false
-        }
-    }
-
     func setCurrentProjectID() {
         UserDefaults.standard.set(projectID, forKey: UserDefaultKey.currentProjectID)
     }
@@ -577,7 +557,6 @@ final class ProjectEditViewModel {
             boundingBoxes: originalProject.guide.boundingBoxes,
             outlineImage: originalProject.guide.outlineImage ?? UIImage(),
             cameraTilt: originalProject.guide.cameraTilt,
-            wasMirroredAtCapture: originalProject.guide.wasMirroredAtCapture,
             selectedTimestamp: originalProject.guide.selectedTimestamp
         )
 
@@ -614,7 +593,7 @@ final class ProjectEditViewModel {
         }
         for (idx, originalClip) in originalOrdered.enumerated() {
             let tempClip = Clip(
-                id: "temp_\(UUID().uuidString)",
+                id: "temp_\(originalClip.id)",
                 videoURL: originalClip.videoURL,
                 originalDuration: originalClip.originalDuration,
                 startPoint: originalClip.startPoint,
@@ -688,6 +667,11 @@ final class ProjectEditViewModel {
                 showEmptyProjectAlert = true
                 return // 여기서 완전히 종료, 아무것도 삭제하지 않음
             }
+        }
+        // 가이드 클립인지 확인 - 삭제 불가능 alert
+        if tempProject.guide.clipID == id {
+            showCannotDeletGuideClipAlert = true
+            return // 삭제하지 않고 실행 종료
         }
         let currentTime = playHead
 
@@ -773,7 +757,6 @@ final class ProjectEditViewModel {
         originalProject.guide.boundingBoxes = tempProject.guide.boundingBoxes
         originalProject.guide.outlineImageData = tempProject.guide.outlineImageData
         originalProject.guide.cameraTilt = tempProject.guide.cameraTilt
-        originalProject.guide.wasMirroredAtCapture = tempProject.guide.wasMirroredAtCapture
         originalProject.guide.selectedTimestamp = tempProject.guide.selectedTimestamp
 
         // temp 클립의 originalClipID -> 원본 clipID로 복원

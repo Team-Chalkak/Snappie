@@ -38,15 +38,10 @@ struct GuideCameraView: View {
                 }
 
             if let guide = guide, let outline = guide.outlineImage {
-                
-                let shouldFlip = guide.wasMirroredAtCapture != cameraViewModel.isPreviewMirrored
-                
                 Image(uiImage: outline)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .allowsHitTesting(false)
-                    // 개선: 현재 카메라의 Mirror 상태를 기준으로 가이드를 뒤집습니다.
-                    .scaleEffect(x: shouldFlip ? -1 : 1, y: 1)
                     .padding(.top, 12)
                     .padding(.horizontal, 16)
                     .frame(maxHeight: .infinity, alignment: .top)
@@ -59,7 +54,7 @@ struct GuideCameraView: View {
 
             // Tilt 피드백 뷰
             if let tiltManager = viewModel.tiltManager {
-                TiltFeedbackView(offsetX: tiltManager.offsetX, offsetY: tiltManager.offsetZ)
+                TiltFeedbackView(tiltManager: tiltManager)
             }
         }
         .onAppear {

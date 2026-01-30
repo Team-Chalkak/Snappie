@@ -29,7 +29,6 @@ struct CameraView: View {
     @State private var navigateToEdit = false
     @State private var feedbackOpacity: Double = 0
     @State private var fadeOutTask: Task<Void, Never>?
-    @State private var showExitAlert = false
 
     var body: some View {
         ZStack {
@@ -38,7 +37,7 @@ struct CameraView: View {
             } else {
                 SnappieColor.darkHeavy.edgesIgnoringSafeArea(.all)
             }
-            
+
             ZStack {
                 CameraPreviewView(
                     session: viewModel.session,
@@ -51,7 +50,7 @@ struct CameraView: View {
                 )
                 .aspectRatio(9 / 16, contentMode: .fit)
                 .clipped()
-                
+
                 // 타이머 설정 오버레이
                 if viewModel.showTimerFeedback != nil {
                     Text("\(viewModel.showTimerFeedback!.rawValue)")
@@ -59,12 +58,13 @@ struct CameraView: View {
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
                         .opacity(feedbackOpacity)
                 }
-                
+
                 // 타이머 카운트다운 오버레이
                 if viewModel.isTimerRunning && viewModel.timerCountdown > 0 {
                     Text("\(viewModel.timerCountdown)")
                         .font(SnappieFont.style(.kronaExtra))
                         .foregroundColor(SnappieColor.labelPrimaryNormal)
+                        .frame(width: 200, height: 200)
                         .transition(.opacity)
                         .animation(.easeOut(duration: 0.4), value: viewModel.timerCountdown)
                 }
@@ -77,38 +77,33 @@ struct CameraView: View {
             if viewModel.isHorizontalLevelActive {
                 HorizontalLevelIndicatorView(gravityX: viewModel.tiltCollector.gravityX)
             }
-            
+
             // 촬영 이탈버튼
-            VStack {
-                HStack {
-                    SnappieButton(.iconBackground(
-                        icon: .dismiss,
-                        size: .large,
-                        isActive: true
-                    )) {
-                        showExitAlert = true
-                            Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
-                    }
-                    .padding(.leading, 30)
-                    .padding(.top, 25)
-                        
-                    Spacer()
+            if !viewModel.isRecording {
+                SnappieButton(.iconBackground(
+                    icon: .dismiss,
+                    size: .large,
+                    isActive: true
+                )) {
+                    handleExitCamera()
+                    Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
                 }
-                    
-                Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(.leading, 30)
+                .padding(.top, 25)
             }
-            
+
             VStack {
                 CameraTopControlView(viewModel: viewModel, guide: guide)
-                
+
                 Spacer()
-                
+
                 CameraBottomControlView(viewModel: viewModel)
             }.padding(.horizontal, Layout.cameraControlHorizontalPadding)
         }
         .onChange(of: viewModel.showTimerFeedback) { _, newValue in
             fadeOutTask?.cancel()
-            
+
             if newValue != nil {
                 // 즉시 opacity 1
                 feedbackOpacity = 1
@@ -116,7 +111,7 @@ struct CameraView: View {
                     do {
                         // 대기 1초
                         try await Task.sleep(nanoseconds: 700_000_000)
-                        
+
                         // 태스크가 취소되지 않았다면 페이드아웃
                         if !Task.isCancelled {
                             withAnimation(.easeOut(duration: 0.3)) {
@@ -133,7 +128,7 @@ struct CameraView: View {
         .onReceive(viewModel.videoSavedPublisher) { url in
             self.clipUrl = url
             viewModel.saveCameraSettings()
-            
+
             coordinator.push(.clipEdit(
                 clipURL: url,
                 state: shootState,
@@ -170,18 +165,9 @@ struct CameraView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
-        .alert("촬영을 마치고 나갈까요?", isPresented: $showExitAlert) {
-            Button("취소", role: .cancel) {}
-            Button("나가기", role: .destructive) {
-                handleExitCamera()
-                Analytics.logEvent("exitCameraButtonTapped", parameters: nil)
-            }
-        } message: {
-            Text("지금까지 찍은 장면은 저장돼요.")
-        }
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
     }
-    
+
     private func handleExitCamera() {
         viewModel.stopCamera()
 

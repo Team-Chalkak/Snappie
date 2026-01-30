@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct EditableClip: Identifiable {
+struct EditableClip: Identifiable, Equatable, Hashable { // TODO: ClipEditView 확인 후 Identifiable만 남기기
     let id: String
     let url: URL
     let originalDuration: Double

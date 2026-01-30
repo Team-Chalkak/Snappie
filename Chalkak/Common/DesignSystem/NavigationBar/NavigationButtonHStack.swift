@@ -63,29 +63,83 @@ extension SnappieNavigationBar {
 
                 Spacer()
 
-                // (right button(s))
-                if let secondaryRightButton {
-                    SnappieButton(
-                        .solidSecondary(
-                            contentType: .text(secondaryRightButton.label),
-                            size: .medium,
-                            isOutlined: true
-                        ),
-                        action: secondaryRightButton.action
-                    )
+                // right button(s)
+                // Secondary (우측 왼쪽)
+                if let secondary = secondaryRightButton {
+                    rightButtonView(secondary, isPrimary: false)
+                        .disabled(!secondary.isEnabled)
+                        .opacity(secondary.isEnabled ? 1.0 : 0.4)
                 }
 
-                if let primaryRightButton {
-                    SnappieButton(
-                        .solidPrimary(
-                            title: primaryRightButton.label,
-                            size: .medium
-                        ),
-                        action: primaryRightButton.action
-                    )
+                // Primary (우측 오른쪽)
+                if let primary = primaryRightButton {
+                    if let secondaryButtonStyle = secondaryRightButton?.style,
+                       case .icon = secondaryButtonStyle {
+                        rightButtonView(
+                            primary,
+                            isPrimary: true,
+                            isSecondaryStyleIcon: true
+                        )
+                        .disabled(!primary.isEnabled)
+                        .opacity(primary.isEnabled ? 1.0 : 0.4)
+                    } else {
+                        rightButtonView(primary, isPrimary: true)
+                            .disabled(!primary.isEnabled)
+                            .opacity(primary.isEnabled ? 1.0 : 0.4)
+                    }
                 }
             }
         }
-    }
+        
+        @ViewBuilder
+        private func rightButtonView(
+            _ item: ItemsForButton,
+            isPrimary: Bool,
+            isSecondaryStyleIcon: Bool = false
+        ) -> some View {
+            switch item.style {
+            case .text(let title):
+                if isPrimary {
+                    if isSecondaryStyleIcon {
+                        SnappieButton(
+                            .solidSecondary(
+                                contentType: .text(title),
+                                size: .medium,
+                                isOutlined: false
+                            ),
+                            action: item.action
+                        )
+                    } else {
+                        SnappieButton(
+                            .solidPrimary(
+                                title: title,
+                                size: .medium
+                            ),
+                            action: item.action
+                        )
+                    }
+                } else {
+                    SnappieButton(
+                        .solidSecondary(
+                            contentType: .text(title),
+                            size: .medium,
+                            isOutlined: true
+                        ),
+                        action: item.action
+                    )
+                }
 
+            case .icon(let icon):
+                SnappieButton(
+                    .iconBackground(
+                        icon: icon,
+                        size: .medium,
+                        isActive: item.isEnabled
+                    ),
+                    action: item.action
+                )
+            }
+        }
+
+    }
 }
