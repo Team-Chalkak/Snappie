@@ -94,7 +94,7 @@ struct ClipEditView: View {
 
             VStack(alignment: .center, spacing: 16) {
                 SnappieNavigationBar(
-                    navigationTitle: "장면 다듬기",
+                    navigationTitle: Text("장면 다듬기"),
                     leftButtonType: .backward {
                         guard let previous = coordinator.previousPath else {
                             return

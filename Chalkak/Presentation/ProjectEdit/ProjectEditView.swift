@@ -31,7 +31,7 @@ struct ProjectEditView: View {
     var body: some View {
         VStack(spacing: 0) {
             SnappieNavigationBar(
-                navigationTitle: viewModel.projectTitle,
+                navigationTitle: viewModel.projectTitleText,
                 leftButtonType: .backward {
                     if viewModel.hasChanges && !isSaving {
                         showExitConfirmation = true

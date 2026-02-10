@@ -16,7 +16,7 @@ enum AlertType {
     case photoPermissionDenied
     case cannotDeleteGuideClip
 
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
         case .deleteProject: return "프로젝트를 삭제할까요?"
         case .retakeVideo: return "다시 찍으시겠어요?"
@@ -28,7 +28,7 @@ enum AlertType {
         }
     }
 
-    var message: String {
+    var message: LocalizedStringKey {
         switch self {
         case .deleteProject: return "프로젝트와 안에 있는 장면이 모두 삭제돼요."
         case .retakeVideo: return "지금 나가면 방금 찍은 영상이 지워져요."
@@ -40,7 +40,7 @@ enum AlertType {
         }
     }
 
-    var confirmText: String {
+    var confirmText: LocalizedStringKey {
         switch self {
         case .deleteProject: return "삭제"
         case .retakeVideo, .cannotDeleteGuideClip: return "확인"

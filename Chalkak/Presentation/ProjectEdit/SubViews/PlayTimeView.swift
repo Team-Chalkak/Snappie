@@ -20,7 +20,7 @@ struct PlayTimeView: View {
     private var displayText: String {
         if let clip = trimmingClip {
             // 트리밍 모드: 소수점 두 자리, 앞자리 0 패딩 없이
-            return String(format: "%.2f초", clip.trimmedDuration)
+            return "\(clip.trimmedDuration, default: "%.2f")"
         } else {
             // 일반 모드: 소수점 두 자리, 정수부 2자리 0패딩
             return String(
@@ -38,7 +38,7 @@ struct PlayTimeView: View {
             
             if let clip = trimmingClip {
                 // 트리밍 모드: 소수점 두 자리, 앞자리 0 패딩 없이
-                Text(String(format: "%.2f초", clip.trimmedDuration))
+                Text("\(clip.trimmedDuration, specifier: "%.2f")")
                     .font(SnappieFont.style(.proLabel3))
                     .foregroundStyle(SnappieColor.labelDarkNormal)
                     .padding(.horizontal, 8)

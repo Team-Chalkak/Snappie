@@ -5,6 +5,7 @@
 //  Created by 석민솔 on 12/29/25.
 //
 
+import SwiftUI
 
 enum ToolbarButtonStyle {
     case editClip
@@ -13,7 +14,7 @@ enum ToolbarButtonStyle {
 }
 
 extension ToolbarButtonStyle {
-    var label: String {
+    var label: LocalizedStringKey {
         switch self {
         case .editClip:
             "장면 다듬기"
