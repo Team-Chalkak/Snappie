@@ -27,7 +27,16 @@ struct ProjectTimelineView: View {
     // 드래그 상태
     @State private var draggingClip: EditableClip?
     @State private var dragValue: DragGesture.Value?
-    @State private var isDragActive = false
+    @State private var isDragActive = false {
+        didSet {
+            // isDragActive 변경 시 노티피케이션 발송
+            NotificationCenter.default.post(
+                name: NSNotification.Name(NotificationCenterKey.ClipReorderingStateChanged.rawValue),
+                object: nil,
+                userInfo: [NotificationCenterKey.ClipReorderingStateChanged.userInfoKey: isDragActive]
+            )
+        }
+    }
 
     // 삽입 후보 인덱스(gap)
     @State private var insertionIndex: Int?
