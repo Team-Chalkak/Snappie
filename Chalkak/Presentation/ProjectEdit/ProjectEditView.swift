@@ -172,6 +172,9 @@ struct ProjectEditView: View {
                     // 임시 프로젝트 생성 및 초기 로드
                     await viewModel.initializeTempProject(loadAfter: true)
                     
+                    // 시작 위치를 기존 영상의 제일 마지막 위치로
+                    viewModel.seekTo(time: viewModel.totalDuration)
+                    
                     if let clip = newClip {
                         viewModel.addClipToTemp(clip: clip)
                         newClip = nil
