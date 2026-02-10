@@ -80,6 +80,8 @@
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 		994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE12F18884C0029AAE3 /* SchemaV4.swift */; };
 		994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */; };
+		994EFB5C2F3AEE830029AAE3 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */; };
+		994EFB5E2F3AFD9B0029AAE3 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */; };
 		998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998230512EF1CE500081CE94 /* GoogleService-Info.plist */; };
 		998230562EF1D5660081CE94 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 998230552EF1D5660081CE94 /* FirebaseCore */; };
 		998230582EF1E5180081CE94 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 998230572EF1E5180081CE94 /* FirebaseAnalytics */; };
@@ -247,6 +249,8 @@
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		994EFAE12F18884C0029AAE3 /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
 		994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlayheadView.swift; sourceTree = "<group>"; };
+		994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		998230512EF1CE500081CE94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
@@ -671,6 +675,8 @@
 				C5FB3EC22E2E0E2900A4C1BE /* Fonts */,
 				993A1F4C2E267E0C0059B70A /* Assets.xcassets */,
 				993A1F4D2E267E0C0059B70A /* sample-video.mov */,
+				994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */,
+				994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -1016,6 +1022,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 993A1CBD2E2049D50059B70A;
 			minimizedProjectReferenceProxies = 1;
@@ -1040,7 +1047,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */,
+				994EFB5E2F3AFD9B0029AAE3 /* InfoPlist.xcstrings in Resources */,
 				C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
+				994EFB5C2F3AEE830029AAE3 /* Localizable.xcstrings in Resources */,
 				993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */,
 				993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */,
 				993A1F522E267E0C0059B70A /* sample-video.mov in Resources */,
@@ -1320,6 +1329,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1376,6 +1386,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1398,10 +1409,10 @@
 				INFOPLIST_FILE = Chalkak/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Snappie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "App의 다양한 컨텐츠를 사용하여, 사진 또는 동영상을 촬영해 보세요.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "동영상에 소리를 녹음하시려면 App이 마이크에 접근할 수 있도록 허용되어있어야 합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 기기에 저장하기 위해 사진에 대한 접근을 허용해야 합니다.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "사용자 맞춤 서비스 제공을 위해 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is required to record audio in videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save videos to your device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Tracking permission is used to provide personalized services.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1443,10 +1454,10 @@
 				INFOPLIST_FILE = Chalkak/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Snappie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "App의 다양한 컨텐츠를 사용하여, 사진 또는 동영상을 촬영해 보세요.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "동영상에 소리를 녹음하시려면 App이 마이크에 접근할 수 있도록 허용되어있어야 합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 기기에 저장하기 위해 사진에 대한 접근을 허용해야 합니다.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "사용자 맞춤 서비스 제공을 위해 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is required to record audio in videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save videos to your device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Tracking permission is used to provide personalized services.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
