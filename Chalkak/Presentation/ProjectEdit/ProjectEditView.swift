@@ -23,6 +23,9 @@ struct ProjectEditView: View {
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
 
+    // 클립 순서 조정 시 toolbar opacity 관리
+    @State private var toolbarOpacity: Double = 1.0
+
     init(projectID: String, newClip: Clip? = nil) {
         self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
         self._newClip = State(initialValue: newClip)
@@ -145,7 +148,7 @@ struct ProjectEditView: View {
                         guard let payload = viewModel.makeClipEditPayload(
                             selectedClipID: selectedClipID
                         ) else { return }
-                        
+
                         coordinator.push(.guideSelect(
                             clip: payload.clip,
                             state: payload.state,
@@ -159,6 +162,7 @@ struct ProjectEditView: View {
                 )
                 .padding(.top, 16)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                .opacity(toolbarOpacity)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
@@ -166,6 +170,13 @@ struct ProjectEditView: View {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
         )
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name(NotificationCenterKey.ClipReorderingStateChanged.rawValue))) { notification in
+            if let isReordering = notification.userInfo?[NotificationCenterKey.ClipReorderingStateChanged.userInfoKey] as? Bool {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    toolbarOpacity = isReordering ? 0 : 1
+                }
+            }
+        }
         .onAppear {
             Task {
                 if !viewModel.isAlreadyInitialized {
