@@ -27,14 +27,14 @@ final class ProjectEditViewModel {
     var previewImage: UIImage?
     var isDragging = false
     var guide: Guide? /// 프로젝트 로딩중
-  
+
     var isLoading = false
     var showEmptyProjectAlert = false
     var showCannotDeletGuideClipAlert = false
     var selectedClipID: String?
 
-    // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
-    private var originalClips: [EditableClip] = []
+    /// 수정 여부 판단 플래그
+    private(set) var isDirty = false
 
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
@@ -47,8 +47,7 @@ final class ProjectEditViewModel {
     // MARK: - Temp 관련 프로퍼티
 
     var hasChanges: Bool {
-        guard let project = SwiftDataManager.shared.fetchProject(byID: projectID) else { return false }
-        return project.isTemp
+        return isDirty
     }
 
     var originalProjectID: String {
@@ -69,11 +68,31 @@ final class ProjectEditViewModel {
     // MARK: - 비동기 로딩 메서드
 
     func loadProject() async {
+        let prevClips = editableClips
+        let prevGuideTimestamp = guide?.selectedTimestamp
+
         isLoading = true
-
         await loadProjectData()
-
         isLoading = false
+
+        // projectEditView뿐만아니라, 클립 편집 / 가이드 같이 다른 뷰로 이탈해서 변경하고 돌아오는 것 감지
+        if isAlreadyInitialized, !prevClips.isEmpty {
+            if prevClips.count != editableClips.count {
+                isDirty = true
+            } else {
+                for (prev, curr) in zip(prevClips, editableClips) {
+                    if prev.id == curr.id,
+                       prev.startPoint != curr.startPoint || prev.endPoint != curr.endPoint
+                    {
+                        isDirty = true
+                        break
+                    }
+                }
+            }
+            if guide?.selectedTimestamp != prevGuideTimestamp {
+                isDirty = true
+            }
+        }
     }
 
     @MainActor
@@ -126,9 +145,6 @@ final class ProjectEditViewModel {
         // UI 업데이트 (썸네일 없이 먼저 표시)
         editableClips = tempClips
 
-        // 원본 상태 저장 (변경사항 추적용)
-        originalClips = tempClips
-
         // 플레이어 설정 (썸네일 없이도 가능)
         await setupPlayerAsync()
 
@@ -178,7 +194,7 @@ final class ProjectEditViewModel {
         do {
             let result = try await generator.image(at: time)
             return UIImage(cgImage: result.image)
-    
+
         } catch {
             print("썸네일 생성 실패 at \(atTime)s: \(error)")
             return nil
@@ -372,7 +388,7 @@ final class ProjectEditViewModel {
     func updatePreviewImage(at time: Double) async {
         guard let generator = imageGenerator else { return }
         let time = CMTime(seconds: time, preferredTimescale: 600)
-        
+
         do {
             let result = try await generator.image(at: time)
             previewImage = UIImage(cgImage: result.image)
@@ -486,6 +502,7 @@ final class ProjectEditViewModel {
 
     func moveClip(from source: IndexSet, to destination: Int) {
         let currentTime = playHead
+        isDirty = true
 
         // 1. Reorder the UI-facing array
         editableClips.move(fromOffsets: source, toOffset: destination)
@@ -607,6 +624,9 @@ final class ProjectEditViewModel {
             tempProject.clipList.append(tempClip)
         }
 
+        // 처음 생성시 false
+        isDirty = false
+
         // Context에 추가 (Guide와 CameraSetting 먼저)
         SwiftDataManager.shared.context.insert(tempGuide)
         if let tempCameraSetting = tempCameraSetting {
@@ -632,6 +652,7 @@ final class ProjectEditViewModel {
             print("현재 temp 프로젝트가 아닙니다.")
             return
         }
+        isDirty = true
 
         let nextOrder = (tempProject.clipList.map(\.order).max() ?? -1) + 1
 
@@ -674,6 +695,7 @@ final class ProjectEditViewModel {
             return // 삭제하지 않고 실행 종료
         }
         let currentTime = playHead
+        isDirty = true
 
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
@@ -717,6 +739,7 @@ final class ProjectEditViewModel {
         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
         editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
+        isDirty = true
 
         // 드래그 중이 아닐 때 플레이어 업데이트 수행
         if !isDragging {
