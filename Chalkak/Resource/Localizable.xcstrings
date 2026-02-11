@@ -416,7 +416,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "마이크 접근 권한"
           }
         }
