@@ -19,7 +19,8 @@ struct ProjectEditView: View {
     @State private var showExportView = false
     @State private var isSaving = false
     @State private var showSaveCompleteAlert: Bool = false
-    @State private var toolbarOpacity: Double = 1.0
+    @State private var isReordering: Bool = false
+
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -94,6 +95,7 @@ struct ProjectEditView: View {
                 playHeadPosition: $viewModel.playHead,
                 isDragging: $viewModel.isDragging,
                 selectedClipID: $viewModel.selectedClipID,
+                isReordering: $isReordering,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
                 guideClipID: viewModel.guide?.clipID,
@@ -161,7 +163,11 @@ struct ProjectEditView: View {
                 )
                 .padding(.top, 16)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                .opacity(toolbarOpacity)
+                .opacity(isReordering ? 0 : 1)
+                .animation(
+                    .easeInOut(duration: 0.25),
+                    value: isReordering
+                )
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
@@ -169,13 +175,6 @@ struct ProjectEditView: View {
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
         )
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name(NotificationCenterKey.ClipReorderingStateChanged.rawValue))) { notification in
-            if let isReordering = notification.userInfo?[NotificationCenterKey.ClipReorderingStateChanged.userInfoKey] as? Bool {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    toolbarOpacity = isReordering ? 0 : 1
-                }
-            }
-        }
         .onAppear {
             Task {
                 if !viewModel.isAlreadyInitialized {

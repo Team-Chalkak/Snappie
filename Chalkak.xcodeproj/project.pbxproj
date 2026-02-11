@@ -117,7 +117,6 @@
 		C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */; };
 		C54ABC112F01AC8400A9EC1E /* ToolButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */; };
 		C54ABC132F01ACAE00A9EC1E /* ToolbarButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC122F01ACAE00A9EC1E /* ToolbarButtonStyle.swift */; };
-		C581FDEE2F3B2FA2008BEC34 /* NotificationCenterKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C581FDED2F3B2FA2008BEC34 /* NotificationCenterKey.swift */; };
 		C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */; };
 		C5886D312E371D9B000566C5 /* OverlayDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */; };
 		C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5886D352E375A94000566C5 /* ProjectListViewModel.swift */; };
@@ -278,7 +277,6 @@
 		C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipToolbarView.swift; sourceTree = "<group>"; };
 		C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolButtonView.swift; sourceTree = "<group>"; };
 		C54ABC122F01ACAE00A9EC1E /* ToolbarButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtonStyle.swift; sourceTree = "<group>"; };
-		C581FDED2F3B2FA2008BEC34 /* NotificationCenterKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterKey.swift; sourceTree = "<group>"; };
 		C5886D2D2E371D9B000566C5 /* OverlayDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDisplayView.swift; sourceTree = "<group>"; };
 		C5886D2E2E371D9B000566C5 /* OverlaySkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySkeletonView.swift; sourceTree = "<group>"; };
 		C5886D352E375A94000566C5 /* ProjectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListViewModel.swift; sourceTree = "<group>"; };
@@ -544,7 +542,6 @@
 			children = (
 				993A1F262E267E0C0059B70A /* Model */,
 				993A1F272E267E0C0059B70A /* SwiftDataManager.swift */,
-				C581FDED2F3B2FA2008BEC34 /* NotificationCenterKey.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -1121,7 +1118,6 @@
 				C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
 				7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */,
-				C581FDEE2F3B2FA2008BEC34 /* NotificationCenterKey.swift in Sources */,
 				992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */,
 				993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */,
 				992EE7C62E32AD900079AFBF /* TrimmingLineSliderView.swift in Sources */,

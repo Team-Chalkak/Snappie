@@ -12,6 +12,7 @@ struct TrimminglineSliderView: View {
     @Binding var playHeadPosition: Double
     @Binding var isDragging: Bool
     @Binding var selectedClipID: String?
+    @Binding var isReordering: Bool
     let isPlaying: Bool
     let totalDuration: Double
     let guideClipID: String?
@@ -31,7 +32,7 @@ struct TrimminglineSliderView: View {
     private let clipHeight: CGFloat = 97
 
     @State private var dragOffset: CGFloat = 0
-    @State private var playheadOpacity: Double = 1.0
+
 
     var body: some View {
         ZStack {
@@ -39,6 +40,7 @@ struct TrimminglineSliderView: View {
             ProjectTimelineView(
                 clips: $clips,
                 isDragging: $isDragging,
+                isReordering: $isReordering,
                 selectedClipID: $selectedClipID,
                 guideClipID: guideClipID,
                 playHeadPosition: playHeadPosition,
@@ -85,15 +87,9 @@ struct TrimminglineSliderView: View {
             PlayheadView()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .allowsHitTesting(false)
-                .opacity(playheadOpacity)
+                .opacity(isReordering ? 0 : 1)
+                .animation(.easeInOut(duration: 0.25), value: isReordering)
         }
         .frame(height: sliderHeight)
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name(NotificationCenterKey.ClipReorderingStateChanged.rawValue))) { notification in
-            if let isReordering = notification.userInfo?[NotificationCenterKey.ClipReorderingStateChanged.userInfoKey] as? Bool {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    playheadOpacity = isReordering ? 0 : 1
-                }
-            }
-        }
     }
 }
