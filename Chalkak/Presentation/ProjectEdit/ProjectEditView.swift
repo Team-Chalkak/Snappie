@@ -65,6 +65,8 @@ struct ProjectEditView: View {
                 player: viewModel.player,
                 isDragging: viewModel.isDragging,
                 overlayImage: viewModel.guide?.outlineImage,
+                isPlayerReady: viewModel.isPlayerReady,
+                isRebuildingPlayer: viewModel.isRebuildingPlayer,
                 isOverlayVisible: $isOverlayVisible
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))

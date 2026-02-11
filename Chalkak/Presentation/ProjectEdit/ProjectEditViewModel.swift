@@ -31,6 +31,8 @@ final class ProjectEditViewModel {
     var isLoading = false
     var showEmptyProjectAlert = false
     var showCannotDeletGuideClipAlert = false
+    var isPlayerReady = false
+    var isRebuildingPlayer = false
     var selectedClipID: String?
 
     // 변경사항을 추적하기위한 originalClip - 상태 저장용 프로퍼티
@@ -188,6 +190,9 @@ final class ProjectEditViewModel {
     /// 비동기 플레이어 설정
     @MainActor
     private func setupPlayerAsync() async {
+        isRebuildingPlayer = true
+        isPlayerReady = false
+        
         let savedPlayHead = playHead
 
         let composition = AVMutableComposition()
@@ -201,10 +206,12 @@ final class ProjectEditViewModel {
                 preferredTrackID: kCMPersistentTrackID_Invalid
             )
         else {
+            isRebuildingPlayer = false
             return
         }
 
         var cursor = CMTime.zero
+        
         for clip in editableClips {
             // URL 유효성 재확인
             guard FileManager.isValidVideoFile(at: clip.url) else {
@@ -219,16 +226,13 @@ final class ProjectEditViewModel {
 
             do {
                 let vidTracks = try await asset.loadTracks(withMediaType: .video)
-                guard !vidTracks.isEmpty else { continue }
+                guard let videoTrack = vidTracks.first else { continue }
+
+                try vidTrack.insertTimeRange(range, of: videoTrack, at: cursor)
 
                 let audTracks = try await asset.loadTracks(withMediaType: .audio)
-                guard !audTracks.isEmpty else { continue }
-
-                if let track = vidTracks.first {
-                    try vidTrack.insertTimeRange(range, of: track, at: cursor)
-                }
-                if let track = audTracks.first {
-                    try audTrack.insertTimeRange(range, of: track, at: cursor)
+                if let audioTrack = audTracks.first {
+                    try audTrack.insertTimeRange(range, of: audioTrack, at: cursor)
                 }
 
                 cursor = cursor + dur
@@ -239,6 +243,15 @@ final class ProjectEditViewModel {
         }
 
         currentComposition = composition
+        
+        let duration = CMTimeGetSeconds(composition.duration)
+        guard duration.isFinite, duration > 0 else {
+            player.replaceCurrentItem(with: nil)
+            isPlayerReady = false
+            isRebuildingPlayer = false
+            return
+        }
+        
         let previewComposition = composition.makePreviewVideoComposition(using: editableClips)
         let item = AVPlayerItem(asset: composition)
         item.videoComposition = previewComposition
@@ -248,12 +261,8 @@ final class ProjectEditViewModel {
         imageGenerator?.appliesPreferredTrackTransform = true
         imageGenerator?.videoComposition = previewComposition
 
-        // 저장된 플레이헤드 위치로 복원
-        if savedPlayHead > 0, savedPlayHead <= totalDuration {
-            await updatePreviewImage(at: savedPlayHead)
-        } else {
-            await updatePreviewImage(at: playHead)
-        }
+        let restoreTime = min(max(0, savedPlayHead), duration)
+        await updatePreviewImage(at: restoreTime)
 
         if let token = timeObserverToken {
             player.removeTimeObserver(token)
@@ -264,6 +273,9 @@ final class ProjectEditViewModel {
             addTimeObserver()
         }
         addEndObserver()
+        
+        isPlayerReady = true
+        isRebuildingPlayer = false
     }
 
     // MARK: - 동기 메서드들
@@ -676,6 +688,8 @@ final class ProjectEditViewModel {
         let currentTime = playHead
 
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
+        isRebuildingPlayer = true
+        isPlayerReady = false
         player.pause()
         isPlaying = false
         player.replaceCurrentItem(with: nil)

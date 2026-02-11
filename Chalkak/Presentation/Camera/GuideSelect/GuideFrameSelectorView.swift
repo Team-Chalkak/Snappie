@@ -73,7 +73,7 @@ struct GuideFrameSelectorView: View {
             DragGesture(minimumDistance: 0)
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player?.pause()
+                    editViewModel.player.pause()
                     editViewModel.isPlaying = false
 
                     let draggedFrameX = gesture.location.x

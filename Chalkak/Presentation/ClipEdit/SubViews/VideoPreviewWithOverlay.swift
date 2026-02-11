@@ -31,9 +31,11 @@ import AVFoundation
  */
 struct VideoPreviewWithOverlay: View {
     let previewImage: UIImage?
-    let player: AVPlayer?
+    let player: AVPlayer
     let isDragging: Bool
     let overlayImage: UIImage?
+    let isPlayerReady: Bool
+    let isRebuildingPlayer: Bool
     
     @Binding var isOverlayVisible: Bool
 
@@ -41,7 +43,9 @@ struct VideoPreviewWithOverlay: View {
         VideoPreviewView(
             previewImage: previewImage,
             player: player,
-            isDragging: isDragging
+            isDragging: isDragging,
+            isPlayerReady: isPlayerReady,
+            isRebuildingPlayer: isRebuildingPlayer
         )
         .overlay {
             if isOverlayVisible, let overlayImage {

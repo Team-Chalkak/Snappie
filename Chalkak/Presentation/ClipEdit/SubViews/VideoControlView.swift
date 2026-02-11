@@ -43,6 +43,8 @@ struct VideoControlView: View {
                 player: editViewModel.player,
                 isDragging: isDragging,
                 overlayImage: overlayImage,
+                isPlayerReady: editViewModel.isPlayerReady,
+                isRebuildingPlayer: editViewModel.isRebuildingPlayer,
                 isOverlayVisible: $isOverlayVisible
             )
 

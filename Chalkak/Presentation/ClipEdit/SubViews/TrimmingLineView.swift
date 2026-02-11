@@ -96,7 +96,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
@@ -117,7 +117,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
@@ -144,7 +144,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = max(handleWidth,
@@ -173,7 +173,7 @@ struct TrimmingLineView: View {
             DragGesture()
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player?.pause()
+                    editViewModel.player.pause()
                     editViewModel.isPlaying = false
 
                     let locationRatio = gesture.location.x / TimelineConstants.thumbnailLineWidth
