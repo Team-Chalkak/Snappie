@@ -411,12 +411,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Camera Access"
+            "value" : "Microphone Access"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "마이크 접근 권한"
           }
         }
