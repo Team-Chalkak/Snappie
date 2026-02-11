@@ -38,7 +38,7 @@ struct PlayInfoView: View {
                 action: onPlayPauseTapped
             )
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 24)
+            .padding(.leading, 16)
             
             // 시간표시
             PlayTimeView(
@@ -57,7 +57,7 @@ struct PlayInfoView: View {
                 isOverlayVisible.toggle()
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.trailing, 24)
+            .padding(.trailing, 16)
         }
     }
 }

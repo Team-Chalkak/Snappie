@@ -250,6 +250,8 @@ final class ProjectEditViewModel {
 
         // 저장된 플레이헤드 위치로 복원
         if savedPlayHead > 0, savedPlayHead <= totalDuration {
+            let seekTime = CMTime(seconds: savedPlayHead, preferredTimescale: 600)
+            await player.seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
             await updatePreviewImage(at: savedPlayHead)
         } else {
             await updatePreviewImage(at: playHead)

@@ -19,9 +19,12 @@ struct ProjectEditView: View {
     @State private var showExportView = false
     @State private var isSaving = false
     @State private var showSaveCompleteAlert: Bool = false
+    @State private var isReordering: Bool = false
+
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
+
 
     init(projectID: String, newClip: Clip? = nil) {
         self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
@@ -92,6 +95,7 @@ struct ProjectEditView: View {
                 playHeadPosition: $viewModel.playHead,
                 isDragging: $viewModel.isDragging,
                 selectedClipID: $viewModel.selectedClipID,
+                isReordering: $isReordering,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
                 guideClipID: viewModel.guide?.clipID,
@@ -145,7 +149,7 @@ struct ProjectEditView: View {
                         guard let payload = viewModel.makeClipEditPayload(
                             selectedClipID: selectedClipID
                         ) else { return }
-                        
+
                         coordinator.push(.guideSelect(
                             clip: payload.clip,
                             state: payload.state,
@@ -159,6 +163,11 @@ struct ProjectEditView: View {
                 )
                 .padding(.top, 16)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                .opacity(isReordering ? 0 : 1)
+                .animation(
+                    .easeInOut(duration: 0.25),
+                    value: isReordering
+                )
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
@@ -171,6 +180,9 @@ struct ProjectEditView: View {
                 if !viewModel.isAlreadyInitialized {
                     // 임시 프로젝트 생성 및 초기 로드
                     await viewModel.initializeTempProject(loadAfter: true)
+                    
+                    // 시작 위치를 기존 영상의 제일 마지막 위치로
+                    viewModel.seekTo(time: viewModel.totalDuration)
                     
                     if let clip = newClip {
                         viewModel.addClipToTemp(clip: clip)

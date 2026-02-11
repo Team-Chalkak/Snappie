@@ -10,6 +10,7 @@ import SwiftUI
 struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
     @Binding var isDragging: Bool
+    @Binding var isReordering: Bool
     @Binding var selectedClipID: String?
     let guideClipID: String?
     let playHeadPosition: Double
@@ -27,7 +28,6 @@ struct ProjectTimelineView: View {
     // 드래그 상태
     @State private var draggingClip: EditableClip?
     @State private var dragValue: DragGesture.Value?
-    @State private var isDragActive = false
 
     // 삽입 후보 인덱스(gap)
     @State private var insertionIndex: Int?
@@ -46,10 +46,10 @@ struct ProjectTimelineView: View {
                 // Layer 1: timeline content
                 HStack(alignment: .center, spacing: clipSpacing) {
                     ForEach(Array(clips.enumerated()), id: \.1.id) { index, clip in
-                        let isBeingDragged = (draggingClip?.id == clip.id && isDragActive)
+                        let isBeingDragged = (draggingClip?.id == clip.id && isReordering)
 
                         // gap
-                        if let insertionIndex, insertionIndex == index, isDragActive {
+                        if let insertionIndex, insertionIndex == index, isReordering {
                             insertionGap(width: clipWidth)
                         }
 
@@ -58,7 +58,7 @@ struct ProjectTimelineView: View {
                             clip: clip,
                             isDragging: $isDragging,
                             isSelected: selectedClipID == clip.id,
-                            isReordering: isDragActive,
+                            isReordering: isReordering,
                             onDragStateChanged: onDragStateChanged,
                             onTap: { onClipTapped(clip.id) },
                             isGuideClip: guideClipID == clip.id
@@ -72,7 +72,7 @@ struct ProjectTimelineView: View {
                     // 맨 뒤 삽입
                     if let insertionIndex,
                        insertionIndex == clips.count,
-                       isDragActive,
+                       isReordering,
                        draggingClip != nil {
                         insertionGap(width: clipWidth)
                     }
@@ -95,7 +95,7 @@ struct ProjectTimelineView: View {
                 )
 
                 // Layer 2: overlay (앵커 기반 왼쪽 정렬)
-                if let draggingClip = draggingClip, isDragActive, let dragValue = self.dragValue {
+                if let draggingClip = draggingClip, isReordering, let dragValue = self.dragValue {
                     let viewMinX = geo.frame(in: .global).minX
 
                     // 손가락이 누른 위치(클립 내부 상대 X). 없으면 가운데로.
@@ -117,7 +117,7 @@ struct ProjectTimelineView: View {
                         clip: draggingClip,
                         isDragging: .constant(true),
                         isSelected: selectedClipID == draggingClip.id,
-                        isReordering: isDragActive,
+                        isReordering: isReordering,
                         onDragStateChanged: onDragStateChanged,
                         onTap: { onClipTapped(draggingClip.id) },
                         isGuideClip: guideClipID == draggingClip.id
@@ -142,7 +142,7 @@ struct ProjectTimelineView: View {
             .onEnded { _ in
                 withAnimation(.spring()) {
                     draggingClip = clip
-                    isDragActive = true
+                    isReordering = true
                 }
             }
             .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
@@ -191,7 +191,7 @@ struct ProjectTimelineView: View {
                     withAnimation(.spring()) {
                         draggingClip = nil
                         dragValue = nil
-                        isDragActive = false
+                        isReordering = false
                         insertionIndex = nil
                         dragAnchorInClip = nil
                     }
