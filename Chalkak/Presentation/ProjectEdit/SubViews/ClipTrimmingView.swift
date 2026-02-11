@@ -15,6 +15,8 @@ struct ClipTrimmingView: View {
     let onDragStateChanged: (Bool) -> Void
     let onTap: () -> Void
     let isGuideClip: Bool
+    
+    @State private var showStroke: Bool = false
 
     private let clipWidth: CGFloat = 62
     private let clipHeight: CGFloat = 97
@@ -58,13 +60,21 @@ struct ClipTrimmingView: View {
         .frame(width: clipWidth, height: clipHeight)
         .clipShape(RoundedRectangle(cornerRadius: clipRadius))
         .overlay {
-            if isSelected && !isReordering {
+            if showStroke {
                 RoundedRectangle(cornerRadius: clipRadius)
                     .stroke(SnappieColor.primaryNormal, lineWidth: 2)
             }
         }
         .onTapGesture {
             onTap()
+        }
+        .onChange(of: isSelected && !isReordering) { oldValue, newValue in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    showStroke = newValue
+                }
+            }
+
         }
     }
 }

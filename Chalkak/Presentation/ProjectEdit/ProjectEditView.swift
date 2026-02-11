@@ -20,7 +20,6 @@ struct ProjectEditView: View {
     @State private var isSaving = false
     @State private var showSaveCompleteAlert: Bool = false
     @State private var toolbarOpacity: Double = 1.0
-    @State private var showToolBar: Bool = false
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
@@ -125,14 +124,14 @@ struct ProjectEditView: View {
             )
 
             // ClipToolbarView - 선택된 클립이 있을 때만 표시
-            if showToolBar {
+            if let selectedClipID = viewModel.selectedClipID {
                 ClipToolbarView(
                     hideToolbar: {
                         viewModel.selectedClipID = nil
                     },
                     onTapEditClip: {
                         guard let payload = viewModel.makeClipEditPayload(
-                            selectedClipID: viewModel.selectedClipID!
+                            selectedClipID: selectedClipID
                         ) else { return }
 
                         coordinator.push(.clipEdit(
@@ -146,7 +145,7 @@ struct ProjectEditView: View {
                     onTapEditGuide: {
                         viewModel.setCurrentProjectID()
                         guard let payload = viewModel.makeClipEditPayload(
-                            selectedClipID: viewModel.selectedClipID!
+                            selectedClipID: selectedClipID
                         ) else { return }
 
                         coordinator.push(.guideSelect(
@@ -157,7 +156,7 @@ struct ProjectEditView: View {
                         )
                     },
                     onTapDeleteClip: {
-                        viewModel.deleteClip(id: viewModel.selectedClipID!)
+                        viewModel.deleteClip(id: selectedClipID)
                     }
                 )
                 .padding(.top, 16)
@@ -165,7 +164,7 @@ struct ProjectEditView: View {
                 .opacity(toolbarOpacity)
             }
         }
-        .animation(.easeInOut(duration: 0.1), value: viewModel.selectedClipID != nil)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
         .background(
             SnappieColor.darkHeavy
                 .ignoresSafeArea()
@@ -174,23 +173,6 @@ struct ProjectEditView: View {
             if let isReordering = notification.userInfo?[NotificationCenterKey.ClipReorderingStateChanged.userInfoKey] as? Bool {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     toolbarOpacity = isReordering ? 0 : 1
-                }
-            }
-        }
-        .onChange(of: viewModel.selectedClipID == nil) { oldValue, newValue in
-            if oldValue == false && newValue == true {
-                // 선택된 클립이 없어질 때
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.easeInOut) {
-                        showToolBar = false
-                    }
-                }
-            } else if newValue == false {
-                // 클립이 선택되어있을 때
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.easeInOut) {
-                        showToolBar = true
-                    }
                 }
             }
         }
