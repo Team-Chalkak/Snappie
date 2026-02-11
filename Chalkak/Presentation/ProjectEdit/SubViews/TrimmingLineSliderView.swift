@@ -12,6 +12,7 @@ struct TrimminglineSliderView: View {
     @Binding var playHeadPosition: Double
     @Binding var isDragging: Bool
     @Binding var selectedClipID: String?
+    @Binding var isReordering: Bool
     let isPlaying: Bool
     let totalDuration: Double
     let guideClipID: String?
@@ -32,12 +33,14 @@ struct TrimminglineSliderView: View {
 
     @State private var dragOffset: CGFloat = 0
 
+
     var body: some View {
         ZStack {
             // 타임 라인
             ProjectTimelineView(
                 clips: $clips,
                 isDragging: $isDragging,
+                isReordering: $isReordering,
                 selectedClipID: $selectedClipID,
                 guideClipID: guideClipID,
                 playHeadPosition: playHeadPosition,
@@ -84,6 +87,8 @@ struct TrimminglineSliderView: View {
             PlayheadView()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .allowsHitTesting(false)
+                .opacity(isReordering ? 0 : 1)
+                .animation(.easeInOut(duration: 0.25), value: isReordering)
         }
         .frame(height: sliderHeight)
     }

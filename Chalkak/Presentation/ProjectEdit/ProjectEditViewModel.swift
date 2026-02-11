@@ -261,7 +261,10 @@ final class ProjectEditViewModel {
         imageGenerator?.appliesPreferredTrackTransform = true
         imageGenerator?.videoComposition = previewComposition
 
-        let restoreTime = min(max(0, savedPlayHead), duration)
+        let restoreTime = sanitizePlayHead(savedPlayHead, totalDuration: totalDuration)
+        let seekTime = CMTime(seconds: restoreTime, preferredTimescale: 600)
+        
+        await player.seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
         await updatePreviewImage(at: restoreTime)
 
         if let token = timeObserverToken {
@@ -276,6 +279,12 @@ final class ProjectEditViewModel {
         
         isPlayerReady = true
         isRebuildingPlayer = false
+    }
+  
+    private func sanitizePlayHead(_ value: Double, totalDuration: Double) -> Double {
+        guard value.isFinite else { return 0 }
+        let upper = max(0, totalDuration)
+        return min(max(0, value), upper)
     }
 
     // MARK: - 동기 메서드들
