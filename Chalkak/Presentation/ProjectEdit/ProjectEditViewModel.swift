@@ -705,10 +705,11 @@ final class ProjectEditViewModel {
         // 2. UI에서 제거
         editableClips.removeAll { $0.id == id }
 
-        // 3. temp 프로젝트에서 클립 제거 (cascade가 자동으로 SwiftData 삭제 처리)
-        if let _ = tempProject.clipList.first(where: { $0.id == id }) {
+        // 3. temp 프로젝트에서 클립 제거
+        if let clipToDelete = tempProject.clipList.first(where: { $0.id == id }) {
             tempProject.clipList.removeAll { $0.id == id }
-            // cascade로 인해 clipToDelete는 자동으로 삭제됨
+            // cascade로 안날라가는 개별 클립 제거
+            SwiftDataManager.shared.context.delete(clipToDelete)
 
             // order 재정렬
             for (idx, c) in tempProject.clipList.enumerated() {
