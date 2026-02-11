@@ -44,7 +44,7 @@ struct ProjectEditView: View {
                     }
                 },
                 rightButtonType: .twoButton(
-                    primary: .init(label: "저장") {
+                    primary: .init(label: "저장", isEnabled: viewModel.hasChanges) {
                         Task {
                             isSaving = true
                             let success = await viewModel.commitChanges()

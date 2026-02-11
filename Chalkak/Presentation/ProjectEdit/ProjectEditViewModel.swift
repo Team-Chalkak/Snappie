@@ -34,7 +34,7 @@ final class ProjectEditViewModel {
     var selectedClipID: String?
 
     /// 수정 여부 판단 플래그
-    private(set) var isDirty = false
+    private(set) var hasUnsavedChanges = false
 
     var totalDuration: Double {
         editableClips.reduce(0) { $0 + $1.trimmedDuration }
@@ -47,7 +47,7 @@ final class ProjectEditViewModel {
     // MARK: - Temp 관련 프로퍼티
 
     var hasChanges: Bool {
-        return isDirty
+        return hasUnsavedChanges
     }
 
     var originalProjectID: String {
@@ -78,19 +78,19 @@ final class ProjectEditViewModel {
         // projectEditView뿐만아니라, 클립 편집 / 가이드 같이 다른 뷰로 이탈해서 변경하고 돌아오는 것 감지
         if isAlreadyInitialized, !prevClips.isEmpty {
             if prevClips.count != editableClips.count {
-                isDirty = true
+                hasUnsavedChanges = true
             } else {
                 for (prev, curr) in zip(prevClips, editableClips) {
                     if prev.id == curr.id,
                        prev.startPoint != curr.startPoint || prev.endPoint != curr.endPoint
                     {
-                        isDirty = true
+                        hasUnsavedChanges = true
                         break
                     }
                 }
             }
             if guide?.selectedTimestamp != prevGuideTimestamp {
-                isDirty = true
+                hasUnsavedChanges = true
             }
         }
     }
@@ -502,7 +502,7 @@ final class ProjectEditViewModel {
 
     func moveClip(from source: IndexSet, to destination: Int) {
         let currentTime = playHead
-        isDirty = true
+        hasUnsavedChanges = true
 
         // 1. Reorder the UI-facing array
         editableClips.move(fromOffsets: source, toOffset: destination)
@@ -625,7 +625,7 @@ final class ProjectEditViewModel {
         }
 
         // 처음 생성시 false
-        isDirty = false
+        hasUnsavedChanges = false
 
         // Context에 추가 (Guide와 CameraSetting 먼저)
         SwiftDataManager.shared.context.insert(tempGuide)
@@ -652,7 +652,7 @@ final class ProjectEditViewModel {
             print("현재 temp 프로젝트가 아닙니다.")
             return
         }
-        isDirty = true
+        hasUnsavedChanges = true
 
         let nextOrder = (tempProject.clipList.map(\.order).max() ?? -1) + 1
 
@@ -695,7 +695,7 @@ final class ProjectEditViewModel {
             return // 삭제하지 않고 실행 종료
         }
         let currentTime = playHead
-        isDirty = true
+        hasUnsavedChanges = true
 
         // 1. 플레이어 정리 (삭제될 클립 참조 방지)
         player.pause()
@@ -740,7 +740,7 @@ final class ProjectEditViewModel {
         guard let idx = editableClips.firstIndex(where: { $0.id == clipID }) else { return }
         editableClips[idx].startPoint = max(0, min(start, editableClips[idx].originalDuration))
         editableClips[idx].endPoint = max(0, min(end, editableClips[idx].originalDuration))
-        isDirty = true
+        hasUnsavedChanges = true
 
         // 드래그 중이 아닐 때 플레이어 업데이트 수행
         if !isDragging {
