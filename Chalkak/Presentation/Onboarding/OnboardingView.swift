@@ -12,27 +12,40 @@ struct OnboardingView: View {
     let onComplete: () -> Void
 
     @State private var currentIndex = 0
-
+    
+    private let items: [OnboardingItem] = [
+        .init(
+            id: 0,
+            imageName: "onboard_image1",
+            titleKey: "onboarding.step1.title",
+            descriptionKey: "onboarding.step1.description"),
+        .init(
+            id: 1,
+            imageName: "onboard_image2",
+            titleKey: "onboarding.step2.title",
+            descriptionKey: "onboarding.step2.description"),
+        .init(
+            id: 2,
+            imageName: "onboard_image3",
+            titleKey: "onboarding.step3.title",
+            descriptionKey: "onboarding.step3.description")
+    ]
+    
     var body: some View {
         ZStack {
             SnappieColor.darkStrong.ignoresSafeArea()
 
             TabView(selection: $currentIndex) {
-                Onboard(ImageName: "onboard_image1",
-                        title: "첫 촬영으로 가이드 완성",
-                        description: "원하는 장면을 찍으면 자동으로 \n촬영 가이드가 만들어져요.")
-                    .tag(0)
-
-                Onboard(ImageName: "onboard_image2",
-                        title: "촬영 직후 간단 편집",
-                        description: "장면을 촬영할 때마다 \n길이만 간단히 조절하면 돼요.")
-                    .tag(1)
-
-                Onboard(ImageName: "onboard_image3",
-                        title: "다 찍으면 영상 완성",
-                        description: "원하는 장면을 다 찍고 종료하면 \n영상이 하나로 이어져 완성돼요.")
-                    .tag(2)
+                ForEach(items) { item in
+                    Onboard(
+                        ImageName: item.imageName,
+                        title: item.titleKey,
+                        description: item.descriptionKey
+                    )
+                    .tag(item.id)
+                }
             }
+            .padding(.horizontal, 24)
             .padding(.vertical, 48)
             .padding(.bottom, 56)
             .tabViewStyle(.page(indexDisplayMode: .always))
@@ -60,4 +73,11 @@ struct OnboardingView: View {
             }
         }
     }
+}
+
+private struct OnboardingItem: Identifiable {
+    let id: Int
+    let imageName: String
+    let titleKey: LocalizedStringKey
+    let descriptionKey: LocalizedStringKey
 }

@@ -12,7 +12,7 @@ import SwiftUI
 struct ButtonSolidPrimary: View {
     // input properties
     let size: ButtonSizeType
-    let title: String
+    let title: LocalizedStringKey
     let action: () -> Void
     
     // styler propety
@@ -21,7 +21,7 @@ struct ButtonSolidPrimary: View {
     // init
     init(
         size: ButtonSizeType,
-        title: String,
+        title: LocalizedStringKey,
         action: @escaping () -> Void
     ) {
         self.size = size

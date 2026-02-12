@@ -31,7 +31,7 @@ struct ClipTrimmingView: View {
                     .frame(width: clipWidth, height: clipHeight)
                     .overlay(alignment: .bottom) {
                         // clip duration
-                        Text("\(String(format: "%.1f", clip.trimmedDuration))초")
+                        Text("\(clip.trimmedDuration, specifier: "%.1f")")
                             .foregroundStyle(.matcha50)
                             .snappieStyle(.roundCaption1)
                             .shadow(color: .black.opacity(0.4), radius: 5)

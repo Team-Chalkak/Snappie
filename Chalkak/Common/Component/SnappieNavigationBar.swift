@@ -13,7 +13,7 @@ struct SnappieNavigationBar: View {
     /// 네비게이션 타이틀입니다. 제목이 있는 경우 입력해주세요.
     ///
     /// 제목을 입력하지 않는 경우 기본값으로 없음 처리됩니다.
-    var navigationTitle: String? = nil
+    var navigationTitle: Text? = nil
 
     /// 좌측 버튼의 스타일입니다. 이전 또는 X를 enum타입으로 입력해주세요
     let leftButtonType: LeftButtonType
@@ -32,7 +32,7 @@ struct SnappieNavigationBar: View {
 
             // 제목
             if let navigationTitle {
-                Text(navigationTitle)
+                navigationTitle
                     .font(SnappieFont.style(.proLabel1))
                     .foregroundStyle(Color.matcha50)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -78,7 +78,7 @@ struct SnappieNavigationBar: View {
 
             // dismiss(x) 버튼 & title 있음 & 우측 버튼
             SnappieNavigationBar(
-                navigationTitle: "title",
+                navigationTitle: Text("title"),
                 leftButtonType: .dismiss {
                     // dismiss action
                 },

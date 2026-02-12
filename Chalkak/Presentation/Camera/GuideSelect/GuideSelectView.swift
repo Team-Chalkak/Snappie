@@ -59,7 +59,7 @@ struct GuideSelectView: View {
 
             VStack(alignment: .center, spacing: 16) {
                 SnappieNavigationBar(
-                    navigationTitle: "가이드 선택",
+                    navigationTitle: Text("가이드 선택"),
                     leftButtonType: .backward {
                         coordinator.popLast()
                     },
