@@ -39,12 +39,15 @@ struct ProjectEditView: View {
                     if viewModel.hasChanges && !isSaving {
                         showExitConfirmation = true
                     } else {
-                        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-                        coordinator.popToScreen(.projectList)
+                        Task {
+                            _ = await viewModel.discardChanges()
+                            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                            coordinator.popToScreen(.projectList)
+                        }
                     }
                 },
                 rightButtonType: .twoButton(
-                    primary: .init(label: "저장") {
+                    primary: .init(label: "저장", isEnabled: viewModel.hasChanges) {
                         Task {
                             isSaving = true
                             let success = await viewModel.commitChanges()
