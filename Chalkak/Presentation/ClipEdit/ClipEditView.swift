@@ -49,7 +49,7 @@ struct ClipEditView: View {
     // 2. State & ObservedObject
     @StateObject private var editViewModel: ClipEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    @StateObject private var videoManager = VideoManager()
+//    @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
@@ -196,6 +196,9 @@ struct ClipEditView: View {
             if shootState != .firstShoot, editViewModel.clipID == nil {
                 editViewModel.applyReferenceDuration()
             }
+        }
+        .onDisappear {
+            editViewModel.cleanup()
         }
     }
 }
