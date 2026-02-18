@@ -55,6 +55,7 @@ class CameraManager: NSObject, ObservableObject {
             UserDefaults.standard.set(value, forKey: UserDefaultKey.cameraPosition)
         }
     }
+
     @Published private(set) var isPreviewMirrored: Bool = false
 
     var onPreviewMirroringChanged: ((Bool) -> Void)?
@@ -170,9 +171,11 @@ class CameraManager: NSObject, ObservableObject {
             device.exposureMode = .continuousAutoExposure
         }
 
-        // 줌 설정 후면 카메라 한정
+        // 줌 설정 (후면 카메라 한정)
         if device.position == .back {
-            applyZoomScale(backCameraZoomScale, to: device)
+            let minZoom = device.minAvailableVideoZoomFactor
+            let maxZoom = device.maxAvailableVideoZoomFactor
+            device.videoZoomFactor = max(minZoom, min(backCameraZoomScale * 2.0, maxZoom))
 
             DispatchQueue.main.async { [weak self] in
                 self?.currentZoomScale = self?.backCameraZoomScale ?? 1.0
@@ -364,40 +367,38 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    /// 줌 배율 스무스하게 전환 (프리셋 버튼용 0.5,1,2)
+    func smoothSetZoomScale(_ scale: CGFloat) {
+        setZoomScale(scale, rate: 8.0)
+    }
+
     /// 줌 배율 설정
-    func setZoomScale(_ scale: CGFloat) {
+    /// - Parameters:
+    ///   - scale: UI 줌 배율 (0.5 ~ 6.0)
+    ///   - rate: ramp 속도로 조정을 해주는데, 일관성을 위해 즉시반영(슬라이더/핀치 할때만)은. nil로 처리를 해줬고, 값이 있으면 스무스하게 전환되는 것을 의도했습니다.(프리셋버튼 0.5,1,2) rate는 높을수록 반응이 빠름
+    func setZoomScale(_ scale: CGFloat, rate: Float? = nil) {
         guard let device = videoDeviceInput?.device else { return }
         guard device.position == .back else { return }
+
+        let minZoom = device.minAvailableVideoZoomFactor
+        let maxZoom = device.maxAvailableVideoZoomFactor
+        let targetZoom = max(minZoom, min(scale * 2.0, maxZoom))
 
         do {
             try device.lockForConfiguration()
             defer { device.unlockForConfiguration() }
 
-            applyZoomScale(scale, to: device)
-
-            currentZoomScale = scale
-            backCameraZoomScale = scale
-
+            if let rate {
+                device.ramp(toVideoZoomFactor: targetZoom, withRate: rate)
+            } else {
+                device.videoZoomFactor = targetZoom
+            }
         } catch {
             print("줌 조정 에러 \(error)")
         }
-    }
 
-    /// 디바이스에 실제 줌 배율을 적용
-    /// - Parameters:
-    ///   - scale: UI 줌 배율
-    ///   - device: AVCaptureDevice
-    /// - Note: device.lockForConfiguration() 이미 호출된 상태에서만 활용할 수 있음!  줌 설정이 끝나면  lockForConfiguration역시 필요 합니다 !
-    private func applyZoomScale(_ scale: CGFloat, to device: AVCaptureDevice) {
-        let minZoom = device.minAvailableVideoZoomFactor
-        let maxZoom = device.maxAvailableVideoZoomFactor
-
-        // UI 스케일을 실제 줌 배율 변환
-        let zoomAdjustment = scale * 2.0
-
-        let clampedZoomFactor = max(minZoom, min(zoomAdjustment, maxZoom))
-
-        device.videoZoomFactor = clampedZoomFactor
+        currentZoomScale = scale
+        backCameraZoomScale = scale
     }
 
     /// 카메라 세션 시작
@@ -488,7 +489,7 @@ private extension CameraManager {
         guard let connection = connection else { return }
         let mirrored = connection.isVideoMirrored
 
-        if self.isPreviewMirrored != mirrored {
+        if isPreviewMirrored != mirrored {
             DispatchQueue.main.async {
                 self.isPreviewMirrored = mirrored
                 self.onPreviewMirroringChanged?(mirrored)
@@ -501,7 +502,7 @@ private extension CameraManager {
     func refreshPreviewMirroring() {
         propagatePreviewMirroring(from: previewLayer?.connection)
     }
-    
+
     func updateRecordingMirroring() {
         // movieOutput
         if let conn = movieOutput.connection(with: .video), conn.isVideoMirroringSupported {
@@ -531,13 +532,12 @@ private extension CameraManager {
             conn.automaticallyAdjustsVideoMirroring = false
         }
     }
-
 }
 
 extension CameraManager {
     enum RecordingMirrorPolicy {
-        case followPreview   // 권장: 프리뷰가 미러면 파일도 미러
-        case alwaysMirrored  // 항상 미러 저장
-        case neverMirrored   // 절대 미러 저장 X (기존 방식)
+        case followPreview // 권장: 프리뷰가 미러면 파일도 미러
+        case alwaysMirrored // 항상 미러 저장
+        case neverMirrored // 절대 미러 저장 X (기존 방식)
     }
 }
