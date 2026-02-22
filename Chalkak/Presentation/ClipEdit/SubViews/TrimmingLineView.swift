@@ -80,7 +80,7 @@ struct TrimmingLineView: View {
                 topTrailingRadius: 6
             )
             .fill(SnappieColor.darkHeavy.opacity(0.6))
-            .frame(width: max(0, thumbnailLineWidth + handleWidth - endX), height: thumbnailHeight)
+            .frame(width: max(0, thumbnailLineWidth + handleWidth), height: thumbnailHeight)
             .offset(x: endX)
 
             // 4. 트리밍 박스
