@@ -24,19 +24,19 @@ enum AlertType {
         case .emptyProjectDelete: return "작업 중인 프로젝트를 삭제할까요?"
         case .photoPermissionDenied: return "사진 라이브러리 접근 권한이 필요해요"
         case .cannotDeleteGuideClip:
-            return "가이드로 사용된 장면은\n삭제할 수 없어요."
+            return "가이드로 사용된 장면은\n삭제할 수 없어요"
         }
     }
 
     var message: LocalizedStringKey {
         switch self {
-        case .deleteProject: return "프로젝트와 안에 있는 장면이 모두 삭제돼요."
-        case .retakeVideo: return "지금 나가면 방금 찍은 영상이 지워져요."
-        case .finishShooting: return "지금까지 찍은 장면은 저장돼요."
-        case .emptyProjectDelete: return "남아있는 장면이 없으면 프로젝트가 삭제돼요."
-        case .photoPermissionDenied: return "영상을 저장하려면 사진 라이브러리 접근 권한이 필요해요.\n설정에서 권한을 허용해주세요."
+        case .deleteProject: return "프로젝트와 안에 있는 장면이 모두 삭제돼요"
+        case .retakeVideo: return "지금 나가면 방금 찍은 영상이 지워져요"
+        case .finishShooting: return "지금까지 찍은 장면은 저장돼요"
+        case .emptyProjectDelete: return "남아있는 장면이 없으면 프로젝트가 삭제돼요"
+        case .photoPermissionDenied: return "영상을 저장하려면 사진 라이브러리 접근 권한이 필요해요\n설정에서 권한을 허용해주세요"
         case .cannotDeleteGuideClip:
-            return "다른 장면을 가이드로 지정한 후 장면을 삭제할 수 있어요."
+            return "다른 장면을 가이드로 지정한 후 장면을 삭제할 수 있어요"
         }
     }
 
@@ -44,7 +44,7 @@ enum AlertType {
         switch self {
         case .deleteProject: return "삭제"
         case .retakeVideo, .cannotDeleteGuideClip: return "확인"
-        case .finishShooting: return "나가기"
+        case .finishShooting: return "Alert.나가기"
         case .emptyProjectDelete: return "삭제"
         case .photoPermissionDenied: return "설정으로 이동"
         }

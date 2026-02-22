@@ -184,7 +184,7 @@ struct ClipEditView: View {
 
             Button("취소", role: .cancel) {}
         } message: {
-            Text("지금 이어서 찍거나, 프로젝트를 마무리할 수 있어요.")
+            Text("지금 이어서 찍거나, 프로젝트를 마무리할 수 있어요")
         }
         .alert(.retakeVideo, isPresented: $showRetakeAlert) {
             coordinator.popLast()

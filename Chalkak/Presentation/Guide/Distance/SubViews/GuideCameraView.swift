@@ -46,7 +46,7 @@ struct GuideCameraView: View {
                     .padding(.horizontal, 16)
                     .frame(maxHeight: .infinity, alignment: .top)
             } else {
-                Text("가이드를 생성하지못했어요.\n인물이 나오는 장면을 촬영해주세요")
+                Text("가이드 생성에 실패했어요\n인물이 나오는 장면을 선택해주세요")
                     .foregroundColor(SnappieColor.labelPrimaryNormal)
                     .allowsHitTesting(false)
                     .multilineTextAlignment(.center)

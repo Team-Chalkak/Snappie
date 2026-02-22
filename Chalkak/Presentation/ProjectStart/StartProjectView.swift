@@ -37,7 +37,7 @@ struct StartProjectView: View {
                         .fill(SnappieColor.gradientFillNormal)
                         .cornerRadius(16)
 
-                    Text("추가된 영상이 없습니다.")
+                    Text("아직 추가된 장면이 없어요")
                         .snappieStyle(.proBody1)
                         .foregroundStyle(SnappieColor.labelPrimaryNormal)
                 }
@@ -117,12 +117,12 @@ struct StartProjectView: View {
 
 struct ProjectAddClip: Tip {
     var title: Text {
-        Text("클립 추가 방법")
+        Text("장면 추가하기")
             .foregroundStyle(.matcha600)
     }
 
     var message: Text? {
-        Text("버튼을 눌러서 촬영을 시작하세요.")
+        Text("버튼을 눌러 장면 촬영 시작")
             .foregroundStyle(.matcha400)
     }
 

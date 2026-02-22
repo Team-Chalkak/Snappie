@@ -12,8 +12,8 @@ import SwiftUI
 struct SnappieProgressAlert: View {
     @Binding var isPresented: Bool
     @Binding var isLoading: Bool
-    let loadingMessage: String
-    let completionMessage: String
+    let loadingMessage: LocalizedStringKey
+    let completionMessage: LocalizedStringKey
 
     var body: some View {
         ZStack {
@@ -41,8 +41,8 @@ struct SnappieProgressAlert: View {
 struct SnappieProgressAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     @Binding var isLoading: Bool
-    let loadingMessage: String
-    let completionMessage: String
+    let loadingMessage: LocalizedStringKey
+    let completionMessage: LocalizedStringKey
 
     func body(content: Content) -> some View {
         ZStack {
@@ -70,8 +70,8 @@ extension View {
     func snappieProgressAlert(
         isPresented: Binding<Bool>,
         isLoading: Binding<Bool>,
-        loadingMessage: String,
-        completionMessage: String
+        loadingMessage: LocalizedStringKey,
+        completionMessage: LocalizedStringKey
     ) -> some View {
         modifier(
             SnappieProgressAlertModifier(
