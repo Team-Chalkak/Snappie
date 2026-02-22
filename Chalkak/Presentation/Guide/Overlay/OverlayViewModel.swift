@@ -97,7 +97,7 @@ final class OverlayViewModel: ObservableObject {
         let formatter = DateFormatter()
         formatter.dateFormat = "HHmm"
         let timeString = formatter.string(from: date)
-        return "프로젝트 \(timeString)"
+        return "Project \(timeString)"
     }
 
     /// `Project` 저장
