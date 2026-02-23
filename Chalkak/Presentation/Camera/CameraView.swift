@@ -43,7 +43,7 @@ struct CameraView: View {
                     session: viewModel.session,
                     cameraManager: viewModel.model, // cameraManager 전달
                     tabToFocus: viewModel.focusAtPoint,
-                    onPinchZoom: viewModel.selectZoomScale,
+                    onPinchZoom: { viewModel.selectZoomScale($0) },
                     currentZoomScale: viewModel.zoomScale,
                     isUsingFrontCamera: viewModel.isUsingFrontCamera,
                     showGrid: $viewModel.isGrid

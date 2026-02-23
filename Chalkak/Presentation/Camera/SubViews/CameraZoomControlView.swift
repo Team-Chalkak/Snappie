@@ -36,7 +36,7 @@ struct CameraZoomControlView: View {
             zoomScale: viewModel.zoomScale,
             minZoom: viewModel.minZoomScale,
             maxZoom: viewModel.maxZoomScale,
-            onValueChanged: viewModel.selectZoomScale
+            onValueChanged: { viewModel.selectZoomScale($0) }
         )
         .frame(width: Layout.zoomSliderWidth, height: Layout.zoomSliderHeight)
         .transition(.move(edge: .top).combined(with: .opacity))
