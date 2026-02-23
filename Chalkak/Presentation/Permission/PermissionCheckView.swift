@@ -23,7 +23,7 @@ struct CameraPermissionSheet: View {
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(Color.matcha50)
-                        Text("앱 설정에서 카메라와 마이크의\n접근 설정을 허용해 주세요.")
+                        Text("앱 설정에서 카메라와 마이크의\n접근 설정을 허용해 주세요")
                             .foregroundStyle(SnappieColor.labelPrimaryNormal)
                             .multilineTextAlignment(.center)
                     }
@@ -37,7 +37,7 @@ struct CameraPermissionSheet: View {
                                     .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.matcha50)
-                                Text("영상을 녹화하기 위해 접근 권한이 필요해요.")
+                                Text("영상을 녹화하기 위해 접근 권한이 필요해요")
                                     .font(.subheadline)
                                     .foregroundStyle(Color.matcha50)
                             }
@@ -51,7 +51,7 @@ struct CameraPermissionSheet: View {
                                     .font(.headline)
                                     .fontWeight(.bold)
                                     .foregroundStyle(Color.matcha50)
-                                Text("소리를 녹음하기 위해 접근 권한이 필요해요.")
+                                Text("소리를 녹음하기 위해 접근 권한이 필요해요")
                                     .font(.subheadline)
                                     .foregroundStyle(Color.matcha50)
                             }

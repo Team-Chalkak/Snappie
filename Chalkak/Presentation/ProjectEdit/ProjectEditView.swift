@@ -217,7 +217,7 @@ struct ProjectEditView: View {
                 }
                 Analytics.logEvent("saveEditProjectButtonTapped", parameters: nil)
             }
-            Button("저장하지 않고 나가기") {
+            Button("나가기", role: .destructive) {
                 Task {
                     let success = await viewModel.discardChanges()
                     if success {
@@ -231,7 +231,7 @@ struct ProjectEditView: View {
                 Analytics.logEvent("cancelButtonTapped", parameters: nil)
             }
         } message: {
-            Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
+            Text("저장하지 않으면 방금 편집한 내용이 사라져요")
         }
         
         // 내보내기 시트
