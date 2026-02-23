@@ -64,7 +64,7 @@ struct CameraZoomControlView: View {
               !range.isActive(viewModel.zoomScale) else { return }
 
         withAnimation(.easeInOut(duration: Layout.animationDuration)) {
-            viewModel.selectZoomScale(range.preset)
+            viewModel.selectZoomScale(range.preset, smooth: true)
         }
     }
 

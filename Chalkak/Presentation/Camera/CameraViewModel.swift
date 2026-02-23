@@ -109,6 +109,7 @@ class CameraViewModel: ObservableObject {
         tiltCollector.start()
         model.startSession()
     }
+
     func stopCamera() {
         if isRecording { stopVideoRecording() }
         tiltCollector.stop()
@@ -151,13 +152,22 @@ class CameraViewModel: ObservableObject {
         }
     }
 
-    func selectZoomScale(_ scale: CGFloat) {
+    /// 줌 배율 설정
+    /// - Parameters:
+    ///   - scale: 줌 배율 (0.5 ~ 6.0)
+    ///   - smooth: true - (프리셋 버튼), false - (슬라이더/핀치)
+    func selectZoomScale(_ scale: CGFloat, smooth: Bool = false) {
         guard !isUsingFrontCamera else { return }
         guard !scale.isNaN, !scale.isInfinite else { return }
 
         let safeScale = max(minZoomScale, min(maxZoomScale, scale))
         zoomScale = safeScale
-        model.setZoomScale(safeScale)
+
+        if smooth {
+            model.smoothSetZoomScale(safeScale)
+        } else {
+            model.setZoomScale(safeScale)
+        }
 
         lastZoomInteraction = Date()
         if showingZoomControl { startZoomSliderAutoHideTimer() }
