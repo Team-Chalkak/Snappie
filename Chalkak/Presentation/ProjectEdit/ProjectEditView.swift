@@ -48,12 +48,12 @@ struct ProjectEditView: View {
                 rightButtonType: .twoButton(
                     primary: .init(label: "저장", isEnabled: viewModel.hasChanges) {
                         Task {
+                            showSaveCompleteAlert = true
                             isSaving = true
                             let success = await viewModel.commitChanges()
                             if success {
                                 // 저장 후 새로운 temp 프로젝트 생성
                                 await viewModel.initializeTempProject(loadAfter: true)
-                                showSaveCompleteAlert = true
                             }
                             isSaving = false
                         }
@@ -75,7 +75,15 @@ struct ProjectEditView: View {
                 isOverlayVisible: $isOverlayVisible
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
+            .snappieProgress(
+                isPresented: Binding(
+                    get: { viewModel.isLoading && !isSaving },
+                    set: { newValue in
+                        viewModel.isLoading = newValue
+                    }
+                ),
+                message: "영상 불러오는 중"
+            )
             
             // 재생 일시정지 버튼 & 시간표시하는 서브뷰
             PlayInfoView(
