@@ -335,40 +335,6 @@ final class ClipEditViewModel {
         endPoint = newEnd
     }
 
-    /// GuideSelectView에서 트리밍된 구간만 보여주게끔 조정
-    func trimmedClip(trimStart: Double, trimEnd: Double) async {
-        guard let imageGenerator = imageGenerator else { return }
-        // 원본시간
-        trimOffset = trimStart
-
-        // 사용자가 보기에 시작은 0초로 고정
-        let trimmedDuration = trimEnd - trimStart
-        startPoint = 0
-        duration = trimmedDuration
-        endPoint = trimmedDuration
-
-        seek(to: 0)
-
-        await updatePreviewImage(at: 0)
-
-        thumbnails = []
-        let interval = trimmedDuration / Double(thumbnailCount)
-
-        let times = (0 ..< thumbnailCount).map { i in
-            CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
-        }
-        
-        do {
-            for try await result in imageGenerator.images(for: times) {
-                let cgImage = try result.image
-                let uiImage = UIImage(cgImage: cgImage)
-                thumbnails.append(uiImage)
-            }
-        } catch {
-            print("썸네일트리밍 error \(error)")
-        }
-    }
-    
     /// Project의 referenceDuration 값을 기반으로
     /// 트리밍 구간(startPoint, endPoint)을 초기화합니다.
     /// 두 번째 촬영 이후부터 호출됩니다.

@@ -5,8 +5,8 @@
 //  Created by Youbin on 7/24/25.
 //
 
-import SwiftUI
 import AVFoundation
+import SwiftUI
 
 /**
  VideoControlView: 영상 미리보기 및 조작 인터페이스
@@ -23,8 +23,13 @@ import AVFoundation
     VideoControlView(
         isDragging: isDragging,
         overlayImage: guide?.outlineImage,
-        editViewModel: editViewModel,
-        isGuideSelectMode: false
+        previewImage: editViewModel.previewImage,
+        player: editViewModel.player,
+        isPlayerReady: editViewModel.isPlayerReady,
+        isRebuildingPlayer: editViewModel.isRebuildingPlayer,
+        isPlaying: editViewModel.isPlaying,
+        onTogglePlayback: { editViewModel.togglePlayback() },
+        currentTrimmedDuration: editViewModel.currentTrimmedDuration
     )
  */
 struct VideoControlView: View {
@@ -32,27 +37,35 @@ struct VideoControlView: View {
     let overlayImage: UIImage?
     var displayTime: Double? = nil
 
-    var editViewModel: ClipEditViewModel
+    let previewImage: UIImage?
+    let player: AVPlayer
+    let isPlayerReady: Bool
+    let isRebuildingPlayer: Bool
+    let isPlaying: Bool
+    let onTogglePlayback: () -> Void
+    var currentTrimmedDuration: Double = 0
+
     @State private var isOverlayVisible: Bool = true
 
     var body: some View {
-        VStack(alignment: .center, spacing: 16 ,content: {
-
+        VStack(alignment: .center, spacing: 16, content: {
             VideoPreviewWithOverlay(
-                previewImage: editViewModel.previewImage,
-                player: editViewModel.player,
+                previewImage: previewImage,
+                player: player,
                 isDragging: isDragging,
                 overlayImage: overlayImage,
-                isPlayerReady: editViewModel.isPlayerReady,
-                isRebuildingPlayer: editViewModel.isRebuildingPlayer,
+                isPlayerReady: isPlayerReady,
+                isRebuildingPlayer: isRebuildingPlayer,
                 isOverlayVisible: $isOverlayVisible
             )
 
             VideoControlPanelView(
-                editViewModel: editViewModel,
+                isPlaying: isPlaying,
+                onTogglePlayback: onTogglePlayback,
                 isOverlayVisible: $isOverlayVisible,
                 showOverlayToggle: overlayImage != nil,
-                displayTime: displayTime
+                displayTime: displayTime,
+                currentTrimmedDuration: currentTrimmedDuration
             )
         })
     }

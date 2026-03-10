@@ -30,25 +30,27 @@ import SwiftUI
     )
  */
 struct VideoControlPanelView: View {
-    var editViewModel: ClipEditViewModel
+    let isPlaying: Bool
+    let onTogglePlayback: () -> Void
     @Binding var isOverlayVisible: Bool
     let showOverlayToggle: Bool
     var displayTime: Double? = nil
+    var currentTrimmedDuration: Double = 0
 
     private var timeToDisplay: Double {
-        displayTime ?? editViewModel.currentTrimmedDuration
+        displayTime ?? currentTrimmedDuration
     }
 
     var body: some View {
         ZStack(alignment: .center) {
             SnappieButton(
                 .iconBackground(
-                    icon: self.editViewModel.isPlaying ? .pauseFill : .playFill,
+                    icon: isPlaying ? .pauseFill : .playFill,
                     size: .medium,
                     isActive: true
                 )
             ) {
-                self.editViewModel.togglePlayback()
+                onTogglePlayback()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 24)
@@ -73,10 +75,10 @@ struct VideoControlPanelView: View {
                 .iconBackground(
                     icon: .silhouette,
                     size: .medium,
-                    isActive: self.showOverlayToggle ? self.isOverlayVisible : false
+                    isActive: showOverlayToggle ? isOverlayVisible : false
                 )
             ) {
-                self.isOverlayVisible.toggle()
+                isOverlayVisible.toggle()
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.trailing, 24)

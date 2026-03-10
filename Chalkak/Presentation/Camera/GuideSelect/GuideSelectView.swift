@@ -19,7 +19,7 @@ struct GuideSelectView: View {
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
 
-    @State private var editViewModel: ClipEditViewModel
+    @State private var viewModel: GuideSelectViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
 
@@ -44,12 +44,7 @@ struct GuideSelectView: View {
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
 
-        // ClipEditViewModel 재사용 (트리밍 기능은 사용하지 않음)
-        _editViewModel = State(wrappedValue: ClipEditViewModel(
-            clipURL: clip.videoURL,
-            cameraSetting: cameraSetting,
-            timeStampedTiltList: []
-        ))
+        _viewModel = State(wrappedValue: GuideSelectViewModel(clipURL: clip.videoURL))
     }
 
     var body: some View {
@@ -70,7 +65,7 @@ struct GuideSelectView: View {
                             }
 
                             // 트리밍 시간을 원본시간으로 변환
-                            let originalTimestamp = clip.startPoint + editViewModel.startPoint
+                            let originalTimestamp = clip.startPoint + viewModel.startPoint
 
                             coordinator.push(
                                 .overlay(
@@ -87,8 +82,13 @@ struct GuideSelectView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: overlayImage,
-                    displayTime: editViewModel.startPoint,
-                    editViewModel: editViewModel
+                    displayTime: viewModel.startPoint,
+                    previewImage: viewModel.previewImage,
+                    player: viewModel.player,
+                    isPlayerReady: viewModel.isPlayerReady,
+                    isRebuildingPlayer: viewModel.isRebuildingPlayer,
+                    isPlaying: viewModel.isPlaying,
+                    onTogglePlayback: { viewModel.togglePlayback() }
                 )
 
                 // 클립 시간 표시
@@ -111,7 +111,7 @@ struct GuideSelectView: View {
                             .padding(.trailing, 24)
                     }
                     // 하단 썸네일 부분
-                    GuideFrameSelectorView(editViewModel: editViewModel, isDragging: $isDragging)
+                    GuideFrameSelectorView(viewModel: viewModel, isDragging: $isDragging)
                         .padding(.horizontal, 26)
                 }
             }
@@ -120,22 +120,22 @@ struct GuideSelectView: View {
         .navigationBarBackButtonHidden(true)
         .task {
             // 트리밍된 구간만 보여주도록 설정
-            await editViewModel.trimmedClip(
+            await viewModel.trimmedClip(
                 trimStart: clip.startPoint,
                 trimEnd: clip.endPoint
             )
             // 저장된 가이드 타임스탬프가 있으면 초기 프레임 위치로 반영
             if case .followUpShoot(let guide) = shootState {
                 if let selectedTimestamp = guide.selectedTimestamp {
-                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
-                    editViewModel.updateStart(clamped)
-                    editViewModel.seek(to: clamped)
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, viewModel.duration))
+                    viewModel.updateStart(clamped)
+                    viewModel.seek(to: clamped)
                 }
             } else if case .appendShoot(let guide) = shootState {
                 if let selectedTimestamp = guide.selectedTimestamp {
-                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, editViewModel.duration))
-                    editViewModel.updateStart(clamped)
-                    editViewModel.seek(to: clamped)
+                    let clamped = max(0, min(selectedTimestamp - clip.startPoint, viewModel.duration))
+                    viewModel.updateStart(clamped)
+                    viewModel.seek(to: clamped)
                 }
             }
         }
