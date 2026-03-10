@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GuideFrameSelectorView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
     var body: some View {

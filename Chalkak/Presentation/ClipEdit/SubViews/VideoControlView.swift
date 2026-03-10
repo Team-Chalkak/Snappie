@@ -32,7 +32,7 @@ struct VideoControlView: View {
     let overlayImage: UIImage?
     var displayTime: Double? = nil
 
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @State private var isOverlayVisible: Bool = true
 
     var body: some View {

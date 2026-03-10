@@ -30,7 +30,7 @@ import SwiftUI
     )
  */
 struct VideoControlPanelView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @Binding var isOverlayVisible: Bool
     let showOverlayToggle: Bool
     var displayTime: Double? = nil

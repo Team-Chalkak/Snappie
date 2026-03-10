@@ -32,25 +32,27 @@ import UIKit
     ├─ guide == nil : saveProjectData() 호출 → Clip 및 Project 생성
     └─ guide != nil : appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
  */
+
 @MainActor
-final class ClipEditViewModel: ObservableObject {
+@Observable
+final class ClipEditViewModel {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
     var timeStampedTiltList: [TimeStampedTilt]
     
     // 2. Published properties
-    @Published var player: AVPlayer = AVPlayer()
-    @Published var startPoint: Double = 0
-    @Published var endPoint: Double = 0
-    @Published var duration: Double = 0
-    @Published var thumbnails: [UIImage] = []
-    @Published var isPlaying = false
-    @Published var previewImage: UIImage?
-    @Published var clipID: String? = nil
-    @Published var currentPlayTime: Double = 0
-    @Published var isPlayerReady: Bool = false
-    @Published var isRebuildingPlayer: Bool = false
+    var player: AVPlayer = .init()
+    var startPoint: Double = 0
+    var endPoint: Double = 0
+    var duration: Double = 0
+    var thumbnails: [UIImage] = []
+    var isPlaying = false
+    var previewImage: UIImage?
+    var clipID: String?
+    var currentPlayTime: Double = 0
+    var isPlayerReady: Bool = false
+    var isRebuildingPlayer: Bool = false
 
     // 3. 계산 프로퍼티
     /// 현재 트리밍된 영상 길이 (초 단위)
@@ -307,7 +309,7 @@ final class ClipEditViewModel: ObservableObject {
                 }
             }
             
-            self.timeObserverToken = token
+            timeObserverToken = token
         }
 
         // 범위 내면 바로 재생, 아니면 start로 이동 후 재생
