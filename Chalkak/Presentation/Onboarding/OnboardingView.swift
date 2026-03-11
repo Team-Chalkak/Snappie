@@ -12,24 +12,34 @@ struct OnboardingView: View {
     let onComplete: () -> Void
 
     @State private var currentIndex = 0
+    @Environment(\.locale) private var locale
     
     private let items: [OnboardingItem] = [
         .init(
             id: 0,
-            imageName: "onboard_image1",
+            imageName: "OnboardingImage1",
             titleKey: "onboarding.step1.title",
             descriptionKey: "onboarding.step1.description"),
         .init(
             id: 1,
-            imageName: "onboard_image2",
+            imageName: "OnboardingImage2",
             titleKey: "onboarding.step2.title",
             descriptionKey: "onboarding.step2.description"),
         .init(
             id: 2,
-            imageName: "onboard_image3",
+            imageName: "OnboardingImage3",
             titleKey: "onboarding.step3.title",
             descriptionKey: "onboarding.step3.description")
     ]
+    
+    private var isKorean: Bool {
+        let langCode = locale.language.languageCode?.identifier ?? ""
+        return langCode.lowercased().hasPrefix("ko")
+    }
+    
+    private func localizedImageName(base: String) -> String {
+        "\(isKorean ? "ko" : "en")\(base)"
+    }
     
     var body: some View {
         ZStack {
@@ -38,7 +48,7 @@ struct OnboardingView: View {
             TabView(selection: $currentIndex) {
                 ForEach(items) { item in
                     Onboard(
-                        ImageName: item.imageName,
+                        ImageName: localizedImageName(base: item.imageName),
                         title: item.titleKey,
                         description: item.descriptionKey
                     )

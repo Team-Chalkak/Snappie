@@ -20,7 +20,7 @@ struct Onboard: View {
                 .padding(.bottom, 40)
             Text(title)
                 .foregroundStyle(Color.matcha200)
-                .font(Locale.current.isEnglish ? .title2 : .title)
+                .font(.title)
                 .fontWeight(.bold)
                 .padding(.bottom, 12)
             Text(description)
@@ -30,11 +30,5 @@ struct Onboard: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 80, alignment: .top)
         }
-    }
-}
-
-extension Locale {
-    var isEnglish: Bool {
-        (language.languageCode?.identifier ?? "") == "en"
     }
 }
