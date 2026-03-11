@@ -8,6 +8,16 @@
 import AVFoundation
 import SwiftUI
 
+struct VideoContext {
+    let previewImage: UIImage?
+    let player: AVPlayer
+    let isPlayerReady: Bool
+    let isRebuildingPlayer: Bool
+    let isPlaying: Bool
+    let currentTrimmedDuration: Double
+    let onTogglePlayback: () -> Void
+}
+
 /**
  VideoControlView: 영상 미리보기 및 조작 인터페이스
 
@@ -18,54 +28,49 @@ import SwiftUI
  - VideoControlPanelView: 재생/일시정지 버튼, 트리밍된 길이 표시, 오버레이 on/off 버튼 포함
 
  ## 호출 위치
- - `ClipEditView` 내부에서 영상 조작 뷰로 사용됨
+ - `ClipEditView`, `GuideSelectView` 내부에서 영상 조작 뷰로 사용됨
  - 호출 예시
     VideoControlView(
         isDragging: isDragging,
         overlayImage: guide?.outlineImage,
-        previewImage: editViewModel.previewImage,
-        player: editViewModel.player,
-        isPlayerReady: editViewModel.isPlayerReady,
-        isRebuildingPlayer: editViewModel.isRebuildingPlayer,
-        isPlaying: editViewModel.isPlaying,
-        onTogglePlayback: { editViewModel.togglePlayback() },
-        currentTrimmedDuration: editViewModel.currentTrimmedDuration
+        context: VideoContext(
+            previewImage: editViewModel.previewImage,
+            player: editViewModel.player,
+            isPlayerReady: editViewModel.isPlayerReady,
+            isRebuildingPlayer: editViewModel.isRebuildingPlayer,
+            isPlaying: editViewModel.isPlaying,
+            currentTrimmedDuration: editViewModel.currentTrimmedDuration,
+            onTogglePlayback: { editViewModel.togglePlayback() }
+        )
     )
  */
 struct VideoControlView: View {
     let isDragging: Bool
     let overlayImage: UIImage?
     var displayTime: Double? = nil
-
-    let previewImage: UIImage?
-    let player: AVPlayer
-    let isPlayerReady: Bool
-    let isRebuildingPlayer: Bool
-    let isPlaying: Bool
-    let onTogglePlayback: () -> Void
-    var currentTrimmedDuration: Double = 0
+    let context: VideoContext
 
     @State private var isOverlayVisible: Bool = true
 
     var body: some View {
         VStack(alignment: .center, spacing: 16, content: {
             VideoPreviewWithOverlay(
-                previewImage: previewImage,
-                player: player,
+                previewImage: context.previewImage,
+                player: context.player,
                 isDragging: isDragging,
                 overlayImage: overlayImage,
-                isPlayerReady: isPlayerReady,
-                isRebuildingPlayer: isRebuildingPlayer,
+                isPlayerReady: context.isPlayerReady,
+                isRebuildingPlayer: context.isRebuildingPlayer,
                 isOverlayVisible: $isOverlayVisible
             )
 
             VideoControlPanelView(
-                isPlaying: isPlaying,
-                onTogglePlayback: onTogglePlayback,
+                isPlaying: context.isPlaying,
+                onTogglePlayback: context.onTogglePlayback,
                 isOverlayVisible: $isOverlayVisible,
                 showOverlayToggle: overlayImage != nil,
                 displayTime: displayTime,
-                currentTrimmedDuration: currentTrimmedDuration
+                currentTrimmedDuration: context.currentTrimmedDuration
             )
         })
     }

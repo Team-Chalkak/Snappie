@@ -83,12 +83,15 @@ struct GuideSelectView: View {
                     isDragging: isDragging,
                     overlayImage: overlayImage,
                     displayTime: viewModel.startPoint,
-                    previewImage: viewModel.previewImage,
-                    player: viewModel.player,
-                    isPlayerReady: viewModel.isPlayerReady,
-                    isRebuildingPlayer: viewModel.isRebuildingPlayer,
-                    isPlaying: viewModel.isPlaying,
-                    onTogglePlayback: { viewModel.togglePlayback() }
+                    context: VideoContext(
+                        previewImage: viewModel.previewImage,
+                        player: viewModel.player,
+                        isPlayerReady: viewModel.isPlayerReady,
+                        isRebuildingPlayer: viewModel.isRebuildingPlayer,
+                        isPlaying: viewModel.isPlaying,
+                        currentTrimmedDuration: 0,
+                        onTogglePlayback: { viewModel.togglePlayback() }
+                    )
                 )
 
                 // 클립 시간 표시
@@ -111,7 +114,22 @@ struct GuideSelectView: View {
                             .padding(.trailing, 24)
                     }
                     // 하단 썸네일 부분
-                    GuideFrameSelectorView(viewModel: viewModel, isDragging: $isDragging)
+                    GuideFrameSelectorView(
+                        state: FrameSelectorState(
+                            thumbnails: viewModel.thumbnails,
+                            duration: viewModel.duration,
+                            startPoint: viewModel.startPoint,
+                            thumbnailUnitWidth: { viewModel.thumbnailUnitWidth(for: $0) },
+                            startX: { viewModel.startX(thumbnailLineWidth: $0, handleWidth: $1) }
+                        ),
+                        actions: FrameSelectorActions(
+                            pause: { viewModel.player.pause() },
+                            setNotPlaying: { viewModel.isPlaying = false },
+                            updateStart: { viewModel.updateStart($0) },
+                            seek: { viewModel.seek(to: $0) }
+                        ),
+                        isDragging: $isDragging
+                    )
                         .padding(.horizontal, 26)
                 }
             }
