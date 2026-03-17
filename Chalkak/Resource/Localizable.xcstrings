@@ -128,12 +128,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create Your Guide on the First Take"
+            "value" : "Guide on the First Take"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "첫 촬영으로 가이드 완성"
           }
         }
@@ -162,12 +162,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quick Edits After Each Take"
+            "value" : "Quick Trim After Take"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "촬영 직후 간단 편집"
           }
         }
@@ -198,12 +198,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Change Your Guide Anytime"
+            "value" : "Change Guide Anytime"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "언제든 가이드 변경"
           }
         }
