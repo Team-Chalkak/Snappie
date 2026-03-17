@@ -56,7 +56,7 @@ struct VideoControlPanelView: View {
             HStack(alignment: .center) {
                 Spacer()
 
-                Text(String(format: "%.2f초", timeToDisplay))
+                Text("\(timeToDisplay, specifier: "%.2f")")
                     .font(SnappieFont.style(.proLabel3))
                     .foregroundStyle(SnappieColor.labelDarkNormal)
                     .padding(.horizontal, 9.5)

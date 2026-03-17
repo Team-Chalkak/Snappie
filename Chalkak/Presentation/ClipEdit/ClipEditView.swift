@@ -49,7 +49,7 @@ struct ClipEditView: View {
     // 2. State & ObservedObject
     @StateObject private var editViewModel: ClipEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    @StateObject private var videoManager = VideoManager()
+//    @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
@@ -94,7 +94,7 @@ struct ClipEditView: View {
 
             VStack(alignment: .center, spacing: 16) {
                 SnappieNavigationBar(
-                    navigationTitle: "장면 다듬기",
+                    navigationTitle: Text("장면 다듬기"),
                     leftButtonType: .backward {
                         guard let previous = coordinator.previousPath else {
                             return
@@ -184,7 +184,7 @@ struct ClipEditView: View {
 
             Button("취소", role: .cancel) {}
         } message: {
-            Text("지금 이어서 찍거나, 프로젝트를 마무리할 수 있어요.")
+            Text("지금 이어서 찍거나, 프로젝트를 마무리할 수 있어요")
         }
         .alert(.retakeVideo, isPresented: $showRetakeAlert) {
             coordinator.popLast()
@@ -196,6 +196,9 @@ struct ClipEditView: View {
             if shootState != .firstShoot, editViewModel.clipID == nil {
                 editViewModel.applyReferenceDuration()
             }
+        }
+        .onDisappear {
+            editViewModel.cleanup()
         }
     }
 }

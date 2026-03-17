@@ -80,7 +80,7 @@ struct TrimmingLineView: View {
                 topTrailingRadius: 6
             )
             .fill(SnappieColor.darkHeavy.opacity(0.6))
-            .frame(width: max(0, thumbnailLineWidth + handleWidth - endX), height: thumbnailHeight)
+            .frame(width: max(0, thumbnailLineWidth + handleWidth), height: thumbnailHeight)
             .offset(x: endX)
 
             // 4. 트리밍 박스
@@ -96,7 +96,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
@@ -117,7 +117,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = gesture.location.x - handleWidth
@@ -144,7 +144,7 @@ struct TrimmingLineView: View {
                     DragGesture()
                         .onChanged { gesture in
                             isDragging = true
-                            editViewModel.player?.pause()
+                            editViewModel.player.pause()
                             editViewModel.isPlaying = false
 
                             let x = max(handleWidth,
@@ -173,7 +173,7 @@ struct TrimmingLineView: View {
             DragGesture()
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player?.pause()
+                    editViewModel.player.pause()
                     editViewModel.isPlaying = false
 
                     let locationRatio = gesture.location.x / TimelineConstants.thumbnailLineWidth

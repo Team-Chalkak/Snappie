@@ -17,7 +17,7 @@ enum ButtonCategory {
 
 /// 버튼 하위 타입 분류
 enum ButtonType{
-    case solidPrimary(title: String, size: ButtonSizeType)
+    case solidPrimary(title: LocalizedStringKey, size: ButtonSizeType)
     case solidSecondary(contentType: ButtonContentType, size: ButtonSizeType, isOutlined: Bool)
     
     case iconNormal(icon: Icon, size: ButtonSizeType)
@@ -47,7 +47,7 @@ enum ButtonSizeType {
 /// 버튼 내부 콘텐츠 종류
 enum ButtonContentType {
     /// Text가 버튼의 label로 들어오는 경우
-    case text(String)
+    case text(LocalizedStringKey)
     /// 커스텀 아이콘 이미지가 label로 들어오는 경우
     case icon(Icon)
 }

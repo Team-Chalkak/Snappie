@@ -14,7 +14,6 @@
 		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
 		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
 		7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D60F6482F0D141700621874 /* SchemaV3.swift */; };
-		7DB5DE822F02C64100E1FAE8 /* ProjectPreviewSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */; };
 		7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */; };
 		7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */; };
 		7DD82CC32EFECCA000AD8DFC /* TimeLineConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */; };
@@ -80,6 +79,8 @@
 		993A21822E26ABAC0059B70A /* Array + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993A21812E26ABA70059B70A /* Array + Ext.swift */; };
 		994EFAE22F1888500029AAE3 /* SchemaV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE12F18884C0029AAE3 /* SchemaV4.swift */; };
 		994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */; };
+		994EFB5C2F3AEE830029AAE3 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */; };
+		994EFB5E2F3AFD9B0029AAE3 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */; };
 		998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 998230512EF1CE500081CE94 /* GoogleService-Info.plist */; };
 		998230562EF1D5660081CE94 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 998230552EF1D5660081CE94 /* FirebaseCore */; };
 		998230582EF1E5180081CE94 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 998230572EF1E5180081CE94 /* FirebaseAnalytics */; };
@@ -178,7 +179,6 @@
 		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
 		7D60F6482F0D141700621874 /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
-		7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPreviewSectionView.swift; sourceTree = "<group>"; };
 		7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectView.swift; sourceTree = "<group>"; };
 		7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideFrameSelectorView.swift; sourceTree = "<group>"; };
 		7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineConstants.swift; sourceTree = "<group>"; };
@@ -247,6 +247,8 @@
 		993A21812E26ABA70059B70A /* Array + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Ext.swift"; sourceTree = "<group>"; };
 		994EFAE12F18884C0029AAE3 /* SchemaV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV4.swift; sourceTree = "<group>"; };
 		994EFAE32F1933030029AAE3 /* ClipPlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlayheadView.swift; sourceTree = "<group>"; };
+		994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		998230512EF1CE500081CE94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9985192E2E4B3CE100A9F695 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		999992462E2D869400D56BD1 /* BoundingBoxInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxInfo.swift; sourceTree = "<group>"; };
@@ -407,7 +409,6 @@
 				C54ABC022EF9080400A9EC1E /* PlayheadView.swift */,
 				C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */,
 				C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */,
-				7DB5DE812F02C64100E1FAE8 /* ProjectPreviewSectionView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -671,6 +672,8 @@
 				C5FB3EC22E2E0E2900A4C1BE /* Fonts */,
 				993A1F4C2E267E0C0059B70A /* Assets.xcassets */,
 				993A1F4D2E267E0C0059B70A /* sample-video.mov */,
+				994EFB5B2F3AEE830029AAE3 /* Localizable.xcstrings */,
+				994EFB5D2F3AFD9B0029AAE3 /* InfoPlist.xcstrings */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -1016,6 +1019,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 993A1CBD2E2049D50059B70A;
 			minimizedProjectReferenceProxies = 1;
@@ -1040,7 +1044,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				998230522EF1CE500081CE94 /* GoogleService-Info.plist in Resources */,
+				994EFB5E2F3AFD9B0029AAE3 /* InfoPlist.xcstrings in Resources */,
 				C5FB3EC52E2E0E6700A4C1BE /* KronaOne-Regular.ttf in Resources */,
+				994EFB5C2F3AEE830029AAE3 /* Localizable.xcstrings in Resources */,
 				993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */,
 				993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */,
 				993A1F522E267E0C0059B70A /* sample-video.mov in Resources */,
@@ -1177,7 +1183,6 @@
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
 				C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */,
-				7DB5DE822F02C64100E1FAE8 /* ProjectPreviewSectionView.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,
 				C5C12EAE2E325A5800C4DC6D /* GlassButtonStyler.swift in Sources */,
@@ -1320,6 +1325,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1376,6 +1382,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1388,7 +1395,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
@@ -1398,10 +1405,10 @@
 				INFOPLIST_FILE = Chalkak/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Snappie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "App의 다양한 컨텐츠를 사용하여, 사진 또는 동영상을 촬영해 보세요.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "동영상에 소리를 녹음하시려면 App이 마이크에 접근할 수 있도록 허용되어있어야 합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 기기에 저장하기 위해 사진에 대한 접근을 허용해야 합니다.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "사용자 맞춤 서비스 제공을 위해 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is required to record audio in videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save videos to your device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Tracking permission is used to provide personalized services.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1413,7 +1420,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.DeveloperAcademy.Chalkak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1434,7 +1441,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"Chalkak/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F83F8K6223;
@@ -1443,10 +1450,10 @@
 				INFOPLIST_FILE = Chalkak/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Snappie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "App의 다양한 컨텐츠를 사용하여, 사진 또는 동영상을 촬영해 보세요.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "동영상에 소리를 녹음하시려면 App이 마이크에 접근할 수 있도록 허용되어있어야 합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "영상을 기기에 저장하기 위해 사진에 대한 접근을 허용해야 합니다.";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "사용자 맞춤 서비스 제공을 위해 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is required to record audio in videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access is required to save videos to your device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Tracking permission is used to provide personalized services.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1458,7 +1465,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.DeveloperAcademy.Chalkak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

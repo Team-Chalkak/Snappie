@@ -9,10 +9,10 @@ import SwiftUI
 
 /// 1초 후 사라지는 토스트 Alert
 struct SnappieAlert: View {
-    let message: String
+    let message: LocalizedStringKey
     let showImage: Bool
 
-    init(message: String, showImage: Bool = true) {
+    init(message: LocalizedStringKey, showImage: Bool = true) {
         self.message = message
         self.showImage = showImage
     }
@@ -40,7 +40,7 @@ struct SnappieAlert: View {
 
 struct SnappieAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
-    let message: String
+    let message: LocalizedStringKey
     let showImage: Bool
 
     func body(content: Content) -> some View {
@@ -64,11 +64,11 @@ struct SnappieAlertModifier: ViewModifier {
 }
 
 extension View {
-    func snappieAlert(isPresented: Binding<Bool>, message: String) -> some View {
+    func snappieAlert(isPresented: Binding<Bool>, message: LocalizedStringKey) -> some View {
         modifier(SnappieAlertModifier(isPresented: isPresented, message: message, showImage: true))
     }
     
-    func snappieAlert(isPresented: Binding<Bool>, message: String, showImage: Bool) -> some View {
+    func snappieAlert(isPresented: Binding<Bool>, message: LocalizedStringKey, showImage: Bool) -> some View {
         modifier(SnappieAlertModifier(isPresented: isPresented, message: message, showImage: showImage))
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // 네비게이션용 커스텀 타입들
 extension SnappieNavigationBar {
@@ -27,7 +28,7 @@ extension SnappieNavigationBar {
     /// 버튼을 위해 필요한 정보들
     struct ItemsForButton {
         enum Style {
-            case text(String)
+            case text(LocalizedStringKey)
             case icon(Icon)
         }
         
@@ -36,7 +37,7 @@ extension SnappieNavigationBar {
         let action: () -> Void
         
         init(
-            label: String,
+            label: LocalizedStringKey,
             isEnabled: Bool = true,
             action: @escaping () -> Void
         ) {

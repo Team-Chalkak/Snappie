@@ -19,9 +19,12 @@ struct ProjectEditView: View {
     @State private var showExportView = false
     @State private var isSaving = false
     @State private var showSaveCompleteAlert: Bool = false
+    @State private var isReordering: Bool = false
+
 
     // appendShoot에서 전달된 클립 데이터
     @State private var newClip: Clip? = nil
+
 
     init(projectID: String, newClip: Clip? = nil) {
         self._viewModel = State(wrappedValue: ProjectEditViewModel(projectID: projectID))
@@ -31,24 +34,26 @@ struct ProjectEditView: View {
     var body: some View {
         VStack(spacing: 0) {
             SnappieNavigationBar(
-                navigationTitle: viewModel.projectTitle,
                 leftButtonType: .backward {
                     if viewModel.hasChanges && !isSaving {
                         showExitConfirmation = true
                     } else {
-                        UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-                        coordinator.popToScreen(.projectList)
+                        Task {
+                            _ = await viewModel.discardChanges()
+                            UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
+                            coordinator.popToScreen(.projectList)
+                        }
                     }
                 },
                 rightButtonType: .twoButton(
-                    primary: .init(label: "저장") {
+                    primary: .init(label: "저장", isEnabled: viewModel.hasChanges) {
                         Task {
+                            showSaveCompleteAlert = true
                             isSaving = true
                             let success = await viewModel.commitChanges()
                             if success {
                                 // 저장 후 새로운 temp 프로젝트 생성
                                 await viewModel.initializeTempProject(loadAfter: true)
-                                showSaveCompleteAlert = true
                             }
                             isSaving = false
                         }
@@ -65,10 +70,20 @@ struct ProjectEditView: View {
                 player: viewModel.player,
                 isDragging: viewModel.isDragging,
                 overlayImage: viewModel.guide?.outlineImage,
+                isPlayerReady: viewModel.isPlayerReady,
+                isRebuildingPlayer: viewModel.isRebuildingPlayer,
                 isOverlayVisible: $isOverlayVisible
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .snappieProgress(isPresented: $viewModel.isLoading, message: "영상 불러오는 중")
+            .snappieProgress(
+                isPresented: Binding(
+                    get: { viewModel.isLoading && !isSaving },
+                    set: { newValue in
+                        viewModel.isLoading = newValue
+                    }
+                ),
+                message: "영상 불러오는 중"
+            )
             
             // 재생 일시정지 버튼 & 시간표시하는 서브뷰
             PlayInfoView(
@@ -92,6 +107,7 @@ struct ProjectEditView: View {
                 playHeadPosition: $viewModel.playHead,
                 isDragging: $viewModel.isDragging,
                 selectedClipID: $viewModel.selectedClipID,
+                isReordering: $isReordering,
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
                 guideClipID: viewModel.guide?.clipID,
@@ -145,7 +161,7 @@ struct ProjectEditView: View {
                         guard let payload = viewModel.makeClipEditPayload(
                             selectedClipID: selectedClipID
                         ) else { return }
-                        
+
                         coordinator.push(.guideSelect(
                             clip: payload.clip,
                             state: payload.state,
@@ -159,6 +175,11 @@ struct ProjectEditView: View {
                 )
                 .padding(.top, 16)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                .opacity(isReordering ? 0 : 1)
+                .animation(
+                    .easeInOut(duration: 0.25),
+                    value: isReordering
+                )
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedClipID != nil)
@@ -171,6 +192,9 @@ struct ProjectEditView: View {
                 if !viewModel.isAlreadyInitialized {
                     // 임시 프로젝트 생성 및 초기 로드
                     await viewModel.initializeTempProject(loadAfter: true)
+                    
+                    // 시작 위치를 기존 영상의 제일 마지막 위치로
+                    viewModel.seekTo(time: viewModel.totalDuration)
                     
                     if let clip = newClip {
                         viewModel.addClipToTemp(clip: clip)
@@ -200,7 +224,7 @@ struct ProjectEditView: View {
                 }
                 Analytics.logEvent("saveEditProjectButtonTapped", parameters: nil)
             }
-            Button("저장하지 않고 나가기") {
+            Button("나가기", role: .destructive) {
                 Task {
                     let success = await viewModel.discardChanges()
                     if success {
@@ -214,7 +238,7 @@ struct ProjectEditView: View {
                 Analytics.logEvent("cancelButtonTapped", parameters: nil)
             }
         } message: {
-            Text("저장하지 않으면 방금 편집한 내용이 사라져요.")
+            Text("저장하지 않으면 방금 편집한 내용이 사라져요")
         }
         
         // 내보내기 시트
@@ -280,89 +304,3 @@ struct ProjectEditView: View {
         )
     }
 }
-
-// MARK: - Subviews
-/*
-private extension ProjectEditView {
-    @ViewBuilder
-    var navigationBar: some View {
-        ZStack {
-            HStack {
-                backButton
-                Spacer()
-                rightButtons
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .padding(.bottom, 16)
-    }
-
-    @ViewBuilder
-    private var rightButtons: some View {
-        HStack(spacing: 8) {
-            exportButton
-            saveButton
-        }
-    }
-
-    private var backButton: some View {
-        SnappieButton(
-            .iconBackground(
-                icon: .chevronBackward,
-                size: .medium,
-                isActive: true
-            )
-        ) {
-            if viewModel.hasChanges {
-                showExitConfirmation = true
-            } else {
-                UserDefaults.standard.set(nil, forKey: UserDefaultKey.currentProjectID)
-                coordinator.popToScreen(.projectList)
-            }
-        }
-    }
-
-    private var exportButton: some View {
-        Button {
-            Task {
-                let success = await viewModel.exportEditedVideoToPhotos()
-                if success {
-                    showExportSuccessAlert = true
-                } else {
-                    showPhotoPermissionDeniedAlert = true
-                }
-            }
-        } label: {
-            Image(systemName: "square.and.arrow.down")
-                .frame(width: 20, height: 20)
-                .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                .padding(6)
-                .background(SnappieColor.containerFillNormal)
-                .frame(width: 32, height: 32)
-                .clipShape(.circle)
-        }
-    }
-
-    private var saveButton: some View {
-        Button {
-            Task {
-                let success = await viewModel.exportEditedVideoToPhotos()
-                if success {
-                    showExportSuccessAlert = true
-                } else {
-                    showPhotoPermissionDeniedAlert = true
-                }
-            }
-        } label: {
-            Text("저장")
-                .font(SnappieFont.style(.proLabel2))
-                .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 9)
-                .background(SnappieColor.containerFillNormal)
-                .clipShape(.capsule)
-        }
-    }
-}
-*/

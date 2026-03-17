@@ -98,7 +98,7 @@ struct ProjectCardView: View {
                 }
             },
             message: {
-                Text("새로운 이름을 입력해주세요.")
+                Text("새로운 이름을 입력해주세요")
             }
         )
     }

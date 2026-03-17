@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 프로그레스 표시 Alert (내보내는 중 등에 사용)
 struct SnappieProgress: View {
-    let message: String
+    let message: LocalizedStringKey
     @State private var rotationAngle: Double = 0
     
     private var progressGradient: AngularGradient {
@@ -24,7 +24,7 @@ struct SnappieProgress: View {
         )
     }
     
-    init(message: String) {
+    init(message: LocalizedStringKey) {
         self.message = message
     }
     
@@ -63,7 +63,7 @@ struct SnappieProgress: View {
 
 struct SnappieProgressModifier: ViewModifier {
     @Binding var isPresented: Bool
-    let message: String
+    let message: LocalizedStringKey
     
     func body(content: Content) -> some View {
         ZStack {
@@ -79,7 +79,7 @@ struct SnappieProgressModifier: ViewModifier {
 }
 
 extension View {
-    func snappieProgress(isPresented: Binding<Bool>, message: String) -> some View {
+    func snappieProgress(isPresented: Binding<Bool>, message: LocalizedStringKey) -> some View {
         modifier(SnappieProgressModifier(isPresented: isPresented, message: message))
     }
 }

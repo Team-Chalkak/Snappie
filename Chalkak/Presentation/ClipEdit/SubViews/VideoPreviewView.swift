@@ -21,31 +21,39 @@ import SwiftUI
  */
 struct VideoPreviewView: View {
     let previewImage: UIImage?
-    let player: AVPlayer?
+    let player: AVPlayer
     let isDragging: Bool
+    let isPlayerReady: Bool
+    let isRebuildingPlayer: Bool
 
     var body: some View {
         Group {
-            if isDragging, let previewImage = previewImage {
+            if isDragging, let previewImage {
                 Image(uiImage: previewImage)
                     .resizable()
                     .aspectRatio(9.0 / 16.0, contentMode: .fit)
-            } else if let player = player {
+            } else if isRebuildingPlayer || !isPlayerReady {
+                if let previewImage {
+                    Image(uiImage: previewImage)
+                        .resizable()
+                        .aspectRatio(9.0 / 16.0, contentMode: .fit)
+                } else {
+                    // 로딩 중일 때도 동일한 aspectRatio 공간 확보 임시 뷰
+                    ProgressView()
+                        .tint(SnappieColor.primaryLight)
+                        .scaleEffect(2.0)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .background(
+                            Rectangle()
+                                .fill(SnappieColor.darkStrong)
+                                .aspectRatio(9.0 / 16.0, contentMode: .fit)
+                        )
+                }
+            } else {
                 VideoPlayer(player: player)
                     .disabled(true)
                     .aspectRatio(9.0 / 16.0, contentMode: .fit)
                     .clipped()
-            } else {
-                // 로딩 중일 때도 동일한 aspectRatio 공간 확보 임시 뷰
-                ProgressView()
-                    .tint(SnappieColor.primaryLight)
-                    .scaleEffect(2.0)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .background(
-                        Rectangle()
-                            .fill(SnappieColor.darkStrong)
-                            .aspectRatio(9.0 / 16.0, contentMode: .fit)
-                    )
             }
         }
     }

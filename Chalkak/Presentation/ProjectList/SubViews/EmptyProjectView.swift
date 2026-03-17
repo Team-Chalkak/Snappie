@@ -18,7 +18,7 @@ struct EmptyProjectView: View {
 
             Spacer()
 
-            Text("프로젝트가 비어 있어요.\n촬영을 시작하여 새 프로젝트를 만들어볼까요?")
+            Text("아직 생성된 프로젝트가 없어요\n버튼을 눌러 새 프로젝트를 시작해볼까요?")
                 .multilineTextAlignment(.center)
                 .font(SnappieFont.style(.proLabel1))
                 .foregroundStyle(SnappieColor.labelPrimaryNormal)
