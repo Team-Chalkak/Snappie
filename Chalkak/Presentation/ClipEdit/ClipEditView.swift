@@ -16,7 +16,7 @@ import SwiftUI
  사용자가 영상에서 사용할 구간을 직접 선택(트리밍)할 수 있도록 도와주는 메인 View
  영상 재생, 썸네일 기반 트리밍, 클립 저장, 다음 단계(윤곽선 생성 또는 후속 클립 연결)로 이동하는 역할
 
- ## 데이터 흐름
+ ## 데이터 흐름 
  ⭐️ guide 값(nil 여부)에 따른 분기 처리
  ├─ guide == nil
  │    1) "내보내기" 버튼이 표시되지 않음
@@ -47,7 +47,7 @@ struct ClipEditView: View {
     let cameraManager: CameraManager
 
     // 2. State & ObservedObject
-    @StateObject private var editViewModel: ClipEditViewModel
+    @State private var editViewModel: ClipEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
 //    @StateObject private var videoManager = VideoManager()
     @State private var isDragging = false
@@ -74,7 +74,7 @@ struct ClipEditView: View {
         timeStampedTiltList: [TimeStampedTilt],
         clipID: String? = nil
     ) {
-        _editViewModel = StateObject(wrappedValue: ClipEditViewModel(
+        _editViewModel = State(wrappedValue: ClipEditViewModel(
             clipURL: clipURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: timeStampedTiltList,
@@ -148,7 +148,15 @@ struct ClipEditView: View {
                 VideoControlView(
                     isDragging: isDragging,
                     overlayImage: guide?.outlineImage,
-                    editViewModel: editViewModel
+                    context: VideoContext(
+                        previewImage: editViewModel.previewImage,
+                        player: editViewModel.player,
+                        isPlayerReady: editViewModel.isPlayerReady,
+                        isRebuildingPlayer: editViewModel.isRebuildingPlayer,
+                        isPlaying: editViewModel.isPlaying,
+                        currentTrimmedDuration: editViewModel.currentTrimmedDuration,
+                        onTogglePlayback: { editViewModel.togglePlayback() }
+                    )
                 )
 
                 TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)

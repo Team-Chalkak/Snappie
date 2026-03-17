@@ -21,7 +21,7 @@ import SwiftUI
  - 호출 예시 : TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
  */
 struct TrimmingControlView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
 
     var body: some View {

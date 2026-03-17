@@ -14,6 +14,7 @@
 		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
 		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
 		7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D60F6482F0D141700621874 /* SchemaV3.swift */; };
+		7DD5117A2F5FF740005A4701 /* GuideSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD511792F5FF740005A4701 /* GuideSelectViewModel.swift */; };
 		7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */; };
 		7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */; };
 		7DD82CC32EFECCA000AD8DFC /* TimeLineConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */; };
@@ -179,6 +180,7 @@
 		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
 		7D60F6482F0D141700621874 /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
+		7DD511792F5FF740005A4701 /* GuideSelectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectViewModel.swift; sourceTree = "<group>"; };
 		7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectView.swift; sourceTree = "<group>"; };
 		7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideFrameSelectorView.swift; sourceTree = "<group>"; };
 		7DD82CC22EFECC9A00AD8DFC /* TimeLineConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineConstants.swift; sourceTree = "<group>"; };
@@ -381,6 +383,7 @@
 		7DD82CBC2EFEC26600AD8DFC /* GuideSelect */ = {
 			isa = PBXGroup;
 			children = (
+				7DD511792F5FF740005A4701 /* GuideSelectViewModel.swift */,
 				7DD82CBF2EFEC29B00AD8DFC /* GuideFrameSelectorView.swift */,
 				7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */,
 			);
@@ -1182,6 +1185,7 @@
 				C5886D3B2E375B46000566C5 /* ProjectCardCoverImageView.swift in Sources */,
 				C5FB3EBF2E277CAA00A4C1BE /* VideoLoader.swift in Sources */,
 				9340078D2E340459006BE89C /* VideoControlPanelView.swift in Sources */,
+				7DD5117A2F5FF740005A4701 /* GuideSelectViewModel.swift in Sources */,
 				C5886D3D2E376A4D000566C5 /* ProjectInfoMenuView.swift in Sources */,
 				993A1F6B2E267E0C0059B70A /* CircleIconButton.swift in Sources */,
 				C5C12EA22E2FEE1C00C4DC6D /* SnappieButton.swift in Sources */,

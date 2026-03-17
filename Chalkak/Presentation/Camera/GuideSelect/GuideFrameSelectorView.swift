@@ -7,8 +7,24 @@
 
 import SwiftUI
 
+struct FrameSelectorState {
+    let thumbnails: [UIImage]
+    let duration: Double
+    let startPoint: Double
+    let thumbnailUnitWidth: (CGFloat) -> CGFloat
+    let startX: (CGFloat, CGFloat) -> CGFloat
+}
+
+struct FrameSelectorActions {
+    let pause: () -> Void
+    let setNotPlaying: () -> Void
+    let updateStart: (Double) -> Void
+    let seek: (Double) -> Void
+}
+
 struct GuideFrameSelectorView: View {
-    @ObservedObject var editViewModel: ClipEditViewModel
+    let state: FrameSelectorState
+    let actions: FrameSelectorActions
     @Binding var isDragging: Bool
 
     var body: some View {
@@ -17,19 +33,19 @@ struct GuideFrameSelectorView: View {
         let handleWidth: CGFloat = TimelineConstants.handleWidth
         let thumbnailHeight: CGFloat = TimelineConstants.thumbnailHeight
 
-        let thumbnailUnitWidth = editViewModel.thumbnailUnitWidth(for: thumbnailLineWidth)
+        let thumbnailUnitWidth = state.thumbnailUnitWidth(thumbnailLineWidth)
         // 박스가 오른쪽 핸들 넘지 않게 제한
-        let rawFrameX = editViewModel.startX(thumbnailLineWidth: thumbnailLineWidth, handleWidth: handleWidth)
+        let rawFrameX = state.startX(thumbnailLineWidth, handleWidth)
         let maxFrameX = handleWidth + thumbnailLineWidth - TimelineConstants.frameBoxWidth
         let frameX = max(handleWidth, min(rawFrameX, maxFrameX))
-        let duration = editViewModel.duration
+        let duration = state.duration
 
         ZStack(alignment: .leading) {
             HStack(spacing: 0) {
                 HandleCapsule(isLeading: true)
 
                 HStack(spacing: 0) {
-                    ForEach(Array(editViewModel.thumbnails.enumerated()), id: \.offset) { _, image in
+                    ForEach(Array(state.thumbnails.enumerated()), id: \.offset) { _, image in
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()
@@ -73,8 +89,8 @@ struct GuideFrameSelectorView: View {
             DragGesture(minimumDistance: 0)
                 .onChanged { gesture in
                     isDragging = true
-                    editViewModel.player.pause()
-                    editViewModel.isPlaying = false
+                    actions.pause()
+                    actions.setNotPlaying()
 
                     let draggedFrameX = gesture.location.x
                     let minFrameX = handleWidth
@@ -84,11 +100,11 @@ struct GuideFrameSelectorView: View {
                     let ratio = (clampedFrameX - handleWidth) / (thumbnailLineWidth - TimelineConstants.frameBoxWidth)
                     let newStart = ratio * duration
 
-                    editViewModel.updateStart(newStart)
+                    actions.updateStart(newStart)
                 }
                 .onEnded { _ in
                     isDragging = false
-                    editViewModel.seek(to: editViewModel.startPoint)
+                    actions.seek(state.startPoint)
                 }
         )
     }

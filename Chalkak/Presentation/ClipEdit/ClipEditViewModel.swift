@@ -32,25 +32,27 @@ import UIKit
     ├─ guide == nil : saveProjectData() 호출 → Clip 및 Project 생성
     └─ guide != nil : appendClipToCurrentProject() 호출 → 기존 Project에 Clip 추가
  */
+
 @MainActor
-final class ClipEditViewModel: ObservableObject {
+@Observable
+final class ClipEditViewModel {
     // 1. Input
     var clipURL: URL
     var cameraSetting: CameraSetting
     var timeStampedTiltList: [TimeStampedTilt]
     
     // 2. Published properties
-    @Published var player: AVPlayer = AVPlayer()
-    @Published var startPoint: Double = 0
-    @Published var endPoint: Double = 0
-    @Published var duration: Double = 0
-    @Published var thumbnails: [UIImage] = []
-    @Published var isPlaying = false
-    @Published var previewImage: UIImage?
-    @Published var clipID: String? = nil
-    @Published var currentPlayTime: Double = 0
-    @Published var isPlayerReady: Bool = false
-    @Published var isRebuildingPlayer: Bool = false
+    var player: AVPlayer = .init()
+    var startPoint: Double = 0
+    var endPoint: Double = 0
+    var duration: Double = 0
+    var thumbnails: [UIImage] = []
+    var isPlaying = false
+    var previewImage: UIImage?
+    var clipID: String?
+    var currentPlayTime: Double = 0
+    var isPlayerReady: Bool = false
+    var isRebuildingPlayer: Bool = false
 
     // 3. 계산 프로퍼티
     /// 현재 트리밍된 영상 길이 (초 단위)
@@ -307,7 +309,7 @@ final class ClipEditViewModel: ObservableObject {
                 }
             }
             
-            self.timeObserverToken = token
+            timeObserverToken = token
         }
 
         // 범위 내면 바로 재생, 아니면 start로 이동 후 재생
@@ -333,40 +335,6 @@ final class ClipEditViewModel: ObservableObject {
         endPoint = newEnd
     }
 
-    /// GuideSelectView에서 트리밍된 구간만 보여주게끔 조정
-    func trimmedClip(trimStart: Double, trimEnd: Double) async {
-        guard let imageGenerator = imageGenerator else { return }
-        // 원본시간
-        trimOffset = trimStart
-
-        // 사용자가 보기에 시작은 0초로 고정
-        let trimmedDuration = trimEnd - trimStart
-        startPoint = 0
-        duration = trimmedDuration
-        endPoint = trimmedDuration
-
-        seek(to: 0)
-
-        await updatePreviewImage(at: 0)
-
-        thumbnails = []
-        let interval = trimmedDuration / Double(thumbnailCount)
-
-        let times = (0 ..< thumbnailCount).map { i in
-            CMTime(seconds: trimStart + Double(i) * interval, preferredTimescale: 600)
-        }
-        
-        do {
-            for try await result in imageGenerator.images(for: times) {
-                let cgImage = try result.image
-                let uiImage = UIImage(cgImage: cgImage)
-                thumbnails.append(uiImage)
-            }
-        } catch {
-            print("썸네일트리밍 error \(error)")
-        }
-    }
-    
     /// Project의 referenceDuration 값을 기반으로
     /// 트리밍 구간(startPoint, endPoint)을 초기화합니다.
     /// 두 번째 촬영 이후부터 호출됩니다.
