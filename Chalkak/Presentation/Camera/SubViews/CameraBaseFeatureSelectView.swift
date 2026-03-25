@@ -9,7 +9,7 @@ import FirebaseAnalytics
 import SwiftUI
 
 struct CameraBaseFeatureSelectView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
 
     var body: some View {
         ButtonIconWithText(title: "Timer", icon: viewModel.currentTimerIcon, isActive: viewModel.selectedTimerDuration != .off) {

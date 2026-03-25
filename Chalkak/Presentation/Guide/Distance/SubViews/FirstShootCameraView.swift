@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FirstShootCameraView: View {
     @State private var viewModel = BoundingBoxViewModel()
-    @StateObject private var cameraViewModel = CameraViewModel()
+    @State private var cameraViewModel = CameraViewModel()
 
     var body: some View {
         ZStack {

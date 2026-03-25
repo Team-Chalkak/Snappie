@@ -21,7 +21,7 @@ struct CameraView: View {
         }
     }
 
-    @StateObject var viewModel = CameraViewModel()
+    @State var viewModel = CameraViewModel()
     @EnvironmentObject private var coordinator: Coordinator
     @Environment(PermissionManager.self) private var permissionManager
 

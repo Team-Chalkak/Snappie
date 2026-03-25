@@ -9,48 +9,46 @@ import AVFoundation
 import Combine
 import CoreMotion
 import Foundation
+import Observation
 import Photos
 import SwiftData
 import SwiftUI
 
-class CameraViewModel: ObservableObject {
-    // MARK: - Published Properties (UI State)
+@Observable
+class CameraViewModel {
+    // MARK: - Properties (UI State)
 
     // 뷰가 직접 구독하는 상태 변수들을 그룹화합니다.
-    @Published var needsPermissionRequest = false
-    @Published var isTimerRunning = false
-    @Published var selectedTimerDuration: TimerOptions = .off
-    @Published var showTimerFeedback: TimerOptions? = nil
-    @Published var showingCameraControl = false
-    @Published var torchMode: TorchMode = .off
-    @Published var isGrid = false
-    @Published var isHorizontalLevelActive = false {
+    var needsPermissionRequest = false
+    var isTimerRunning = false
+    var selectedTimerDuration: TimerOptions = .off
+    var showTimerFeedback: TimerOptions?
+    var showingCameraControl = false
+    var torchMode: TorchMode = .off
+    var isGrid = false
+    var isHorizontalLevelActive = false {
         didSet { isHorizontalLevelActive ? startObservingTilt() : stopObservingTilt() }
     }
 
-    @Published var isHorizontal = false
-    @Published var cameraPostion: AVCaptureDevice.Position = .back {
+    var isHorizontal = false
+    var cameraPostion: AVCaptureDevice.Position = .back {
         didSet { isUsingFrontCamera = (cameraPostion == .front) }
     }
 
-    @Published var isRecording = false
-    @Published var recordingTime = 0
-    @Published var timerCountdown = 0
-    @Published var showingZoomControl = false
-    @Published var zoomScale: CGFloat = 1.0
-    @Published var isUsingFrontCamera: Bool = false
-    @Published var isPreviewMirrored: Bool = false
-    @Published var hasBadge: Bool = false
-    @Published var showProjectSavedAlert: Bool = false
-    @Published var lastZoomInteraction = Date() // 줌 슬라이더 타이머 로직을 위해 유지
-
-    // MARK: - Core Dependencies & Models
+    var isRecording = false
+    var recordingTime = 0
+    var timerCountdown = 0
+    var showingZoomControl = false
+    var zoomScale: CGFloat = 1.0
+    var isUsingFrontCamera: Bool = false
+    var isPreviewMirrored: Bool = false
+    var hasBadge: Bool = false
+    var showProjectSavedAlert: Bool = false
+    var lastZoomInteraction = Date() // 줌 슬라이더 타이머 로직을 위해 유지
 
     var model: CameraManager
     private let swiftDataManager = SwiftDataManager.shared
-    @Published var tiltCollector = TiltDataCollector()
-
-    // MARK: Internal State
+    var tiltCollector = TiltDataCollector()
 
     let session: AVCaptureSession
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
@@ -67,23 +65,21 @@ class CameraViewModel: ObservableObject {
     private var dataCollectionTimer: Timer?
     private var recordingStartDate: Date?
 
-    // MARK: - Computed Properties
-
     var minZoomScale: CGFloat { 0.5 }
     var maxZoomScale: CGFloat { 6.0 }
     var formattedTime: String { String(format: "%02d:%02d", recordingTime / 60, recordingTime % 60) }
     var currentTimerIcon: Icon { selectedTimerDuration.icon }
     var currentFlashIcon: Icon { torchMode.icon }
 
-    // MARK: - init
-
     init() {
-        model = CameraManager()
-        session = model.session
-        model.$isRecording
-            .assign(to: &$isRecording)
+        let cameraManager = CameraManager()
+        model = cameraManager
+        session = cameraManager.session
+        cameraManager.$isRecording
+            .sink { [weak self] value in self?.isRecording = value }
+            .store(in: &cancellables)
 
-        model.savedVideoInfo
+        cameraManager.savedVideoInfo
             .receive(on: DispatchQueue.main)
             .sink { [weak self] url in
                 self?.videoSavedPublisher.send(url)
@@ -103,7 +99,7 @@ class CameraViewModel: ObservableObject {
         setPreviewMirroringUpdateHandler()
     }
 
-    // MARK: - Camera Set
+    // MARK: 카메라 세팅 관련 함수들
 
     func startCamera() {
         tiltCollector.start()

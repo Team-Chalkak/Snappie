@@ -9,7 +9,7 @@ import FirebaseAnalytics
 import SwiftUI
 
 struct CameraDefaultTopControlView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
 
     var body: some View {
         VStack(spacing: 8) {

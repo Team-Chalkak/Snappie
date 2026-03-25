@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CameraBottomControlView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
 
     var body: some View {
         VStack(spacing: 20) {
