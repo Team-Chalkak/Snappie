@@ -50,6 +50,7 @@ class CameraViewModel {
     private let swiftDataManager = SwiftDataManager.shared
     var tiltCollector = TiltDataCollector()
 
+    weak var coordinator: Coordinator?
     let session: AVCaptureSession
     let videoSavedPublisher = PassthroughSubject<URL, Never>()
     var timeStampedTiltList: [TimeStampedTilt] = []
@@ -110,6 +111,24 @@ class CameraViewModel {
         if isRecording { stopVideoRecording() }
         tiltCollector.stop()
         model.stopSession()
+    }
+
+    @MainActor func exitCamera() {
+        stopCamera()
+
+        // 이제 CameraView는 ProjectEditView를 통해서만 접근이 가능함
+        guard let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) else {
+            coordinator?.removeAll()
+            return
+        }
+
+        if let tempProject = swiftDataManager.fetchProject(byID: projectID),
+           let originalID = tempProject.originalID // Temp 여부에 따라 originalID or projectId
+        {
+            coordinator?.popToScreen(.projectEdit(projectID: originalID))
+        } else {
+            coordinator?.popToScreen(.projectEdit(projectID: projectID))
+        }
     }
 
     func switchCameraControls() { showingCameraControl.toggle() }
