@@ -205,6 +205,9 @@ struct ClipEditView: View {
                 editViewModel.applyReferenceDuration()
             }
         }
+        .onAppear {
+            editViewModel.restorePlayer()
+        }
         .onDisappear {
             editViewModel.cleanup()
         }
