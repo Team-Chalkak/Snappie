@@ -149,6 +149,12 @@ final class ClipEditViewModel {
         player.pause()
         player.replaceCurrentItem(with: nil)
     }
+
+    ///  가이드선택 -> 장면 다듬기로 돌아갔을때 cleanup으로 날아간 player복구
+    func restorePlayer() {
+        guard player.currentItem == nil else { return }
+        setupPlayer()
+    }
     
     /// 영상 전체 길이와 썸네일 간격을 계산하여, 일정 시간 간격으로 트리밍 타임라인 썸네일 이미지 생성
     func generateThumbnails() async {

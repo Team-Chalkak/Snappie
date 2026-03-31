@@ -10,7 +10,7 @@ import SwiftData
 import SwiftUI
 
 struct CameraRecordView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
     var body: some View {

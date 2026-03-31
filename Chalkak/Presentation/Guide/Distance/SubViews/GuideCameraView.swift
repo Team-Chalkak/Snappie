@@ -12,14 +12,14 @@ struct GuideCameraView: View {
     let shootState: ShootState
     
     @State private var viewModel = BoundingBoxViewModel()
-    @StateObject private var cameraViewModel = CameraViewModel()
+    @State private var cameraViewModel = CameraViewModel()
 
     init(guide: Guide?, shootState: ShootState) {
         self.guide = guide
         self.shootState = shootState
 
         let cameraVM = CameraViewModel()
-        self._cameraViewModel = StateObject(wrappedValue: cameraVM)
+        self._cameraViewModel = State(wrappedValue: cameraVM)
         self._viewModel = State(
             wrappedValue: BoundingBoxViewModel(
                 properTilt: guide?.cameraTilt,

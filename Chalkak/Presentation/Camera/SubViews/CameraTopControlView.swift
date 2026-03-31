@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CameraTopControlView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
     let guide: Guide?
 
     var body: some View {

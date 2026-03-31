@@ -21,7 +21,7 @@ struct CameraView: View {
         }
     }
 
-    @StateObject var viewModel = CameraViewModel()
+    @State var viewModel = CameraViewModel()
     @EnvironmentObject private var coordinator: Coordinator
     @Environment(PermissionManager.self) private var permissionManager
 
@@ -85,7 +85,7 @@ struct CameraView: View {
                     size: .large,
                     isActive: true
                 )) {
-                    handleExitCamera()
+                    viewModel.exitCamera()
                     Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -144,6 +144,7 @@ struct CameraView: View {
             )
         }
         .onAppear {
+            viewModel.coordinator = coordinator
             permissionManager.reevaluateAndPresentIfNeeded()
 
             if permissionManager.permissionState == .both {
@@ -168,23 +169,6 @@ struct CameraView: View {
         .snappieAlert(isPresented: $viewModel.showProjectSavedAlert, message: "프로젝트가 저장되었습니다")
     }
 
-    private func handleExitCamera() {
-        viewModel.stopCamera()
-
-        // 이제 CameraView는 ProjectEditView를 통해서만 접근이 가능함
-        if let projectID = UserDefaults.standard.string(forKey: UserDefaultKey.currentProjectID) {
-            if let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
-               let originalID = tempProject.originalID // Temp 여부에 따라 originalID or projectId
-            {
-                coordinator.popToScreen(.projectEdit(projectID: originalID))
-            } else {
-                coordinator.popToScreen(.projectEdit(projectID: projectID))
-            }
-        } else {
-            // fallback
-            coordinator.removeAll()
-        }
-    }
 }
 
 private extension CameraView {

@@ -9,7 +9,7 @@ import FirebaseAnalytics
 import SwiftUI
 
 struct CameraZoomControlView: View {
-    @ObservedObject var viewModel: CameraViewModel
+    var viewModel: CameraViewModel
     @State private var longPressStarted = false
 
     // 줌 활성범위
