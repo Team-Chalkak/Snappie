@@ -17,6 +17,9 @@ struct ProjectEditView: View {
     @State private var showPhotoPermissionDeniedAlert = false
     @State private var isOverlayVisible: Bool = true
     @State private var showExportView = false
+    @State private var showExportActionSheet = false
+    @State private var exportMode: ExportMode = .combined
+    @State private var showClipExportAlert = false
     @State private var isSaving = false
     @State private var showSaveCompleteAlert: Bool = false
     @State private var isReordering: Bool = false
@@ -59,7 +62,7 @@ struct ProjectEditView: View {
                         }
                     },
                     secondary: .init(icon: .export) {
-                        showExportView.toggle()
+                        showExportActionSheet = true
                     }
                 )
             )
@@ -171,6 +174,10 @@ struct ProjectEditView: View {
                     },
                     onTapDeleteClip: {
                         viewModel.deleteClip(id: selectedClipID)
+                    },
+                    onTapExportClip: {
+                        showClipExportAlert = true
+                        Task { await viewModel.exportSelectedClip() }
                     }
                 )
                 .padding(.top, 16)
@@ -241,9 +248,22 @@ struct ProjectEditView: View {
             Text("저장하지 않으면 방금 편집한 내용이 사라져요")
         }
         
+        // 내보내기 액션시트
+        .confirmationDialog("내보내기", isPresented: $showExportActionSheet, titleVisibility: .visible) {
+            Button("합쳐서 내보내기") {
+                exportMode = .combined
+                showExportView = true
+            }
+            Button("장면별로 내보내기") {
+                exportMode = .sceneByScene
+                showExportView = true
+            }
+            Button("취소", role: .cancel) {}
+        }
+
         // 내보내기 시트
         .sheet(isPresented: $showExportView) {
-            ProjectPreviewView(editableClips: viewModel.editableClips)
+            ProjectPreviewView(editableClips: viewModel.editableClips, exportMode: exportMode)
         }
         
         // 가이드 클립 삭제 시, 불가능 알림
@@ -301,6 +321,17 @@ struct ProjectEditView: View {
             isLoading: $isSaving,
             loadingMessage: "저장 중...",
             completionMessage: "편집 내용 저장됨"
+        )
+
+        // 선택 클립 내보내기 Alert
+        .snappieProgressAlert(
+            isPresented: $showClipExportAlert,
+            isLoading: Binding(
+                get: { viewModel.isExportingClip },
+                set: { _ in }
+            ),
+            loadingMessage: "장면을 내보내는 중...",
+            completionMessage: "내보내기 완료"
         )
     }
 }

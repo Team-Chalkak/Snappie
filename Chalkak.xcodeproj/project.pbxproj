@@ -115,6 +115,7 @@
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		C52566D42FB3911E0026EA67 /* ExportMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52566D32FB3911E0026EA67 /* ExportMode.swift */; };
 		C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC022EF9080400A9EC1E /* PlayheadView.swift */; };
 		C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */; };
 		C54ABC112F01AC8400A9EC1E /* ToolButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */; };
@@ -277,6 +278,7 @@
 		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
+		C52566D32FB3911E0026EA67 /* ExportMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportMode.swift; sourceTree = "<group>"; };
 		C54ABC022EF9080400A9EC1E /* PlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayheadView.swift; sourceTree = "<group>"; };
 		C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipToolbarView.swift; sourceTree = "<group>"; };
 		C54ABC102F01AC8400A9EC1E /* ToolButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolButtonView.swift; sourceTree = "<group>"; };
@@ -639,6 +641,7 @@
 		993A1F482E267E0C0059B70A /* ProjectPreview */ = {
 			isa = PBXGroup;
 			children = (
+				C52566D32FB3911E0026EA67 /* ExportMode.swift */,
 				993A1F462E267E0C0059B70A /* ProjectPreviewView.swift */,
 				993A1F472E267E0C0059B70A /* ProjectPreviewViewModel.swift */,
 			);
@@ -1194,6 +1197,7 @@
 				99C7266A2E2F068800E9D0CD /* FirstShootCameraView.swift in Sources */,
 				993A1F6D2E267E0C0059B70A /* ZoomSlider.swift in Sources */,
 				C5886D362E375A94000566C5 /* ProjectListViewModel.swift in Sources */,
+				C52566D42FB3911E0026EA67 /* ExportMode.swift in Sources */,
 				993A1F6E2E267E0C0059B70A /* CameraView.swift in Sources */,
 				992EE7CE2E32AF030079AFBF /* ClipTrimmingView.swift in Sources */,
 				C5C12EB42E3380B900C4DC6D /* NavigationButtonHStack.swift in Sources */,
