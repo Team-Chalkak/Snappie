@@ -29,11 +29,15 @@ final class ProjectEditViewModel {
     var guide: Guide? /// 프로젝트 로딩중
 
     var isLoading = false
+    var isExportingClip = false
     var showEmptyProjectAlert = false
     var showCannotDeletGuideClipAlert = false
     var isPlayerReady = false
     var isRebuildingPlayer = false
     var selectedClipID: String?
+
+    private let videoManager = VideoManager()
+    private let photoLibrarySaver = PhotoLibrarySaver()
 
     /// 수정 여부 판단 플래그
     private(set) var hasUnsavedChanges = false
@@ -483,6 +487,19 @@ final class ProjectEditViewModel {
 
     func deselectClip() {
         selectedClipID = nil
+    }
+
+    func exportSelectedClip() async {
+        guard let clipID = selectedClipID,
+              let clip = editableClips.first(where: { $0.id == clipID }) else { return }
+        isExportingClip = true
+        defer { isExportingClip = false }
+        do {
+            let url = try await videoManager.processAndSaveVideo(clips: [clip])
+            _ = await photoLibrarySaver.saveVideoToLibrary(videoURL: url)
+        } catch {
+            print("클립 내보내기 실패:", error)
+        }
     }
 
     func toggleTrimmingMode(for clipID: String) {

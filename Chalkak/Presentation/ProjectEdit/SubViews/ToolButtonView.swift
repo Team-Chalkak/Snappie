@@ -32,6 +32,9 @@ struct ToolButtonView: View {
                         Image(systemName: "trash")
                             .font(.system(size: 18))
                             .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    case .exportClip:
+                        IconView(iconType: .export, scale: .xlarge)
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
                     }
                 }
                 .frame(width: buttonWidth, height: buttonHeight)
