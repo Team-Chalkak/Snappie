@@ -12,6 +12,7 @@ struct ClipToolbarView: View {
     let onTapEditClip: () -> Void
     let onTapEditGuide: () -> Void
     let onTapDeleteClip: () -> Void
+    let onTapExportClip: () -> Void
 
     private let buttonWidth: CGFloat = 52
     private let buttonHeight: CGFloat = 40
@@ -42,7 +43,12 @@ struct ClipToolbarView: View {
             ToolButtonView(buttonStyle: .deleteClip) {
                 onTapDeleteClip()
             }
-            
+
+            // 내보내기 버튼
+            ToolButtonView(buttonStyle: .exportClip) {
+                onTapExportClip()
+            }
+
             Spacer()
         }
         .padding(.horizontal, 8)

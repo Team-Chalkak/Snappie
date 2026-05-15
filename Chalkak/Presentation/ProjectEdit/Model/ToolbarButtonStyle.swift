@@ -11,6 +11,7 @@ enum ToolbarButtonStyle {
     case editClip
     case editGuide
     case deleteClip
+    case exportClip
 }
 
 extension ToolbarButtonStyle {
@@ -22,6 +23,8 @@ extension ToolbarButtonStyle {
             "가이드 수정"
         case .deleteClip:
             "장면 삭제"
+        case .exportClip:
+            "내보내기"
         }
     }
 }

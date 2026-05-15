@@ -22,8 +22,10 @@ struct ProjectPreviewView: View {
 
     // MARK: Init
 
-    init(editableClips: [EditableClip]) {
-        self._viewModel = StateObject(wrappedValue: ProjectPreviewViewModel(editableClips: editableClips))
+    init(editableClips: [EditableClip], exportMode: ExportMode = .combined) {
+        self._viewModel = StateObject(
+            wrappedValue: ProjectPreviewViewModel(editableClips: editableClips, exportMode: exportMode)
+        )
     }
    
     // MARK: body
@@ -51,7 +53,7 @@ struct ProjectPreviewView: View {
         .snappieProgressAlert(
             isPresented: $viewModel.isExporting,
             isLoading: $viewModel.isExporting,
-            loadingMessage: "내보내는 중...",
+            loadingMessage: viewModel.loadingMessage,
             completionMessage: "내보내기 완료"
         )
         .snappieAlert(
