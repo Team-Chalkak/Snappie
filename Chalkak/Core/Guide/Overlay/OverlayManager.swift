@@ -35,17 +35,15 @@ class OverlayManager: ObservableObject {
     // 2. Private 저장 프로퍼티
     private let context = CIContext()
 
-    //MARK: - 인물 마스킹
-    /// 영상에서 사람의 마스킹하여 추출 -> outlineImage로 변환
+    //MARK: - 전경 인스턴스 마스킹
+    /// 영상에서 사람+사물 전경 인스턴스를 마스킹 → union bounding box + outlineImage 추출
     /// - Parameters:
     ///   - image: 입력 원본 CIImage (주로 영상 프레임)
     func process(image: CIImage, completion: @escaping () -> Void) {
         // 1. Vision 요청 준비
-        let rectangleRequest = VNDetectHumanRectanglesRequest()
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
-        rectangleRequest.upperBodyOnly = true
         let handler = VNImageRequestHandler(ciImage: image, options: [:])
-        
+
         let isFront: Bool
         if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition) {
             isFront = (savedValue == "front")
@@ -55,43 +53,48 @@ class OverlayManager: ObservableObject {
 
         DispatchQueue.global().async {
             do {
-                try handler.perform([rectangleRequest, maskRequest])
+                try handler.perform([maskRequest])
 
-                /// 2단계: BoundingBox 추출
-                if let results = rectangleRequest.results, !results.isEmpty {
-                    let correctedBoxes = results.map { observation -> CGRect in
-                            let box = observation.boundingBox
-                            if isFront {
-                                // 좌우 반전
-                                return CGRect(
-                                    x: 1 - box.origin.x - box.size.width,
-                                    y: box.origin.y,
-                                    width: box.size.width,
-                                    height: box.size.height
-                                )
-                            } else {
-                                return box
-                            }
-                        }
-
-                    DispatchQueue.main.async {
-                        self.boundingBoxes = correctedBoxes
-                    }
-                }
-
-                /// 3단계: 마스크 생성
+                /// 2단계: 마스크 생성
                 guard let maskResult = maskRequest.results?.first as? VNInstanceMaskObservation else {
                     print("❌ 마스크 결과 없음")
-                    DispatchQueue.main.async { completion() }
+                    DispatchQueue.main.async {
+                        self.boundingBoxes = []
+                        completion()
+                    }
                     return
                 }
 
-                /// 4단계: 마스크된 이미지 생성
+                /// 3단계: 마스크된 이미지 생성
                 let maskedPixelBuffer = try maskResult.generateMaskedImage(
                     ofInstances: maskResult.allInstances,
                     from: handler,
                     croppedToInstancesExtent: false
                 )
+
+                /// 4단계: 마스크 알파 채널에서 union BoundingBox 추출
+                let unionBoxes: [CGRect]
+                if let unionBox = self.unionBoundingBox(from: maskedPixelBuffer) {
+                    let correctedBox: CGRect
+                    if isFront {
+                        // 좌우 반전
+                        correctedBox = CGRect(
+                            x: 1 - unionBox.origin.x - unionBox.size.width,
+                            y: unionBox.origin.y,
+                            width: unionBox.size.width,
+                            height: unionBox.size.height
+                        )
+                    } else {
+                        correctedBox = unionBox
+                    }
+                    unionBoxes = [correctedBox]
+                } else {
+                    unionBoxes = []
+                }
+                DispatchQueue.main.async {
+                    self.boundingBoxes = unionBoxes
+                }
+
                 let ciImage = CIImage(cvPixelBuffer: maskedPixelBuffer)
 
                 DispatchQueue.main.async {
@@ -113,6 +116,47 @@ class OverlayManager: ObservableObject {
                 DispatchQueue.main.async { completion() }
             }
         }
+    }
+
+    //MARK: - 마스크 union bounding box 계산
+    /// 마스크된 BGRA 이미지의 알파 채널에서 non-zero 픽셀 합집합 영역을 Vision 정규화 좌표(원점 좌하단)로 반환
+    private func unionBoundingBox(from maskedBuffer: CVPixelBuffer) -> CGRect? {
+        let width = CVPixelBufferGetWidth(maskedBuffer)
+        let height = CVPixelBufferGetHeight(maskedBuffer)
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(maskedBuffer)
+
+        CVPixelBufferLockBaseAddress(maskedBuffer, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(maskedBuffer, .readOnly) }
+
+        guard let base = CVPixelBufferGetBaseAddress(maskedBuffer) else { return nil }
+        let bytes = base.assumingMemoryBound(to: UInt8.self)
+
+        var minX = width
+        var minY = height
+        var maxX = -1
+        var maxY = -1
+
+        // BGRA 픽셀의 알파 채널(offset +3)이 0보다 크면 전경
+        for y in 0..<height {
+            let rowStart = y * bytesPerRow
+            for x in 0..<width where bytes[rowStart + x * 4 + 3] > 0 {
+                if x < minX { minX = x }
+                if x > maxX { maxX = x }
+                if y < minY { minY = y }
+                if y > maxY { maxY = y }
+            }
+        }
+
+        guard maxX >= 0, maxY >= 0 else { return nil }
+
+        let w = CGFloat(width)
+        let h = CGFloat(height)
+        return CGRect(
+            x: CGFloat(minX) / w,
+            y: 1.0 - CGFloat(maxY + 1) / h,
+            width: CGFloat(maxX - minX + 1) / w,
+            height: CGFloat(maxY - minY + 1) / h
+        )
     }
 
     //MARK: - 실루엣 오버레이 이미지 생성
