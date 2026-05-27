@@ -176,6 +176,7 @@ struct ProjectEditView: View {
                         viewModel.deleteClip(id: selectedClipID)
                     },
                     onTapExportClip: {
+                        viewModel.isExportingClip = true
                         showClipExportAlert = true
                         Task { await viewModel.exportSelectedClip() }
                     }

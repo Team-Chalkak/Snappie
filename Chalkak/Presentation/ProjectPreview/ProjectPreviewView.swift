@@ -16,9 +16,7 @@ struct ProjectPreviewView: View {
     @StateObject private var viewModel: ProjectPreviewViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @State private var showExportSuccessAlert = false
     @State private var showPhotoPermissionDeniedAlert = false
-    @State private var isExporting = false
 
     // MARK: Init
 
@@ -56,10 +54,6 @@ struct ProjectPreviewView: View {
             loadingMessage: viewModel.loadingMessage,
             completionMessage: "내보내기 완료"
         )
-        .snappieAlert(
-            isPresented: $showExportSuccessAlert,
-            message: "내보내기 완료"
-        )
         .alert(
             .photoPermissionDenied,
             isPresented: $showPhotoPermissionDeniedAlert,
@@ -72,9 +66,7 @@ struct ProjectPreviewView: View {
         .onAppear {
             Task {
                 let success = await viewModel.exportAndSetPlayer()
-                if success {
-                    showExportSuccessAlert = true
-                } else {
+                if !success {
                     showPhotoPermissionDeniedAlert = true
                 }
             }
