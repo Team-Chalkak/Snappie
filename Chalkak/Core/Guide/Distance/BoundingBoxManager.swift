@@ -45,7 +45,7 @@ class BoundingBoxManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate
             )
 
             let boxes: [CGRect]
-            if let unionBox = unionBoundingBox(fromMaskedBuffer: maskedBuffer) {
+            if let unionBox = unionBoundingBox(from: maskedBuffer) {
                 boxes = [unionBox]
             } else {
                 boxes = []

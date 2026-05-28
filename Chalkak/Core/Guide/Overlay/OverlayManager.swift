@@ -74,7 +74,7 @@ class OverlayManager: ObservableObject {
 
                 /// 4단계: 마스크 알파 채널에서 union BoundingBox 추출
                 let unionBoxes: [CGRect]
-                if let unionBox = unionBoundingBox(fromMaskedBuffer: maskedPixelBuffer) {
+                if let unionBox = unionBoundingBox(from: maskedPixelBuffer) {
                     let correctedBox: CGRect
                     if isFront {
                         // 좌우 반전

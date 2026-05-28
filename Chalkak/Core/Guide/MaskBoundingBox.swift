@@ -12,7 +12,7 @@ import Foundation
 
 /// 마스크된 BGRA 이미지의 알파 채널에서 non-zero 픽셀 합집합 영역을
 /// Vision 정규화 좌표(원점 좌하단)로 반환
-func unionBoundingBox(fromMaskedBuffer maskedBuffer: CVPixelBuffer) -> CGRect? {
+func unionBoundingBox(from maskedBuffer: CVPixelBuffer) -> CGRect? {
     let width = CVPixelBufferGetWidth(maskedBuffer)
     let height = CVPixelBufferGetHeight(maskedBuffer)
     let bytesPerRow = CVPixelBufferGetBytesPerRow(maskedBuffer)
