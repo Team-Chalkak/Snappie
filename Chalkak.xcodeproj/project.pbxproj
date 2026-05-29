@@ -13,6 +13,7 @@
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
 		7D3DFFD42EFD5E9C00E15204 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */; };
 		7D3DFFD82EFD604600E15204 /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3DFFD72EFD604200E15204 /* PermissionState.swift */; };
+		7D49A77A2FC1EC270003D691 /* MaskBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D49A7792FC1EC270003D691 /* MaskBoundingBox.swift */; };
 		7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D60F6482F0D141700621874 /* SchemaV3.swift */; };
 		7DD5117A2F5FF740005A4701 /* GuideSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD511792F5FF740005A4701 /* GuideSelectViewModel.swift */; };
 		7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */; };
@@ -180,6 +181,7 @@
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
 		7D3DFFD32EFD5E9C00E15204 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		7D3DFFD72EFD604200E15204 /* PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionState.swift; sourceTree = "<group>"; };
+		7D49A7792FC1EC270003D691 /* MaskBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskBoundingBox.swift; sourceTree = "<group>"; };
 		7D60F6482F0D141700621874 /* SchemaV3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV3.swift; sourceTree = "<group>"; };
 		7DD511792F5FF740005A4701 /* GuideSelectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectViewModel.swift; sourceTree = "<group>"; };
 		7DD82CBA2EFEA2E400AD8DFC /* GuideSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideSelectView.swift; sourceTree = "<group>"; };
@@ -500,6 +502,7 @@
 				993A1F122E267E0C0059B70A /* Distance */,
 				993A1F182E267E0C0059B70A /* Overlay */,
 				993A1F1C2E267E0C0059B70A /* Tilt */,
+				7D49A7792FC1EC270003D691 /* MaskBoundingBox.swift */,
 			);
 			path = Guide;
 			sourceTree = "<group>";
@@ -1150,6 +1153,7 @@
 				9999924B2E2D8ED600D56BD1 /* UserDefaultKey.swift in Sources */,
 				993A1F5F2E267E0C0059B70A /* Clip.swift in Sources */,
 				99C7266C2E2F06A200E9D0CD /* GuideCameraView.swift in Sources */,
+				7D49A77A2FC1EC270003D691 /* MaskBoundingBox.swift in Sources */,
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
 				0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */,
