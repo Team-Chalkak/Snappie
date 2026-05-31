@@ -44,13 +44,6 @@ class OverlayManager: ObservableObject {
         let maskRequest = VNGenerateForegroundInstanceMaskRequest()
         let handler = VNImageRequestHandler(ciImage: image, options: [:])
 
-        let isFront: Bool
-        if let savedValue = UserDefaults.standard.string(forKey: UserDefaultKey.cameraPosition) {
-            isFront = (savedValue == "front")
-        } else {
-            isFront = false
-        }
-
         DispatchQueue.global().async {
             do {
                 try handler.perform([maskRequest])
@@ -73,21 +66,12 @@ class OverlayManager: ObservableObject {
                 )
 
                 /// 4단계: 마스크 알파 채널에서 union BoundingBox 추출
+                /// 라이브 인식(BoundingBoxManager) 및 outline 이미지와 동일한 좌표계를 유지해야
+                /// 비교가 맞으므로 전면 좌우반전 보정을 하지 않는다.
+                /// (전면 녹화/프리뷰 미러링은 두 경로 모두에 이미 동일하게 적용되어 있음)
                 let unionBoxes: [CGRect]
                 if let unionBox = unionBoundingBox(from: maskedPixelBuffer) {
-                    let correctedBox: CGRect
-                    if isFront {
-                        // 좌우 반전
-                        correctedBox = CGRect(
-                            x: 1 - unionBox.origin.x - unionBox.size.width,
-                            y: unionBox.origin.y,
-                            width: unionBox.size.width,
-                            height: unionBox.size.height
-                        )
-                    } else {
-                        correctedBox = unionBox
-                    }
-                    unionBoxes = [correctedBox]
+                    unionBoxes = [unionBox]
                 } else {
                     unionBoxes = []
                 }
