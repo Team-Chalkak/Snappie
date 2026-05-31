@@ -112,7 +112,11 @@ final class OverlayViewModel: ObservableObject {
            let outlineImage = overlayManager.outlineImage
         {
             let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
-                BoundingBoxInfo(origin: PointWrapper(box.origin), scale: box.width)
+                BoundingBoxInfo(
+                    origin: PointWrapper(box.origin),
+                    scale: box.width,
+                    height: box.height
+                )
             }
             project.guide.boundingBoxes = boundingBoxInfos
             project.guide.outlineImageData = outlineImage.pngData() ?? Data()
@@ -195,7 +199,8 @@ final class OverlayViewModel: ObservableObject {
         let boundingBoxInfos = overlayManager.boundingBoxes.map { box in
             BoundingBoxInfo(
                 origin: PointWrapper(box.origin),
-                scale: box.width
+                scale: box.width,
+                height: box.height
             )
         }
 

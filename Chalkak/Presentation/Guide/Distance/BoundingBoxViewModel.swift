@@ -61,14 +61,7 @@ class BoundingBoxViewModel {
 
     /// 기준 설정
     func setReference(from guide: Guide) {
-        let referenceBoxes: [CGRect] = guide.boundingBoxes.map { boxInfo in
-            CGRect(
-                x: boxInfo.origin.x,
-                y: boxInfo.origin.y,
-                width: boxInfo.scale,
-                height: boxInfo.scale // or use separate width/height if needed
-            )
-        }
+        let referenceBoxes = guide.boundingBoxes.map(\.cgRect)
 
         referenceBoundingBoxes = referenceBoxes
         isSettingReference = true
@@ -106,11 +99,11 @@ class BoundingBoxViewModel {
         let liveArea = live.width * live.height
         let ratio = liveArea / refArea
 
-        let xDiff = abs(live.minX - ref.minX)
-        let yDiff = abs(live.minY - ref.minY)
+        let xDiff = abs(live.midX - ref.midX)
+        let yDiff = abs(live.midY - ref.midY)
 
         let areaOk = (0.7 ... 1.3).contains(ratio)
-        let positionOk = (xDiff < 0.05 && yDiff < 0.05)
+        let positionOk = (xDiff < 0.08 && yDiff < 0.08)
 
         return areaOk && positionOk
     }
