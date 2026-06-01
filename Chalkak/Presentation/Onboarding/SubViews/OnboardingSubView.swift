@@ -24,6 +24,76 @@ struct OnboardingBrandBeatStepView: View {
     }
 }
 
+struct OnboardingGuideRecordStepView: View {
+    let lines: [String]
+    @State private var isVisible = false
+    @State private var showsActiveIcon = false
+
+    var body: some View {
+        VStack(spacing: 36) {
+            ZStack {
+                Image("on_c")
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(showsActiveIcon ? 0 : 1)
+
+                Image("on_c-active")
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(showsActiveIcon ? 1 : 0)
+            }
+            .frame(width: 72, height: 72)
+
+            VStack(spacing: 10) {
+                ForEach(lines, id: \.self) { line in
+                    Text(line)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        }
+        .opacity(isVisible ? 1 : 0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 24)
+        .task {
+            await runGuideIconAnimation()
+        }
+    }
+
+    private func runGuideIconAnimation() async {
+        await Task.yield()
+
+        await MainActor.run {
+            withAnimation(.easeIn(duration: 0.4)) {
+                isVisible = true
+            }
+        }
+
+        do {
+            try await Task.sleep(nanoseconds: 400_000_000)
+        } catch {
+            return
+        }
+
+        while !Task.isCancelled {
+            do {
+                try await Task.sleep(nanoseconds: 520_000_000)
+            } catch {
+                return
+            }
+
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showsActiveIcon.toggle()
+                }
+            }
+        }
+    }
+}
+
 struct OnboardingTextStepView: View {
     let lines: [String]
 
