@@ -24,15 +24,18 @@ struct OnboardingBrandBeatStepView: View {
     }
 }
 
-struct OnboardingGuideRecordStepView: View {
+struct OnboardingIconBeatStepView: View {
     let lines: [String]
+    let imageName: String
+    let activeImageName: String
+
     @State private var isVisible = false
 
     var body: some View {
         VStack(spacing: 36) {
             OnboardingLoopingIconView(
-                imageName: "on_c",
-                activeImageName: "on_c-active"
+                imageName: imageName,
+                activeImageName: activeImageName
             )
 
             VStack(spacing: 10) {

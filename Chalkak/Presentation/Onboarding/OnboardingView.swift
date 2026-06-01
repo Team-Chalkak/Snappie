@@ -48,9 +48,17 @@ struct OnboardingView: View {
     private var renderedStep: some View {
         switch controller.currentStep {
         case .introExactComposition:
-            OnboardingBrandBeatStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
+            OnboardingIconBeatStepView(
+                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
+                imageName: "on_p",
+                activeImageName: "on_p-active"
+            )
         case .guideSimpleRecord:
-            OnboardingGuideRecordStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
+            OnboardingIconBeatStepView(
+                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
+                imageName: "on_c",
+                activeImageName: "on_c-active"
+            )
         case .dailyMemoryCarousel:
             OnboardingCarouselStepView(
                 titleLines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
