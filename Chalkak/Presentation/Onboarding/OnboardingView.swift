@@ -54,13 +54,23 @@ struct OnboardingView: View {
                 titleLines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
                 selectedCard: $controller.selectedCarouselCard
             )
+        case .firstShootPrompt, .guideShootPrompt:
+            OnboardingCenteredPromptStepView(
+                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
+                buttonTitle: "확인"
+            ) {
+                handleCenteredPromptAction()
+            }
         default:
             OnboardingTextStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
         }
     }
 
     private var shouldShowPrimaryButton: Bool {
-        switch controller.advanceBehavior {
+        guard controller.currentStep != .firstShootPrompt,
+              controller.currentStep != .guideShootPrompt else { return false }
+
+        return switch controller.advanceBehavior {
         case .automatic:
             false
         case .manual, .completion:
@@ -80,14 +90,14 @@ struct OnboardingView: View {
         }
 
         if controller.currentStep == .firstShootPrompt {
-            handleFirstShootPromptAction()
+            handleCenteredPromptAction()
             return
         }
 
         controller.moveNext()
     }
 
-    private func handleFirstShootPromptAction() {
+    private func handleCenteredPromptAction() {
         controller.moveNext()
     }
 

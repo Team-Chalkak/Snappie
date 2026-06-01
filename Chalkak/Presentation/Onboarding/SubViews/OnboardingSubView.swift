@@ -31,10 +31,33 @@ struct OnboardingTextStepView: View {
         VStack(spacing: 10) {
             ForEach(lines, id: \.self) { line in
                 Text(line)
-                    .font(SnappieFont.style(.proLabel4))
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(SnappieColor.labelPrimaryNormal)
                     .multilineTextAlignment(.center)
             }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 24)
+    }
+}
+
+struct OnboardingCenteredPromptStepView: View {
+    let lines: [String]
+    let buttonTitle: String
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 75) {
+            VStack(spacing: 10) {
+                ForEach(lines, id: \.self) { line in
+                    Text(line)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                        .multilineTextAlignment(.center)
+                }
+            }
+
+            OnboardingPrimaryButton(title: buttonTitle, action: action)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 24)
@@ -203,5 +226,18 @@ struct OnboardingPrimaryButton: View {
             OnboardingPrimaryButton(title: "다음") {}
                 .padding(24)
         }
+    }
+}
+
+#Preview("Onboarding centered prompt") {
+    ZStack {
+        SnappieColor.darkStrong.ignoresSafeArea()
+        OnboardingCenteredPromptStepView(
+            lines: [
+                "작은 친구와 함께",
+                "첫 촬영을 시작해볼까요?"
+            ],
+            buttonTitle: "확인"
+        ) {}
     }
 }
