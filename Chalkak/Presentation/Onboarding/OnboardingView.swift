@@ -1,8 +1,8 @@
 //
-//  OnboardingVied.swift
+//  OnboardingView.swift
 //  Chalkak
 //
-//  Created by Murphy on 8/12/25.
+//  Created by bishoe01 on 6/1/26.
 //
 
 import FirebaseAnalytics
@@ -11,83 +11,97 @@ import SwiftUI
 struct OnboardingView: View {
     let onComplete: () -> Void
 
-    @State private var currentIndex = 0
-    @Environment(\.locale) private var locale
-    
-    private let items: [OnboardingItem] = [
-        .init(
-            id: 0,
-            imageName: "OnboardingImage1",
-            titleKey: "onboarding.step1.title",
-            descriptionKey: "onboarding.step1.description"),
-        .init(
-            id: 1,
-            imageName: "OnboardingImage2",
-            titleKey: "onboarding.step2.title",
-            descriptionKey: "onboarding.step2.description"),
-        .init(
-            id: 2,
-            imageName: "OnboardingImage3",
-            titleKey: "onboarding.step3.title",
-            descriptionKey: "onboarding.step3.description")
-    ]
-    
-    private var isKorean: Bool {
-        let langCode = locale.language.languageCode?.identifier ?? ""
-        return langCode.lowercased().hasPrefix("ko")
+    @StateObject private var controller: OnboardingFlowController
+
+    init(
+        steps: [OnboardingStep] = OnboardingStep.activeSteps,
+        onComplete: @escaping () -> Void
+    ) {
+        self.onComplete = onComplete
+        _controller = StateObject(wrappedValue: OnboardingFlowController(steps: steps))
     }
-    
-    private func localizedImageName(base: String) -> String {
-        "\(isKorean ? "ko" : "en")\(base)"
-    }
-    
+
     var body: some View {
         ZStack {
             SnappieColor.darkStrong.ignoresSafeArea()
 
-            TabView(selection: $currentIndex) {
-                ForEach(items) { item in
-                    Onboard(
-                        ImageName: localizedImageName(base: item.imageName),
-                        title: item.titleKey,
-                        description: item.descriptionKey
-                    )
-                    .tag(item.id)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 48)
-            .padding(.bottom, 56)
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            VStack(spacing: 0) {
+                renderedStep
 
-            VStack {
-                Spacer()
-
-                if currentIndex == 2 {
-                    Button("시작하기") {
-                        onComplete()
-                        Analytics.logEvent("startButtonTapped", parameters: nil)
+                if shouldShowPrimaryButton {
+                    OnboardingPrimaryButton(title: primaryButtonTitle) {
+                        handlePrimaryAction()
                     }
-                    .font(.headline)
-                    .foregroundColor(SnappieColor.labelDarkNormal)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(SnappieColor.primaryNormal)
-                    .cornerRadius(99)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .animation(.easeInOut(duration: 0.3), value: currentIndex)
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: controller.currentStep)
+        }
+        .task(id: controller.currentStep) {
+            await scheduleAutomaticAdvanceIfNeeded()
         }
     }
-}
 
-private struct OnboardingItem: Identifiable {
-    let id: Int
-    let imageName: String
-    let titleKey: LocalizedStringKey
-    let descriptionKey: LocalizedStringKey
+    @ViewBuilder
+    private var renderedStep: some View {
+        switch controller.currentStep {
+        case .introExactComposition, .guideSimpleRecord:
+            OnboardingBrandBeatStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
+        case .dailyMemoryCarousel:
+            OnboardingCarouselStepView(
+                titleLines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
+                selectedCard: $controller.selectedCarouselCard
+            )
+        default:
+            OnboardingTextStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
+        }
+    }
+
+    private var shouldShowPrimaryButton: Bool {
+        switch controller.advanceBehavior {
+        case .automatic:
+            false
+        case .manual, .completion:
+            true
+        }
+    }
+
+    private var primaryButtonTitle: String {
+        controller.isCompletionStep ? "시작하기" : "다음"
+    }
+
+    private func handlePrimaryAction() {
+        if controller.isCompletionStep {
+            onComplete()
+            Analytics.logEvent("startButtonTapped", parameters: nil)
+            return
+        }
+
+        if controller.currentStep == .firstShootPrompt {
+            handleFirstShootPromptAction()
+            return
+        }
+
+        controller.moveNext()
+    }
+
+    private func handleFirstShootPromptAction() {
+        controller.moveNext()
+    }
+
+    private func scheduleAutomaticAdvanceIfNeeded() async {
+        guard case .automatic(let delay) = controller.advanceBehavior else { return }
+
+        do {
+            try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                controller.moveNext()
+            }
+        } catch {
+            return
+        }
+    }
 }

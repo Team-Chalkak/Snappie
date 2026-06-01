@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */; };
+		A1B2C3D42FD0000100000001 /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000003 /* OnboardingStep.swift */; };
+		A1B2C3D42FD0000100000002 /* OnboardingFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */; };
 		0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512F82E541718001FA7F9 /* OnboardingView.swift */; };
 		0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */; };
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
@@ -176,6 +178,8 @@
 
 /* Begin PBXFileReference section */
 		0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCheckView.swift; sourceTree = "<group>"; };
+		A1B2C3D42FD0000100000003 /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStep.swift; sourceTree = "<group>"; };
+		A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowController.swift; sourceTree = "<group>"; };
 		0D5512F82E541718001FA7F9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSubView.swift; sourceTree = "<group>"; };
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
@@ -362,6 +366,8 @@
 		0D5512F02E4B2D36001FA7F9 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D42FD0000100000003 /* OnboardingStep.swift */,
+				A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */,
 				0D5512F82E541718001FA7F9 /* OnboardingView.swift */,
 				0D5512F52E5415C9001FA7F9 /* SubViews */,
 			);
@@ -1232,6 +1238,8 @@
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */,
 				992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */,
+				A1B2C3D42FD0000100000001 /* OnboardingStep.swift in Sources */,
+				A1B2C3D42FD0000100000002 /* OnboardingFlowController.swift in Sources */,
 				0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */,
 				993A1F7B2E267E0C0059B70A /* ProjectPreviewViewModel.swift in Sources */,
 				C5F7B6A12E2F6A2A0066B59C /* ButtonSolid.swift in Sources */,

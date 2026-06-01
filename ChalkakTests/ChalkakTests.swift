@@ -44,4 +44,53 @@ struct ChalkakTests {
         #expect(viewModel.isAligned)
     }
 
+    @Test func onboardingFlowMovesThroughOnlyActiveSteps() {
+        let controller = OnboardingFlowController()
+
+        #expect(controller.currentStep == .introExactComposition)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .guideSimpleRecord)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .dailyMemoryCarousel)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .firstShootPrompt)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .guideShootPrompt)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .shootDone)
+
+        controller.moveNext()
+        #expect(controller.currentStep == .projectContinue)
+    }
+
+    @Test func onboardingCompletionStepDoesNotMoveNext() {
+        let controller = OnboardingFlowController(steps: [.projectContinue])
+
+        #expect(controller.isCompletionStep)
+        controller.moveNext()
+
+        #expect(controller.currentStep == .projectContinue)
+        #expect(controller.isCompletionStep)
+    }
+
+    @Test func onboardingFirstShootPromptUsesSelectedCarouselCard() {
+        let controller = OnboardingFlowController()
+
+        controller.selectedCarouselCard = .second
+        #expect(OnboardingStep.firstShootPrompt.prompt(for: controller.selectedCarouselCard) == [
+            "귀여운 포즈로",
+            "첫 촬영을 시작해볼까요?"
+        ])
+
+        controller.selectedCarouselCard = .third
+        #expect(OnboardingStep.firstShootPrompt.prompt(for: controller.selectedCarouselCard) == [
+            "소중한 사람과",
+            "첫 촬영을 시작해볼까요 ?"
+        ])
+    }
 }
