@@ -27,22 +27,13 @@ struct OnboardingBrandBeatStepView: View {
 struct OnboardingGuideRecordStepView: View {
     let lines: [String]
     @State private var isVisible = false
-    @State private var showsActiveIcon = false
 
     var body: some View {
         VStack(spacing: 36) {
-            ZStack {
-                Image("on_c")
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(showsActiveIcon ? 0 : 1)
-
-                Image("on_c-active")
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(showsActiveIcon ? 1 : 0)
-            }
-            .frame(width: 72, height: 72)
+            OnboardingLoopingIconView(
+                imageName: "on_c",
+                activeImageName: "on_c-active"
+            )
 
             VStack(spacing: 10) {
                 ForEach(lines, id: \.self) { line in
@@ -75,7 +66,34 @@ struct OnboardingGuideRecordStepView: View {
         } catch {
             return
         }
+    }
+}
 
+struct OnboardingLoopingIconView: View {
+    let imageName: String
+    let activeImageName: String
+
+    @State private var showsActiveImage = false
+
+    var body: some View {
+        ZStack {
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .opacity(showsActiveImage ? 0 : 1)
+
+            Image(activeImageName)
+                .resizable()
+                .scaledToFit()
+                .opacity(showsActiveImage ? 1 : 0)
+        }
+        .frame(width: 72, height: 72)
+        .task {
+            await runIconLoop()
+        }
+    }
+
+    private func runIconLoop() async {
         while !Task.isCancelled {
             do {
                 try await Task.sleep(nanoseconds: 520_000_000)
@@ -87,7 +105,7 @@ struct OnboardingGuideRecordStepView: View {
 
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    showsActiveIcon.toggle()
+                    showsActiveImage.toggle()
                 }
             }
         }
