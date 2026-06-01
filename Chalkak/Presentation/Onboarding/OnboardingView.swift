@@ -64,10 +64,17 @@ struct OnboardingView: View {
                 titleLines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
                 selectedCard: $controller.selectedCarouselCard
             )
-        case .firstShootPrompt, .guideShootPrompt:
+        case .firstShootPrompt:
             OnboardingCenteredPromptStepView(
                 lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
                 buttonTitle: "확인"
+            ) {
+                handleCenteredPromptAction()
+            }
+        case .guideShootPrompt:
+            OnboardingGuideShootPromptStepView(
+                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
+                frameImageNames: (1...17).map { "c-\($0)" }
             ) {
                 handleCenteredPromptAction()
             }

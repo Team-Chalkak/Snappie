@@ -155,6 +155,108 @@ struct OnboardingCenteredPromptStepView: View {
     }
 }
 
+struct OnboardingGuideShootPromptStepView: View {
+    let lines: [String]
+    let frameImageNames: [String]
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 75) {
+            VStack(spacing: 32) {
+                OnboardingFrameAnimationView(imageNames: frameImageNames)
+
+                VStack(spacing: 10) {
+                    ForEach(lines, id: \.self) { line in
+                        Text(line)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+            }
+
+            OnboardingPrimaryButton(title: "확인", action: action)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 24)
+    }
+}
+
+struct OnboardingFrameAnimationView: View {
+    let imageNames: [String]
+
+    private let frameDuration: UInt64 = 56_000_000
+    private let size: CGFloat = 30
+    @State private var currentFrameIndex = 0
+    @State private var isLoopFading = false
+
+    var body: some View {
+        ZStack {
+            if let imageName = currentImageName {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(isLoopFading ? 0 : 1)
+            }
+
+            if let firstImageName = imageNames.first {
+                Image(firstImageName)
+                    .resizable()
+                    .scaledToFit()
+                    .opacity(isLoopFading ? 1 : 0)
+            }
+        }
+        .frame(width: size, height: size)
+        .task {
+            await runFrameLoop()
+        }
+    }
+
+    private var currentImageName: String? {
+        guard !imageNames.isEmpty else { return nil }
+        return imageNames[currentFrameIndex]
+    }
+
+    private func runFrameLoop() async {
+        guard imageNames.count > 1 else { return }
+
+        currentFrameIndex = 0
+
+        while !Task.isCancelled {
+            do {
+                try await Task.sleep(nanoseconds: frameDuration)
+            } catch {
+                return
+            }
+
+            guard !Task.isCancelled else { return }
+
+            if currentFrameIndex == imageNames.index(before: imageNames.endIndex) {
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: 0.6)) {
+                        isLoopFading = true
+                    }
+                }
+
+                do {
+                    try await Task.sleep(nanoseconds: 600_000_000)
+                } catch {
+                    return
+                }
+
+                await MainActor.run {
+                    currentFrameIndex = 0
+                    isLoopFading = false
+                }
+            } else {
+                await MainActor.run {
+                    currentFrameIndex += 1
+                }
+            }
+        }
+    }
+}
+
 struct OnboardingCarouselStepView: View {
     let titleLines: [String]
     @Binding var selectedCard: OnboardingCarouselCard
