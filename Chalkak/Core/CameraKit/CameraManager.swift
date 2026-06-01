@@ -522,14 +522,13 @@ private extension CameraManager {
             }
         }
 
-        // videoOutput도 파일 좌표계와 맞추기 위한 동일 처리
+        // 거리 인식(detection)용 videoOutput은 절대 미러링하지 않는다.
+        // 가이드 박스는 미러링되지 않은 좌표계(가이드 영상의 preferredTransform 기준)로 저장되므로
+        // 라이브 인식도 동일하게 비미러 상태여야 전/후면 모두 좌표가 일치한다.
+        // (전면에서 미러링 시, BoundingBoxManager의 .right 회전과 결합되어 박스가 상하 반전됨)
         if let conn = videoOutput.connection(with: .video), conn.isVideoMirroringSupported {
-            switch recordingMirrorPolicy {
-            case .followPreview: conn.isVideoMirrored = isPreviewMirrored
-            case .alwaysMirrored: conn.isVideoMirrored = true
-            case .neverMirrored: conn.isVideoMirrored = false
-            }
             conn.automaticallyAdjustsVideoMirroring = false
+            conn.isVideoMirrored = false
         }
     }
 }
