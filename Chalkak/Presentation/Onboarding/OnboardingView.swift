@@ -43,7 +43,10 @@ private struct KoreanOnboardingFlowView: View {
                 renderedStep
 
                 if shouldShowPrimaryButton {
-                    OnboardingPrimaryButton(title: primaryButtonTitle) {
+                    OnboardingPrimaryButton(
+                        title: primaryButtonTitle,
+                        horizontalPadding: primaryButtonHorizontalPadding
+                    ) {
                         handlePrimaryAction()
                     }
                     .padding(.horizontal, 24)
@@ -119,7 +122,11 @@ private struct KoreanOnboardingFlowView: View {
     }
 
     private var primaryButtonTitle: String {
-        controller.isCompletionStep ? "시작하기" : "다음"
+        controller.isCompletionStep ? "완료" : "다음"
+    }
+
+    private var primaryButtonHorizontalPadding: CGFloat {
+        controller.isCompletionStep ? 95 : 30
     }
 
     private func handlePrimaryAction() {

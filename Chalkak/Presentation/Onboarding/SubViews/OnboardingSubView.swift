@@ -509,14 +509,25 @@ private struct OnboardingPhotoCard: View {
 
 struct OnboardingPrimaryButton: View {
     let title: String
+    let horizontalPadding: CGFloat
     let action: () -> Void
+
+    init(
+        title: String,
+        horizontalPadding: CGFloat = 30,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.horizontalPadding = horizontalPadding
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(SnappieColor.labelDarkNormal)
-                .padding(.horizontal, 30)
+                .padding(.horizontal, horizontalPadding)
                 .padding(.vertical, 16)
                 .background(SnappieColor.primaryNormal)
                 .cornerRadius(99)
