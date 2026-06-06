@@ -162,6 +162,96 @@ struct OnboardingTextStepView: View {
     }
 }
 
+struct OnboardingTypingTextStepView: View {
+    let lines: [String]
+    let characterDelay: UInt64
+    let completionDelay: UInt64
+    let onFinished: () -> Void
+
+    @State private var displayedLines: [String] = []
+    @State private var activeLineIndex: Int?
+
+    init(
+        lines: [String],
+        characterDelay: UInt64 = 120_000_000,
+        completionDelay: UInt64 = 700_000_000,
+        onFinished: @escaping () -> Void
+    ) {
+        self.lines = lines
+        self.characterDelay = characterDelay
+        self.completionDelay = completionDelay
+        self.onFinished = onFinished
+    }
+
+    var body: some View {
+        VStack(spacing: 10) {
+            ForEach(lines.indices, id: \.self) { index in
+                Text(displayedLine(at: index) + cursorSuffix(for: index))
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 24)
+        .task(id: lines.joined(separator: "\n")) {
+            await runTypingAnimation()
+        }
+    }
+
+    private func displayedLine(at index: Int) -> String {
+        guard displayedLines.indices.contains(index) else { return "" }
+        return displayedLines[index]
+    }
+
+    private func cursorSuffix(for index: Int) -> String {
+        activeLineIndex == index ? "|" : ""
+    }
+
+    private func runTypingAnimation() async {
+        await MainActor.run {
+            displayedLines = lines.map { _ in "" }
+            activeLineIndex = lines.isEmpty ? nil : lines.startIndex
+        }
+
+        for lineIndex in lines.indices {
+            await MainActor.run {
+                activeLineIndex = lineIndex
+            }
+
+            for character in lines[lineIndex] {
+                do {
+                    try await Task.sleep(nanoseconds: characterDelay)
+                } catch {
+                    return
+                }
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    displayedLines[lineIndex].append(character)
+                }
+            }
+        }
+
+        await MainActor.run {
+            activeLineIndex = nil
+        }
+
+        do {
+            try await Task.sleep(nanoseconds: completionDelay)
+        } catch {
+            return
+        }
+
+        guard !Task.isCancelled else { return }
+
+        await MainActor.run {
+            onFinished()
+        }
+    }
+}
+
 struct OnboardingCenteredPromptStepView: View {
     let lines: [String]
     let buttonTitle: String

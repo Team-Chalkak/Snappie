@@ -9,6 +9,7 @@ import Foundation
 
 enum OnboardingAdvanceBehavior: Equatable {
     case automatic(delay: TimeInterval)
+    case typingAutomatic
     case manual
     case completion
 }
@@ -28,7 +29,9 @@ enum OnboardingCarouselCard: Int, CaseIterable, Hashable, Identifiable {
     case second
     case third
 
-    var id: Int { rawValue }
+    var id: Int {
+        rawValue
+    }
 
     var imageName: String {
         switch self {
@@ -100,8 +103,10 @@ enum OnboardingStep: CaseIterable, Equatable {
             .automatic(delay: 2.2)
         case .guideSimpleRecord:
             .automatic(delay: 3.0)
-        case .dailyMemoryCarousel, .firstShootPrompt, .guideShootPrompt, .shootDone:
+        case .dailyMemoryCarousel, .firstShootPrompt, .guideShootPrompt:
             .manual
+        case .shootDone:
+            .typingAutomatic
         case .projectContinue:
             .completion
         }
@@ -149,12 +154,12 @@ enum OnboardingStep: CaseIterable, Equatable {
             ]
         case .shootDone:
             [
-                "촬영끝!"
+                "촬영 끝!"
             ]
         case .projectContinue:
             [
                 "나의 프로젝트에서",
-                "오늘 하루를 계속 담아보세요"
+                "오늘 하루를 완성해보세요!"
             ]
         }
     }

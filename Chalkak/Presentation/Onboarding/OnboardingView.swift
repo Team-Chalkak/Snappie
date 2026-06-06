@@ -92,6 +92,12 @@ private struct KoreanOnboardingFlowView: View {
             ) {
                 handleCenteredPromptAction()
             }
+        case .shootDone:
+            OnboardingTypingTextStepView(
+                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard)
+            ) {
+                controller.moveNext()
+            }
         default:
             OnboardingTextStepView(lines: controller.currentStep.prompt(for: controller.selectedCarouselCard))
         }
@@ -99,10 +105,13 @@ private struct KoreanOnboardingFlowView: View {
 
     private var shouldShowPrimaryButton: Bool {
         guard controller.currentStep != .firstShootPrompt,
-              controller.currentStep != .guideShootPrompt else { return false }
+              controller.currentStep != .guideShootPrompt,
+              controller.currentStep != .shootDone else { return false }
 
         return switch controller.advanceBehavior {
         case .automatic:
+            false
+        case .typingAutomatic:
             false
         case .manual, .completion:
             true

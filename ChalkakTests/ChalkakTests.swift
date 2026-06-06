@@ -78,6 +78,22 @@ struct ChalkakTests {
         #expect(controller.isCompletionStep)
     }
 
+    @Test func shootDoneStepUsesTypingAutomaticAdvance() {
+        let controller = OnboardingFlowController(steps: [.shootDone, .projectContinue])
+
+        #expect(controller.currentStep == .shootDone)
+        #expect(controller.advanceBehavior == .typingAutomatic)
+        #expect(controller.currentStep.prompt(for: nil) == ["촬영끝!"])
+
+        controller.moveNext()
+
+        #expect(controller.currentStep == .projectContinue)
+        #expect(controller.currentStep.prompt(for: nil) == [
+            "나의 프로젝트에서",
+            "오늘 하루를 완성해보세요"
+        ])
+    }
+
     @Test func onboardingFirstShootPromptUsesSelectedCarouselCard() {
         let controller = OnboardingFlowController()
 
