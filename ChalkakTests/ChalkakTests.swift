@@ -93,4 +93,13 @@ struct ChalkakTests {
             "첫 촬영을 시작해볼까요 ?"
         ])
     }
+
+    @Test func onboardingAudienceUsesKoreanFlowOnlyForKoreanLanguageCodes() {
+        #expect(OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ko")))
+        #expect(OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ko-KR")))
+        #expect(OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ko_KR")))
+
+        #expect(!OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "en")))
+        #expect(!OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ja")))
+    }
 }

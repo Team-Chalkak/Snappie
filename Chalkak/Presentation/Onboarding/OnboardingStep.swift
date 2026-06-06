@@ -13,6 +13,16 @@ enum OnboardingAdvanceBehavior: Equatable {
     case completion
 }
 
+enum OnboardingAudience {
+    static func usesKoreanOnboarding(locale: Locale) -> Bool {
+        isKorean(languageCode: locale.language.languageCode)
+    }
+
+    static func isKorean(languageCode: Locale.LanguageCode?) -> Bool {
+        languageCode == .korean
+    }
+}
+
 enum OnboardingCarouselCard: Int, CaseIterable, Hashable, Identifiable {
     case first
     case second
