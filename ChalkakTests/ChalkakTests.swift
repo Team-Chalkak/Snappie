@@ -147,4 +147,34 @@ struct ChalkakTests {
         #expect(!OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "en")))
         #expect(!OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ja")))
     }
+
+    @Test func onboardingNotificationScheduleEndsBeforeMidnightWhenStartedBeforeEvening() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let startDate = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 6, hour: 15, minute: 30)))
+
+        let dates = OnboardingNotificationSchedulePolicy.scheduledDates(
+            from: startDate,
+            calendar: calendar
+        )
+
+        #expect(dates.count == 8)
+        #expect(dates.first == calendar.date(from: DateComponents(year: 2026, month: 6, day: 6, hour: 16, minute: 30)))
+        #expect(dates.last == calendar.date(from: DateComponents(year: 2026, month: 6, day: 6, hour: 23, minute: 30)))
+    }
+
+    @Test func onboardingNotificationScheduleRunsUntilSameTimeNextDayWhenStartedAfterEvening() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let startDate = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 6, hour: 18, minute: 20)))
+
+        let dates = OnboardingNotificationSchedulePolicy.scheduledDates(
+            from: startDate,
+            calendar: calendar
+        )
+
+        #expect(dates.count == 24)
+        #expect(dates.first == calendar.date(from: DateComponents(year: 2026, month: 6, day: 6, hour: 19, minute: 20)))
+        #expect(dates.last == calendar.date(from: DateComponents(year: 2026, month: 6, day: 7, hour: 18, minute: 20)))
+    }
 }

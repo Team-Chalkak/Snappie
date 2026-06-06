@@ -26,6 +26,7 @@ private struct KoreanOnboardingFlowView: View {
     let onComplete: () -> Void
 
     @StateObject private var controller: OnboardingFlowController
+    @State private var isRequestingNotificationAuthorization = false
 
     init(
         steps: [OnboardingStep] = OnboardingStep.activeSteps,
@@ -131,8 +132,7 @@ private struct KoreanOnboardingFlowView: View {
 
     private func handlePrimaryAction() {
         if controller.isCompletionStep {
-            onComplete()
-            Analytics.logEvent("startButtonTapped", parameters: nil)
+            completeAfterNotificationAuthorization()
             return
         }
 
@@ -142,6 +142,17 @@ private struct KoreanOnboardingFlowView: View {
         }
 
         controller.moveNext()
+    }
+
+    private func completeAfterNotificationAuthorization() {
+        guard !isRequestingNotificationAuthorization else { return }
+
+        isRequestingNotificationAuthorization = true
+        OnboardingNotificationScheduler.shared.requestAuthorizationAndSchedule {
+            isRequestingNotificationAuthorization = false
+            onComplete()
+            Analytics.logEvent("startButtonTapped", parameters: nil)
+        }
     }
 
     private func handleCenteredPromptAction() {
@@ -167,6 +178,7 @@ private struct LegacyOnboardingView: View {
     let onComplete: () -> Void
 
     @State private var currentIndex = 0
+    @State private var isRequestingNotificationAuthorization = false
     @Environment(\.locale) private var locale
 
     private let items: [OnboardingItem] = [
@@ -215,8 +227,7 @@ private struct LegacyOnboardingView: View {
 
                 if currentIndex == items.index(before: items.endIndex) {
                     Button("시작하기") {
-                        onComplete()
-                        Analytics.logEvent("startButtonTapped", parameters: nil)
+                        completeAfterNotificationAuthorization()
                     }
                     .font(.headline)
                     .foregroundColor(SnappieColor.labelDarkNormal)
@@ -235,6 +246,17 @@ private struct LegacyOnboardingView: View {
 
     private func localizedImageName(base: String) -> String {
         "\(OnboardingAudience.usesKoreanOnboarding(locale: locale) ? "ko" : "en")\(base)"
+    }
+
+    private func completeAfterNotificationAuthorization() {
+        guard !isRequestingNotificationAuthorization else { return }
+
+        isRequestingNotificationAuthorization = true
+        OnboardingNotificationScheduler.shared.requestAuthorizationAndSchedule {
+            isRequestingNotificationAuthorization = false
+            onComplete()
+            Analytics.logEvent("startButtonTapped", parameters: nil)
+        }
     }
 }
 
