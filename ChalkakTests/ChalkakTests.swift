@@ -94,6 +94,35 @@ struct ChalkakTests {
         ])
     }
 
+    @Test func onboardingCarouselSelectionChangeFiresOnlyWhenCenteredCardChanges() {
+        var selectedCard = OnboardingCarouselCard.first
+        var changeCount = 0
+
+        OnboardingCarouselCard.updateSelection(
+            &selectedCard,
+            toCenteredCard: nil
+        ) {
+            changeCount += 1
+        }
+
+        OnboardingCarouselCard.updateSelection(
+            &selectedCard,
+            toCenteredCard: .first
+        ) {
+            changeCount += 1
+        }
+
+        OnboardingCarouselCard.updateSelection(
+            &selectedCard,
+            toCenteredCard: .second
+        ) {
+            changeCount += 1
+        }
+
+        #expect(selectedCard == .second)
+        #expect(changeCount == 1)
+    }
+
     @Test func onboardingAudienceUsesKoreanFlowOnlyForKoreanLanguageCodes() {
         #expect(OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ko")))
         #expect(OnboardingAudience.usesKoreanOnboarding(locale: Locale(identifier: "ko-KR")))

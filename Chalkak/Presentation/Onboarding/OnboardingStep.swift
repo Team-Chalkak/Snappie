@@ -62,6 +62,17 @@ enum OnboardingCarouselCard: Int, CaseIterable, Hashable, Identifiable {
             "연인, 가족, 반려동물과 함께"
         }
     }
+
+    static func updateSelection(
+        _ selectedCard: inout OnboardingCarouselCard,
+        toCenteredCard centeredCard: OnboardingCarouselCard?,
+        onChange: () -> Void
+    ) {
+        guard let centeredCard, centeredCard != selectedCard else { return }
+
+        selectedCard = centeredCard
+        onChange()
+    }
 }
 
 enum OnboardingStep: CaseIterable, Equatable {

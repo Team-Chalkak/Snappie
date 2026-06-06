@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct Onboard: View {
     let ImageName: String
@@ -288,8 +289,21 @@ struct OnboardingFrameAnimationView: View {
 
 struct OnboardingCarouselStepView: View {
     let titleLines: [String]
+    private let onCenteredCardChange: () -> Void
     @Binding var selectedCard: OnboardingCarouselCard
     @State private var scrollPosition: OnboardingCarouselCard?
+
+    init(
+        titleLines: [String],
+        selectedCard: Binding<OnboardingCarouselCard>,
+        onCenteredCardChange: @escaping () -> Void = {
+            UISelectionFeedbackGenerator().selectionChanged()
+        }
+    ) {
+        self.titleLines = titleLines
+        self._selectedCard = selectedCard
+        self.onCenteredCardChange = onCenteredCardChange
+    }
 
     var body: some View {
         VStack(spacing: 40) {
@@ -353,8 +367,11 @@ struct OnboardingCarouselStepView: View {
             scrollPosition = newValue
         }
         .onChange(of: scrollPosition) { _, newValue in
-            guard let newValue else { return }
-            selectedCard = newValue
+            OnboardingCarouselCard.updateSelection(
+                &selectedCard,
+                toCenteredCard: newValue,
+                onChange: onCenteredCardChange
+            )
         }
     }
 }
