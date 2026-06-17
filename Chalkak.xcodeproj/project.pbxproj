@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0D5512EC2E432177001FA7F9 /* PermissionCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */; };
-		A1B2C3D42FD0000100000001 /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000003 /* OnboardingStep.swift */; };
-		A1B2C3D42FD0000100000002 /* OnboardingFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */; };
-		B6D100002FD53A0000010001 /* OnboardingNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D100002FD53A0000010002 /* OnboardingNotificationScheduler.swift */; };
 		0D5512F92E541723001FA7F9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512F82E541718001FA7F9 /* OnboardingView.swift */; };
 		0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */; };
 		7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */; };
@@ -106,6 +103,8 @@
 		99E6F0142E90DC03002ED9C2 /* SchemaV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */; };
 		99E6F0162E90DCBB002ED9C2 /* AppTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0152E90DCB4002ED9C2 /* AppTypes.swift */; };
 		99E6F01A2E90EDA9002ED9C2 /* SchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */; };
+		A1B2C3D42FD0000100000001 /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000003 /* OnboardingStep.swift */; };
+		A1B2C3D42FD0000100000002 /* OnboardingFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */; };
 		B60564A52E3A767F00AACABE /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */; };
 		B60DC5F12E38A621001D8327 /* SnappieProgressAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60DC5F02E38A621001D8327 /* SnappieProgressAlert.swift */; };
 		B64788642E3323C40091A067 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64788632E3323C10091A067 /* RecordButton.swift */; };
@@ -119,6 +118,8 @@
 		B6A592732E37CB4900D3DF6A /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592722E37CB4400D3DF6A /* CommonAlert.swift */; };
 		B6A592762E38470D00D3DF6A /* SnappieAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A592742E38470D00D3DF6A /* SnappieAlert.swift */; };
 		B6AB62AE2E2E8DBE00207590 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		B6D100002FD53A0000010001 /* OnboardingNotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D100002FD53A0000010002 /* OnboardingNotificationScheduler.swift */; };
+		C5133FC62FE28D8100BF0A4A /* ProjectAddClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5133FC52FE28D8100BF0A4A /* ProjectAddClip.swift */; };
 		C52566D42FB3911E0026EA67 /* ExportMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52566D32FB3911E0026EA67 /* ExportMode.swift */; };
 		C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC022EF9080400A9EC1E /* PlayheadView.swift */; };
 		C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */; };
@@ -179,9 +180,6 @@
 
 /* Begin PBXFileReference section */
 		0D5512EB2E432174001FA7F9 /* PermissionCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCheckView.swift; sourceTree = "<group>"; };
-		A1B2C3D42FD0000100000003 /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStep.swift; sourceTree = "<group>"; };
-		A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowController.swift; sourceTree = "<group>"; };
-		B6D100002FD53A0000010002 /* OnboardingNotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNotificationScheduler.swift; sourceTree = "<group>"; };
 		0D5512F82E541718001FA7F9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSubView.swift; sourceTree = "<group>"; };
 		7D17CABB2EEFE93C00C26529 /* StartProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartProjectView.swift; sourceTree = "<group>"; };
@@ -274,6 +272,8 @@
 		99E6F0132E90DBF9002ED9C2 /* SchemaV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV1.swift; sourceTree = "<group>"; };
 		99E6F0152E90DCB4002ED9C2 /* AppTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTypes.swift; sourceTree = "<group>"; };
 		99E6F0192E90EDA5002ED9C2 /* SchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaV2.swift; sourceTree = "<group>"; };
+		A1B2C3D42FD0000100000003 /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStep.swift; sourceTree = "<group>"; };
+		A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowController.swift; sourceTree = "<group>"; };
 		B60564A42E3A767F00AACABE /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		B60DC5F02E38A621001D8327 /* SnappieProgressAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieProgressAlert.swift; sourceTree = "<group>"; };
 		B64788632E3323C10091A067 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
@@ -286,6 +286,8 @@
 		B6A592612E37B49000D3DF6A /* ZoomButtonGestureModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButtonGestureModifier.swift; sourceTree = "<group>"; };
 		B6A592722E37CB4400D3DF6A /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		B6A592742E38470D00D3DF6A /* SnappieAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappieAlert.swift; sourceTree = "<group>"; };
+		B6D100002FD53A0000010002 /* OnboardingNotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNotificationScheduler.swift; sourceTree = "<group>"; };
+		C5133FC52FE28D8100BF0A4A /* ProjectAddClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectAddClip.swift; sourceTree = "<group>"; };
 		C52566D32FB3911E0026EA67 /* ExportMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportMode.swift; sourceTree = "<group>"; };
 		C54ABC022EF9080400A9EC1E /* PlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayheadView.swift; sourceTree = "<group>"; };
 		C54ABC0E2F01A4C000A9EC1E /* ClipToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipToolbarView.swift; sourceTree = "<group>"; };
@@ -911,6 +913,7 @@
 		C5F7B69D2E2EB78D0066B59C /* Component */ = {
 			isa = PBXGroup;
 			children = (
+				C5133FC52FE28D8100BF0A4A /* ProjectAddClip.swift */,
 				C5F7B69E2E2EB7AB0066B59C /* IconView.swift */,
 				C5C12EA12E2FEE1C00C4DC6D /* SnappieButton.swift */,
 				C5C12EB02E33684F00C4DC6D /* SnappieNavigationBar.swift */,
@@ -1166,6 +1169,7 @@
 				993A1F602E267E0C0059B70A /* Guide.swift in Sources */,
 				9340078B2E340445006BE89C /* TrimmingTimeDisplayView.swift in Sources */,
 				0D5512FB2E541762001FA7F9 /* OnboardingSubView.swift in Sources */,
+				C5133FC62FE28D8100BF0A4A /* ProjectAddClip.swift in Sources */,
 				993A1F612E267E0C0059B70A /* Project.swift in Sources */,
 				C5886D302E371D9B000566C5 /* OverlaySkeletonView.swift in Sources */,
 				C54ABC032EF9080400A9EC1E /* PlayheadView.swift in Sources */,
