@@ -335,24 +335,9 @@ final class ProjectEditViewModel {
                 self.playHead = secs
                 Task { await self.updatePreviewImage(at: secs) }
 
-                // 기존 트리밍 로직도 그대로 유지
-                if let clip = self.editableClips.first(where: { $0.isTrimming }) {
-                    let allStart = self.allClipStart(of: clip)
-                    let allEnd = allStart + clip.trimmedDuration
-                    if secs >= allEnd {
-                        self.player.seek(
-                            to: CMTime(seconds: allStart, preferredTimescale: 600),
-                            toleranceBefore: .zero, toleranceAfter: .zero
-                        )
-                        if self.isPlaying {
-                            self.player.play()
-                        }
-                    }
-                } else {
-                    if secs >= self.totalDuration {
-                        self.isPlaying = false
-                        self.player.pause()
-                    }
+                if secs >= self.totalDuration {
+                    self.isPlaying = false
+                    self.player.pause()
                 }
             }
         }
@@ -427,23 +412,6 @@ final class ProjectEditViewModel {
     }
 
     func togglePlayback() {
-        if let clip = editableClips.first(where: { $0.isTrimming }) {
-            let allStart = allClipStart(of: clip)
-            let allEnd = allStart + clip.trimmedDuration
-
-            if playHead < allStart || playHead >= allEnd {
-                seekTo(time: allStart)
-            }
-
-            isPlaying.toggle()
-            if isPlaying {
-                player.play()
-            } else {
-                player.pause()
-            }
-            return
-        }
-
         // 끝에 도달했을 때 0초로 리셋하지 않고 그 자리에서 정지
         if playHead >= totalDuration {
             isPlaying = false
@@ -499,39 +467,6 @@ final class ProjectEditViewModel {
             _ = await photoLibrarySaver.saveVideoToLibrary(videoURL: url)
         } catch {
             print("클립 내보내기 실패:", error)
-        }
-    }
-
-    func toggleTrimmingMode(for clipID: String) {
-        // 트리밍 모드 토글
-        editableClips = editableClips.map { clip in
-            var c = clip
-            c.isTrimming = (c.id == clipID) ? !c.isTrimming : false
-            return c
-        }
-
-        // 트리밍 모드가 활성화된 클립을 찾고, 해당 클립의 시작 위치로 플레이헤드 이동
-        if let trimmingClip = editableClips.first(where: { $0.isTrimming }) {
-            // 해당 클립의 타임라인상 시작 위치
-            let clipStartTime = allClipStart(of: trimmingClip)
-
-            // 범위 체크
-            let safeTime = min(max(0, clipStartTime), totalDuration)
-
-            // 트리밍된 부분의 시작점으로 플레이헤드 이동
-            seekTo(time: safeTime)
-
-            // 재생 중이었다면 일시정지
-            if isPlaying {
-                isPlaying = false
-                player.pause()
-            }
-        }
-    }
-
-    func deactivateAllTrimming() {
-        for i in 0 ..< editableClips.count {
-            editableClips[i].isTrimming = false
         }
     }
 
