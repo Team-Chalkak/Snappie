@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct ProjectTimelineView: View {
     @Binding var clips: [EditableClip]
@@ -16,6 +17,7 @@ struct ProjectTimelineView: View {
     let playHeadPosition: Double
     let totalDuration: Double
     let dragOffset: CGFloat
+    let addClipTip: ProjectAddClip
 
     let pixelOffsetForTime: (Double) -> CGFloat
     let clipSpacing: CGFloat
@@ -86,6 +88,7 @@ struct ProjectTimelineView: View {
                                     .fill(.deepGreen400)
                             )
                     }
+                    .popoverTip(addClipTip)
                 }
                 .padding(.horizontal, geo.size.width / 2)
                 .offset(x: -pixelOffsetForTime(playHeadPosition) + dragOffset)
