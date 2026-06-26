@@ -139,3 +139,9 @@ iOSInjectionProject/
 ### Firebase
 GoogleService-Info.plist
 Chalkak/GoogleService-Info.plist
+
+### Local agent notes ###
+/agents/
+/AGENTS.local.md
+/agents.md
+/CLAUDE.local.md

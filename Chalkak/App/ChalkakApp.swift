@@ -98,6 +98,9 @@ struct ChalkakApp: App {
                 .sheet(isPresented: $permissionManager.showPermissionSheet) {
                     CameraPermissionSheet(permissionManager: permissionManager)
                 }
+                .task {
+                    delegate.requestTrackingAuthorizationIfNeeded()
+                }
             } else {
                 OnboardingView(onComplete: {
                     hasCompletedOnboarding = true
@@ -121,7 +124,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         configureAnalyticsUserType()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        return true
+    }
+
+    func requestTrackingAuthorizationIfNeeded(after delay: TimeInterval = 1) {
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
                 case .authorized:
@@ -138,7 +149,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
         }
-        return true
     }
     
     private func configureAnalyticsUserType() {
