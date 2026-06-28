@@ -23,7 +23,18 @@ import SwiftUI
 struct TrimmingControlView: View {
     var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
+    let onInteractionStarted: (() -> Void)?
 
+    init(
+        editViewModel: ClipEditViewModel,
+        isDragging: Binding<Bool>,
+        onInteractionStarted: (() -> Void)? = nil
+    ) {
+        self.editViewModel = editViewModel
+        self._isDragging = isDragging
+        self.onInteractionStarted = onInteractionStarted
+    }
+    
     var body: some View {
         VStack(alignment: .center, spacing: 8, content: {
             Divider()
@@ -31,8 +42,12 @@ struct TrimmingControlView: View {
             
             TrimmingTimeDisplayView(editViewModel: editViewModel)
             
-            TrimmingLineView(editViewModel: editViewModel, isDragging: $isDragging)
-                .padding(.horizontal, 26)
+            TrimmingLineView(
+                editViewModel: editViewModel,
+                isDragging: $isDragging,
+                onInteractionStarted: onInteractionStarted
+            )
+            .padding(.horizontal, 26)
             
         })
     }

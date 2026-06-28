@@ -57,6 +57,7 @@ struct ClipEditView: View {
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
     @State private var showRetakeAlert = false
+    @State private var showsOnboardingTooltip = true
 
     // 3. 계산 프로퍼티
     private var guide: Guide? {
@@ -68,6 +69,10 @@ struct ClipEditView: View {
         }
     }
 
+    private var shouldShowOnboardingTooltip: Bool {
+        onboardingCompletion != nil
+    }
+    
     // 4. init
     init(
         clipURL: URL,
@@ -196,9 +201,32 @@ struct ClipEditView: View {
                     )
                 )
 
-                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+                ZStack(alignment: .topLeading) {
+                    TrimmingControlView(
+                        editViewModel: editViewModel,
+                        isDragging: $isDragging,
+                        onInteractionStarted: {
+                            dismissOnboardingTooltip()
+                        }
+                    )
+
+                    if shouldShowOnboardingTooltip && showsOnboardingTooltip {
+                        OnboardingEditorTooltip(text: "필요 없는 부분은 잘라낼 수 있어요")
+                            .padding(.leading, 23)
+                            .offset(y: -20)
+                            .transition(.opacity)
+                            .zIndex(2)
+                            .allowsHitTesting(false)
+                    }
+                }
             }
             .padding(.bottom, 14)
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    dismissOnboardingTooltip()
+                }
+            )
         }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(
@@ -247,6 +275,14 @@ struct ClipEditView: View {
         }
         .onDisappear {
             editViewModel.cleanup()
+        }
+    }
+    
+    private func dismissOnboardingTooltip() {
+        guard showsOnboardingTooltip else { return }
+
+        withAnimation(.easeOut(duration: 0.35)) {
+            showsOnboardingTooltip = false
         }
     }
 }
