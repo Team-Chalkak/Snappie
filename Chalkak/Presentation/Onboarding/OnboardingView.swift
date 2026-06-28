@@ -99,13 +99,6 @@ private struct KoreanOnboardingFlowView: View {
                     controller.moveBack()
                 }
             )
-        case .guideShootPrompt:
-            OnboardingGuideShootPromptStepView(
-                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
-                frameImageNames: (1...17).map { "c-\($0)" }
-            ) {
-                handleCenteredPromptAction()
-            }
         case .followUpShootExperience:
             if let guide = controller.experienceGuide {
                 OnboardingFollowUpShootExperienceView(
@@ -133,7 +126,6 @@ private struct KoreanOnboardingFlowView: View {
 
     private var shouldShowPrimaryButton: Bool {
         guard controller.currentStep != .firstShootPrompt,
-              controller.currentStep != .guideShootPrompt,
               controller.currentStep != .firstShootExperience,
               controller.currentStep != .followUpShootExperience,
               controller.currentStep != .shootDone else {
