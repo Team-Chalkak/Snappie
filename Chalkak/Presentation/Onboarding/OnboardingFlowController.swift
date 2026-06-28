@@ -12,6 +12,7 @@ final class OnboardingFlowController: ObservableObject {
 
     @Published private(set) var currentIndex: Int
     @Published var selectedCarouselCard: OnboardingCarouselCard
+    @Published var experienceGuide: Guide?
 
     init(
         steps: [OnboardingStep] = OnboardingStep.activeSteps,

@@ -18,6 +18,8 @@ struct GuideSelectView: View {
     let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
+    let onboardingBack: (() -> Void)?
+    let onboardingCompletion: ((Double) -> Void)?
 
     @State private var viewModel: GuideSelectViewModel
     @EnvironmentObject private var coordinator: Coordinator
@@ -37,13 +39,17 @@ struct GuideSelectView: View {
         clip: Clip,
         shootState: ShootState,
         cameraSetting: CameraSetting,
-        cameraManager: CameraManager
+        cameraManager: CameraManager,
+        onboardingCompletion: ((Double) -> Void)? = nil,
+        onboardingBack: (() -> Void)? = nil
     ) {
         self.clip = clip
         self.shootState = shootState
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
-
+        self.onboardingCompletion = onboardingCompletion
+        self.onboardingBack = onboardingBack
+        
         _viewModel = State(wrappedValue: GuideSelectViewModel(clipURL: clip.videoURL))
     }
 
@@ -56,16 +62,21 @@ struct GuideSelectView: View {
                 SnappieNavigationBar(
                     navigationTitle: Text("가이드 선택"),
                     leftButtonType: .backward {
+                        if let onboardingBack {
+                            onboardingBack()
+                            return
+                        }
+                        
                         coordinator.popLast()
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
-                            guard let previous = coordinator.previousPath else {
+                            let originalTimestamp = clip.startPoint + viewModel.startPoint
+
+                            if let onboardingCompletion {
+                                onboardingCompletion(originalTimestamp)
                                 return
                             }
-
-                            // 트리밍 시간을 원본시간으로 변환
-                            let originalTimestamp = clip.startPoint + viewModel.startPoint
 
                             coordinator.push(
                                 .overlay(
