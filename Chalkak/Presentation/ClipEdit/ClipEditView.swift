@@ -138,6 +138,7 @@ struct ClipEditView: View {
                                     }
 
                                 case .followUpShoot, .appendShoot:
+                                    editViewModel.appendClipToCurrentProject()
                                     onboardingFinishShoot?()
                                 }
 
