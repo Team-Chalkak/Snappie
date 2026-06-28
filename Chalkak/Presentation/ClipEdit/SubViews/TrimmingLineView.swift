@@ -116,10 +116,11 @@ struct TrimmingLineView: View {
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
                             let newStart = min(ratio * duration, editViewModel.endPoint - 0.1)
 
-                            editViewModel.updateStart(newStart)
+                            editViewModel.previewTrimStartWhileDragging(newStart)
                         }
                         .onEnded { _ in
                             isDragging = false
+                            editViewModel.seek(to: editViewModel.startPoint)
                         }
                 )
 
@@ -139,10 +140,11 @@ struct TrimmingLineView: View {
                             let ratio = max(0, min(x / thumbnailLineWidth, 1))
                             let newEnd = max(ratio * duration, editViewModel.startPoint + 0.1)
 
-                            editViewModel.updateEnd(newEnd)
+                            editViewModel.previewTrimEndWhileDragging(newEnd)
                         }
                         .onEnded { _ in
                             isDragging = false
+                            editViewModel.seek(to: editViewModel.endPoint)
                         }
                 )
             

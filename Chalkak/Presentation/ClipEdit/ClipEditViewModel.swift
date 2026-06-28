@@ -212,6 +212,32 @@ final class ClipEditViewModel {
         }
     }
     
+    /// 트리밍 좌측 핸들 드래그에 맞춰 프리뷰 이미지 갱신
+    func previewTrimStartWhileDragging(_ value: Double) {
+        startPoint = value
+        currentPlayTime = value
+
+        player.pause()
+        isPlaying = false
+
+        Task {
+            await updatePreviewImage(at: value)
+        }
+    }
+
+    /// 트리밍 우측 핸들 드래그에 맞춰 프리뷰 이미지 갱신
+    func previewTrimEndWhileDragging(_ value: Double) {
+        endPoint = value
+        currentPlayTime = value
+
+        player.pause()
+        isPlaying = false
+
+        Task {
+            await updatePreviewImage(at: value)
+        }
+    }
+    
     /// AVPlayer를 지정된 시간으로 이동
     func seek(
         to time: Double,
