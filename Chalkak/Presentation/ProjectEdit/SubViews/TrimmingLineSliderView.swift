@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct TrimminglineSliderView: View {
     @Binding var clips: [EditableClip]
@@ -16,6 +17,7 @@ struct TrimminglineSliderView: View {
     let isPlaying: Bool
     let totalDuration: Double
     let guideClipID: String?
+    let addClipTip: ProjectAddClip
 
     let onSeek: (Double) -> Void
     let onMove: (IndexSet, Int) -> Void
@@ -46,6 +48,7 @@ struct TrimminglineSliderView: View {
                 playHeadPosition: playHeadPosition,
                 totalDuration: totalDuration,
                 dragOffset: dragOffset,
+                addClipTip: addClipTip,
                 pixelOffsetForTime: pixelOffsetForTime,
                 clipSpacing: clipSpacing,
                 onMove: onMove,

@@ -8,11 +8,13 @@
 import AVKit
 import FirebaseAnalytics
 import SwiftUI
+import TipKit
 
 /// 프로젝트 편집 메인뷰
 struct ProjectEditView: View {
     @State private var viewModel: ProjectEditViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    private let projectAddClipTip = ProjectAddClip()
     @State private var showExitConfirmation = false
     @State private var showPhotoPermissionDeniedAlert = false
     @State private var isOverlayVisible: Bool = true
@@ -114,6 +116,7 @@ struct ProjectEditView: View {
                 isPlaying: viewModel.isPlaying,
                 totalDuration: viewModel.totalDuration,
                 guideClipID: viewModel.guide?.clipID,
+                addClipTip: projectAddClipTip,
                 onSeek: viewModel.seekTo,
                 onMove: viewModel.moveClip,
                 onAddClipTapped: {
