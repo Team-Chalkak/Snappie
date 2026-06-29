@@ -78,30 +78,48 @@ final class ProjectEditViewModel {
     // MARK: - 비동기 로딩 메서드
 
     func loadProject() async {
-        let prevClips = editableClips
-        let prevGuideTimestamp = guide?.selectedTimestamp
-
         isLoading = true
         await loadProjectData()
         isLoading = false
 
-        // projectEditView뿐만아니라, 클립 편집 / 가이드 같이 다른 뷰로 이탈해서 변경하고 돌아오는 것 감지
-        if isAlreadyInitialized, !prevClips.isEmpty {
-            if prevClips.count != editableClips.count {
-                hasUnsavedChanges = true
-            } else {
-                for (prev, curr) in zip(prevClips, editableClips) {
-                    if prev.id == curr.id,
-                       prev.startPoint != curr.startPoint || prev.endPoint != curr.endPoint
-                    {
-                        hasUnsavedChanges = true
-                        break
-                    }
-                }
-            }
-            if guide?.selectedTimestamp != prevGuideTimestamp {
-                hasUnsavedChanges = true
-            }
+        // temp ↔ 원본 변경사항 감지
+        hasUnsavedChanges = computeHasUnsavedChanges()
+    }
+
+    /// temp 프로젝트가 원본과 달라졌는지 직접 비교해 변경 여부를 판단한다.
+    private func computeHasUnsavedChanges() -> Bool {
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+              tempProject.isTemp,
+              let originalID = tempProject.originalID,
+              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID)
+        else {
+            return false // temp가 아니면 비교 대상이 없음 = 변경 없음
+        }
+
+        // 가이드 변경 (선택 타임스탬프)
+        if tempProject.guide.selectedTimestamp != originalProject.guide.selectedTimestamp {
+            return true
+        }
+
+        // 클립 변경 (개수 / 순서 / 트리밍 구간)
+        let tempOrdered = sortedByTimelineOrder(tempProject.clipList)
+        let originalOrdered = sortedByTimelineOrder(originalProject.clipList)
+
+        if tempOrdered.count != originalOrdered.count { return true }
+
+        for (temp, original) in zip(tempOrdered, originalOrdered) {
+            // 새로 추가됐거나(originalClipID == nil) 순서가 바뀌면 원본 매핑이 어긋남
+            if temp.originalClipID != original.id { return true }
+            if temp.startPoint != original.startPoint || temp.endPoint != original.endPoint { return true }
+        }
+
+        return false
+    }
+
+    private func sortedByTimelineOrder(_ clips: [Clip]) -> [Clip] {
+        clips.sorted {
+            if $0.order != $1.order { return $0.order < $1.order }
+            return $0.createdAt < $1.createdAt
         }
     }
 
