@@ -78,30 +78,48 @@ final class ProjectEditViewModel {
     // MARK: - 비동기 로딩 메서드
 
     func loadProject() async {
-        let prevClips = editableClips
-        let prevGuideTimestamp = guide?.selectedTimestamp
-
         isLoading = true
         await loadProjectData()
         isLoading = false
 
-        // projectEditView뿐만아니라, 클립 편집 / 가이드 같이 다른 뷰로 이탈해서 변경하고 돌아오는 것 감지
-        if isAlreadyInitialized, !prevClips.isEmpty {
-            if prevClips.count != editableClips.count {
-                hasUnsavedChanges = true
-            } else {
-                for (prev, curr) in zip(prevClips, editableClips) {
-                    if prev.id == curr.id,
-                       prev.startPoint != curr.startPoint || prev.endPoint != curr.endPoint
-                    {
-                        hasUnsavedChanges = true
-                        break
-                    }
-                }
-            }
-            if guide?.selectedTimestamp != prevGuideTimestamp {
-                hasUnsavedChanges = true
-            }
+        // temp ↔ 원본 변경사항 감지
+        hasUnsavedChanges = computeHasUnsavedChanges()
+    }
+
+    /// temp 프로젝트가 원본과 달라졌는지 직접 비교해 변경 여부를 판단한다.
+    private func computeHasUnsavedChanges() -> Bool {
+        guard let tempProject = SwiftDataManager.shared.fetchProject(byID: projectID),
+              tempProject.isTemp,
+              let originalID = tempProject.originalID,
+              let originalProject = SwiftDataManager.shared.fetchProject(byID: originalID)
+        else {
+            return false // temp가 아니면 비교 대상이 없음 = 변경 없음
+        }
+
+        // 가이드 변경 (선택 타임스탬프)
+        if tempProject.guide.selectedTimestamp != originalProject.guide.selectedTimestamp {
+            return true
+        }
+
+        // 클립 변경 (개수 / 순서 / 트리밍 구간)
+        let tempOrdered = sortedByTimelineOrder(tempProject.clipList)
+        let originalOrdered = sortedByTimelineOrder(originalProject.clipList)
+
+        if tempOrdered.count != originalOrdered.count { return true }
+
+        for (temp, original) in zip(tempOrdered, originalOrdered) {
+            // 새로 추가됐거나(originalClipID == nil) 순서가 바뀌면 원본 매핑이 어긋남
+            if temp.originalClipID != original.id { return true }
+            if temp.startPoint != original.startPoint || temp.endPoint != original.endPoint { return true }
+        }
+
+        return false
+    }
+
+    private func sortedByTimelineOrder(_ clips: [Clip]) -> [Clip] {
+        clips.sorted {
+            if $0.order != $1.order { return $0.order < $1.order }
+            return $0.createdAt < $1.createdAt
         }
     }
 
@@ -335,24 +353,9 @@ final class ProjectEditViewModel {
                 self.playHead = secs
                 Task { await self.updatePreviewImage(at: secs) }
 
-                // 기존 트리밍 로직도 그대로 유지
-                if let clip = self.editableClips.first(where: { $0.isTrimming }) {
-                    let allStart = self.allClipStart(of: clip)
-                    let allEnd = allStart + clip.trimmedDuration
-                    if secs >= allEnd {
-                        self.player.seek(
-                            to: CMTime(seconds: allStart, preferredTimescale: 600),
-                            toleranceBefore: .zero, toleranceAfter: .zero
-                        )
-                        if self.isPlaying {
-                            self.player.play()
-                        }
-                    }
-                } else {
-                    if secs >= self.totalDuration {
-                        self.isPlaying = false
-                        self.player.pause()
-                    }
+                if secs >= self.totalDuration {
+                    self.isPlaying = false
+                    self.player.pause()
                 }
             }
         }
@@ -427,23 +430,6 @@ final class ProjectEditViewModel {
     }
 
     func togglePlayback() {
-        if let clip = editableClips.first(where: { $0.isTrimming }) {
-            let allStart = allClipStart(of: clip)
-            let allEnd = allStart + clip.trimmedDuration
-
-            if playHead < allStart || playHead >= allEnd {
-                seekTo(time: allStart)
-            }
-
-            isPlaying.toggle()
-            if isPlaying {
-                player.play()
-            } else {
-                player.pause()
-            }
-            return
-        }
-
         // 끝에 도달했을 때 0초로 리셋하지 않고 그 자리에서 정지
         if playHead >= totalDuration {
             isPlaying = false
@@ -499,39 +485,6 @@ final class ProjectEditViewModel {
             _ = await photoLibrarySaver.saveVideoToLibrary(videoURL: url)
         } catch {
             print("클립 내보내기 실패:", error)
-        }
-    }
-
-    func toggleTrimmingMode(for clipID: String) {
-        // 트리밍 모드 토글
-        editableClips = editableClips.map { clip in
-            var c = clip
-            c.isTrimming = (c.id == clipID) ? !c.isTrimming : false
-            return c
-        }
-
-        // 트리밍 모드가 활성화된 클립을 찾고, 해당 클립의 시작 위치로 플레이헤드 이동
-        if let trimmingClip = editableClips.first(where: { $0.isTrimming }) {
-            // 해당 클립의 타임라인상 시작 위치
-            let clipStartTime = allClipStart(of: trimmingClip)
-
-            // 범위 체크
-            let safeTime = min(max(0, clipStartTime), totalDuration)
-
-            // 트리밍된 부분의 시작점으로 플레이헤드 이동
-            seekTo(time: safeTime)
-
-            // 재생 중이었다면 일시정지
-            if isPlaying {
-                isPlaying = false
-                player.pause()
-            }
-        }
-    }
-
-    func deactivateAllTrimming() {
-        for i in 0 ..< editableClips.count {
-            editableClips[i].isTrimming = false
         }
     }
 
