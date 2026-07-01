@@ -14,6 +14,8 @@ enum OnboardingNotificationSchedulePolicy {
 
     private static let eveningCutoffHour = 18
     private static let maxNotificationCount = 24
+    private static let notificationIntervalHours = 2
+    private static let quietHourEnd = 8 // 00:00~08:00 알림 제외
 
     static func scheduledDates(
         from startDate: Date,
@@ -21,14 +23,16 @@ enum OnboardingNotificationSchedulePolicy {
     ) -> [Date] {
         let endDate = scheduleEndDate(from: startDate, calendar: calendar)
         var dates: [Date] = []
-        var nextDate = calendar.date(byAdding: .hour, value: 1, to: startDate)
+        var nextDate = calendar.date(byAdding: .hour, value: notificationIntervalHours, to: startDate)
 
         while let date = nextDate,
               date <= endDate,
               dates.count < maxNotificationCount
         {
-            dates.append(date)
-            nextDate = calendar.date(byAdding: .hour, value: 1, to: date)
+            if calendar.component(.hour, from: date) >= quietHourEnd {
+                dates.append(date)
+            }
+            nextDate = calendar.date(byAdding: .hour, value: notificationIntervalHours, to: date)
         }
 
         return dates
