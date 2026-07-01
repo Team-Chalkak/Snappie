@@ -18,10 +18,13 @@ struct GuideSelectView: View {
     let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
+    let onboardingBack: (() -> Void)?
+    let onboardingCompletion: ((Double) -> Void)?
 
     @State private var viewModel: GuideSelectViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @State private var isDragging = false
+    @State private var showsOnboardingTooltip = true
 
     private var overlayImage: UIImage? {
         switch shootState {
@@ -32,18 +35,26 @@ struct GuideSelectView: View {
             return guide.outlineImage
         }
     }
-
+    
+    private var isOnboardingMode: Bool {
+        onboardingCompletion != nil
+    }
+    
     init(
         clip: Clip,
         shootState: ShootState,
         cameraSetting: CameraSetting,
-        cameraManager: CameraManager
+        cameraManager: CameraManager,
+        onboardingCompletion: ((Double) -> Void)? = nil,
+        onboardingBack: (() -> Void)? = nil
     ) {
         self.clip = clip
         self.shootState = shootState
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
-
+        self.onboardingCompletion = onboardingCompletion
+        self.onboardingBack = onboardingBack
+        
         _viewModel = State(wrappedValue: GuideSelectViewModel(clipURL: clip.videoURL))
     }
 
@@ -56,16 +67,21 @@ struct GuideSelectView: View {
                 SnappieNavigationBar(
                     navigationTitle: Text("가이드 선택"),
                     leftButtonType: .backward {
+                        if let onboardingBack {
+                            onboardingBack()
+                            return
+                        }
+                        
                         coordinator.popLast()
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
-                            guard let previous = coordinator.previousPath else {
+                            let originalTimestamp = clip.startPoint + viewModel.startPoint
+
+                            if let onboardingCompletion {
+                                onboardingCompletion(originalTimestamp)
                                 return
                             }
-
-                            // 트리밍 시간을 원본시간으로 변환
-                            let originalTimestamp = clip.startPoint + viewModel.startPoint
 
                             coordinator.push(
                                 .overlay(
@@ -114,25 +130,45 @@ struct GuideSelectView: View {
                             .padding(.trailing, 24)
                     }
                     // 하단 썸네일 부분
-                    GuideFrameSelectorView(
-                        state: FrameSelectorState(
-                            thumbnails: viewModel.thumbnails,
-                            duration: viewModel.duration,
-                            startPoint: viewModel.startPoint,
-                            thumbnailUnitWidth: { viewModel.thumbnailUnitWidth(for: $0) },
-                            startX: { viewModel.startX(thumbnailLineWidth: $0, handleWidth: $1) }
-                        ),
-                        actions: FrameSelectorActions(
-                            pause: { viewModel.player.pause() },
-                            setNotPlaying: { viewModel.isPlaying = false },
-                            updateStart: { viewModel.updateStart($0) },
-                            seek: { viewModel.seek(to: $0) }
-                        ),
-                        isDragging: $isDragging
-                    )
+                    ZStack(alignment: .topLeading) {
+                        GuideFrameSelectorView(
+                            state: FrameSelectorState(
+                                thumbnails: viewModel.thumbnails,
+                                duration: viewModel.duration,
+                                startPoint: viewModel.startPoint,
+                                thumbnailUnitWidth: { viewModel.thumbnailUnitWidth(for: $0) },
+                                startX: { viewModel.startX(thumbnailLineWidth: $0, handleWidth: $1) }
+                            ),
+                            actions: FrameSelectorActions(
+                                pause: { viewModel.player.pause() },
+                                setNotPlaying: { viewModel.isPlaying = false },
+                                updateStart: { value in
+                                    dismissOnboardingTooltip()
+                                    viewModel.updateStart(value)
+                                },
+                                seek: { viewModel.seek(to: $0) }
+                            ),
+                            isDragging: $isDragging
+                        )
                         .padding(.horizontal, 26)
+
+                        if isOnboardingMode && showsOnboardingTooltip {
+                            OnboardingEditorTooltip(text: "어떤 장면을 가이드로 사용할까요?")
+                                .padding(.leading, 23)
+                                .offset(y: -50)
+                                .transition(.opacity)
+                                .zIndex(2)
+                                .allowsHitTesting(false)
+                        }
+                    }
                 }
             }
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    dismissOnboardingTooltip()
+                }
+            )
             .padding(.bottom, 14)
         }
         .navigationBarBackButtonHidden(true)
@@ -156,6 +192,14 @@ struct GuideSelectView: View {
                     viewModel.seek(to: clamped)
                 }
             }
+        }
+    }
+    
+    private func dismissOnboardingTooltip() {
+        guard showsOnboardingTooltip else { return }
+
+        withAnimation(.easeOut(duration: 0.35)) {
+            showsOnboardingTooltip = false
         }
     }
 }

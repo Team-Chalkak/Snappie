@@ -11,7 +11,9 @@ import SwiftUI
 struct CameraView: View {
     let shootState: ShootState
     let isAligned: Bool
-
+    let onboardingVideoSaved: ((URL, CameraSetting, CameraManager, [TimeStampedTilt]) -> Void)?
+    let onboardingExit: (() -> Void)?
+    
     private var guide: Guide? {
         switch shootState {
         case .firstShoot:
@@ -21,7 +23,8 @@ struct CameraView: View {
         }
     }
 
-    @State var viewModel = CameraViewModel()
+    @State var viewModel: CameraViewModel
+    
     @EnvironmentObject private var coordinator: Coordinator
     @Environment(PermissionManager.self) private var permissionManager
 
@@ -30,6 +33,20 @@ struct CameraView: View {
     @State private var feedbackOpacity: Double = 0
     @State private var fadeOutTask: Task<Void, Never>?
 
+    init(
+        shootState: ShootState,
+        isAligned: Bool,
+        viewModel: CameraViewModel = CameraViewModel(),
+        onboardingVideoSaved: ((URL, CameraSetting, CameraManager, [TimeStampedTilt]) -> Void)? = nil,
+        onboardingExit: (() -> Void)? = nil
+    ) {
+        self.shootState = shootState
+        self.isAligned = isAligned
+        self._viewModel = State(wrappedValue: viewModel)
+        self.onboardingVideoSaved = onboardingVideoSaved
+        self.onboardingExit = onboardingExit
+    }
+    
     var body: some View {
         ZStack {
             if isAligned {
@@ -85,6 +102,12 @@ struct CameraView: View {
                     size: .large,
                     isActive: true
                 )) {
+                    if let onboardingExit {
+                        viewModel.stopCamera()
+                        onboardingExit()
+                        return
+                    }
+                    
                     viewModel.exitCamera()
                     Analytics.logEvent("exitCameraAlertTapped", parameters: nil)
                 }
@@ -126,26 +149,42 @@ struct CameraView: View {
             }
         }
         .onReceive(viewModel.videoSavedPublisher) { url in
+            let cameraSetting = CameraSetting(
+                zoomScale: viewModel.zoomScale,
+                isGridEnabled: viewModel.isGrid,
+                isFrontPosition: viewModel.isUsingFrontCamera,
+                timerSecond: viewModel.selectedTimerDuration.rawValue
+            )
+
+            if let onboardingVideoSaved {
+                onboardingVideoSaved(
+                    url,
+                    cameraSetting,
+                    viewModel.model,
+                    viewModel.timeStampedTiltList
+                )
+                return
+            }
+
             self.clipUrl = url
             viewModel.saveCameraSettings()
 
             coordinator.push(.clipEdit(
                 clipURL: url,
                 state: shootState,
-                cameraSetting: CameraSetting(
-                    zoomScale: viewModel.zoomScale,
-                    isGridEnabled: viewModel.isGrid,
-                    isFrontPosition: viewModel.isUsingFrontCamera,
-                    timerSecond: viewModel.selectedTimerDuration.rawValue
-                ),
+                cameraSetting: cameraSetting,
                 cameraManager: viewModel.model,
                 TimeStampedTiltList: viewModel.timeStampedTiltList
-            )
-            )
+            ))
         }
         .onAppear {
             viewModel.coordinator = coordinator
-            permissionManager.reevaluateAndPresentIfNeeded()
+            
+            if onboardingVideoSaved != nil {
+                permissionManager.requestAndCheckPermissions()
+            } else {
+                permissionManager.reevaluateAndPresentIfNeeded()
+            }
 
             if permissionManager.permissionState == .both {
                 viewModel.startCamera()

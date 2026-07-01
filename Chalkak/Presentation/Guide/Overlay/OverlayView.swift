@@ -32,6 +32,7 @@ struct OverlayView: View {
     // 1. Input properties
     let clip: Clip
     let cameraSetting: CameraSetting
+    let onboardingCompletion: ((Guide) -> Void)?
 
     // 2. State & ObservedObject
     @StateObject var overlayViewModel: OverlayViewModel
@@ -45,11 +46,20 @@ struct OverlayView: View {
         clip: Clip,
         cameraSetting: CameraSetting,
         cameraManager: CameraManager,
-        selectedTimestamp: Double
+        selectedTimestamp: Double,
+        onboardingCompletion: ((Guide) -> Void)? = nil
     ) {
         self.clip = clip
         self.cameraSetting = cameraSetting
-        self._overlayViewModel = StateObject(wrappedValue: OverlayViewModel(clip: clip, cameraSetting: cameraSetting, cameraManager: cameraManager, selectedTimestamp: selectedTimestamp))
+        self.onboardingCompletion = onboardingCompletion
+        self._overlayViewModel = StateObject(
+            wrappedValue: OverlayViewModel(
+                clip: clip,
+                cameraSetting: cameraSetting,
+                cameraManager: cameraManager,
+                selectedTimestamp: selectedTimestamp
+            )
+        )
     }
 
     var body: some View {
@@ -111,7 +121,14 @@ struct OverlayView: View {
             if overlayViewModel.isOverlayReady && overlayViewModel.outlineImage != nil {
                 Button(action: {
                     let projectID = overlayViewModel.saveProjectData()
+                    
                     if let guide = overlayViewModel.guide {
+                        
+                        if let onboardingCompletion {
+                            onboardingCompletion(guide)
+                            return
+                        }
+                        
                         coordinator.push(
                             .projectEdit(
                                 projectID: projectID,

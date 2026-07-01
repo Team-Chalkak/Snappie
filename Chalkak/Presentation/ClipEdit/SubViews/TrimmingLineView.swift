@@ -27,7 +27,18 @@ import SwiftUI
 struct TrimmingLineView: View {
     var editViewModel: ClipEditViewModel
     @Binding var isDragging: Bool
-
+    let onInteractionStarted: (() -> Void)?
+    
+    init(
+        editViewModel: ClipEditViewModel,
+        isDragging: Binding<Bool>,
+        onInteractionStarted: (() -> Void)? = nil
+    ) {
+        self.editViewModel = editViewModel
+        self._isDragging = isDragging
+        self.onInteractionStarted = onInteractionStarted
+    }
+    
     var body: some View {
         /// 내부 상수 선언
         let totalWidth: CGFloat = TimelineConstants.totalWidth
@@ -95,6 +106,8 @@ struct TrimmingLineView: View {
                 .gesture(
                     DragGesture()
                         .onChanged { gesture in
+                            onInteractionStarted?()
+                            
                             isDragging = true
                             editViewModel.player.pause()
                             editViewModel.isPlaying = false
@@ -116,6 +129,8 @@ struct TrimmingLineView: View {
                 .gesture(
                     DragGesture()
                         .onChanged { gesture in
+                            onInteractionStarted?()
+                            
                             isDragging = true
                             editViewModel.player.pause()
                             editViewModel.isPlaying = false
@@ -143,6 +158,8 @@ struct TrimmingLineView: View {
                 .gesture(
                     DragGesture()
                         .onChanged { gesture in
+                            onInteractionStarted?()
+                            
                             isDragging = true
                             editViewModel.player.pause()
                             editViewModel.isPlaying = false
@@ -172,6 +189,8 @@ struct TrimmingLineView: View {
             // 드래그 제스처
             DragGesture()
                 .onChanged { gesture in
+                    onInteractionStarted?()
+                    
                     isDragging = true
                     editViewModel.player.pause()
                     editViewModel.isPlaying = false

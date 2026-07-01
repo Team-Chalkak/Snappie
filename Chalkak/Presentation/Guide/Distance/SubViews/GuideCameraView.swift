@@ -10,13 +10,22 @@ import SwiftUI
 struct GuideCameraView: View {
     let guide: Guide?
     let shootState: ShootState
+    let onboardingVideoSaved: ((URL, CameraSetting, CameraManager, [TimeStampedTilt]) -> Void)?
+    let onboardingExit: (() -> Void)?
     
     @State private var viewModel = BoundingBoxViewModel()
     @State private var cameraViewModel = CameraViewModel()
 
-    init(guide: Guide?, shootState: ShootState) {
+    init(
+        guide: Guide?,
+        shootState: ShootState,
+        onboardingVideoSaved: ((URL, CameraSetting, CameraManager, [TimeStampedTilt]) -> Void)? = nil,
+        onboardingExit: (() -> Void)? = nil
+    ) {
         self.guide = guide
         self.shootState = shootState
+        self.onboardingVideoSaved = onboardingVideoSaved
+        self.onboardingExit = onboardingExit
 
         let cameraVM = CameraViewModel()
         self._cameraViewModel = State(wrappedValue: cameraVM)
@@ -30,12 +39,18 @@ struct GuideCameraView: View {
 
     var body: some View {        
         ZStack {
-            CameraView(shootState: shootState, isAligned: viewModel.isAligned, viewModel: cameraViewModel)
-                .onAppear {
-                    cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
-                        viewModel.liveBoundingBoxes = bboxes
-                    }
+            CameraView(
+                shootState: shootState,
+                isAligned: viewModel.isAligned,
+                viewModel: cameraViewModel,
+                onboardingVideoSaved: onboardingVideoSaved,
+                onboardingExit: onboardingExit
+            )
+            .onAppear {
+                cameraViewModel.setBoundingBoxUpdateHandler { bboxes in
+                    viewModel.liveBoundingBoxes = bboxes
                 }
+            }
 
             if let guide = guide, let outline = guide.outlineImage {
                 Image(uiImage: outline)

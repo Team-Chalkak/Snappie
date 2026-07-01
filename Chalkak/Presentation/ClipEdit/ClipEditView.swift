@@ -45,6 +45,9 @@ struct ClipEditView: View {
     let shootState: ShootState
     let cameraSetting: CameraSetting
     let cameraManager: CameraManager
+    let onboardingCompletion: ((Clip, CameraSetting, CameraManager) -> Void)?
+    let onboardingFinishShoot: (() -> Void)?
+    let onboardingBack: (() -> Void)?
 
     // 2. State & ObservedObject
     @State private var editViewModel: ClipEditViewModel
@@ -54,6 +57,7 @@ struct ClipEditView: View {
     @State private var autoPlayEnabled = true
     @State private var showActionSheet = false
     @State private var showRetakeAlert = false
+    @State private var showsOnboardingTooltip = true
 
     // 3. 계산 프로퍼티
     private var guide: Guide? {
@@ -65,6 +69,10 @@ struct ClipEditView: View {
         }
     }
 
+    private var shouldShowOnboardingTooltip: Bool {
+        onboardingCompletion != nil
+    }
+    
     // 4. init
     init(
         clipURL: URL,
@@ -72,18 +80,24 @@ struct ClipEditView: View {
         cameraSetting: CameraSetting,
         cameraManager: CameraManager,
         timeStampedTiltList: [TimeStampedTilt],
-        clipID: String? = nil
+        clipID: String? = nil,
+        onboardingCompletion: ((Clip, CameraSetting, CameraManager) -> Void)? = nil,
+        onboardingFinishShoot: (() -> Void)? = nil,
+        onboardingBack: (() -> Void)? = nil
     ) {
         _editViewModel = State(wrappedValue: ClipEditViewModel(
             clipURL: clipURL,
             cameraSetting: cameraSetting,
             timeStampedTiltList: timeStampedTiltList,
             clipID: clipID
-        )
-        )
+        ))
+
         self.shootState = shootState
         self.cameraSetting = cameraSetting
         self.cameraManager = cameraManager
+        self.onboardingCompletion = onboardingCompletion
+        self.onboardingFinishShoot = onboardingFinishShoot
+        self.onboardingBack = onboardingBack
     }
 
     // 5. body
@@ -96,6 +110,11 @@ struct ClipEditView: View {
                 SnappieNavigationBar(
                     navigationTitle: Text("장면 다듬기"),
                     leftButtonType: .backward {
+                        if let onboardingBack {
+                            onboardingBack()
+                            return
+                        }
+                        
                         guard let previous = coordinator.previousPath else {
                             return
                         }
@@ -111,6 +130,26 @@ struct ClipEditView: View {
                     },
                     rightButtonType: .oneButton(
                         .init(label: "완료") {
+                            if onboardingCompletion != nil || onboardingFinishShoot != nil {
+                                switch shootState {
+                                case .firstShoot:
+                                    if let onboardingCompletion {
+                                        let clip = editViewModel.createClipData()
+                                        onboardingCompletion(
+                                            clip,
+                                            editViewModel.cameraSetting,
+                                            cameraManager
+                                        )
+                                    }
+
+                                case .followUpShoot, .appendShoot:
+                                    editViewModel.appendClipToCurrentProject()
+                                    onboardingFinishShoot?()
+                                }
+
+                                return
+                            }
+
                             guard let previous = coordinator.previousPath else {
                                 return
                             }
@@ -119,6 +158,7 @@ struct ClipEditView: View {
                             case .projectEdit:
                                 editViewModel.updateClipInTempProject()
                                 coordinator.popLast()
+
                             default:
                                 switch shootState {
                                 case .firstShoot:
@@ -130,8 +170,10 @@ struct ClipEditView: View {
                                             cameraManager: cameraManager
                                         )
                                     )
+
                                 case .followUpShoot:
                                     showActionSheet = true
+
                                 case .appendShoot:
                                     let newClip = editViewModel.createClipData()
 
@@ -159,9 +201,32 @@ struct ClipEditView: View {
                     )
                 )
 
-                TrimmingControlView(editViewModel: editViewModel, isDragging: $isDragging)
+                ZStack(alignment: .topLeading) {
+                    TrimmingControlView(
+                        editViewModel: editViewModel,
+                        isDragging: $isDragging,
+                        onInteractionStarted: {
+                            dismissOnboardingTooltip()
+                        }
+                    )
+
+                    if shouldShowOnboardingTooltip && showsOnboardingTooltip {
+                        OnboardingEditorTooltip(text: "필요 없는 부분은 잘라낼 수 있어요")
+                            .padding(.leading, 23)
+                            .offset(y: -20)
+                            .transition(.opacity)
+                            .zIndex(2)
+                            .allowsHitTesting(false)
+                    }
+                }
             }
             .padding(.bottom, 14)
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    dismissOnboardingTooltip()
+                }
+            )
         }
         .navigationBarBackButtonHidden(true)
         .confirmationDialog(
@@ -210,6 +275,14 @@ struct ClipEditView: View {
         }
         .onDisappear {
             editViewModel.cleanup()
+        }
+    }
+    
+    private func dismissOnboardingTooltip() {
+        guard showsOnboardingTooltip else { return }
+
+        withAnimation(.easeOut(duration: 0.35)) {
+            showsOnboardingTooltip = false
         }
     }
 }

@@ -35,6 +35,12 @@
 		992EE80B2E36BC9F0079AFBF /* AVMutableComposition + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */; };
 		992EE80D2E36C8C90079AFBF /* PlayTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */; };
 		992EE8172E36CFE70079AFBF /* ProjectTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */; };
+		9936E4E42FF0C8F3006CD9F8 /* OnboardingFirstShootExperienceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4E32FF0C8E4006CD9F8 /* OnboardingFirstShootExperienceView.swift */; };
+		9936E4E62FF0C90D006CD9F8 /* OnboardingExperienceRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4E52FF0C906006CD9F8 /* OnboardingExperienceRoute.swift */; };
+		9936E4E82FF0C929006CD9F8 /* OnboardingFollowUpShootExperienceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4E72FF0C91E006CD9F8 /* OnboardingFollowUpShootExperienceView.swift */; };
+		9936E4EA2FF0F82D006CD9F8 /* OnboardingGuideCameraPromptOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4E92FF0F821006CD9F8 /* OnboardingGuideCameraPromptOverlay.swift */; };
+		9936E4EE2FF116C4006CD9F8 /* OnboardingEditorTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4ED2FF116BC006CD9F8 /* OnboardingEditorTooltip.swift */; };
+		9936E4F02FF116EB006CD9F8 /* Shape + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9936E4EF2FF116D9006CD9F8 /* Shape + Ext.swift */; };
 		993A1F502E267E0C0059B70A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4A2E267E0C0059B70A /* Preview Assets.xcassets */; };
 		993A1F512E267E0C0059B70A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4C2E267E0C0059B70A /* Assets.xcassets */; };
 		993A1F522E267E0C0059B70A /* sample-video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 993A1F4D2E267E0C0059B70A /* sample-video.mov */; };
@@ -207,6 +213,12 @@
 		992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVMutableComposition + Ext.swift"; sourceTree = "<group>"; };
 		992EE80C2E36C8C60079AFBF /* PlayTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayTimeView.swift; sourceTree = "<group>"; };
 		992EE8162E36CFB00079AFBF /* ProjectTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTimelineView.swift; sourceTree = "<group>"; };
+		9936E4E32FF0C8E4006CD9F8 /* OnboardingFirstShootExperienceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFirstShootExperienceView.swift; sourceTree = "<group>"; };
+		9936E4E52FF0C906006CD9F8 /* OnboardingExperienceRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingExperienceRoute.swift; sourceTree = "<group>"; };
+		9936E4E72FF0C91E006CD9F8 /* OnboardingFollowUpShootExperienceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFollowUpShootExperienceView.swift; sourceTree = "<group>"; };
+		9936E4E92FF0F821006CD9F8 /* OnboardingGuideCameraPromptOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGuideCameraPromptOverlay.swift; sourceTree = "<group>"; };
+		9936E4ED2FF116BC006CD9F8 /* OnboardingEditorTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEditorTooltip.swift; sourceTree = "<group>"; };
+		9936E4EF2FF116D9006CD9F8 /* Shape + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shape + Ext.swift"; sourceTree = "<group>"; };
 		993A1CC62E2049D50059B70A /* Chalkak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chalkak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CD62E2049D60059B70A /* ChalkakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		993A1CE02E2049D60059B70A /* ChalkakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChalkakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -370,6 +382,7 @@
 		0D5512F02E4B2D36001FA7F9 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				9936E4E52FF0C906006CD9F8 /* OnboardingExperienceRoute.swift */,
 				A1B2C3D42FD0000100000003 /* OnboardingStep.swift */,
 				A1B2C3D42FD0000100000004 /* OnboardingFlowController.swift */,
 				B6D100002FD53A0000010002 /* OnboardingNotificationScheduler.swift */,
@@ -382,6 +395,10 @@
 		0D5512F52E5415C9001FA7F9 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				9936E4ED2FF116BC006CD9F8 /* OnboardingEditorTooltip.swift */,
+				9936E4E92FF0F821006CD9F8 /* OnboardingGuideCameraPromptOverlay.swift */,
+				9936E4E72FF0C91E006CD9F8 /* OnboardingFollowUpShootExperienceView.swift */,
+				9936E4E32FF0C8E4006CD9F8 /* OnboardingFirstShootExperienceView.swift */,
 				0D5512FA2E541750001FA7F9 /* OnboardingSubView.swift */,
 			);
 			path = SubViews;
@@ -765,6 +782,7 @@
 		993A21802E26AB9C0059B70A /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				9936E4EF2FF116D9006CD9F8 /* Shape + Ext.swift */,
 				7DD82CC42EFFB01A00AD8DFC /* TimeInterval+Extension.swift */,
 				992EE80A2E36BC980079AFBF /* AVMutableComposition + Ext.swift */,
 				99C93A3C2E2B998100F42541 /* UIImage + Ext.swift */,
@@ -1142,6 +1160,7 @@
 				B68A46CF2E38A25D0062F04E /* SnappieProgress.swift in Sources */,
 				C5C12EB62E3380D100C4DC6D /* NavigationEnums.swift in Sources */,
 				993A1F592E267E0C0059B70A /* OverlayManager.swift in Sources */,
+				9936E4E42FF0C8F3006CD9F8 /* OnboardingFirstShootExperienceView.swift in Sources */,
 				C54ABC0F2F01A4C000A9EC1E /* ClipToolbarView.swift in Sources */,
 				C5C12EAC2E325A3B00C4DC6D /* IconButtonStyler.swift in Sources */,
 				7D17CABC2EEFE93C00C26529 /* StartProjectView.swift in Sources */,
@@ -1186,15 +1205,19 @@
 				C5C12EB12E33684F00C4DC6D /* SnappieNavigationBar.swift in Sources */,
 				7D60F6492F0D141800621874 /* SchemaV3.swift in Sources */,
 				C5FB3EBD2E26AA0700A4C1BE /* VideoMerger.swift in Sources */,
+				9936E4F02FF116EB006CD9F8 /* Shape + Ext.swift in Sources */,
 				994EFAE42F19330C0029AAE3 /* ClipPlayheadView.swift in Sources */,
 				993A1F672E267E0C0059B70A /* CameraBottomControlView.swift in Sources */,
 				C5FB3EC12E28F11100A4C1BE /* PhotoLibrarySaver.swift in Sources */,
+				9936E4E82FF0C929006CD9F8 /* OnboardingFollowUpShootExperienceView.swift in Sources */,
+				9936E4EA2FF0F82D006CD9F8 /* OnboardingGuideCameraPromptOverlay.swift in Sources */,
 				7DD82CC02EFEC2A400AD8DFC /* GuideFrameSelectorView.swift in Sources */,
 				B60DC5F12E38A621001D8327 /* SnappieProgressAlert.swift in Sources */,
 				C5C12EA82E3227D100C4DC6D /* ButtonGlass.swift in Sources */,
 				B6AB62AE2E2E8DBE00207590 /* (null) in Sources */,
 				B64788662E3324130091A067 /* TorchMode.swift in Sources */,
 				99C93A0E2E27BB0700F42541 /* Path.swift in Sources */,
+				9936E4EE2FF116C4006CD9F8 /* OnboardingEditorTooltip.swift in Sources */,
 				C5F7B69C2E2EB25F0066B59C /* Icon.swift in Sources */,
 				C5F7B69F2E2EB7AB0066B59C /* IconView.swift in Sources */,
 				993A1F682E267E0C0059B70A /* CameraDefaultTopControlView.swift in Sources */,
@@ -1245,6 +1268,7 @@
 				993A1F7A2E267E0C0059B70A /* ProjectPreviewView.swift in Sources */,
 				7DD82CBB2EFEA2E400AD8DFC /* GuideSelectView.swift in Sources */,
 				992EE7C22E32ACBA0079AFBF /* ProjectEditView.swift in Sources */,
+				9936E4E62FF0C90D006CD9F8 /* OnboardingExperienceRoute.swift in Sources */,
 				A1B2C3D42FD0000100000001 /* OnboardingStep.swift in Sources */,
 				A1B2C3D42FD0000100000002 /* OnboardingFlowController.swift in Sources */,
 				B6D100002FD53A0000010001 /* OnboardingNotificationScheduler.swift in Sources */,

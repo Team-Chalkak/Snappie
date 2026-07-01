@@ -24,8 +24,5 @@ struct BoundingBoxView: View {
                 GuideCameraView(guide: guide, shootState: shootState)
             }
         }
-        .onAppear {
-            permissionManager.reevaluateAndPresentIfNeeded()
-        }
     }
 }

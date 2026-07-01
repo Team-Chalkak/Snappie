@@ -37,6 +37,8 @@ enum SnappieColor {
     static let redRecording: Color = Color("red-recording")
     static let gradientFillNormal = Gradient(colors: [ Color("matcha-200").opacity(0.2), Color("deep-green-600").opacity(0.15)])
     
+    static let tooltipBackground: Color = Color("matcha-300")
+    
     // MARK: - Foundation 색상
     static let matcha50: Color = Color("matcha-50")
     

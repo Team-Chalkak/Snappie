@@ -83,7 +83,8 @@ enum OnboardingStep: CaseIterable, Equatable {
     case guideSimpleRecord
     case dailyMemoryCarousel
     case firstShootPrompt
-    case guideShootPrompt
+    case firstShootExperience
+    case followUpShootExperience
     case shootDone
     case projectContinue
 
@@ -92,7 +93,8 @@ enum OnboardingStep: CaseIterable, Equatable {
         .guideSimpleRecord,
         .dailyMemoryCarousel,
         .firstShootPrompt,
-        .guideShootPrompt,
+        .firstShootExperience,
+        .followUpShootExperience,
         .shootDone,
         .projectContinue
     ]
@@ -103,7 +105,9 @@ enum OnboardingStep: CaseIterable, Equatable {
             .automatic(delay: 2.2)
         case .guideSimpleRecord:
             .automatic(delay: 3.0)
-        case .dailyMemoryCarousel, .firstShootPrompt, .guideShootPrompt:
+        case .dailyMemoryCarousel, .firstShootPrompt:
+            .manual
+        case .firstShootExperience, .followUpShootExperience:
             .manual
         case .shootDone:
             .typingAutomatic
@@ -147,11 +151,6 @@ enum OnboardingStep: CaseIterable, Equatable {
                     "첫 촬영을 시작해볼까요 ?"
                 ]
             }
-        case .guideShootPrompt:
-            [
-                "가이드에 맞춰",
-                "다른 장면을 찍어주세요"
-            ]
         case .shootDone:
             [
                 "촬영 끝!"
@@ -161,6 +160,8 @@ enum OnboardingStep: CaseIterable, Equatable {
                 "나의 프로젝트에서",
                 "오늘 하루를 완성해보세요!"
             ]
+        case .firstShootExperience, .followUpShootExperience:
+            []
         }
     }
 }

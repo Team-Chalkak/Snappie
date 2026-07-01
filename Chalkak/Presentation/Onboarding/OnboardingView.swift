@@ -89,12 +89,29 @@ private struct KoreanOnboardingFlowView: View {
             ) {
                 handleCenteredPromptAction()
             }
-        case .guideShootPrompt:
-            OnboardingGuideShootPromptStepView(
-                lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
-                frameImageNames: (1...17).map { "c-\($0)" }
-            ) {
-                handleCenteredPromptAction()
+        case .firstShootExperience:
+            OnboardingFirstShootExperienceView(
+                onFinished: { guide in
+                    controller.experienceGuide = guide
+                    controller.moveNext()
+                },
+                onExit: {
+                    controller.moveBack()
+                }
+            )
+        case .followUpShootExperience:
+            if let guide = controller.experienceGuide {
+                OnboardingFollowUpShootExperienceView(
+                    guide: guide,
+                    onFinished: {
+                        controller.moveNext()
+                    },
+                    onExit: {
+                        controller.moveBack()
+                    }
+                )
+            } else {
+                OnboardingTextStepView(lines: ["가이드 생성에 실패했어요"])
             }
         case .shootDone:
             OnboardingTypingTextStepView(
@@ -109,13 +126,14 @@ private struct KoreanOnboardingFlowView: View {
 
     private var shouldShowPrimaryButton: Bool {
         guard controller.currentStep != .firstShootPrompt,
-              controller.currentStep != .guideShootPrompt,
-              controller.currentStep != .shootDone else { return false }
+              controller.currentStep != .firstShootExperience,
+              controller.currentStep != .followUpShootExperience,
+              controller.currentStep != .shootDone else {
+            return false
+        }
 
         return switch controller.advanceBehavior {
-        case .automatic:
-            false
-        case .typingAutomatic:
+        case .automatic, .typingAutomatic:
             false
         case .manual, .completion:
             true

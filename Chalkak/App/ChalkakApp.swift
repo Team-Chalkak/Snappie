@@ -105,6 +105,11 @@ struct ChalkakApp: App {
                 OnboardingView(onComplete: {
                     hasCompletedOnboarding = true
                 })
+                .environmentObject(coordinator)
+                .environment(permissionManager)
+                .sheet(isPresented: $permissionManager.showPermissionSheet) {
+                    CameraPermissionSheet(permissionManager: permissionManager)
+                }
             }
         }
         .modelContainer(sharedContainer)
