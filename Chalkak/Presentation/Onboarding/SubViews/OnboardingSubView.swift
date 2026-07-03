@@ -268,7 +268,7 @@ struct OnboardingTypingTextStepView: View {
     init(
         lines: [String],
         characterDelay: UInt64 = 120_000_000,
-        completionDelay: UInt64 = 700_000_000,
+        completionDelay: UInt64 = 1_700_000_000,
         onFinished: @escaping () -> Void
     ) {
         self.lines = lines
