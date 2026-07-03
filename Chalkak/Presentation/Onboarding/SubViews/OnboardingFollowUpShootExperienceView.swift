@@ -24,8 +24,7 @@ struct OnboardingFollowUpShootExperienceView: View {
                     lines: [
                         "가이드에 맞춰",
                         "다른 장면을 찍어주세요"
-                    ],
-                    frameImageNames: (1...17).map { "c-\($0)" }
+                    ]
                 ) {
                     withAnimation(.easeInOut(duration: 0.25)) {
                         isGuidePromptPresented = false

@@ -66,10 +66,9 @@ private struct KoreanOnboardingFlowView: View {
     private var renderedStep: some View {
         switch controller.currentStep {
         case .introExactComposition:
-            OnboardingIconBeatStepView(
+            OnboardingFadeBeatStepView(
                 lines: controller.currentStep.prompt(for: controller.selectedCarouselCard),
-                imageName: "on_p",
-                activeImageName: "on_p-active"
+                imageName: "on_p"
             )
         case .guideSimpleRecord:
             OnboardingIconBeatStepView(

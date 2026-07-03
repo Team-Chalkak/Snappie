@@ -9,7 +9,6 @@ import SwiftUI
 
 struct OnboardingGuideCameraPromptOverlay: View {
     let lines: [String]
-    let frameImageNames: [String]
     let action: () -> Void
 
     var body: some View {
@@ -20,7 +19,7 @@ struct OnboardingGuideCameraPromptOverlay: View {
 
             VStack(spacing: 75) {
                 VStack(spacing: 32) {
-                    OnboardingFrameAnimationView(imageNames: frameImageNames)
+                    OnboardingTiltCircleAnimationView()
 
                     VStack(spacing: 10) {
                         ForEach(lines, id: \.self) { line in
