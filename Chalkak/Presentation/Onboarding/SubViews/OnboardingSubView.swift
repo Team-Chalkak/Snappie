@@ -63,7 +63,7 @@ struct OnboardingIconBeatStepView: View {
     @State private var isVisible = false
 
     var body: some View {
-        VStack(spacing: 36) {
+        VStack(spacing: 20) {
             OnboardingLoopingIconView(
                 imageName: imageName,
                 activeImageName: activeImageName,
@@ -79,6 +79,7 @@ struct OnboardingIconBeatStepView: View {
                 }
             }
         }
+        .offset(y: -16)
         .opacity(isVisible ? 1 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 24)
@@ -184,7 +185,7 @@ struct OnboardingFadeBeatStepView: View {
     @State private var isBright = true
 
     var body: some View {
-        VStack(spacing: 36) {
+        VStack(spacing: 20) {
             Image(imageName)
                 .resizable()
                 .scaledToFit()
@@ -200,6 +201,7 @@ struct OnboardingFadeBeatStepView: View {
                 }
             }
         }
+        .offset(y: -16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 24)
         .task {
@@ -541,60 +543,65 @@ struct OnboardingCarouselStepView: View {
     }
 
     var body: some View {
-        VStack(spacing: 40) {
-            VStack(spacing: 10) {
-                ForEach(titleLines, id: \.self) { line in
-                    Text(line)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                        .multilineTextAlignment(.center)
+        GeometryReader { geometry in
+            let layout = OnboardingCarouselLayout(availableHeight: geometry.size.height)
+
+            VStack(spacing: layout.titleCardSpacing) {
+                VStack(spacing: 10) {
+                    ForEach(titleLines, id: \.self) { line in
+                        Text(line)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-            }
 
-            VStack(spacing: 10) {
-                GeometryReader { geometry in
-                    let cardWidth = min(304, geometry.size.width - 84)
-                    let sidePeek = max(24, (geometry.size.width - cardWidth) / 2)
+                VStack(spacing: 10) {
+                    GeometryReader { geometry in
+                        let cardWidth = min(304, geometry.size.width - 84)
+                        let sidePeek = max(24, (geometry.size.width - cardWidth) / 2)
 
-                    ScrollView(.horizontal) {
-                        LazyHStack(spacing: 16) {
-                            ForEach(OnboardingCarouselCard.allCases) { card in
-                                OnboardingPhotoCard(
-                                    card: card,
-                                    isSelected: card == selectedCard
-                                )
-                                .frame(width: cardWidth)
-                                .id(card)
-                                .scrollTransition(.interactive, axis: .horizontal) { content, phase in
-                                    content
-                                        .scaleEffect(phase.isIdentity ? 1 : 0.9)
-                                        .opacity(phase.isIdentity ? 1 : 0.55)
+                        ScrollView(.horizontal) {
+                            LazyHStack(spacing: 16) {
+                                ForEach(OnboardingCarouselCard.allCases) { card in
+                                    OnboardingPhotoCard(
+                                        card: card,
+                                        isSelected: card == selectedCard,
+                                        layout: layout
+                                    )
+                                    .frame(width: cardWidth)
+                                    .id(card)
+                                    .scrollTransition(.interactive, axis: .horizontal) { content, phase in
+                                        content
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.9)
+                                            .opacity(phase.isIdentity ? 1 : 0.55)
+                                    }
                                 }
                             }
+                            .scrollTargetLayout()
                         }
-                        .scrollTargetLayout()
+                        .contentMargins(.horizontal, sidePeek, for: .scrollContent)
+                        .scrollPosition(id: $scrollPosition)
+                        .scrollTargetBehavior(.viewAligned)
+                        .scrollIndicators(.hidden)
                     }
-                    .contentMargins(.horizontal, sidePeek, for: .scrollContent)
-                    .scrollPosition(id: $scrollPosition)
-                    .scrollTargetBehavior(.viewAligned)
-                    .scrollIndicators(.hidden)
-                }
-                .frame(height: 474)
+                    .frame(height: layout.cardHeight)
 
-                HStack(spacing: 8) {
-                    ForEach(OnboardingCarouselCard.allCases) { card in
-                        Circle()
-                            .fill(card == selectedCard ? SnappieColor.primaryNormal : SnappieColor.darkNormal)
-                            .frame(width: 8, height: 8)
+                    HStack(spacing: 8) {
+                        ForEach(OnboardingCarouselCard.allCases) { card in
+                            Circle()
+                                .fill(card == selectedCard ? SnappieColor.primaryNormal : SnappieColor.darkNormal)
+                                .frame(width: 8, height: 8)
+                        }
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.top, layout.topPadding)
+            .padding(.bottom, layout.bottomPadding)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 92)
-        .padding(.bottom, 76)
         .onAppear {
             scrollPosition = selectedCard
         }
@@ -611,12 +618,60 @@ struct OnboardingCarouselStepView: View {
     }
 }
 
+private struct OnboardingCarouselLayout {
+    let availableHeight: CGFloat
+
+    private var compactProgress: CGFloat {
+        min(max((760 - availableHeight) / 140, 0), 1)
+    }
+
+    var topPadding: CGFloat {
+        interpolated(normal: 92, compact: 56)
+    }
+
+    var titleCardSpacing: CGFloat {
+        interpolated(normal: 40, compact: 24)
+    }
+
+    var bottomPadding: CGFloat {
+        interpolated(normal: 40, compact: 16)
+    }
+
+    var cardHeight: CGFloat {
+        let titleHeight: CGFloat = 68
+        let indicatorHeight: CGFloat = 34
+        let reservedHeight = topPadding + titleHeight + titleCardSpacing + indicatorHeight + bottomPadding
+        return min(474, max(360, availableHeight - reservedHeight))
+    }
+
+    var cardVerticalPadding: CGFloat {
+        interpolated(normal: 30, compact: 22)
+    }
+
+    var cardContentSpacing: CGFloat {
+        interpolated(normal: 20, compact: 14)
+    }
+
+    var imageHeight: CGFloat {
+        min(338, max(230, cardHeight - 136))
+    }
+
+    var imageWidth: CGFloat {
+        imageHeight * 190 / 338
+    }
+
+    private func interpolated(normal: CGFloat, compact: CGFloat) -> CGFloat {
+        normal + (compact - normal) * compactProgress
+    }
+}
+
 private struct OnboardingPhotoCard: View {
     let card: OnboardingCarouselCard
     let isSelected: Bool
+    let layout: OnboardingCarouselLayout
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: layout.cardContentSpacing) {
             Text(card.title)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(SnappieColor.labelPrimaryNormal)
@@ -627,7 +682,7 @@ private struct OnboardingPhotoCard: View {
             Image(card.imageName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 190, height: 338)
+                .frame(width: layout.imageWidth, height: layout.imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .clipped()
 
@@ -639,8 +694,8 @@ private struct OnboardingPhotoCard: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, 22)
-        .padding(.vertical, 30)
-        .frame(height: 474)
+        .padding(.vertical, layout.cardVerticalPadding)
+        .frame(height: layout.cardHeight)
         .background(SnappieColor.darkNormal.opacity(0.96))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {

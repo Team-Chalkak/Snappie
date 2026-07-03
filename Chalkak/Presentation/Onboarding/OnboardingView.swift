@@ -40,23 +40,14 @@ private struct KoreanOnboardingFlowView: View {
         ZStack {
             SnappieColor.darkStrong.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                renderedStep
-
-                if shouldShowPrimaryButton {
-                    OnboardingPrimaryButton(
-                        title: primaryButtonTitle,
-                        horizontalPadding: primaryButtonHorizontalPadding
-                    ) {
-                        handlePrimaryAction()
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .animation(.easeInOut(duration: 0.3), value: controller.currentStep)
+            renderedStep
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if shouldShowPrimaryButton {
+                primaryButton
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: controller.currentStep)
         .task(id: controller.currentStep) {
             await scheduleAutomaticAdvanceIfNeeded()
         }
@@ -145,6 +136,22 @@ private struct KoreanOnboardingFlowView: View {
 
     private var primaryButtonHorizontalPadding: CGFloat {
         controller.isCompletionStep ? 95 : 30
+    }
+
+    private var primaryButtonBottomPadding: CGFloat {
+        controller.currentStep == .dailyMemoryCarousel ? 52 : 24
+    }
+
+    private var primaryButton: some View {
+        OnboardingPrimaryButton(
+            title: primaryButtonTitle,
+            horizontalPadding: primaryButtonHorizontalPadding
+        ) {
+            handlePrimaryAction()
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, primaryButtonBottomPadding)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     private func handlePrimaryAction() {
