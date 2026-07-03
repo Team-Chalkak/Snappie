@@ -701,7 +701,7 @@ private struct OnboardingPhotoCard: View {
         .overlay {
             if isSelected {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+                    .strokeBorder(SnappieColor.primaryNormal, lineWidth: 2)
             }
         }
     }
