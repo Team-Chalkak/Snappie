@@ -58,14 +58,16 @@ struct OnboardingIconBeatStepView: View {
     let lines: [String]
     let imageName: String
     let activeImageName: String
+    var loopTiming: OnboardingIconLoopTiming = .iconBeat
 
     @State private var isVisible = false
 
     var body: some View {
-        VStack(spacing: 36) {
+        VStack(spacing: 20) {
             OnboardingLoopingIconView(
                 imageName: imageName,
-                activeImageName: activeImageName
+                activeImageName: activeImageName,
+                timing: loopTiming
             )
 
             VStack(spacing: 10) {
@@ -77,6 +79,7 @@ struct OnboardingIconBeatStepView: View {
                 }
             }
         }
+        .offset(y: -16)
         .opacity(isVisible ? 1 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 24)
@@ -102,19 +105,35 @@ struct OnboardingIconBeatStepView: View {
     }
 }
 
+struct OnboardingIconLoopTiming {
+    var defaultStateHold: Duration
+    var activeStateHold: Duration
+    var activate: Animation
+    var deactivate: Animation
+
+    static let iconBeat = OnboardingIconLoopTiming(
+        defaultStateHold: .milliseconds(600),
+        activeStateHold: .milliseconds(800),
+        activate: .easeIn(duration: 0.2),
+        deactivate: .easeIn(duration: 0.3)
+    )
+}
+
 struct OnboardingLoopingIconView: View {
     let imageName: String
     let activeImageName: String
+    var timing: OnboardingIconLoopTiming = .iconBeat
 
     @State private var showsActiveImage = false
 
     var body: some View {
         ZStack {
+            // 카메라(점 없음) 베이스 — 항상 켜둬서 몸통이 흔들리지 않음
             Image(imageName)
                 .resizable()
                 .scaledToFit()
-                .opacity(showsActiveImage ? 0 : 1)
 
+            // 카메라+빨간 점 — 이 레이어만 페이드해서 점만 깜빡이도록
             Image(activeImageName)
                 .resizable()
                 .scaledToFit()
@@ -128,18 +147,93 @@ struct OnboardingLoopingIconView: View {
 
     private func runIconLoop() async {
         while !Task.isCancelled {
-            do {
-                try await Task.sleep(nanoseconds: 520_000_000)
-            } catch {
-                return
+            // 기본 상태 유지 후 빨간 점으로 전환
+            guard await wait(timing.defaultStateHold) else { return }
+            await setActive(true, animation: timing.activate)
+
+            // 빨간 점 상태 유지 후 기본으로 전환
+            guard await wait(timing.activeStateHold) else { return }
+            await setActive(false, animation: timing.deactivate)
+        }
+    }
+
+    private func wait(_ duration: Duration) async -> Bool {
+        do {
+            try await Task.sleep(for: duration)
+        } catch {
+            return false
+        }
+        return !Task.isCancelled
+    }
+
+    private func setActive(_ isActive: Bool, animation: Animation) async {
+        await MainActor.run {
+            withAnimation(animation) {
+                showsActiveImage = isActive
             }
+        }
+    }
+}
 
-            guard !Task.isCancelled else { return }
+/// 이미지 전환 없이 단일 이미지만 은은하게 호흡시키는 비트 뷰 (스텝 1)
+struct OnboardingFadeBeatStepView: View {
+    let lines: [String]
+    let imageName: String
+    var timing: OnboardingIconLoopTiming = .iconBeat
+    var dimmedOpacity: Double = 0.4
 
-            await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showsActiveImage.toggle()
+    @State private var isBright = true
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 72)
+                .opacity(isBright ? 1 : dimmedOpacity)
+
+            VStack(spacing: 10) {
+                ForEach(lines, id: \.self) { line in
+                    Text(line)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                        .multilineTextAlignment(.center)
                 }
+            }
+        }
+        .offset(y: -16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 24)
+        .task {
+            await runFadeLoop()
+        }
+    }
+
+    private func runFadeLoop() async {
+        while !Task.isCancelled {
+            // 선명한 상태 유지 후 흐려짐
+            guard await wait(timing.activeStateHold) else { return }
+            await setBright(false, animation: timing.deactivate)
+
+            // 흐린 상태 유지 후 다시 선명해짐
+            guard await wait(timing.defaultStateHold) else { return }
+            await setBright(true, animation: timing.activate)
+        }
+    }
+
+    private func wait(_ duration: Duration) async -> Bool {
+        do {
+            try await Task.sleep(for: duration)
+        } catch {
+            return false
+        }
+        return !Task.isCancelled
+    }
+
+    private func setBright(_ isBrightState: Bool, animation: Animation) async {
+        await MainActor.run {
+            withAnimation(animation) {
+                isBright = isBrightState
             }
         }
     }
@@ -174,7 +268,7 @@ struct OnboardingTypingTextStepView: View {
     init(
         lines: [String],
         characterDelay: UInt64 = 120_000_000,
-        completionDelay: UInt64 = 700_000_000,
+        completionDelay: UInt64 = 1_700_000_000,
         onFinished: @escaping () -> Void
     ) {
         self.lines = lines
@@ -277,13 +371,12 @@ struct OnboardingCenteredPromptStepView: View {
 
 struct OnboardingGuideShootPromptStepView: View {
     let lines: [String]
-    let frameImageNames: [String]
     let action: () -> Void
 
     var body: some View {
         VStack(spacing: 75) {
             VStack(spacing: 32) {
-                OnboardingFrameAnimationView(imageNames: frameImageNames)
+                OnboardingTiltCircleAnimationView()
 
                 VStack(spacing: 10) {
                     ForEach(lines, id: \.self) { line in
@@ -302,76 +395,130 @@ struct OnboardingGuideShootPromptStepView: View {
     }
 }
 
-struct OnboardingFrameAnimationView: View {
-    let imageNames: [String]
+struct OnboardingTiltCircleAnimationView: View {
+    private enum Phase {
+        case start
+        case halfOverlapped
+        case attached
 
-    private let frameDuration: UInt64 = 56_000_000
-    private let size: CGFloat = 30
-    @State private var currentFrameIndex = 0
-    @State private var isLoopFading = false
+        var innerCircleCenter: CGPoint {
+            switch self {
+            case .start:
+                CGPoint(x: 15, y: 15)
+            case .halfOverlapped:
+                CGPoint(x: 33, y: 33)
+            case .attached:
+                CGPoint(x: 45, y: 45)
+            }
+        }
+    }
+
+    private let designSize: CGFloat = 69
+    private let renderedSize: CGFloat = 30
+    private let outerCircleCenter = CGPoint(x: 45, y: 45)
+    private let outerCircleDiameter: CGFloat = 37
+    private let innerCircleDiameter: CGFloat = 24
+    private let fadeOutDuration = 0.1
+    private let firstMoveDuration = 0.35
+    private let secondMoveDuration = 0.15
+
+    @State private var phase: Phase = .start
+    @State private var isVisible = true
 
     var body: some View {
-        ZStack {
-            if let imageName = currentImageName {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(isLoopFading ? 0 : 1)
-            }
+        ZStack(alignment: .topLeading) {
+            Circle()
+                .stroke(SnappieColor.primaryNormal.opacity(0.32), lineWidth: 2)
+                .frame(width: outerCircleDiameter + 7, height: outerCircleDiameter + 7)
+                .position(outerCircleCenter)
 
-            if let firstImageName = imageNames.first {
-                Image(firstImageName)
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(isLoopFading ? 1 : 0)
-            }
+            Circle()
+                .stroke(SnappieColor.primaryNormal, lineWidth: 5)
+                .frame(width: outerCircleDiameter, height: outerCircleDiameter)
+                .position(outerCircleCenter)
+
+            Circle()
+                .fill(SnappieColor.primaryNormal)
+                .frame(width: innerCircleDiameter, height: innerCircleDiameter)
+                .position(phase.innerCircleCenter)
         }
-        .frame(width: size, height: size)
+        .frame(width: designSize, height: designSize)
+        .opacity(isVisible ? 1 : 0)
+        .scaleEffect(renderedSize / designSize)
+        .frame(width: renderedSize, height: renderedSize)
         .task {
-            await runFrameLoop()
+            await runTiltLoop()
         }
     }
 
-    private var currentImageName: String? {
-        guard !imageNames.isEmpty else { return nil }
-        return imageNames[currentFrameIndex]
-    }
-
-    private func runFrameLoop() async {
-        guard imageNames.count > 1 else { return }
-
-        currentFrameIndex = 0
+    private func runTiltLoop() async {
+        await reset()
+        var shouldWaitBeforeNextMove = true
 
         while !Task.isCancelled {
-            do {
-                try await Task.sleep(nanoseconds: frameDuration)
-            } catch {
-                return
+            if shouldWaitBeforeNextMove {
+                guard await wait(.milliseconds(400)) else { return }
+                await setPhase(.halfOverlapped, animation: .easeIn(duration: firstMoveDuration))
+            } else {
+                await reappearAndMoveToHalfOverlapped()
             }
 
-            guard !Task.isCancelled else { return }
+            guard await wait(.milliseconds(350)) else { return }
+            await setPhase(.attached, animation: .easeIn(duration: secondMoveDuration))
+            guard await wait(.milliseconds(150)) else { return }
 
-            if currentFrameIndex == imageNames.index(before: imageNames.endIndex) {
-                await MainActor.run {
-                    withAnimation(.easeInOut(duration: 0.6)) {
-                        isLoopFading = true
-                    }
-                }
+            guard await wait(.milliseconds(200)) else { return }
+            await setVisible(false, animation: .linear(duration: fadeOutDuration))
+            guard await wait(.milliseconds(100)) else { return }
 
-                do {
-                    try await Task.sleep(nanoseconds: 600_000_000)
-                } catch {
-                    return
-                }
+            guard await wait(.milliseconds(200)) else { return }
+            shouldWaitBeforeNextMove = false
+        }
+    }
 
-                await MainActor.run {
-                    currentFrameIndex = 0
-                    isLoopFading = false
-                }
-            } else {
-                await MainActor.run {
-                    currentFrameIndex += 1
-                }
+    private func wait(_ duration: Duration) async -> Bool {
+        do {
+            try await Task.sleep(for: duration)
+        } catch {
+            return false
+        }
+        return !Task.isCancelled
+    }
+
+    private func reset() async {
+        await MainActor.run {
+            phase = .start
+            isVisible = true
+        }
+    }
+
+    private func setPhase(_ newPhase: Phase, animation: Animation) async {
+        await MainActor.run {
+            withAnimation(animation) {
+                phase = newPhase
+            }
+        }
+    }
+
+    private func reappearAndMoveToHalfOverlapped() async {
+        await MainActor.run {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                phase = .start
+                isVisible = true
+            }
+
+            withAnimation(.easeIn(duration: firstMoveDuration)) {
+                phase = .halfOverlapped
+            }
+        }
+    }
+
+    private func setVisible(_ visible: Bool, animation: Animation) async {
+        await MainActor.run {
+            withAnimation(animation) {
+                isVisible = visible
             }
         }
     }
@@ -396,60 +543,65 @@ struct OnboardingCarouselStepView: View {
     }
 
     var body: some View {
-        VStack(spacing: 40) {
-            VStack(spacing: 10) {
-                ForEach(titleLines, id: \.self) { line in
-                    Text(line)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(SnappieColor.labelPrimaryNormal)
-                        .multilineTextAlignment(.center)
+        GeometryReader { geometry in
+            let layout = OnboardingCarouselLayout(availableHeight: geometry.size.height)
+
+            VStack(spacing: layout.titleCardSpacing) {
+                VStack(spacing: 10) {
+                    ForEach(titleLines, id: \.self) { line in
+                        Text(line)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(SnappieColor.labelPrimaryNormal)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-            }
 
-            VStack(spacing: 10) {
-                GeometryReader { geometry in
-                    let cardWidth = min(304, geometry.size.width - 84)
-                    let sidePeek = max(24, (geometry.size.width - cardWidth) / 2)
+                VStack(spacing: 10) {
+                    GeometryReader { geometry in
+                        let cardWidth = min(304, geometry.size.width - 84)
+                        let sidePeek = max(24, (geometry.size.width - cardWidth) / 2)
 
-                    ScrollView(.horizontal) {
-                        LazyHStack(spacing: 16) {
-                            ForEach(OnboardingCarouselCard.allCases) { card in
-                                OnboardingPhotoCard(
-                                    card: card,
-                                    isSelected: card == selectedCard
-                                )
-                                .frame(width: cardWidth)
-                                .id(card)
-                                .scrollTransition(.interactive, axis: .horizontal) { content, phase in
-                                    content
-                                        .scaleEffect(phase.isIdentity ? 1 : 0.9)
-                                        .opacity(phase.isIdentity ? 1 : 0.55)
+                        ScrollView(.horizontal) {
+                            LazyHStack(spacing: 16) {
+                                ForEach(OnboardingCarouselCard.allCases) { card in
+                                    OnboardingPhotoCard(
+                                        card: card,
+                                        isSelected: card == selectedCard,
+                                        layout: layout
+                                    )
+                                    .frame(width: cardWidth)
+                                    .id(card)
+                                    .scrollTransition(.interactive, axis: .horizontal) { content, phase in
+                                        content
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.9)
+                                            .opacity(phase.isIdentity ? 1 : 0.55)
+                                    }
                                 }
                             }
+                            .scrollTargetLayout()
                         }
-                        .scrollTargetLayout()
+                        .contentMargins(.horizontal, sidePeek, for: .scrollContent)
+                        .scrollPosition(id: $scrollPosition)
+                        .scrollTargetBehavior(.viewAligned)
+                        .scrollIndicators(.hidden)
                     }
-                    .contentMargins(.horizontal, sidePeek, for: .scrollContent)
-                    .scrollPosition(id: $scrollPosition)
-                    .scrollTargetBehavior(.viewAligned)
-                    .scrollIndicators(.hidden)
-                }
-                .frame(height: 474)
+                    .frame(height: layout.cardHeight)
 
-                HStack(spacing: 8) {
-                    ForEach(OnboardingCarouselCard.allCases) { card in
-                        Circle()
-                            .fill(card == selectedCard ? SnappieColor.primaryNormal : SnappieColor.darkNormal)
-                            .frame(width: 8, height: 8)
+                    HStack(spacing: 8) {
+                        ForEach(OnboardingCarouselCard.allCases) { card in
+                            Circle()
+                                .fill(card == selectedCard ? SnappieColor.primaryNormal : SnappieColor.darkNormal)
+                                .frame(width: 8, height: 8)
+                        }
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.top, layout.topPadding)
+            .padding(.bottom, layout.bottomPadding)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 92)
-        .padding(.bottom, 76)
         .onAppear {
             scrollPosition = selectedCard
         }
@@ -466,12 +618,60 @@ struct OnboardingCarouselStepView: View {
     }
 }
 
+private struct OnboardingCarouselLayout {
+    let availableHeight: CGFloat
+
+    private var compactProgress: CGFloat {
+        min(max((760 - availableHeight) / 140, 0), 1)
+    }
+
+    var topPadding: CGFloat {
+        interpolated(normal: 92, compact: 56)
+    }
+
+    var titleCardSpacing: CGFloat {
+        interpolated(normal: 40, compact: 24)
+    }
+
+    var bottomPadding: CGFloat {
+        interpolated(normal: 40, compact: 16)
+    }
+
+    var cardHeight: CGFloat {
+        let titleHeight: CGFloat = 68
+        let indicatorHeight: CGFloat = 34
+        let reservedHeight = topPadding + titleHeight + titleCardSpacing + indicatorHeight + bottomPadding
+        return min(474, max(360, availableHeight - reservedHeight))
+    }
+
+    var cardVerticalPadding: CGFloat {
+        interpolated(normal: 30, compact: 22)
+    }
+
+    var cardContentSpacing: CGFloat {
+        interpolated(normal: 20, compact: 14)
+    }
+
+    var imageHeight: CGFloat {
+        min(338, max(230, cardHeight - 136))
+    }
+
+    var imageWidth: CGFloat {
+        imageHeight * 190 / 338
+    }
+
+    private func interpolated(normal: CGFloat, compact: CGFloat) -> CGFloat {
+        normal + (compact - normal) * compactProgress
+    }
+}
+
 private struct OnboardingPhotoCard: View {
     let card: OnboardingCarouselCard
     let isSelected: Bool
+    let layout: OnboardingCarouselLayout
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: layout.cardContentSpacing) {
             Text(card.title)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(SnappieColor.labelPrimaryNormal)
@@ -482,7 +682,7 @@ private struct OnboardingPhotoCard: View {
             Image(card.imageName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 190, height: 338)
+                .frame(width: layout.imageWidth, height: layout.imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .clipped()
 
@@ -494,14 +694,14 @@ private struct OnboardingPhotoCard: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, 22)
-        .padding(.vertical, 30)
-        .frame(height: 474)
+        .padding(.vertical, layout.cardVerticalPadding)
+        .frame(height: layout.cardHeight)
         .background(SnappieColor.darkNormal.opacity(0.96))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             if isSelected {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(SnappieColor.primaryNormal, lineWidth: 2)
+                    .strokeBorder(SnappieColor.primaryNormal, lineWidth: 2)
             }
         }
     }

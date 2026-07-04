@@ -102,9 +102,9 @@ enum OnboardingStep: CaseIterable, Equatable {
     var advanceBehavior: OnboardingAdvanceBehavior {
         switch self {
         case .introExactComposition:
-            .automatic(delay: 2.2)
+            .automatic(delay: 3.2)
         case .guideSimpleRecord:
-            .automatic(delay: 3.0)
+            .automatic(delay: 4.0)
         case .dailyMemoryCarousel, .firstShootPrompt:
             .manual
         case .firstShootExperience, .followUpShootExperience:
